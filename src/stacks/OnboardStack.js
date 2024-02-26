@@ -1,0 +1,19 @@
+import { View, Text } from 'react-native'
+import React from 'react'
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Notification from '../screens/Onboarding/views/Notification';
+import Register from '../screens/Onboarding/views/Register';
+import VerifyOtp from '../screens/Onboarding/views/VerifyOtp';
+import Location from '../screens/Onboarding/views/Location';
+
+const Stack=createNativeStackNavigator()
+export default function OnboardStack() {
+  return (
+	<Stack.Navigator screenOptions={{headerShown:false}}>
+		<Stack.Screen name='Notification' component={Notification}/>
+		<Stack.Screen name='Register' component={Register}/>
+		<Stack.Screen name='VerifyOtp' component={VerifyOtp}/>
+		<Stack.Screen name='Location' component={Location}/>
+	</Stack.Navigator>
+  )
+}
