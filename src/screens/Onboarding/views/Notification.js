@@ -72,8 +72,8 @@ const styles = ScaledSheet.create({
   subhead: {
     color: '#fff',
     fontFamily: 'ReadexPro-Medium',
-    lineHeight: 20,
-    marginVertical: 20,
+    lineHeight: '20@ms',
+    marginVertical: '20@ms',
   },
   notifyicon: {
     height: '300@ms',

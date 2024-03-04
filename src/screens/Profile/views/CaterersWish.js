@@ -6,6 +6,7 @@ import {searchitems} from '../../../constants/Constants';
 import { gs } from '../../../../GlobalStyles';
 import SearchCaterersCard from '../../Search/views/SearchCaterersCard';
 import SearchTiffinsCard from '../../Search/views/SearchTiffinsCard';
+import { searchStyles } from '../../Search/Searchstyles';
 
 function CaterersWish() {
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -13,8 +14,8 @@ function CaterersWish() {
 	const inputRange = [
 		-1,
 		0,
-		(180 + 10 + 20) * index,
-		(180 + 10 + 20) * (index + 2),
+		(searchStyles.cardheight.height + 10 + searchStyles.cardmargin.marginVertical) * index,
+		(searchStyles.cardheight.height + 10 + searchStyles.cardmargin.marginVertical) * (index + 2),
 	  ];
 	  const scale = scrollY.interpolate({
 		inputRange,

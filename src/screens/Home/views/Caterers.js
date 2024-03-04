@@ -13,16 +13,14 @@ import ExploreIndia from './ExploreIndia';
 import PopularCaterers from './PopularCaterers';
 import Occasions from './Occasions';
 import { ScrollView } from 'react-native-virtualized-view';
+import { ScaledSheet } from 'react-native-size-matters';
 
 export default function Caterers({navigation}) {
   return (
     <View>
       <HeaderView from='Caterers' navigation={navigation}/>
       <ScrollView
-        style={{
-          backgroundColor: '#fff',
-          marginBottom: Platform.OS === 'ios' ? 150 : 130,
-        }}
+        style={styles.container}
         showsVerticalScrollIndicator={false}
         >
         <RecentSearches />
@@ -35,3 +33,9 @@ export default function Caterers({navigation}) {
     </View>
   );
 }
+const styles=ScaledSheet.create({
+  container:{
+    backgroundColor: '#fff',
+    marginBottom: Platform.OS === 'ios' ? '150@ms' : '130@ms',
+  }
+})

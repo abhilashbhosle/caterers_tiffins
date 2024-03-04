@@ -1,9 +1,8 @@
 import {useEffect, useCallback} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
-import {View, StatusBar} from 'react-native';
+import {View, StatusBar, Platform} from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import {NativeModules} from 'react-native';
-const {StatusBarManager} = NativeModules;
 export const ScreenWrapper = ({children}) => {
   // we obtain the object that contains info about the current route
   const route = useRoute();
@@ -12,16 +11,20 @@ export const ScreenWrapper = ({children}) => {
     useCallback(() => {
       switch (route.name) {
         case 'Notification':
-          StatusBar.pushStackEntry({barStyle: 'light-content', hidden: false});
+          StatusBar.pushStackEntry({barStyle: 'light-content', hidden: false,backgroundColor:Platform.OS=='android'&&'#000'});
           break;
         case 'Register':
-          StatusBar.pushStackEntry({barStyle: 'light-content', hidden: false});
+          StatusBar.pushStackEntry({barStyle: 'light-content', hidden: false,backgroundColor:Platform.OS=='android'&&'#000'});
           break;
+          case 'Login':
+            StatusBar.pushStackEntry({barStyle: 'light-content', hidden: false,backgroundColor:Platform.OS=='android'&&'#000'});
+            break;
         case 'Location':
           StatusBar.pushStackEntry({
             barStyle: 'light-content',
             animated: true,
             hidden: false,
+            backgroundColor:Platform.OS=='android'&&'#000'
           });
           break;
         case 'Caterings':
@@ -29,6 +32,7 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
+            backgroundColor:Platform.OS=='android'&&'#000'
           });
           break;
         case 'Tiffins':
@@ -36,6 +40,7 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
+            backgroundColor:Platform.OS=='android'&&'#000'
           });
           break;
         case 'SearchMain':
@@ -43,6 +48,7 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
+            backgroundColor:Platform.OS=='android'&&'#000'
           });
           break;
         case 'ProfileMain':
@@ -50,10 +56,52 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
+            backgroundColor:Platform.OS=='android'&&'#000'
+          });
+          break;
+        case 'FilterMain':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            animated: true,
+            hidden: false,
+            backgroundColor:Platform.OS=='android'&&'#000'
+          });
+          break;
+        case 'FilterTiffins':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            animated: true,
+            hidden: false,
+            backgroundColor:Platform.OS=='android'&&'#000'
+          });
+          break;
+        case 'TiffinProfile':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            animated: true,
+            hidden: false,
+            backgroundColor:Platform.OS=='android'&&'#000'
+          });
+          break;
+          case 'CatererProfile':
+            StatusBar.pushStackEntry({
+              barStyle: 'light-content',
+              animated: true,
+              hidden: false,
+              backgroundColor:Platform.OS=='android'&&'#000'
+            });
+            break;
+        case 'GalleryView':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            animated: true,
+            hidden: false,
+            backgroundColor:Platform.OS=='android'&&'#000'
           });
           break;
         default:
-          StatusBar.pushStackEntry({barStyle: 'light-content', hidden: true});
+          StatusBar.pushStackEntry({barStyle: 'light-content', hidden: true,});
+          
       }
     }, []),
   );

@@ -5,8 +5,9 @@ import {
   Animated,
   Easing,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from 'react-native';
-import React, {memo, useCallback, useEffect, useRef} from 'react';
+import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {ScaledSheet} from 'react-native-size-matters';
 import {useFocusEffect, useRoute} from '@react-navigation/native';
 import {ts} from '../../../../ThemeStyles';
@@ -15,10 +16,13 @@ import {Flex} from 'native-base';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SearchBar from './SearchBar';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import LocationSheet from '../../../components/LocationSheet';
 
 function HeaderView({from, navigation}) {
   const route = useRoute();
   const opacity = useRef(new Animated.Value(0)).current;
+  const [locSheetOpen,setLocSheetOpen]=useState(false)
   useFocusEffect(
     useCallback(() => {
       Animated.spring(opacity, {
@@ -44,7 +48,7 @@ function HeaderView({from, navigation}) {
       <SafeAreaView>
         {/* =======TOP BAR LOCATION/NOTIFY/WISHLIST/PROFILE========= */}
         <Flex direction="row" alignItems="center" justify="space-between">
-          <TouchableOpacity>
+          <TouchableWithoutFeedback onPress={()=>{setLocSheetOpen(true)}}>
             <Flex direction="row" alignItems="center">
               <IonIcons
                 name="location-sharp"
@@ -58,8 +62,9 @@ function HeaderView({from, navigation}) {
                 ]}>
                 Location
               </Text>
+              <IonIcons name='chevron-down' style={[gs.fs16,gs.ml5,{color:'#fff'}]}/>
             </Flex>
-          </TouchableOpacity>
+          </TouchableWithoutFeedback>
           <Flex direction="row">
             <TouchableOpacity style={gs.ph10} activeOpacity={0.7} 
              onPress={() => {
@@ -69,8 +74,8 @@ function HeaderView({from, navigation}) {
             }}
             >
               <IonIcons
-                name="notifications"
-                style={[gs.fs20, {color: '#fff'}]}
+                name="notifications-outline"
+                style={[gs.fs24, {color: '#fff'}]}
               />
             </TouchableOpacity>
             <TouchableOpacity style={gs.ph10} activeOpacity={0.7}  onPress={() => {
@@ -78,7 +83,7 @@ function HeaderView({from, navigation}) {
               screen: 'WishList',
             });
           }}>
-              <IonIcons name="heart" style={[gs.fs20, {color: '#fff'}]} />
+              <MaterialIcons name="favorite-border" style={[gs.fs24, {color: '#fff'}]} />
             </TouchableOpacity>
             <TouchableOpacity
               style={gs.ph10}
@@ -97,6 +102,7 @@ function HeaderView({from, navigation}) {
           <SearchBar from={from} navigation={navigation} />
         </View>
       </SafeAreaView>
+      <LocationSheet locSheetOpen={locSheetOpen} setLocSheetOpen={setLocSheetOpen} from={from}/>
     </Animated.View>
   );
 }

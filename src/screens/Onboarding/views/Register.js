@@ -4,6 +4,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   TextInput,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useState} from 'react';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
@@ -13,6 +14,9 @@ import AntIcon from 'react-native-vector-icons/AntDesign';
 import {gs} from '../../../../GlobalStyles';
 import TextField from '../../../components/TextField';
 import WhiteCoverBtn from '../../../components/WhiteCoverBtn';
+import {ts} from '../../../../ThemeStyles';
+import {Center, Flex} from 'native-base';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function Register({navigation}) {
   const [name, setName] = useState(null);
@@ -20,6 +24,7 @@ export default function Register({navigation}) {
     <ScreenWrapper>
       <ThemeWrapper>
         <SafeAreaView>
+          <KeyboardAwareScrollView enableOnAndroid>
           <View style={styles.container}>
             <TouchableOpacity
               activeOpacity={0.7}
@@ -31,6 +36,14 @@ export default function Register({navigation}) {
                 style={[gs.fs22, {color: '#fff'}, gs.p5]}
               />
             </TouchableOpacity>
+            <Center>
+            <View>
+              <Text
+                style={[{...gs.btnPlaneWhite, marginVertical: 5}, gs.fs20]}>
+                SignUp
+              </Text>
+            </View>
+            </Center>
             <View>
               <Text
                 style={[{...gs.btnPlaneWhite, marginVertical: 25}, gs.fs17]}>
@@ -45,13 +58,45 @@ export default function Register({navigation}) {
               </Text>
               <TextField placeholder="+91 | Mobile Number" />
             </View>
-            <TouchableOpacity style={{marginTop:35}} activeOpacity={0.7} onPress={()=>{navigation.navigate('VerifyOtp')}}>
+            <TouchableOpacity
+              style={{marginTop: 35}}
+              activeOpacity={0.7}
+              onPress={() => {
+                navigation.navigate('VerifyOtp');
+              }}>
               <WhiteCoverBtn btntxt="Get OTP" />
             </TouchableOpacity>
-            <Text style={[{fontFamily:'ReadexPro-Medium',color:'#fff'},gs.fs12,gs.mt20]}>
-            By Clicking I accept the <Text style={{textDecorationLine:'underline'}}>terms of service</Text>  and <Text style={{textDecorationLine:'underline'}}>privacy policy</Text>
+            <Text
+              style={[
+                {fontFamily: 'ReadexPro-Medium', color: '#fff'},
+                gs.fs12,
+                gs.mt20,
+              ]}>
+              By Clicking I accept the{' '}
+              <Text style={{textDecorationLine: 'underline'}}>
+                terms of service
+              </Text>{' '}
+              and{' '}
+              <Text style={{textDecorationLine: 'underline'}}>
+                privacy policy
+              </Text>
             </Text>
+            <Center style={[gs.mt20]}>
+              <TouchableWithoutFeedback onPress={()=>{navigation.navigate('Login')}}>
+                <Text
+                  style={[
+                    gs.fs14,
+                    {fontFamily: ts.secondarymedium, color: '#fff'},
+                  ]}>
+                  Already have an account?{' '}
+                  <Text style={[{textDecorationLine: 'underline'}, gs.fs16]}>
+                    Login
+                  </Text>
+                </Text>
+              </TouchableWithoutFeedback>
+            </Center>
           </View>
+          </KeyboardAwareScrollView>
         </SafeAreaView>
       </ThemeWrapper>
     </ScreenWrapper>

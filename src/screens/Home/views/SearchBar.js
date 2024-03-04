@@ -1,4 +1,4 @@
-import {View, Text, TextInput, TouchableOpacity} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, Platform, Dimensions} from 'react-native';
 import React, {memo, useRef, useState} from 'react';
 import {Center, Flex, Modal, theme} from 'native-base';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -16,38 +16,39 @@ const maxDate = new Date(2037, 6, 3);
 
 function SearchBar({from, navigation}) {
   const route = useRoute();
-  const calendarRef=useRef()
+  const calendarRef = useRef();
   const [openCalendarPicker, setOpenCalendarPicker] = useState(false);
   const theme = from == 'Caterers' ? ts.secondary : ts.primary;
   const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
   const [fromdate, setFromdate] = useState(null);
   const [enddate, setEnddate] = useState(null);
+  const {width,height}=Dimensions.get('screen')
 
   const onDateChange = (date, type) => {
     // console.log(date, type);
     if (type === 'END_DATE') {
       setSelectedEndDate(date);
-      setEnddate(date?moment(date).format('MMM DD'):null);
+      setEnddate(date ? moment(date).format('MMM DD') : null);
     } else {
       setSelectedStartDate(date);
-      setFromdate(date?moment(date).format('MMM DD'):null);
+      setFromdate(date ? moment(date).format('MMM DD') : null);
       setSelectedEndDate(null);
-      setEnddate(null)
+      setEnddate(null);
     }
   };
-  const handleReset=()=>{
-    setSelectedEndDate(null)
-    setSelectedStartDate(null)
-    setFromdate(null)
-    setEnddate(null)
-    calendarRef.current.resetSelections()
-  }
-  const onClose=()=>{
-    setOpenCalendarPicker(false)
-    handleReset()
-  }
-  
+  const handleReset = () => {
+    setSelectedEndDate(null);
+    setSelectedStartDate(null);
+    setFromdate(null);
+    setEnddate(null);
+    calendarRef.current.resetSelections();
+  };
+  const onClose = () => {
+    setOpenCalendarPicker(false);
+    handleReset();
+  };
+
   return (
     <>
       <Flex direction="row">
@@ -79,6 +80,7 @@ function SearchBar({from, navigation}) {
         </Flex>
         {/* ======SEARCH======= */}
         <Flex direction="row" w={'100%'}>
+        
           <TextInput
             style={[
               {...styles.searchTextInput, color: '#57636c'},
@@ -89,7 +91,14 @@ function SearchBar({from, navigation}) {
             placeholderTextColor="#57636c"
           />
           <TouchableOpacity
-            style={styles.searchIconContainer}
+            style={{
+              ...styles.searchIconContainer,
+              borderLeftWidth: 1,
+              borderLeftColor:
+                route.name == 'Caterings' || from == 'Caterers'
+                  ? ts.secondary
+                  : ts.primary,
+            }}
             activeOpacity={0.9}
             onPress={() => {
               navigation.navigate('PageStack', {
@@ -112,14 +121,15 @@ function SearchBar({from, navigation}) {
           </TouchableOpacity>
         </Flex>
       </Flex>
+      
       <Modal isOpen={openCalendarPicker} onClose={onClose}>
-        <Modal.Content
-          width={'100%'}
-          style={{
+        <View
+          style={[{
             ...styles.calendarcontainer,
             backgroundColor: theme,
-            padding: 10,
-          }}>
+            width:'100%'
+          },gs.p10]}
+          >
           <Flex style={styles.rangecontainer}>
             <Flex direction="row" align="center" style={[gs.mt15]}>
               <Text
@@ -130,16 +140,18 @@ function SearchBar({from, navigation}) {
                 Start Date
               </Text>
             </Flex>
-          
 
             <View style={styles.dashedborder}>
               {from == 'Caterers' ? (
                 <MaterialIcons
                   name="silverware-fork-knife"
-                  style={{color: '#fff', fontSize: 40}}
+                  style={styles.midicon}
                 />
               ) : (
-                <MaterialIcon name="food-bank" style={{color: '#fff', fontSize: 40}} />
+                <MaterialIcon
+                  name="food-bank"
+                  style={styles.midicon}
+                />
               )}
             </View>
             <Flex direction="row" align="center" style={[gs.mt15]}>
@@ -152,9 +164,15 @@ function SearchBar({from, navigation}) {
               </Text>
             </Flex>
           </Flex>
-          <Flex style={{...styles.rangecontainer,marginVertical:10}}>
-              <Text style={[gs.fs13,{color:'#fff',fontFamily:ts.primaryregular}]}>{fromdate}</Text>
-              <Text style={[gs.fs13,{color:'#fff',fontFamily:ts.primaryregular}]}>{enddate}</Text>
+          <Flex style={{...styles.rangecontainer, marginVertical: 10}}>
+            <Text
+              style={[gs.fs13, {color: '#fff', fontFamily: ts.primaryregular}]}>
+              {fromdate}
+            </Text>
+            <Text
+              style={[gs.fs13, {color: '#fff', fontFamily: ts.primaryregular}]}>
+              {enddate}
+            </Text>
           </Flex>
           <CalendarPicker
             startFromMonday={true}
@@ -172,6 +190,7 @@ function SearchBar({from, navigation}) {
             textStyle={{color: '#fff', fontFamily: ts.primarysemibold}}
             dayLabelsWrapper={{borderColor: '#fff'}}
             disabledDatesTextStyle={{color: '#ddd'}}
+            
             previousComponent={
               <AntIcons name="arrowleft" style={[gs.fs22, {color: '#fff'}]} />
             }
@@ -184,10 +203,16 @@ function SearchBar({from, navigation}) {
           </View>
           <TouchableOpacity onPress={handleReset}>
             <Center style={[gs.mv15]}>
-              <Text style={[gs.fs14,{color:'#fff',fontFamily:ts.primaryregular}]}>Reset</Text>
+              <Text
+                style={[
+                  gs.fs14,
+                  {color: '#fff', fontFamily: ts.primaryregular},
+                ]}>
+                Reset
+              </Text>
             </Center>
           </TouchableOpacity>
-        </Modal.Content>
+        </View>
       </Modal>
     </>
   );
@@ -204,7 +229,7 @@ const styles = ScaledSheet.create({
   },
   searchTextInput: {
     width: '53%',
-    height: '39.4@ms',
+    height:Platform.OS=='ios'?'39.4@ms': '40@ms',
     backgroundColor: '#fff',
     marginLeft: 2,
   },
@@ -223,4 +248,5 @@ const styles = ScaledSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: '10@ms',
   },
+  midicon:{color: '#fff', fontSize: '40@ms'}
 });

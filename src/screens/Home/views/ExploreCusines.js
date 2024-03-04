@@ -1,5 +1,5 @@
 import {View, Text, Image} from 'react-native';
-import React, { memo } from 'react';
+import React, {memo} from 'react';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
 import {useRoute} from '@react-navigation/native';
@@ -11,11 +11,15 @@ import {ScaledSheet} from 'react-native-size-matters';
 function ExploreCusines() {
   const route = useRoute();
   const renderItem = ({item}) => {
-	return(
-    <Card style={{marginRight: 25, backgroundColor: '#fff'}}>
-        <Image source={item.img} style={[styles.img, gs.br12]} alt={item.name} />
-    </Card>
-	)
+    return (
+      <Card style={{marginRight: 25, backgroundColor: '#fff'}}>
+        <Image
+          source={item.img}
+          style={[styles.img, gs.br12]}
+          alt={item.name}
+        />
+      </Card>
+    );
   };
   return (
     <>
@@ -35,12 +39,12 @@ function ExploreCusines() {
         renderItem={renderItem}
         horizontal
         showsHorizontalScrollIndicator={false}
-		contentContainerStyle={styles.contentContainerStyle}
+        contentContainerStyle={styles.contentContainerStyle}
       />
     </>
   );
 }
-export default memo(ExploreCusines)
+export default memo(ExploreCusines);
 const styles = ScaledSheet.create({
   img: {
     height: '150@ms',
@@ -50,6 +54,6 @@ const styles = ScaledSheet.create({
   contentContainerStyle: {
     paddingBottom: 20,
     paddingTop: 15,
-	marginLeft:'15@ms'
+    paddingLeft: '15@ms',
   },
 });

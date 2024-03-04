@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity, useWindowDimensions, Platform} from 'react-native';
+import {View, Text, TouchableOpacity, useWindowDimensions, Platform, TouchableWithoutFeedback} from 'react-native';
 import React, {useState} from 'react';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {gs} from '../../../../GlobalStyles';
@@ -91,6 +91,17 @@ export default function SearchMain({route, navigation}) {
             Map
           </Text>
         </Flex>
+        <TouchableWithoutFeedback
+       onPress={() => {
+        from == 'Caterers' ?
+        navigation.navigate('PageStack', {
+          screen: 'FilterMain',
+        }):
+        navigation.navigate('PageStack', {
+          screen: 'FilterTiffins',
+        })
+      }}
+        >
         <Flex direction="row" alignItems="center">
           <MaterialIcons
             name="filter"
@@ -100,6 +111,7 @@ export default function SearchMain({route, navigation}) {
             Filters
           </Text>
         </Flex>
+        </TouchableWithoutFeedback>
       </Flex>
       {/* ========SORTING BY TYPES========= */}
       <Badges from={from} />

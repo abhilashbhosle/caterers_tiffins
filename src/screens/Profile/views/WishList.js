@@ -60,9 +60,9 @@ export default function WishList({navigation}) {
                   size={20}
                   category="Medium"
                   style={{
+                    ...styles.titlecontainer,
                     color: focused ? ts.primarytext : 'gray',
-                    fontFamily: ts.secondaryregular,
-                    fontSize: 15,
+                    
                   }}>
                   {route.title}
                 </Text>
@@ -83,4 +83,6 @@ const styles = ScaledSheet.create({
     color: ts.primarytext,
 	marginTop:'10@ms'
   },
+  titlecontainer:{fontFamily: ts.secondaryregular,
+  fontSize: '15@ms',}
 });

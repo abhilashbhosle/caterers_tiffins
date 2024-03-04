@@ -18,7 +18,7 @@ function Badges({from}) {
         activeOpacity={0.8}
 		onPress={()=>{setSelectedItem(item)}}
 		>
-        <Text style={[{color: selectedItem==item?'#fff':'#57636c', fontFamily: ts.secondaryregular}]}>
+        <Text style={[{color: selectedItem==item?'#fff':'#57636c', fontFamily: ts.secondaryregular},gs.fs14]}>
           {item}
         </Text>
       </TouchableOpacity>
@@ -40,7 +40,7 @@ export default memo(Badges);
 
 const styles = ScaledSheet.create({
   badge: {
-    height: 30,
+    height: '30@ms',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: '12@ms',

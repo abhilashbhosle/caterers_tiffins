@@ -15,8 +15,8 @@ function RecentSearches() {
     const inputRange = [
       -1,
       0,
-      (190 + 40 + 20) * index,
-      (190 + 40 + 20) * (index + 2),
+      (styles.img.width + styles.seperation.margin + 20) * index,
+      (styles.img.width + styles.seperation.margin + 20) * (index + 2),
     ];
     const scale = scrollX.interpolate({
       inputRange,
@@ -24,14 +24,14 @@ function RecentSearches() {
     });
     return (
       <Animated.View style={{transform: [{scale}],opacity:scale}}>
-        <Card style={{marginRight: 15, backgroundColor: '#fff'}}>
+        <Card style={[{ backgroundColor: '#fff'},gs.mr15]}>
           <View style={[gs.p10]}>
             <Image
               source={require('../../../assets/Search/cardimg.jpg')}
               style={[styles.img, gs.br12]}
               alt={item.city}
             />
-            <Text style={[{fontFamily: ts.secondarymedium}, gs.pv5, gs.fs15]}>
+            <Text style={[{fontFamily: ts.secondarymedium,color:'#777'}, gs.pv5, gs.fs15]}>
               {item.city}
             </Text>
             <Flex direction="row" align="center">
@@ -65,7 +65,7 @@ function RecentSearches() {
   };
   return (
     <>
-      <View style={[{paddingHorizontal: 15}, gs.mt15]}>
+      <View style={[gs.ph15, gs.mt15]}>
         <Text
           style={[
             gs.fs15,
@@ -102,8 +102,11 @@ const styles = ScaledSheet.create({
     resizeMode: 'cover',
   },
   contentContainerStyle: {
-    paddingBottom: 20,
-    paddingTop: 15,
-    marginLeft: '15@ms',
+    paddingBottom: '20@ms',
+    paddingTop: '15@ms',
+    paddingLeft: '15@ms',
   },
+  seperation:{
+    margin:'30@ms'
+  }
 });

@@ -5,6 +5,7 @@ import {
   useWindowDimensions,
   Image,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {memo, useRef} from 'react';
 import {Card} from 'react-native-paper';
@@ -13,11 +14,16 @@ import {Flex} from 'native-base';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
 import EntypoIcons from 'react-native-vector-icons/Entypo'
+import { useNavigation } from '@react-navigation/native';
 
 function SearchCaterersCard({item}) {
   const {height, width} = useWindowDimensions();
+  const navigation=useNavigation()
   return (
     <Card style={styles.cardcontainer}>
+      <TouchableWithoutFeedback onPress={()=>{ navigation.navigate('PageStack', {
+          screen: 'CatererProfile',
+        })}}>
       <Flex direction="row">
         {/* ======IMAGE====== */}
         <View>
@@ -31,7 +37,7 @@ function SearchCaterersCard({item}) {
             }}>
             <Flex direction="row" style={[gs.p5]} align='center'>
               <TouchableOpacity style={styles.likecontainer}>
-               <EntypoIcons name='heart-outlined' style={{fontSize:18,color:ts.primarytext}}/>
+               <EntypoIcons name='heart-outlined' style={{...styles.wishicon, color: ts.primarytext}}/>
 				</TouchableOpacity>
 				<Text style={[gs.fs11,styles.reviews]}>62 reviews</Text>
             </Flex>
@@ -44,12 +50,12 @@ function SearchCaterersCard({item}) {
         <View style={[gs.pl5, gs.pr10, gs.ph10, gs.pv10]}>
           <Text
             numberOfLines={1}
-            style={[{...styles.name, lineHeight: 20}, gs.fs16]}>
+            style={[{...styles.name}, gs.fs16]}>
             {item.name}
           </Text>
           <Text
             numberOfLines={1}
-            style={[{...styles.area, lineHeight: 20}, gs.fs11]}>
+            style={[{...styles.area}, gs.fs11]}>
             {item.area}
           </Text>
           <Flex direction="row" align="center" style={gs.mt10}>
@@ -70,7 +76,7 @@ function SearchCaterersCard({item}) {
             <Text style={[styles.foodtype, gs.fs11]}>Min. & Max. order: </Text>
             <Text style={[styles.cuisine]}>{item.ordersrange}</Text>
           </Flex>
-          <Flex direction="row" align="center" style={[gs.mt15]}>
+          <Flex direction="row" align="center" style={[gs.mt8]}>
             <Image
               source={require('../../../assets/Search/tableservice.png')}
               style={styles.buffeticon}
@@ -90,6 +96,7 @@ function SearchCaterersCard({item}) {
           </Flex>
         </View>
       </Flex>
+      </TouchableWithoutFeedback>
     </Card>
   );
 }
@@ -112,21 +119,23 @@ const styles = ScaledSheet.create({
   name: {
     color: '#245396',
     fontFamily: ts.primarymedium,
+    lineHeight:'20@ms'
   },
   area: {
     color: '#245396',
     fontFamily: ts.secondaryregular,
+    lineHeight:'20@ms'
   },
   foodtype: {
     fontFamily: ts.secondaryregular,
     color: ts.primarytext,
-    lineHeight: 22,
+    lineHeight: '22@ms',
   },
   cuisine: {
     color: ts.secondary,
     fontSize: '11@ms',
     fontFamily: ts.secondaryregular,
-    lineHeight: 22,
+    lineHeight: '22@ms',
   },
   likecontainer:{
 	height:'25@ms',
@@ -155,5 +164,8 @@ popular:{
 	fontFamily:ts.secondaryregular,
 	color:'#fff',
 	fontSize:'11@ms',
+},
+wishicon:{
+  fontSize:'18@ms'
 }
 });

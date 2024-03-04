@@ -377,52 +377,231 @@ export const tiffinsenquiry = [
 export const notifications = [
   {
     name: 'Andrew Hernandez',
-    detail: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
+    detail:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
     date: 'Jan. 28th, 4:30pm',
     username: '@username',
-    img:require('../assets/Notification/pic.jpg')
+    img: require('../assets/Notification/pic.jpg'),
   },
   {
     name: 'Andrew Hernandez',
-    detail: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
+    detail:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
     date: 'Jan. 28th, 4:30pm',
     username: '@username',
-    img:require('../assets/Notification/pic.jpg')
+    img: require('../assets/Notification/pic.jpg'),
   },
   {
     name: 'Andrew Hernandez',
-    detail: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
+    detail:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
     date: 'Jan. 28th, 4:30pm',
     username: '@username',
-    img:require('../assets/Notification/pic.jpg')
+    img: require('../assets/Notification/pic.jpg'),
   },
   {
     name: 'Andrew Hernandez',
-    detail: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
+    detail:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
     date: 'Jan. 28th, 4:30pm',
     username: '@username',
-    img:require('../assets/Notification/pic.jpg')
+    img: require('../assets/Notification/pic.jpg'),
   },
   {
     name: 'Andrew Hernandez',
-    detail: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
+    detail:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
     date: 'Jan. 28th, 4:30pm',
     username: '@username',
-    img:require('../assets/Notification/pic.jpg')
+    img: require('../assets/Notification/pic.jpg'),
   },
   {
     name: 'Andrew Hernandez',
-    detail: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
+    detail:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
     date: 'Jan. 28th, 4:30pm',
     username: '@username',
-    img:require('../assets/Notification/pic.jpg')
+    img: require('../assets/Notification/pic.jpg'),
   },
   {
     name: 'Andrew Hernandez',
-    detail: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
+    detail:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor, lacus nec posuere consectetur, mi enim commodo ante, sit amet varius purus lectus id urna',
     date: 'Jan. 28th, 4:30pm',
     username: '@username',
-    img:require('../assets/Notification/pic.jpg')
+    img: require('../assets/Notification/pic.jpg'),
   },
- 
+];
+
+export const catererbudget = [
+  'Rs. 100 - Rs. 200',
+  'Rs. 200 - Rs. 300',
+  'Rs. 300 - Rs. 400',
+  'Rs. 400 - Rs. 500',
+  'Rs. 500 & above',
+];
+
+export const caterercuisine = [
+  {
+    name: 'North Indian',
+    selected: false,
+  },
+  {
+    name: 'South Indian',
+    selected: false,
+  },
+  {
+    name: 'East Indian',
+    selected: false,
+  },
+  {
+    name: 'West Indian',
+    selected: false,
+  },
+  {
+    name: 'North East Indian',
+    selected: false,
+  },
+  {
+    name: 'Other Cuisines',
+    selected: false,
+  },
+];
+export const occasion = [
+  {
+    name: 'Wedding',
+    selected: false,
+  },
+  {
+    name: 'Engagement',
+    selected: false,
+  },
+  {
+    name: 'Baby Shower',
+    selected: false,
+  },
+  {
+    name: 'Birthday',
+    selected: false,
+  },
+  {
+    name: 'Naming Ceremony',
+    selected: false,
+  },
+  {
+    name: 'Cocktail Party',
+    selected: false,
+  },
+  {
+    name: 'Bachelorette Party',
+    selected: false,
+  },
+  {
+    name: 'Farewell Party',
+    selected: false,
+  },
+  {
+    name: 'Freshers Party',
+    selected: false,
+  },
+  {
+    name: 'Corporate Party',
+    selected: false,
+  },
+  {
+    name: 'Religious Functions',
+    selected: false,
+  },
+  {
+    name: 'Musical Ceremony',
+    selected: false,
+  },
+];
+export const mealtime = [
+  {
+    name: 'Breakfast',
+    selected: false,
+  },
+  {
+    name: 'Lunch',
+    selected: false,
+  },
+  {
+    name: 'Dinner',
+    selected: false,
+  },
+  {
+    name: 'Snacks',
+    selected: false,
+  },
+];
+export const caterersort = [
+  'Price Low to High',
+  'Price High to Low',
+  'Sort by: A - Z',
+  'Sort by: Z - A',
+];
+
+export const catererBanners = [
+  {
+    img: require('../assets/Banners/c1.png'),
+  },
+  {
+    img: require('../assets/Banners/c2.png'),
+  },
+  {
+    img: require('../assets/Banners/c3.jpg'),
+  },
+  {
+    img: require('../assets/Banners/c4.jpg'),
+  },
+];
+export const caterersgallery = [
+  {
+    img: require('../assets/Gallery/p1.jpg'),
+  },
+  {
+    img: require('../assets/Gallery/p2.jpg'),
+  },
+  {
+    img: require('../assets/Gallery/p3.jpg'),
+  },
+  {
+    img: require('../assets/Gallery/p4.jpg'),
+  },
+  {
+    img: require('../assets/Gallery/p5.jpg'),
+  },
+  {
+    img: require('../assets/Gallery/p6.jpg'),
+  },
+  {
+    img: require('../assets/Gallery/p7.jpg'),
+  },
+  {
+    img: require('../assets/Gallery/p8.jpg'),
+  },
+];
+export const reviews = [
+  {
+    img: require('../assets/Gallery/men.jpg'),
+    name: 'Balaji',
+    date: '2 months ago',
+    comment:
+      'Good .... quality food...good service ...lowest price....worth product...I like this catering...so good value food giving ...I thing this catering is very good service best price for worth able service...I like it',
+  },
+  {
+    img: require('../assets/Gallery/men.jpg'),
+    name: 'Balaji',
+    date: '2 months ago',
+    comment:
+      'Good .... quality food...good service ...lowest price....worth product...I like this catering...so good value food giving ...I thing this catering is very good service best price for worth able service...I like it',
+  },
+  {
+    img: require('../assets/Gallery/men.jpg'),
+    name: 'Balaji',
+    date: '2 months ago',
+    comment:
+      'Good .... quality food...good service ...lowest price....worth product...I like this catering...so good value food giving ...I thing this catering is very good service best price for worth able service...I like it',
+  },
 ];

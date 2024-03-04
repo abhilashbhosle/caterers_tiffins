@@ -1,4 +1,4 @@
-import {View, Text, Image} from 'react-native';
+import {View, Text, Image, Platform} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Caterers from '../screens/Home/views/Caterers';
@@ -21,35 +21,43 @@ export default function BottomBarStack() {
           } else if (route.name === 'Tiffins') {
             iconName = focused ? 'tiffinsf' : 'tiffinso';
           }
-          if (iconName=='caterersf') {
-            return <Image
-              source={require('../assets/Bottombar/chefhatf.png')}
-              tintColor={ts.secondary}
-              style={styles.icons}
-            />;
-          }else if(iconName=='catererso'){
-			return <Image
-			source={require('../assets/Bottombar/chefhat.png')}
-			style={styles.icons}
-		  />;
-		  }else if(iconName=='tiffinsf'){
-			return <Image
-			source={require('../assets/Bottombar/tiffinf.png')}
-			tintColor={ts.primary}
-			style={styles.icons}
-		  />;
-		  }
-		  else if(iconName=='tiffinso'){
-			return <Image
-			source={require('../assets/Bottombar/tiffin.png')}
-			style={styles.icons}
-		  />;
-		  }
+          if (iconName == 'caterersf') {
+            return (
+              <Image
+                source={require('../assets/Bottombar/chefhatf.png')}
+                tintColor={ts.secondary}
+                style={styles.icons}
+              />
+            );
+          } else if (iconName == 'catererso') {
+            return (
+              <Image
+                source={require('../assets/Bottombar/chefhat.png')}
+                style={styles.icons}
+              />
+            );
+          } else if (iconName == 'tiffinsf') {
+            return (
+              <Image
+                source={require('../assets/Bottombar/tiffinf.png')}
+                tintColor={ts.primary}
+                style={styles.icons}
+              />
+            );
+          } else if (iconName == 'tiffinso') {
+            return (
+              <Image
+                source={require('../assets/Bottombar/tiffin.png')}
+                style={styles.icons}
+              />
+            );
+          }
         },
-        tabBarActiveTintColor: ts.secondary,
+        tabBarActiveTintColor:
+          route.name === 'Caterings' ? ts.secondary : ts.primary,
         tabBarInactiveTintColor: 'gray',
         headerShown: false,
-        tabBarLabelStyle: [gs.fs12],
+        tabBarLabelStyle: [gs.fs12,{bottom:Platform.OS=='android'?2:0}],
       })}>
       <Tab.Screen name="Caterings" component={Caterers} />
       <Tab.Screen name="Tiffins" component={Tiffins} />

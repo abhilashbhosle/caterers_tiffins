@@ -19,7 +19,7 @@ function ExploreIndia() {
           imageStyle={gs.br12}>
 		  </ImageBackground>
         <View style={[styles.overlay, gs.br12]}></View>
-		<View style={[{...styles.overlay,justifyContent:'flex-end',flexDirection:'row'},gs.h40]}>
+		<View style={[{...styles.overlay,justifyContent:'flex-end',flexDirection:'row'},gs.h40,styles.txtoverlay]}>
 		<Text style={[{fontFamily:ts.primarymedium,color:'#fff'},gs.fs21,gs.mr20,gs.mt5]}>{item.name}</Text>
 		</View>
       </Card>
@@ -63,4 +63,8 @@ const styles = ScaledSheet.create({
     width: '100%',
 	zIndex:1
   },
+  txtoverlay:{
+    borderTopRightRadius:'12@ms',
+    borderTopLeftRadius:'12@ms'
+  }
 });

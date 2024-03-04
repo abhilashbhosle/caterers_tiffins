@@ -51,6 +51,6 @@ const styles = ScaledSheet.create({
 	contentContainerStyle: {
 	  paddingBottom: 20,
 	  paddingTop: 15,
-	  marginLeft:'15@ms'
+	  paddingLeft:'15@ms'
 	},
   });

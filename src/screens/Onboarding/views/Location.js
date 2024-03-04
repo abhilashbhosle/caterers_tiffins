@@ -6,6 +6,7 @@ import {
   Animated,
   Image,
   Easing,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useRef} from 'react';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';

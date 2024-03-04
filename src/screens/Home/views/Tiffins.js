@@ -6,12 +6,13 @@ import Branded from './Branded'
 import ExploreIndia from './ExploreIndia'
 import { ScrollView } from 'react-native-virtualized-view';
 import TiffinProviders from './TiffinProviders'
+import { ScaledSheet } from 'react-native-size-matters'
 
 export default function Tiffins({navigation}) {
   return (
 	<View>
 	 <HeaderView from='Tiffins' navigation={navigation}/>
-	 <ScrollView style={{backgroundColor:'#fff',marginBottom:Platform.OS==='ios'?150:130}} showsVerticalScrollIndicator={false}>
+	 <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 	 <RecentSearches/>
 	 <Branded/>
 	 <ExploreIndia/>
@@ -20,3 +21,6 @@ export default function Tiffins({navigation}) {
 	</View>
   )
 }
+const styles=ScaledSheet.create({
+container:{backgroundColor:'#fff',marginBottom:Platform.OS==='ios'?'150@ms':'130@ms'}
+})

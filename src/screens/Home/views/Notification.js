@@ -25,7 +25,7 @@ export default function Notification({navigation}) {
             <Text style={[{...styles.date, color: ts.secondary}, gs.fs11]}>
               {item.username}
             </Text>
-            <Text style={[{...styles.date, lineHeight: 15}, gs.fs11]}>
+            <Text style={[{...styles.date}, gs.fs11]}>
               {item.detail}
             </Text>
           </View>
@@ -65,7 +65,7 @@ const styles = ScaledSheet.create({
   },
   date: {
     fontFamily: ts.secondaryregular,
-    lineHeight: '20@ms',
+    lineHeight: '18@ms',
     color: ts.secondarytext,
   },
 });

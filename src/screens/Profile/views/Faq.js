@@ -12,7 +12,7 @@ export default function Faq({navigation}) {
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <ThemeHeaderWrapper
-        lefttxt="About Us"
+        lefttxt="FAQ's"
         goBack={() => navigation.goBack()}
       />
       <ScrollView style={[gs.ph20, {flex: 1}]}>

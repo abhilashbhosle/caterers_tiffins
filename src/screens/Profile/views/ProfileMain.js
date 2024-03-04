@@ -238,11 +238,7 @@ export default function ProfileMain({navigation}) {
             end={{x: 1.0, y: 0.0}}
             style={[
               gs.ph15,
-              {
-                height: 40,
-                justifyContent: 'center',
-                alignItems: 'center',
-              },
+             styles.logout,
               gs.mt20,
             ]}>
             <Flex
@@ -276,7 +272,7 @@ const styles = ScaledSheet.create({
   },
   mobile: {
     color: ts.teritary,
-    lineHeight: 22,
+    lineHeight: '22@ms',
     fontFamily: ts.secondaryregular,
   },
   icon: {
@@ -287,7 +283,7 @@ const styles = ScaledSheet.create({
     height: '55@ms',
     borderColor: '#ddd',
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: '12@ms',
     backgroundColor: '#fafafa',
     justifyContent: 'center',
     paddingHorizontal: '15@ms',
@@ -299,4 +295,9 @@ const styles = ScaledSheet.create({
     fontFamily: ts.secondaryregular,
     color: ts.primarytext,
   },
+  logout: {
+    height: '40@ms',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });

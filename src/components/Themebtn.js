@@ -3,6 +3,7 @@ import React from 'react'
 import LinearGradient from 'react-native-linear-gradient'
 import { ts } from '../../ThemeStyles'
 import { gs } from '../../GlobalStyles'
+import { ScaledSheet } from 'react-native-size-matters'
 
 export default function Themebtn(props) {
   return (
@@ -12,13 +13,7 @@ export default function Themebtn(props) {
 	end={{x: 1.0, y: 0.0}}
 	style={[
 	  gs.ph15,
-	  {
-		height: 40,
-		width: 150,
-		justifyContent: 'center',
-		alignItems: 'center',
-		borderRadius: 10,
-	  },
+	styles.container
 	]}>
 	<Text
 	  style={[
@@ -30,3 +25,12 @@ export default function Themebtn(props) {
   </LinearGradient>
   )
 }
+const styles=ScaledSheet.create({
+	container:  {
+		height: '40@ms',
+		width: '150@ms',
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderRadius: '10@ms',
+	  }
+})
