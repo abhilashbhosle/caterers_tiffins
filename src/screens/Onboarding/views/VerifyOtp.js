@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import React, {useState} from 'react';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
@@ -43,7 +45,9 @@ export default function VerifyOtp({navigation}) {
                 activeOpacity={0.7}
                 onPress={() => {
                   navigation.goBack();
-                }}>
+                }}
+                style={{marginTop:Platform.OS=='android'&& StatusBar.currentHeight}}
+                >
                 <AntIcon
                   name="arrowleft"
                   style={[gs.fs22, {color: '#fff'}, gs.p5]}

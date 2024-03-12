@@ -22,6 +22,7 @@ function PopularCatSlice({data}) {
           {backgroundColor: '#fff', paddingTop: 10},
           gs.ph5,
         ]}
+    
       />
     </View>
   );

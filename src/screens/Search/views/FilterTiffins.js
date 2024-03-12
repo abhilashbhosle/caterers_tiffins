@@ -11,9 +11,11 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {
   catererbudget,
   caterersort,
+  headcount,
   mealtime,
 } from '../../../constants/Constants';
 import ThemeSepBtn from '../../../components/ThemeSepBtn';
+import {ScreenWrapper} from '../../../components/ScreenWrapper';
 
 export default function FilterTiffins({navigation}) {
   const [service, setService] = useState({
@@ -22,6 +24,7 @@ export default function FilterTiffins({navigation}) {
     dinein: false,
   });
   const [selectedBudget, setSelectedBudget] = useState(catererbudget[0]);
+  const [headCount, setHeadCount] = useState('');
   const [mealTime, setMealTime] = useState(mealtime);
   const [selectedSort, setSelectedSort] = useState('');
   const handleMealTime = (item, index) => {
@@ -32,12 +35,13 @@ export default function FilterTiffins({navigation}) {
     setMealTime(data);
   };
   return (
-    <>
+    <ScreenWrapper>
       <ThemeHeaderWrapper
         lefttxt="Filters"
         righttxt="Clear All"
         goBack={() => navigation.goBack()}
         bgColor={ts.primary}
+        
       />
       <KeyboardAwareScrollView
         enableOnAndroid={true}
@@ -173,6 +177,36 @@ export default function FilterTiffins({navigation}) {
         {/* ========BUDGET SELECTION========= */}
         <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>
+            Choose Head count
+          </Text>
+          <Divider style={[gs.mv15]} />
+          <View style={[gs.ph10]}>
+            {headcount.map((e, i) => (
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setHeadCount(e);
+                }}
+                key={i}>
+                <Flex direction="row" justify="space-between" align="center">
+                  <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>{e}</Text>
+                  <MaterialIcons
+                    name={e == headCount ? 'check-circle' : 'circle-outline'}
+                    style={[
+                      gs.fs20,
+                      gs.mr3,
+                      {
+                        color: e == headCount ? ts.primary : ts.alternate,
+                      },
+                    ]}
+                  />
+                </Flex>
+              </TouchableWithoutFeedback>
+            ))}
+          </View>
+        </Card>
+        {/* ========BUDGET SELECTION========= */}
+        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
+          <Text style={[styles.heading, gs.fs15, gs.pl15]}>
             Your Budget (Per plate cost)
           </Text>
           <Divider style={[gs.mv15]} />
@@ -210,18 +244,16 @@ export default function FilterTiffins({navigation}) {
           <Divider style={[gs.mv15]} />
           <View style={[gs.ph15]}>
             {mealTime.map((e, i) => (
-              <Flex
-                direction="row"
-                justify="space-between"
-                align="center"
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  handleMealTime(e, i);
+                }}
                 key={i}>
-                <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                  {e.name}
-                </Text>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    handleMealTime(e, i);
-                  }}>
+                <Flex direction="row" justify="space-between" align="center">
+                  <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                    {e.name}
+                  </Text>
+
                   <MaterialIcons
                     name={
                       e.selected ? 'checkbox-marked' : 'checkbox-blank-outline'
@@ -234,8 +266,8 @@ export default function FilterTiffins({navigation}) {
                       },
                     ]}
                   />
-                </TouchableWithoutFeedback>
-              </Flex>
+                </Flex>
+              </TouchableWithoutFeedback>
             ))}
           </View>
         </Card>
@@ -273,37 +305,32 @@ export default function FilterTiffins({navigation}) {
             ))}
           </View>
         </Card>
-       
       </KeyboardAwareScrollView>
-	  <Card
-          style={[
-            {borderRadius: 0, backgroundColor: '#fff'},
-            gs.ph15,
-            gs.pv10,
-          ]}>
-          <Flex
-            direction="row"
-            align="center"
-            justify="space-between"
-            style={[gs.pv20]}>
-            <Text
-              style={[
-                gs.fs13,
-                {color: ts.primary, fontFamily: ts.secondaryregular},
-              ]}>
-              235 matching Caterers
-            </Text>
-            <ThemeSepBtn btntxt="Show results" themecolor={ts.primary} />
-          </Flex>
-        </Card>
-    </>
+      <Card
+        style={[{borderRadius: 0, backgroundColor: '#fff'}, gs.ph15, gs.pb10]}>
+        <Flex
+          direction="row"
+          align="center"
+          justify="space-between"
+          style={[gs.pt15, gs.pb10]}>
+          <Text
+            style={[
+              gs.fs13,
+              {color: ts.primary, fontFamily: ts.secondaryregular},
+            ]}>
+            235 matching Caterers
+          </Text>
+          <ThemeSepBtn btntxt="Show results" themecolor={ts.primary} />
+        </Flex>
+      </Card>
+    </ScreenWrapper>
   );
 }
 const styles = ScaledSheet.create({
   heading: {
-    fontFamily: ts.secondarymedium,
+    fontFamily: ts.secondarysemibold,
     marginTop: '5@ms',
-    color:'#777'
+    color: ts.primarytext,
   },
   img: {
     height: '35@ms',

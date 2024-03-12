@@ -5,6 +5,8 @@ import {
 	TouchableOpacity,
 	TextInput,
 	TouchableWithoutFeedback,
+	Platform,
+	StatusBar,
   } from 'react-native';
   import React, {useState} from 'react';
   import {ScreenWrapper} from '../../../components/ScreenWrapper';
@@ -30,7 +32,9 @@ import {
 				activeOpacity={0.7}
 				onPress={() => {
 				  navigation.goBack();
-				}}>
+				}} 
+				style={{marginTop:Platform.OS=='android'&&StatusBar.currentHeight}}
+				>
 				<AntIcon
 				  name="arrowleft"
 				  style={[gs.fs22, {color: '#fff'}, gs.p5]}

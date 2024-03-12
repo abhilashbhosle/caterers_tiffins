@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   ScrollView,
+  StatusBar
 } from 'react-native';
 import React from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
@@ -18,15 +19,18 @@ import AntIcon from 'react-native-vector-icons/AntDesign';
 import EntypoIcons from 'react-native-vector-icons/Entypo';
 import LinearGradient from 'react-native-linear-gradient';
 import Share from 'react-native-share';
+import { useFocusEffect } from '@react-navigation/native';
+import { ScreenWrapper } from '../../../components/ScreenWrapper';
 
 export default function ProfileMain({navigation}) {
   return (
+    <ScreenWrapper>
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <ThemeHeaderWrapper
-        lefttxt="Profile"
+        lefttxt="My Profile"
         goBack={() => navigation.goBack()}
       />
-      <ScrollView style={[gs.ph20, {flex: 1}]}>
+      <ScrollView style={[gs.ph20, {flex: 1}]} showsVerticalScrollIndicator={false}>
         <Flex
           direction="row"
           justifyContent="space-between"
@@ -239,7 +243,8 @@ export default function ProfileMain({navigation}) {
             style={[
               gs.ph15,
              styles.logout,
-              gs.mt20,
+              gs.mv20,
+              gs.br10
             ]}>
             <Flex
               direction="row"
@@ -259,6 +264,7 @@ export default function ProfileMain({navigation}) {
         </Flex>
       </ScrollView>
     </View>
+    </ScreenWrapper>
   );
 }
 const styles = ScaledSheet.create({

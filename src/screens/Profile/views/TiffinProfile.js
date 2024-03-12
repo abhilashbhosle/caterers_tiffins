@@ -7,6 +7,7 @@ import {
   Dimensions,
   TextInput,
   Keyboard,
+  StatusBar,
 } from 'react-native';
 import React, {useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
@@ -36,6 +37,7 @@ import {color} from 'native-base/lib/typescript/theme/styled-system';
 import PopularCatSlice from './ProfileModules/PopularCatSlice';
 import PopularTiffinsSlice from './ProfileModules/PopularTiffinsSlice';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function TiffinProfile({navigation}) {
   const {width, height} = Dimensions.get('screen');
@@ -50,8 +52,9 @@ export default function TiffinProfile({navigation}) {
           <Flex
             direction="row"
             justifyContent="space-between"
-            alignItems="center">
-            <Flex direction="row" align="center">
+            alignItems="center"
+            style={[Platform.OS=='ios'?gs.mt10:gs.mt5]}
+            >
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => {
@@ -59,28 +62,27 @@ export default function TiffinProfile({navigation}) {
                 }}>
                 <AntIcon
                   name="arrowleft"
-                  style={[gs.fs22, {color: '#fff'}, gs.mt10]}
+                  style={[gs.fs22, {color: '#fff'}]}
                 />
               </TouchableOpacity>
-            </Flex>
-            <Flex direction="row">
+            <Flex direction="row" alignItems='center'>
               <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]}>
                 <IonIcons
                   name="location-sharp"
-                  style={[gs.fs20, {color: '#fff'}]}
+                  style={[gs.fs22, {color: '#fff'}]}
                 />
               </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]}>
-                <EntypoIcons name="share" style={[gs.fs20, {color: '#fff'}]} />
+              <TouchableOpacity activeOpacity={0.7} style={[gs.ph15]}>
+                <EntypoIcons name="share" style={[gs.fs22, {color: '#fff'}]} />
               </TouchableOpacity>
               <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]}>
-                <AntIcon name="hearto" style={[gs.fs20, {color: '#fff'}]} />
+                <AntIcon name="hearto" style={[gs.fs22, {color: '#fff'}]} />
               </TouchableOpacity>
             </Flex>
           </Flex>
         </SafeAreaView>
       </View>
-      <ScrollView
+      <KeyboardAwareScrollView
         style={{flex: 1, backgroundColor: '#fff'}}
         showsVerticalScrollIndicator={false}>
         <View style={[gs.ph5, gs.pv10]}>
@@ -349,6 +351,7 @@ export default function TiffinProfile({navigation}) {
                   borderColor: cmtfocus ? ts.primary : '#ccc',
                 },
                 gs.mh12,
+                gs.br10
               ]}
               placeholderTextColor="#777"
               multiline
@@ -360,14 +363,14 @@ export default function TiffinProfile({navigation}) {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
       <Card
         style={[{borderRadius: 0, backgroundColor: '#fff'}, gs.ph8, gs.pv10]}>
         <Flex
           direction="row"
           align="center"
           justify="space-between"
-          style={[gs.pv10]}>
+          style={[gs.pv5]}>
           <Text
             style={[
               gs.fs13,
@@ -432,8 +435,8 @@ const styles = ScaledSheet.create({
     fontSize:'13@ms'
   },
   headercontainer: {
-    height: Platform.OS == 'ios' ? '100@ms' : '70@ms',
-    paddingTop: '20@ms',
+    height: Platform.OS == 'ios' ? '100@ms' : '100@ms',
+    paddingTop:Platform.OS=='android'?StatusBar.currentHeight: '20@ms',
     backgroundColor: ts.primary,
   },
 });

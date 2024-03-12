@@ -3,6 +3,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {View, StatusBar, Platform} from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import {NativeModules} from 'react-native';
+import {ts} from '../../ThemeStyles';
 export const ScreenWrapper = ({children}) => {
   // we obtain the object that contains info about the current route
   const route = useRoute();
@@ -11,20 +12,44 @@ export const ScreenWrapper = ({children}) => {
     useCallback(() => {
       switch (route.name) {
         case 'Notification':
-          StatusBar.pushStackEntry({barStyle: 'light-content', hidden: false,backgroundColor:Platform.OS=='android'&&'#000'});
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            hidden: false,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
+            translucent: Platform.OS == 'android' && true,
+          });
           break;
         case 'Register':
-          StatusBar.pushStackEntry({barStyle: 'light-content', hidden: false,backgroundColor:Platform.OS=='android'&&'#000'});
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            hidden: false,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
+            translucent: Platform.OS == 'android' && true,
+          });
           break;
-          case 'Login':
-            StatusBar.pushStackEntry({barStyle: 'light-content', hidden: false,backgroundColor:Platform.OS=='android'&&'#000'});
-            break;
+        case 'Login':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            hidden: false,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
+            translucent: Platform.OS == 'android' && true,
+          });
+          break;
         case 'Location':
           StatusBar.pushStackEntry({
             barStyle: 'light-content',
             animated: true,
             hidden: false,
-            backgroundColor:Platform.OS=='android'&&'#000'
+            backgroundColor: Platform.OS == 'android' && 'transparent',
+            translucent: Platform.OS == 'android' && true,
+          });
+        case 'VerifyOtp':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            animated: true,
+            hidden: false,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
+            translucent: Platform.OS == 'android' && true,
           });
           break;
         case 'Caterings':
@@ -32,7 +57,7 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
-            backgroundColor:Platform.OS=='android'&&'#000'
+            backgroundColor: Platform.OS == 'android' && ts.secondary,
           });
           break;
         case 'Tiffins':
@@ -40,7 +65,7 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
-            backgroundColor:Platform.OS=='android'&&'#000'
+            backgroundColor: Platform.OS == 'android' && ts.primary,
           });
           break;
         case 'SearchMain':
@@ -48,7 +73,6 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
-            backgroundColor:Platform.OS=='android'&&'#000'
           });
           break;
         case 'ProfileMain':
@@ -56,7 +80,62 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
-            backgroundColor:Platform.OS=='android'&&'#000'
+            backgroundColor: Platform.OS == 'android' && 'transparent',
+            translucent: Platform.OS == 'android' && true,
+          });
+          break;
+        case 'WishList':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            animated: true,
+            hidden: false,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
+            translucent: Platform.OS == 'android' && true,
+          });
+          break;
+        case 'MyInquiries':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            animated: true,
+            hidden: false,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
+            translucent: Platform.OS == 'android' && true,
+          });
+          break;
+        case 'AboutUs':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            animated: true,
+            hidden: false,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
+            translucent: Platform.OS == 'android' && true,
+          });
+          break;
+        case 'Faq':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            animated: true,
+            hidden: false,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
+            translucent: Platform.OS == 'android' && true,
+          });
+          break;
+        case 'Help':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            animated: true,
+            hidden: false,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
+            translucent: Platform.OS == 'android' && true,
+          });
+          break;
+        case 'Notifications':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            animated: true,
+            hidden: false,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
+            translucent: Platform.OS == 'android' && true,
           });
           break;
         case 'FilterMain':
@@ -64,7 +143,7 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
-            backgroundColor:Platform.OS=='android'&&'#000'
+            backgroundColor: Platform.OS == 'android' && ts.secondary,
           });
           break;
         case 'FilterTiffins':
@@ -72,7 +151,7 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
-            backgroundColor:Platform.OS=='android'&&'#000'
+            backgroundColor: Platform.OS == 'android' && ts.primary,
           });
           break;
         case 'TiffinProfile':
@@ -80,28 +159,27 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
-            backgroundColor:Platform.OS=='android'&&'#000'
+            backgroundColor: Platform.OS == 'android' && ts.primary,
           });
           break;
-          case 'CatererProfile':
-            StatusBar.pushStackEntry({
-              barStyle: 'light-content',
-              animated: true,
-              hidden: false,
-              backgroundColor:Platform.OS=='android'&&'#000'
-            });
-            break;
+        case 'CatererProfile':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            animated: true,
+            hidden: false,
+            backgroundColor: Platform.OS == 'android' && ts.secondary,
+          });
+          break;
         case 'GalleryView':
           StatusBar.pushStackEntry({
             barStyle: 'light-content',
             animated: true,
             hidden: false,
-            backgroundColor:Platform.OS=='android'&&'#000'
+            backgroundColor: Platform.OS == 'android' && '#000',
           });
           break;
         default:
-          StatusBar.pushStackEntry({barStyle: 'light-content', hidden: true,});
-          
+          StatusBar.pushStackEntry({barStyle: 'light-content', hidden: true});
       }
     }, []),
   );

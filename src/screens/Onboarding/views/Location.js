@@ -7,6 +7,8 @@ import {
   Image,
   Easing,
   TouchableWithoutFeedback,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import React, {useRef} from 'react';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
@@ -37,7 +39,7 @@ export default function Location({navigation}) {
                 activeOpacity={0.7}
                 onPress={() => {
                   navigation.goBack();
-                }}>
+                }} style={{marginTop:Platform.OS=='android'&&StatusBar.currentHeight}}>
                 <AntIcon
                   name="arrowleft"
                   style={[gs.fs22, {color: '#fff'}, gs.p5]}
@@ -58,7 +60,7 @@ export default function Location({navigation}) {
                 />
               </Center>
             </View>
-            <View>
+            <View style={[gs.mb15]}>
               <TouchableOpacity onPress={()=>{navigation.navigate('BottomBarStack')}}>
               <WhiteCoverBtn btntxt="Allow location access" />
               </TouchableOpacity>
@@ -77,7 +79,7 @@ export default function Location({navigation}) {
 const styles = ScaledSheet.create({
   container: {
     paddingHorizontal: '20@ms',
-    paddingTop: 30,
+    paddingTop:Platform.OS=='ios'&&30,
     height: '100%',
     justifyContent: 'space-between',
   },

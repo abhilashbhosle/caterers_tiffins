@@ -35,6 +35,7 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
               onBlur={() => {
                 setFocused(false);
               }}
+              outlineStyle={gs.br10}
             />
             <View style={[{position: 'absolute', left: 20}, gs.mt18]}>
               <MaterialIcons
@@ -90,7 +91,7 @@ const styles = ScaledSheet.create({
   inputcontainer: {
     width: '100%',
     height: '45@ms',
-    borderRadius: 10,
+    borderRadius: '10@ms',
     color: ts.primarytext,
     fontSize: '14@ms',
     paddingLeft: '30@ms',

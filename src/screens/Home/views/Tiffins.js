@@ -7,10 +7,11 @@ import ExploreIndia from './ExploreIndia'
 import { ScrollView } from 'react-native-virtualized-view';
 import TiffinProviders from './TiffinProviders'
 import { ScaledSheet } from 'react-native-size-matters'
+import { ScreenWrapper } from '../../../components/ScreenWrapper'
 
 export default function Tiffins({navigation}) {
   return (
-	<View>
+	<ScreenWrapper>
 	 <HeaderView from='Tiffins' navigation={navigation}/>
 	 <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 	 <RecentSearches/>
@@ -18,9 +19,9 @@ export default function Tiffins({navigation}) {
 	 <ExploreIndia/>
 	 <TiffinProviders/>
 	 </ScrollView>
-	</View>
+	</ScreenWrapper>
   )
 }
 const styles=ScaledSheet.create({
-container:{backgroundColor:'#fff',marginBottom:Platform.OS==='ios'?'150@ms':'130@ms'}
+container:{backgroundColor:'#fff'}
 })

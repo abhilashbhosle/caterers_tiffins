@@ -1,4 +1,4 @@
-import {View, Text, FlatList, Image, useWindowDimensions, Animated} from 'react-native';
+import {View, Text, FlatList, Image, useWindowDimensions, Animated, ImageBackground} from 'react-native';
 import React, {memo, useEffect, useRef, useState} from 'react';
 import {ScaledSheet} from 'react-native-size-matters';
 
@@ -31,7 +31,7 @@ function ProfileBanners({catererBanners}) {
   const renderBanners = ({item}) => {
     return (
       <View style={{width}}>
-        <Image 
+        <ImageBackground
 		source={item.img} 
 		style={[styles.img, {width:'100%'}]} 
 		/>
@@ -52,8 +52,9 @@ function ProfileBanners({catererBanners}) {
 	})(event)
   }
   const handleOnViewableItemsChanged=useRef(({viewableItems})=>{
-	// console.log('viewableItems',viewableItems)
-	setIndex(viewableItems[0].index)
+	
+	setIndex(viewableItems[0]?.index)
+	
   }).current;
 
   const viewabilityConfig=useRef({

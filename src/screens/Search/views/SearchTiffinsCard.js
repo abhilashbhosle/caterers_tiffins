@@ -15,6 +15,7 @@ import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
 import EntypoIcons from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
 function SearchTiffinsCard({item, from}) {
   const navigation = useNavigation();
@@ -38,33 +39,34 @@ function SearchTiffinsCard({item, from}) {
                 width: width / 2.7,
                 justifyContent: 'space-between',
               }}>
-              <Flex direction="row" style={[gs.p5]} align="center">
-                <TouchableOpacity style={styles.likecontainer}>
-                  <EntypoIcons
-                    name="heart-outlined"
-                    style={{...styles.wishicon, color: ts.primarytext}}
-                  />
-                </TouchableOpacity>
-                <Text style={[gs.fs11, styles.reviews]}>62 reviews</Text>
-              </Flex>
-              <View style={styles.popularcontainer}>
-                <Text style={styles.popular}>Popular</Text>
-              </View>
+              <LinearGradient
+                colors={['#0004', 'transparent']}
+                start={{x: 0.0, y: 0.0}}
+                end={{x: 0.0, y: 1.0}}>
+                <Flex direction="row" style={[gs.p5]} align="center">
+                  <TouchableOpacity style={styles.likecontainer}>
+                    <EntypoIcons
+                      name="heart-outlined"
+                      style={{...styles.wishicon, color: '#fff'}}
+                    />
+                  </TouchableOpacity>
+                  <Text style={[gs.fs11, styles.reviews]}>62 reviews</Text>
+                </Flex>
+              </LinearGradient>
+                <View style={styles.popularcontainer}>
+                  <Text style={styles.popular}>Popular</Text>
+                </View>
             </ImageBackground>
           </View>
           {/* ======CONTENT========= */}
           <View style={[gs.pl5, gs.pr10, gs.ph10, gs.pv10]}>
-            <Text
-              numberOfLines={1}
-              style={[{...styles.name}, gs.fs16]}>
+            <Text numberOfLines={1} style={[{...styles.name}, gs.fs16]}>
               {item.name}
             </Text>
-            <Text
-              numberOfLines={1}
-              style={[{...styles.area}, gs.fs11]}>
+            <Text numberOfLines={1} style={[{...styles.area}, gs.fs11]}>
               {item.area}
             </Text>
-            <Flex direction="row" align="center" style={gs.mt10}>
+            <Flex direction="row" align="center" style={gs.mt7}>
               <Text style={[styles.foodtype, gs.fs11]}>Food Type : </Text>
               <Text
                 style={[
@@ -132,12 +134,12 @@ const styles = ScaledSheet.create({
   name: {
     color: '#245396',
     fontFamily: ts.primarymedium,
-    lineHeight:'20@ms'
+    lineHeight: '20@ms',
   },
   area: {
     color: '#245396',
     fontFamily: ts.secondaryregular,
-    lineHeight:'20@ms'
+    lineHeight: '20@ms',
   },
   foodtype: {
     fontFamily: ts.secondaryregular,
@@ -154,7 +156,7 @@ const styles = ScaledSheet.create({
     height: '25@ms',
     width: '25@ms',
     borderRadius: 50,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -162,7 +164,7 @@ const styles = ScaledSheet.create({
     color: '#fff',
     fontFamily: ts.secondarysemibold,
     marginLeft: '10@ms',
-    backgroundColor: 'rgba(217, 130, 43,0.7)',
+    // backgroundColor: 'rgba(217, 130, 43,0.3)',
     paddingHorizontal: '10@ms',
   },
   popularcontainer: {
@@ -178,7 +180,7 @@ const styles = ScaledSheet.create({
     color: '#fff',
     fontSize: '11@ms',
   },
-  wishicon:{
-    fontSize:'18@ms'
-  }
+  wishicon: {
+    fontSize: '18@ms',
+  },
 });

@@ -11,7 +11,7 @@ import {ts} from '../../ThemeStyles';
 import {gs} from '../../GlobalStyles';
 import {Flex} from 'native-base';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import { ScaledSheet } from 'react-native-size-matters';
+import {ScaledSheet} from 'react-native-size-matters';
 
 function ThemeHeaderWrapper(props) {
   const renderChildren = () => {
@@ -20,8 +20,10 @@ function ThemeHeaderWrapper(props) {
         <Flex
           direction="row"
           justifyContent="space-between"
-          alignItems="center">
-          <Flex direction="row" align="center">
+          alignItems="center"
+          
+          >
+          <Flex direction="row" alignItems="center">
             <TouchableOpacity activeOpacity={0.7} onPress={props.goBack}>
               <IonIcons
                 name="chevron-back"
@@ -46,12 +48,7 @@ function ThemeHeaderWrapper(props) {
   };
   return props.bgColor ? (
     <View
-      style={[
-        gs.ph15,
- 
-  {...  styles.container, backgroundColor: props.bgColor}
-        
-      ]}>
+      style={[gs.ph15, {...styles.container, backgroundColor: props.bgColor}]}>
       {renderChildren()}
     </View>
   ) : (
@@ -59,17 +56,15 @@ function ThemeHeaderWrapper(props) {
       colors={[ts.secondary, ts.primary]}
       start={{x: 0.0, y: 0.0}}
       end={{x: 1.0, y: 0.0}}
-      style={[
-        gs.ph15,
-        {...  styles.container, backgroundColor: props.bgColor}
-      ]}>
+      style={[gs.ph15, {...styles.container, backgroundColor: props.bgColor}]}>
       {renderChildren()}
     </LinearGradient>
   );
 }
 export default memo(ThemeHeaderWrapper);
-const styles=ScaledSheet.create({
-  container:{ height: Platform.OS == 'ios' ? '100@ms' : '70@ms',
-  paddingTop: '20@ms',
-},
-})
+const styles = ScaledSheet.create({
+  container: {
+    height: Platform.OS == 'ios' ? '100@ms' : '110@ms',
+    paddingTop:Platform.OS=='android'? '60@ms':'60@ms',
+  },
+});

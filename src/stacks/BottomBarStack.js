@@ -14,6 +14,7 @@ export default function BottomBarStack() {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
+        tabBarStyle:styles.tabbar,
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
           if (route.name === 'Caterings') {
@@ -57,7 +58,7 @@ export default function BottomBarStack() {
           route.name === 'Caterings' ? ts.secondary : ts.primary,
         tabBarInactiveTintColor: 'gray',
         headerShown: false,
-        tabBarLabelStyle: [gs.fs12,{bottom:Platform.OS=='android'?2:0}],
+        tabBarLabelStyle: [gs.fs12,{bottom:Platform.OS=='android'?10:0}],
       })}>
       <Tab.Screen name="Caterings" component={Caterers} />
       <Tab.Screen name="Tiffins" component={Tiffins} />
@@ -69,4 +70,7 @@ const styles = ScaledSheet.create({
     height: '18@ms',
     width: '18@ms',
   },
+  tabbar:{
+    height:Platform.OS=='ios'?'75@ms':'60@ms'
+  }
 });

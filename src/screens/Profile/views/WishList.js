@@ -7,6 +7,7 @@ import {Center} from 'native-base';
 import {ScaledSheet} from 'react-native-size-matters';
 import CaterersWish from './CaterersWish';
 import TiffinsWish from './TiffinsWish';
+import { ScreenWrapper } from '../../../components/ScreenWrapper';
 
 export default function WishList({navigation}) {
   const layout = useWindowDimensions();
@@ -39,6 +40,7 @@ export default function WishList({navigation}) {
   });
 
   return (
+    <ScreenWrapper>
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <ThemeHeaderWrapper
         lefttxt="My Wishlist"
@@ -73,6 +75,7 @@ export default function WishList({navigation}) {
         )}
       />
     </View>
+    </ScreenWrapper>
   );
 }
 const styles = ScaledSheet.create({

@@ -1,4 +1,13 @@
-import {View, Text, TextInput, TouchableOpacity, Platform, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Platform,
+  Dimensions,
+  TouchableWithoutFeedback,
+  Image,
+} from 'react-native';
 import React, {memo, useRef, useState} from 'react';
 import {Center, Flex, Modal, theme} from 'native-base';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -23,7 +32,7 @@ function SearchBar({from, navigation}) {
   const [selectedEndDate, setSelectedEndDate] = useState(null);
   const [fromdate, setFromdate] = useState(null);
   const [enddate, setEnddate] = useState(null);
-  const {width,height}=Dimensions.get('screen')
+  const {width, height} = Dimensions.get('screen');
 
   const onDateChange = (date, type) => {
     // console.log(date, type);
@@ -53,41 +62,44 @@ function SearchBar({from, navigation}) {
     <>
       <Flex direction="row">
         {/* =====CALENDAR====== */}
-        <Flex
-          style={styles.calendarTextInput}
-          direction="row"
-          alignItems="center"
-          justifyContent="center">
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => {
-              setOpenCalendarPicker(true);
-            }}>
-            <MaterialIcon
-              name="edit-calendar"
-              style={[
-                gs.fs25,
-                {
-                  color:
-                    route.name == 'Caterings' || from == 'Caterers'
-                      ? ts.secondary
-                      : ts.primary,
-                },
-              ]}
-            />
-          </TouchableOpacity>
-          <Text style={[gs.fs11, {color: '#57636c'}, gs.ml4]}>Feb 16 - 18</Text>
-        </Flex>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            setOpenCalendarPicker(true);
+          }}>
+          <Flex
+            style={styles.calendarTextInput}
+            direction="row"
+            alignItems="center"
+            justifyContent="center">
+            <View>
+              <MaterialIcon
+                name="edit-calendar"
+                style={[
+                  gs.fs25,
+                  {
+                    color:
+                      route.name == 'Caterings' || from == 'Caterers'
+                        ? ts.secondary
+                        : ts.primary,
+                  },
+                ]}
+              />
+            </View>
+            <Text style={[gs.fs11, {color: '#57636c'}, gs.ml4]}>
+              Feb 16 - 18
+            </Text>
+          </Flex>
+        </TouchableWithoutFeedback>
         {/* ======SEARCH======= */}
         <Flex direction="row" w={'100%'}>
-        
+          {/* ======SEARCH INPUT======== */}
           <TextInput
             style={[
               {...styles.searchTextInput, color: '#57636c'},
               gs.fs11,
               gs.ph10,
             ]}
-            placeholder="Total Headcounts..."
+            placeholder="Search"
             placeholderTextColor="#57636c"
           />
           <TouchableOpacity
@@ -121,17 +133,19 @@ function SearchBar({from, navigation}) {
           </TouchableOpacity>
         </Flex>
       </Flex>
-      
+
       <Modal isOpen={openCalendarPicker} onClose={onClose}>
         <View
-          style={[{
-            ...styles.calendarcontainer,
-            backgroundColor: theme,
-            width:'100%'
-          },gs.p10]}
-          >
-          <Flex style={styles.rangecontainer}>
-            <Flex direction="row" align="center" style={[gs.mt15]}>
+          style={[
+            {
+              ...styles.calendarcontainer,
+              backgroundColor: theme,
+              width: '100%',
+            },
+            gs.p10,
+          ]}>
+          <Flex style={styles.rangecontainer} alignItems='center'>
+            <Flex direction="row" style={[gs.mt15]}>
               <Text
                 style={[
                   gs.fs18,
@@ -143,15 +157,17 @@ function SearchBar({from, navigation}) {
 
             <View style={styles.dashedborder}>
               {from == 'Caterers' ? (
-                <MaterialIcons
-                  name="silverware-fork-knife"
-                  style={styles.midicon}
+                <Image
+                  source={require('../../../assets/Bottombar/chefhatf.png')}
+                  style={styles.chefhat}
+                  tintColor='#fff'
                 />
               ) : (
-                <MaterialIcon
-                  name="food-bank"
-                  style={styles.midicon}
-                />
+                <Image
+                source={require('../../../assets/Bottombar/tiffinf.png')}
+                style={styles.chefhat}
+                tintColor='#fff'
+              />
               )}
             </View>
             <Flex direction="row" align="center" style={[gs.mt15]}>
@@ -164,7 +180,7 @@ function SearchBar({from, navigation}) {
               </Text>
             </Flex>
           </Flex>
-          <Flex style={{...styles.rangecontainer, marginVertical: 10}}>
+          <Flex style={{...styles.rangecontainer, marginVertical: 10}} alignItems='center'>
             <Text
               style={[gs.fs13, {color: '#fff', fontFamily: ts.primaryregular}]}>
               {fromdate}
@@ -190,7 +206,6 @@ function SearchBar({from, navigation}) {
             textStyle={{color: '#fff', fontFamily: ts.primarysemibold}}
             dayLabelsWrapper={{borderColor: '#fff'}}
             disabledDatesTextStyle={{color: '#ddd'}}
-            
             previousComponent={
               <AntIcons name="arrowleft" style={[gs.fs22, {color: '#fff'}]} />
             }
@@ -229,7 +244,7 @@ const styles = ScaledSheet.create({
   },
   searchTextInput: {
     width: '53%',
-    height:Platform.OS=='ios'?'39.4@ms': '40@ms',
+    height: Platform.OS == 'ios' ? '39.4@ms' : '40@ms',
     backgroundColor: '#fff',
     marginLeft: 2,
   },
@@ -248,5 +263,9 @@ const styles = ScaledSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: '10@ms',
   },
-  midicon:{color: '#fff', fontSize: '40@ms'}
+  chefhat: {
+    height: '40@ms',
+    width: '40@ms',
+  },
+  midicon: {color: '#fff', fontSize: '40@ms'},
 });

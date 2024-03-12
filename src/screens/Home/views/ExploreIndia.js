@@ -6,6 +6,7 @@ import {ts} from '../../../../ThemeStyles';
 import {ScaledSheet} from 'react-native-size-matters';
 import {Card} from 'react-native-paper';
 import {india} from '../../../constants/Constants';
+import LinearGradient from 'react-native-linear-gradient';
 
 function ExploreIndia() {
   const route = useRoute();
@@ -16,23 +17,46 @@ function ExploreIndia() {
           source={item.img}
           style={[styles.img]}
           alt={item.name}
-          imageStyle={gs.br12}>
-		  </ImageBackground>
+          imageStyle={gs.br12}></ImageBackground>
         <View style={[styles.overlay, gs.br12]}></View>
-		<View style={[{...styles.overlay,justifyContent:'flex-end',flexDirection:'row'},gs.h40,styles.txtoverlay]}>
-		<Text style={[{fontFamily:ts.primarymedium,color:'#fff'},gs.fs21,gs.mr20,gs.mt5]}>{item.name}</Text>
-		</View>
+        <LinearGradient
+          colors={['#0004', 'transparent']}
+          start={{x: 0.0, y: 0.0}}
+          end={{x: 0.0, y: 1}}
+          style={[
+            {
+              ...styles.overlay,
+              justifyContent: 'flex-end',
+              flexDirection: 'row',
+            },
+            gs.h40,
+            styles.txtoverlay,
+          ]}
+          >
+          <View
+           >
+            <Text
+              style={[
+                {fontFamily: ts.primarymedium, color: '#fff'},
+                gs.fs21,
+                gs.mr20,
+                gs.mt5,
+              ]}>
+              {item.name}
+            </Text>
+          </View>
+        </LinearGradient>
       </Card>
     );
   };
   return (
-    <View style={[{paddingHorizontal: 15}, gs.mt15]}>
+    <View style={[gs.ph15, gs.mt15]}>
       <Text
         style={[
           gs.fs15,
-          {fontFamily: ts.secondarymedium, color: '#555'},
+          {fontFamily: ts.secondarysemibold, color: ts.primarytext},
           gs.fs13,
-          gs.mb10
+          gs.mb10,
         ]}>
         {route.name == 'Caterings'
           ? 'Explore Caterers around India'
@@ -59,12 +83,11 @@ const styles = ScaledSheet.create({
   overlay: {
     height: '200@ms',
     position: 'absolute',
-    backgroundColor: '#0002',
     width: '100%',
-	zIndex:1
+    zIndex: 1,
   },
-  txtoverlay:{
-    borderTopRightRadius:'12@ms',
-    borderTopLeftRadius:'12@ms'
-  }
+  txtoverlay: {
+    borderTopRightRadius: '12@ms',
+    borderTopLeftRadius: '12@ms',
+  },
 });

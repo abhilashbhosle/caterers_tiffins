@@ -1,14 +1,20 @@
-import {View, Text, FlatList, Dimensions, ImageBackground} from 'react-native';
+import {View, Text, FlatList, Dimensions, ImageBackground,TouchableWithoutFeedback} from 'react-native';
 import React from 'react';
 import {ScaledSheet} from 'react-native-size-matters';
 import {Center} from 'native-base';
 import { gs } from '../../../../../GlobalStyles';
+import { useNavigation } from '@react-navigation/native';
 
 export default function GallerySlice({data}) {
   const {height, width} = Dimensions.get('screen');
+  const navigation=useNavigation()
   const renderItem = ({item}) => {
     return (
-      <View>
+      <TouchableWithoutFeedback  onPress={() => {
+        navigation.navigate('PageStack', {
+          screen: 'GalleryView',
+        });
+      }}>
         <ImageBackground
           source={item.img}
           style={[
@@ -17,7 +23,7 @@ export default function GallerySlice({data}) {
           ]}
 		  imageStyle={[gs.br10]}
         />
-      </View>
+      </TouchableWithoutFeedback>
     );
   };
   return (

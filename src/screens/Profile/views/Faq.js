@@ -6,10 +6,12 @@ import EntypoIcons from 'react-native-vector-icons/Entypo';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
 import {ScaledSheet} from 'react-native-size-matters';
+import { ScreenWrapper } from '../../../components/ScreenWrapper';
 
 const data=['How to book my Caterer ?','How to book my Tiffins ?','How to contact my Caterer ?','How to search for Branded ?','How to search for Popular ?']
 export default function Faq({navigation}) {
   return (
+    <ScreenWrapper>
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <ThemeHeaderWrapper
         lefttxt="FAQ's"
@@ -50,6 +52,7 @@ export default function Faq({navigation}) {
      
       </ScrollView>
     </View>
+    </ScreenWrapper>
   );
 }
 const styles = ScaledSheet.create({

@@ -14,10 +14,11 @@ import PopularCaterers from './PopularCaterers';
 import Occasions from './Occasions';
 import { ScrollView } from 'react-native-virtualized-view';
 import { ScaledSheet } from 'react-native-size-matters';
+import { ScreenWrapper } from '../../../components/ScreenWrapper';
 
 export default function Caterers({navigation}) {
   return (
-    <View>
+    <ScreenWrapper>
       <HeaderView from='Caterers' navigation={navigation}/>
       <ScrollView
         style={styles.container}
@@ -30,12 +31,11 @@ export default function Caterers({navigation}) {
         <PopularCaterers />
         <Occasions />
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 }
 const styles=ScaledSheet.create({
   container:{
     backgroundColor: '#fff',
-    marginBottom: Platform.OS === 'ios' ? '150@ms' : '130@ms',
   }
 })

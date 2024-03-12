@@ -6,10 +6,12 @@ import EntypoIcons from 'react-native-vector-icons/Entypo';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
 import {ScaledSheet} from 'react-native-size-matters';
+import { ScreenWrapper } from '../../../components/ScreenWrapper';
 
 const data=['About','Privacy Policy','Security Policy','Terms & Conditions','Disclaimer']
 export default function AboutUs({navigation}) {
   return (
+    <ScreenWrapper>
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <ThemeHeaderWrapper
         lefttxt="About Us"
@@ -50,6 +52,7 @@ export default function AboutUs({navigation}) {
      
       </ScrollView>
     </View>
+    </ScreenWrapper>
   );
 }
 const styles = ScaledSheet.create({

@@ -13,89 +13,102 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {Flex} from 'native-base';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
-import EntypoIcons from 'react-native-vector-icons/Entypo'
-import { useNavigation } from '@react-navigation/native';
+import EntypoIcons from 'react-native-vector-icons/Entypo';
+import {useNavigation} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
 function SearchCaterersCard({item}) {
   const {height, width} = useWindowDimensions();
-  const navigation=useNavigation()
+  const navigation = useNavigation();
   return (
     <Card style={styles.cardcontainer}>
-      <TouchableWithoutFeedback onPress={()=>{ navigation.navigate('PageStack', {
-          screen: 'CatererProfile',
-        })}}>
-      <Flex direction="row">
-        {/* ======IMAGE====== */}
-        <View>
-          <ImageBackground
-            source={item.img}
-            imageStyle={[{...styles.img, width: width / 2.7}, gs.br10]}
-            style={{
-              ...styles.img,
-              width: width / 2.7,
-              justifyContent: 'space-between',
-            }}>
-            <Flex direction="row" style={[gs.p5]} align='center'>
-              <TouchableOpacity style={styles.likecontainer}>
-               <EntypoIcons name='heart-outlined' style={{...styles.wishicon, color: ts.primarytext}}/>
-				</TouchableOpacity>
-				<Text style={[gs.fs11,styles.reviews]}>62 reviews</Text>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          navigation.navigate('PageStack', {
+            screen: 'CatererProfile',
+          });
+        }}>
+        <Flex direction="row">
+          {/* ======IMAGE====== */}
+          <View>
+            <ImageBackground
+              source={item.img}
+              imageStyle={[{...styles.img, width: width / 2.7}, gs.br10]}
+              style={{
+                ...styles.img,
+                width: width / 2.7,
+                justifyContent: 'space-between',
+              }}>
+              <LinearGradient
+                colors={['#0004', 'transparent']}
+                start={{x: 0.0, y: 0.0}}
+                end={{x: 0.0, y: 1.0}}
+               >
+                <Flex direction="row" style={[gs.p5]} align="center">
+                  <TouchableOpacity style={styles.likecontainer}>
+                    <EntypoIcons
+                      name="heart-outlined"
+                      style={{...styles.wishicon, color: '#fff'}}
+                    />
+                  </TouchableOpacity>
+                  <Text style={[gs.fs11, styles.reviews]}>62 reviews</Text>
+                </Flex>
+              </LinearGradient>
+              <View style={styles.popularcontainer}>
+                <Text style={styles.popular}>Popular</Text>
+              </View>
+            </ImageBackground>
+          </View>
+          {/* ======CONTENT========= */}
+          <View style={[gs.pl5, gs.pr10, gs.ph10, gs.pv10]}>
+            <Text numberOfLines={1} style={[{...styles.name}, gs.fs16]}>
+              {item.name}
+            </Text>
+            <Text numberOfLines={1} style={[{...styles.area}, gs.fs11]}>
+              {item.area}
+            </Text>
+            <Flex direction="row" align="center" style={gs.mt7}>
+              <Text style={[styles.foodtype, gs.fs11]}>Food Type : </Text>
+              <Text
+                style={[
+                  gs.fs11,
+                  {color: '#266920', fontFamily: ts.secondaryregular},
+                ]}>
+                {item.type}
+              </Text>
             </Flex>
-			<View style={styles.popularcontainer}>
-            <Text style={styles.popular}>Popular</Text>
-			</View>
-          </ImageBackground>
-        </View>
-        {/* ======CONTENT========= */}
-        <View style={[gs.pl5, gs.pr10, gs.ph10, gs.pv10]}>
-          <Text
-            numberOfLines={1}
-            style={[{...styles.name}, gs.fs16]}>
-            {item.name}
-          </Text>
-          <Text
-            numberOfLines={1}
-            style={[{...styles.area}, gs.fs11]}>
-            {item.area}
-          </Text>
-          <Flex direction="row" align="center" style={gs.mt10}>
-            <Text style={[styles.foodtype, gs.fs11]}>Food Type : </Text>
-            <Text
-              style={[
-                gs.fs11,
-                {color: '#266920', fontFamily: ts.secondaryregular},
-              ]}>
-              {item.type}
-            </Text>
-          </Flex>
-          <Flex direction="row" align="center">
-            <Text style={[styles.foodtype, gs.fs11]}>Cuisines : </Text>
-            <Text style={[styles.cuisine]}>{item.cuisine}</Text>
-          </Flex>
-          <Flex direction="row" align="center">
-            <Text style={[styles.foodtype, gs.fs11]}>Min. & Max. order: </Text>
-            <Text style={[styles.cuisine]}>{item.ordersrange}</Text>
-          </Flex>
-          <Flex direction="row" align="center" style={[gs.mt8]}>
-            <Image
-              source={require('../../../assets/Search/tableservice.png')}
-              style={styles.buffeticon}
-            />
-            <Image
-              source={require('../../../assets/Search/buffetservice.png')}
-              style={styles.buffeticon}
-            />
-            <Text style={[styles.foodtype, gs.fs11]}>Starting Price - </Text>
-            <Text
-              style={[
-                {color: ts.teritary, fontFamily: ts.secondarymedium},
-                gs.fs13,
-              ]}>
-              ₹ {item.startprice}
-            </Text>
-          </Flex>
-        </View>
-      </Flex>
+            <Flex direction="row" align="center">
+              <Text style={[styles.foodtype, gs.fs11]}>Cuisines : </Text>
+              <Text style={[styles.cuisine]} numberOfLines={1}>
+                {item.cuisine} jdjcvwdgc
+              </Text>
+            </Flex>
+            <Flex direction="row" align="center">
+              <Text style={[styles.foodtype, gs.fs11]}>
+                Min. & Max. order:{' '}
+              </Text>
+              <Text style={[styles.cuisine]}>{item.ordersrange}</Text>
+            </Flex>
+            <Flex direction="row" align="center" style={[gs.mt8]}>
+              <Image
+                source={require('../../../assets/Search/tableservice.png')}
+                style={styles.buffeticon}
+              />
+              <Image
+                source={require('../../../assets/Search/buffetservice.png')}
+                style={styles.buffeticon}
+              />
+              <Text style={[styles.foodtype, gs.fs11]}>Starting Price - </Text>
+              <Text
+                style={[
+                  {color: ts.teritary, fontFamily: ts.secondarymedium},
+                  gs.fs13,
+                ]}>
+                ₹ {item.startprice}
+              </Text>
+            </Flex>
+          </View>
+        </Flex>
       </TouchableWithoutFeedback>
     </Card>
   );
@@ -119,12 +132,12 @@ const styles = ScaledSheet.create({
   name: {
     color: '#245396',
     fontFamily: ts.primarymedium,
-    lineHeight:'20@ms'
+    lineHeight: '20@ms',
   },
   area: {
     color: '#245396',
     fontFamily: ts.secondaryregular,
-    lineHeight:'20@ms'
+    lineHeight: '20@ms',
   },
   foodtype: {
     fontFamily: ts.secondaryregular,
@@ -136,36 +149,37 @@ const styles = ScaledSheet.create({
     fontSize: '11@ms',
     fontFamily: ts.secondaryregular,
     lineHeight: '22@ms',
+    width: '55%',
   },
-  likecontainer:{
-	height:'25@ms',
-	width:'25@ms',
-	borderRadius:50,
-	backgroundColor:'#fff',
-	justifyContent:'center',
-	alignItems:'center'
+  likecontainer: {
+    height: '25@ms',
+    width: '25@ms',
+    borderRadius: 50,
+    // backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  reviews:{
-	color:'#fff',
-	fontFamily:ts.secondarysemibold,
-	marginLeft:'10@ms',
-	backgroundColor:'rgba(195, 51, 50,0.7)',
-	paddingHorizontal:'10@ms'
-},
-popularcontainer:{
-	width:'70%',
-	paddingVertical:'2@ms',
-	backgroundColor:ts.accent3,
-	borderTopRightRadius:'10@ms',
-	borderBottomLeftRadius:'10@ms'
-},
-popular:{
-	textAlign:'center',
-	fontFamily:ts.secondaryregular,
-	color:'#fff',
-	fontSize:'11@ms',
-},
-wishicon:{
-  fontSize:'18@ms'
-}
+  reviews: {
+    color: '#fff',
+    fontFamily: ts.secondarysemibold,
+    marginLeft: '10@ms',
+    // backgroundColor: 'rgba(195, 51, 50,0.3)',
+    paddingHorizontal: '10@ms',
+  },
+  popularcontainer: {
+    width: '70%',
+    paddingVertical: '2@ms',
+    backgroundColor: ts.accent3,
+    borderTopRightRadius: '10@ms',
+    borderBottomLeftRadius: '10@ms',
+  },
+  popular: {
+    textAlign: 'center',
+    fontFamily: ts.secondaryregular,
+    color: '#fff',
+    fontSize: '11@ms',
+  },
+  wishicon: {
+    fontSize: '18@ms',
+  },
 });

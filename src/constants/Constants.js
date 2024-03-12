@@ -1,36 +1,31 @@
 export const recentsearches = [
   {
-    city: 'Adyar, Chennai',
-    time: '1 Month',
-    people: '2 people',
+    name: 'Saravana Catering Services',
     img: '../../assets/Search/cardimg.png',
     id: 1,
+    city:'Adyar, Chennai'
   },
   {
-    city: 'Adyar, Chennai',
-    time: '1 Month',
-    people: '2 people',
+    name: 'Balaji Catering Service',
+    city:'Adyar, Chennai',
     img: '../../assets/Search/cardimg.png',
     id: 2,
   },
   {
-    city: 'Adyar, Chennai',
-    time: '1 Month',
-    people: '2 people',
+    name: 'Balaji Catering Service',
+    city:'Adyar, Chennai',
     img: '../../assets/Search/cardimg.png',
     id: 3,
   },
   {
-    city: 'Adyar, Chennai',
-    time: '1 Month',
-    people: '2 people',
+    name: 'Balaji Catering Service',
+    city:'Adyar, Chennai',
     img: '../../assets/Search/cardimg.png',
     id: 4,
   },
   {
-    city: 'Adyar, Chennai',
-    time: '1 Month',
-    people: '2 people',
+    name: 'Balaji Catering Service',
+    city:'Adyar, Chennai',
     img: '../../assets/Search/cardimg.png',
     id: 5,
   },
@@ -40,65 +35,54 @@ export const explorecusines = [
   {
     img: require('../assets/Explore-cuisines/01.png'),
     id: 1,
-    name: 'img1',
+    name: 'North Indian',
   },
   {
     img: require('../assets/Explore-cuisines/02.png'),
     id: 2,
-    name: 'img2',
+    name: 'South Indian',
   },
   {
     img: require('../assets/Explore-cuisines/03.png'),
     id: 3,
-    name: 'img3',
+    name: 'Chinese',
   },
   {
     img: require('../assets/Explore-cuisines/04.png'),
     id: 4,
-    name: 'img4',
+    name: 'Italian',
   },
   {
     img: require('../assets/Explore-cuisines/05.png'),
     id: 5,
-    name: 'img5',
+    name: 'Punjabi',
   },
   {
     img: require('../assets/Explore-cuisines/06.png'),
     id: 6,
-    name: 'img6',
+    name: 'Rajasthani',
   },
 ];
 export const branded = [
   {
-    img: require('../assets/Branded/01.png'),
+    img: require('../assets/Search/cardimg.jpg'),
     id: 1,
     name: 'img1',
+    profile:require('../assets/Banners/c1.png')
   },
   {
-    img: require('../assets/Branded/02.png'),
+    img: require('../assets/Search/cardimg.jpg'),
     id: 2,
     name: 'img2',
+    profile:require('../assets/Banners/c1.png')
   },
   {
-    img: require('../assets/Branded/03.png'),
+    img:require('../assets/Search/cardimg.jpg'),
     id: 3,
     name: 'img3',
+    profile:require('../assets/Banners/c1.png')
   },
-  {
-    img: require('../assets/Branded/04.png'),
-    id: 4,
-    name: 'img4',
-  },
-  {
-    img: require('../assets/Branded/05.png'),
-    id: 5,
-    name: 'img5',
-  },
-  {
-    img: require('../assets/Branded/06.png'),
-    id: 6,
-    name: 'img6',
-  },
+  
 ];
 export const india = [
   {
@@ -440,6 +424,13 @@ export const catererbudget = [
   'Rs. 400 - Rs. 500',
   'Rs. 500 & above',
 ];
+export const headcount=[
+  '100 - 200',
+  '200 - 500',
+  '500 - 1000',
+  '1000 - 3000',
+  '3000 & above'
+]
 
 export const caterercuisine = [
   {

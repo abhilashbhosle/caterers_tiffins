@@ -1,4 +1,8 @@
 export const labels = [
+	{
+		type:'All',
+		selected:true,
+	},
   {
     type: 'Veg',
 	selected:false

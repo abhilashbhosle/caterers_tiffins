@@ -19,7 +19,7 @@ function TiffinsWish() {
 		outputRange: [1, 1, 1, 0],
 	  });
     return (
-		<Animated.View style={{transform: [{scale}],opacity:scale}}>
+		<Animated.View style={{transform: [{scale}]}}>
 	<SearchTiffinsCard item={item} />
 	</Animated.View>
 	)

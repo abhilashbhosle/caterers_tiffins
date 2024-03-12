@@ -8,6 +8,8 @@ import {
   TextInput,
   Keyboard,
   TouchableWithoutFeedback,
+  StatusBar,
+  Image
 } from 'react-native';
 import React, {useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
@@ -36,6 +38,7 @@ import {Card} from 'react-native-paper';
 import ThemeSepBtn from '../../../components/ThemeSepBtn';
 import {color} from 'native-base/lib/typescript/theme/styled-system';
 import { ScreenWrapper } from '../../../components/ScreenWrapper';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function CatererProfile({navigation}) {
   const {width, height} = Dimensions.get('screen');
@@ -54,8 +57,9 @@ export default function CatererProfile({navigation}) {
           <Flex
             direction="row"
             justifyContent="space-between"
-            alignItems="center">
-            <Flex direction="row" align="center">
+            alignItems="center"
+            style={[Platform.OS=='ios'?gs.mt10:gs.mt5]}
+            >
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => {
@@ -63,30 +67,32 @@ export default function CatererProfile({navigation}) {
                 }}>
                 <AntIcon
                   name="arrowleft"
-                  style={[gs.fs22, {color: '#fff'}, gs.mt10]}
+                  style={[gs.fs22, {color: '#fff'}]}
                 />
               </TouchableOpacity>
-            </Flex>
-            <Flex direction="row">
+            <Flex direction="row" alignItems='center'>
               <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]}>
                 <IonIcons
                   name="location-sharp"
-                  style={[gs.fs20, {color: '#fff'}]}
+                  style={[gs.fs22, {color: '#fff'}]}
                 />
               </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]}>
-                <EntypoIcons name="share" style={[gs.fs20, {color: '#fff'}]} />
+              <TouchableOpacity activeOpacity={0.7} style={[gs.ph15]}>
+                <EntypoIcons name="share" style={[gs.fs22, {color: '#fff'}]} />
               </TouchableOpacity>
               <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]}>
-                <AntIcon name="hearto" style={[gs.fs20, {color: '#fff'}]} />
+                <AntIcon name="hearto" style={[gs.fs22, {color: '#fff'}]} />
               </TouchableOpacity>
             </Flex>
           </Flex>
         </SafeAreaView>
       </View>
-      <ScrollView
+      <KeyboardAwareScrollView
         style={{flex: 1, backgroundColor: '#fff'}}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        enableOnAndroid={true}
+        nestedScrollEnabled={true}
+        >
         <View style={[gs.ph5, gs.pv10]}>
           <Flex direction="row" align="center" justify="space-between">
             <Text style={[gs.fs19, styles.heading]}>
@@ -206,7 +212,12 @@ export default function CatererProfile({navigation}) {
                 gs.pv15,
                 gs.ph3,
               ]}>
-              <FontAweSomeIcon name="user-group" style={styles.usericon} />
+              {/* <FontAweSomeIcon name="user-group" style={styles.usericon} /> */}
+              <Image source={require('../../../assets/Common/totalnoofStaffs.png')}
+              alt='staff'
+              style={styles.staffimg}
+              tintColor={ts.secondary}
+              />
               <Text style={[styles.subtxt, gs.fs12, gs.pv7]}>
                 Total No. of Staffs
               </Text>
@@ -343,6 +354,7 @@ export default function CatererProfile({navigation}) {
                 styles.subtxt,
                 gs.fs12,
                 { color: ts.secondary},
+                gs.mt5
               ]}>
               See all 238 reviews
             </Text>
@@ -363,35 +375,36 @@ export default function CatererProfile({navigation}) {
               Write a Review
             </Text>
           </Center>
-          <View style={{marginBottom: cmtfocus ? 500 : 0}}>
             <TextInput
               placeholder="Add Comments"
               style={[
                 {
                   ...styles.issuecontainer,
-               
                   borderColor: cmtfocus ? ts.secondary : '#ccc',
                 },
                 gs.mh12,
+                gs.br10
               ]}
               placeholderTextColor="#777"
               multiline
-              onFocus={handleFocus}
+              onFocus={()=>setCmtfocus(true)}
               onBlur={() => setCmtfocus(false)}
             />
             <TouchableOpacity style={[gs.mh14, gs.mv10]}>
               <ThemeSepBtn btntxt="Submit" themecolor={ts.secondary} />
             </TouchableOpacity>
-          </View>
+{/*         
         </View>
-      </ScrollView>
+        <View style={{bottom: cmtfocus && 500}}> */}
+       </View>
+      </KeyboardAwareScrollView>
       <Card
-        style={[{borderRadius: 0, backgroundColor: '#fff'}, gs.ph8, gs.pv10]}>
+        style={[{borderRadius: 0, backgroundColor: '#fff'}, gs.ph8, gs.pb10,gs.pt5]}>
         <Flex
           direction="row"
           align="center"
           justify="space-between"
-          style={[gs.pv10]}>
+          style={[gs.pb10,gs.pt5]}>
           <Text
             style={[
               gs.fs13,
@@ -440,6 +453,10 @@ const styles = ScaledSheet.create({
     fontSize: '25@ms',
     color: ts.secondary,
   },
+  staffimg:{
+    height:'30@ms',
+    width:'30@ms'
+  },
   servicedesc: {
     fontFamily: ts.secondaryregular,
     color: ts.primarytext,
@@ -456,8 +473,8 @@ const styles = ScaledSheet.create({
     fontSize:'13@ms'
   },
   headercontainer: {
-    height: Platform.OS == 'ios' ? '100@ms' : '70@ms',
-    paddingTop: '20@ms',
+    height: Platform.OS == 'ios' ? '100@ms' : '100@ms',
+    paddingTop:Platform.OS=='android'?StatusBar.currentHeight: '20@ms',
     backgroundColor: ts.secondary,
   },
 });

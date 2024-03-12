@@ -22,7 +22,7 @@ function CaterersWish() {
 		outputRange: [1, 1, 1, 0],
 	  });
     return (
-	<Animated.View style={{transform: [{scale}],opacity:scale}}>
+	<Animated.View style={{transform: [{scale}]}}>
 	<SearchCaterersCard item={item} />
 	</Animated.View>
 	)

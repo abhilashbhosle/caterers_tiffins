@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, Platform,StatusBar } from 'react-native'
 import React from 'react'
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Notification from '../screens/Onboarding/views/Notification';
@@ -10,6 +10,14 @@ import Login from '../screens/Onboarding/views/Login';
 const Stack=createNativeStackNavigator()
 export default function OnboardStack() {
   return (
+	<>
+	{/* {
+		Platform.OS=='android' && 
+		<StatusBar  barStyle="light-content"
+        translucent={true}
+        backgroundColor="transparent"/>
+	} */}
+	
 	<Stack.Navigator screenOptions={{headerShown:false}}>
 		<Stack.Screen name='Notification' component={Notification}/>
 		<Stack.Screen name='Register' component={Register}/>
@@ -17,5 +25,6 @@ export default function OnboardStack() {
 		<Stack.Screen name='Location' component={Location}/>
 		<Stack.Screen name='Login' component={Login}/>
 	</Stack.Navigator>
+	</>
   )
 }

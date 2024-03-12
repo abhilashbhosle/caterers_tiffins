@@ -43,11 +43,11 @@ export default function TiffinProviders() {
   };
   return (
     <>
-      <View style={[{paddingHorizontal: 15}, gs.mt15]}>
+      <View style={[gs.ph15, gs.mt15]}>
         <Text
           style={[
             gs.fs15,
-            {fontFamily: ts.secondarymedium, color: '#555'},
+            {fontFamily: ts.secondarysemibold, color: ts.primarytext},
             gs.fs13,
             gs.mb10,
           ]}>

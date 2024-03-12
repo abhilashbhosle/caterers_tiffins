@@ -3,7 +3,7 @@ import React, {memo} from 'react';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
 import {useRoute} from '@react-navigation/native';
-import {FlatList} from 'native-base';
+import {Center, FlatList} from 'native-base';
 import {explorecusines} from '../../../constants/Constants';
 import {Card} from 'react-native-paper';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -12,26 +12,34 @@ function ExploreCusines() {
   const route = useRoute();
   const renderItem = ({item}) => {
     return (
-      <Card style={{marginRight: 25, backgroundColor: '#fff'}}>
-        <Image
-          source={item.img}
-          style={[styles.img, gs.br12]}
-          alt={item.name}
-        />
+      <Card style={[{backgroundColor: '#fff'}, gs.mr15, gs.br8]}>
+        <Image source={item.img} style={[styles.img]} alt={item.name} />
+        <Center>
+          <Text
+            style={[
+              gs.fs8,
+              gs.p3,
+              {color: ts.primarytext, fontFamily: ts.secondarysemibold},
+            ]}
+            numberOfLines={1}
+            >
+            {item.name}
+          </Text>
+        </Center>
       </Card>
     );
   };
   return (
     <>
-      <View style={[{paddingHorizontal: 15}, gs.mt15]}>
-        <Text
-          style={[
-            gs.fs15,
-            {fontFamily: ts.secondarymedium, color: '#555'},
-            gs.fs13,
-          ]}>
-          Explore Cuisines
-        </Text>
+      <View style={[gs.ph15, gs.mt10]}>
+          <Text
+            style={[
+              gs.fs15,
+              {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+              gs.fs13,
+            ]}>
+            Explore Cuisines
+          </Text>
       </View>
       <FlatList
         data={explorecusines}
@@ -47,9 +55,11 @@ function ExploreCusines() {
 export default memo(ExploreCusines);
 const styles = ScaledSheet.create({
   img: {
-    height: '150@ms',
-    width: '165@ms',
+    height: '50@ms',
+    width: '60@ms',
     resizeMode: 'cover',
+    borderTopRightRadius: '8@ms',
+    borderTopLeftRadius: '8@ms',
   },
   contentContainerStyle: {
     paddingBottom: 20,

@@ -15,6 +15,7 @@ import {caterersinquiry, tiffinsenquiry} from '../../../constants/Constants';
 import {Card} from 'react-native-paper';
 import {gs} from '../../../../GlobalStyles';
 import FontIcons from 'react-native-vector-icons/FontAwesome';
+import { ScreenWrapper } from '../../../components/ScreenWrapper';
 export default function MyInquiries({navigation}) {
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
@@ -144,7 +145,7 @@ export default function MyInquiries({navigation}) {
         </Text>
         <Flex direction="row" align="center" style={[gs.mb5]}>
           <Text style={[styles.types, gs.fs13]}>Food Type : </Text>
-          <Text style={[styles.types, gs.fs13, {color: '#f00'}]}>
+          <Text style={[styles.types, gs.fs13, {color: ts.secondary}]}>
             {item.type}
           </Text>
         </Flex>
@@ -186,6 +187,7 @@ export default function MyInquiries({navigation}) {
   };
   //   =====TIFFINS========//
   const Tiffins = () => (
+    <ScreenWrapper>
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <FlatList
         data={tiffinsenquiry}
@@ -195,6 +197,7 @@ export default function MyInquiries({navigation}) {
         contentContainerStyle={[gs.ph10,gs.pv10]}
       />
     </View>
+    </ScreenWrapper>
   );
   const renderScene = SceneMap({
     first: Caterers,

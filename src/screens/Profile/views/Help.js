@@ -14,11 +14,13 @@ import {ts} from '../../../../ThemeStyles';
 import {ScaledSheet} from 'react-native-size-matters';
 import LinearGradient from 'react-native-linear-gradient';
 import Themebtn from '../../../components/Themebtn';
+import { ScreenWrapper } from '../../../components/ScreenWrapper';
 
 export default function Help({navigation}) {
   const [issuefocus, setIssuefocus] = useState(false);
   const [cmtfocus, setCmtfocus] = useState(false);
   return (
+    <ScreenWrapper>
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={{flex: 1, backgroundColor: '#fff'}}>
         <ThemeHeaderWrapper
@@ -41,7 +43,7 @@ export default function Help({navigation}) {
             style={[{
               ...styles.issuecontainer,
               borderColor: issuefocus ? ts.secondary : '#ccc',
-            },gs.fs14]}
+            },gs.fs14,gs.br10]}
             placeholderTextColor="#777"
             onFocus={() => setIssuefocus(true)}
             onBlur={() => setIssuefocus(false)}
@@ -51,7 +53,7 @@ export default function Help({navigation}) {
             style={[{
               ...styles.issuecontainer,
               borderColor: cmtfocus ? ts.secondary : '#ccc',
-            },styles.comtcontainer,gs.fs14]}
+            },styles.comtcontainer,gs.fs14,gs.br10]}
             placeholderTextColor="#777"
             multiline
             onFocus={() => setCmtfocus(true)}
@@ -65,6 +67,7 @@ export default function Help({navigation}) {
         </Center>
       </View>
     </TouchableWithoutFeedback>
+    </ScreenWrapper>
   );
 }
 const styles = ScaledSheet.create({

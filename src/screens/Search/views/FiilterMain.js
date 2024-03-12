@@ -18,23 +18,26 @@ import {
   catererbudget,
   caterercuisine,
   caterersort,
+  headcount,
   occasions,
 } from '../../../constants/Constants';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import FontistoIcon from 'react-native-vector-icons/Fontisto';
 import AntIcon from 'react-native-vector-icons/Ionicons';
 import ThemeSepBtn from '../../../components/ThemeSepBtn';
+import {ScreenWrapper} from '../../../components/ScreenWrapper';
 
 export default function FiilterMain({navigation}) {
   const [tserviceSelect, setTserviceSelect] = useState(true);
   const [bserviceSelect, setBserviceSelect] = useState(false);
   const [selectedBudget, setSelectedBudget] = useState(catererbudget[0]);
+  const [headCount,setHeadCount]=useState('')
   const [searchenabled, setSearchEnabled] = useState(false);
   const [cuisine, setCuisine] = useState(caterercuisine);
   const [occasion, setOccasion] = useState(occasions);
   const [deliverySelect, setDeliverySelect] = useState(true);
   const [takeawaySelect, setTakeawaySelect] = useState(false);
-  const [selectedSort,setSelectedSort]=useState('')
+  const [selectedSort, setSelectedSort] = useState('');
 
   const handleCuisineSelect = (item, index) => {
     let data = [...cuisine];
@@ -50,7 +53,7 @@ export default function FiilterMain({navigation}) {
   };
 
   return (
-    <>
+    <ScreenWrapper>
       <ThemeHeaderWrapper
         lefttxt="Filters"
         righttxt="Clear All"
@@ -60,8 +63,7 @@ export default function FiilterMain({navigation}) {
       <KeyboardAwareScrollView
         enableOnAndroid={true}
         showsVerticalScrollIndicator={false}
-        style={[{flex: 1, backgroundColor: '#fff'}, gs.ph10, gs.pv20]}
-		>
+        style={[{flex: 1, backgroundColor: '#fff'}, gs.ph10, gs.pv20]}>
         {/* ====CATER SERVICE TYPE====== */}
         <Card style={[gs.mh5, gs.pv10, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>
@@ -110,7 +112,7 @@ export default function FiilterMain({navigation}) {
                 <Image
                   alt="tableservice"
                   source={require('../../../assets/Search/buffetservice.png')}
-                  style={styles.img}
+                  style={styles.buffetimg}
                 />
                 <TouchableWithoutFeedback
                   onPress={() => {
@@ -143,6 +145,39 @@ export default function FiilterMain({navigation}) {
               </Flex>
             </Flex>
           </Flex>
+        </Card>
+        {/* =======HEAD COUNT========= */}
+        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
+          <Text style={[styles.heading, gs.fs15, gs.pl15]}>
+          Choose Head count
+          </Text>
+          <Divider style={[gs.mv15]} />
+          <View style={[gs.ph10]}>
+            {headcount.map((e, i) => (
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setHeadCount(e);
+                }}
+                key={i}>
+                <Flex direction="row" justify="space-between" align="center">
+                  <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>{e}</Text>
+                  <MaterialIcons
+                    name={
+                      e == headCount ? 'check-circle' : 'circle-outline'
+                    }
+                    style={[
+                      gs.fs20,
+                      gs.mr3,
+                      {
+                        color:
+                          e == headCount ? ts.secondary : ts.alternate,
+                      },
+                    ]}
+                  />
+                </Flex>
+              </TouchableWithoutFeedback>
+            ))}
+          </View>
         </Card>
         {/* ========BUDGET SELECTION========= */}
         <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
@@ -221,7 +256,7 @@ export default function FiilterMain({navigation}) {
                   <TouchableWithoutFeedback>
                     <AntIcon
                       name="chevron-down-outline"
-                      style={[gs.pr10, gs.pv10, gs.fs16,{color:'#777'}]}
+                      style={[gs.pr10, gs.pv10, gs.fs16, {color: '#777'}]}
                     />
                   </TouchableWithoutFeedback>
                   <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
@@ -339,18 +374,16 @@ export default function FiilterMain({navigation}) {
           <Divider style={[gs.mv15]} />
           <View style={[gs.ph15]}>
             {occasion.map((e, i) => (
-              <Flex
-                direction="row"
-                justify="space-between"
-                align="center"
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  handleOccasionSelect(e, i);
+                }}
                 key={i}>
-                <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                  {e.name}
-                </Text>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    handleOccasionSelect(e, i);
-                  }}>
+                <Flex direction="row" justify="space-between" align="center">
+                  <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                    {e.name}
+                  </Text>
+
                   <MaterialIcons
                     name={
                       e.selected ? 'checkbox-marked' : 'checkbox-blank-outline'
@@ -363,13 +396,19 @@ export default function FiilterMain({navigation}) {
                       },
                     ]}
                   />
-                </TouchableWithoutFeedback>
-              </Flex>
+                </Flex>
+              </TouchableWithoutFeedback>
             ))}
           </View>
         </Card>
         {/* ========SORT BY========= */}
-        <Card style={[gs.mh5, gs.pv10, gs.mt15, {backgroundColor: '#fff',marginBottom:80}]}>
+        <Card
+          style={[
+            gs.mh5,
+            gs.pv10,
+            gs.mt15,
+            {backgroundColor: '#fff', marginBottom: 80},
+          ]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By</Text>
           <Divider style={[gs.mv15]} />
           <View style={[gs.ph10]}>
@@ -382,15 +421,12 @@ export default function FiilterMain({navigation}) {
                 <Flex direction="row" justify="space-between" align="center">
                   <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>{e}</Text>
                   <MaterialIcons
-                    name={
-                      e == selectedSort ? 'check-circle' : 'circle-outline'
-                    }
+                    name={e == selectedSort ? 'check-circle' : 'circle-outline'}
                     style={[
                       gs.fs20,
                       gs.mr3,
                       {
-                        color:
-                          e == selectedSort ? ts.secondary : ts.alternate,
+                        color: e == selectedSort ? ts.secondary : ts.alternate,
                       },
                     ]}
                   />
@@ -400,26 +436,39 @@ export default function FiilterMain({navigation}) {
           </View>
         </Card>
       </KeyboardAwareScrollView>
-	  <Card style={[{borderRadius:0,backgroundColor:'#fff'},gs.ph15,gs.pv10]}>
-	  <Flex direction='row' align='center' justify='space-between' style={[gs.pv20]}>
-		<Text style={[gs.fs13,{color:ts.secondary,fontFamily:ts.secondaryregular}]}>
-			235 matching Caterers
-		</Text>
-		<ThemeSepBtn btntxt='Show results' themecolor={ts.secondary}/>
-	  </Flex>
-	  </Card>
-    </>
+      <Card
+        style={[{borderRadius: 0, backgroundColor: '#fff'}, gs.ph15, gs.pb10]}>
+        <Flex
+          direction="row"
+          align="center"
+          justify="space-between"
+          style={[gs.pt15, gs.pb10]}>
+          <Text
+            style={[
+              gs.fs13,
+              {color: ts.secondary, fontFamily: ts.secondaryregular},
+            ]}>
+            235 matching Caterers
+          </Text>
+          <ThemeSepBtn btntxt="Show results" themecolor={ts.secondary} />
+        </Flex>
+      </Card>
+    </ScreenWrapper>
   );
 }
 const styles = ScaledSheet.create({
   heading: {
-    fontFamily: ts.secondarymedium,
+    fontFamily: ts.secondarysemibold,
     marginTop: '5@ms',
-    color:'#777'
+    color: ts.primarytext,
   },
   img: {
     height: '35@ms',
     width: '35@ms',
+  },
+  buffetimg:{
+    height:'40@ms',
+    width:'40@ms'
   },
   servicetxt: {
     fontFamily: ts.secondaryregular,
@@ -434,14 +483,14 @@ const styles = ScaledSheet.create({
     paddingLeft: '30@ms',
     paddingRight: 5,
     borderRadius: 10,
-    height:'45@ms'
+    height: '45@ms',
   },
   searchcontainer: {
     position: 'absolute',
     left: '10@ms',
-    height:'45@ms',
-    marginTop:'10@ms',
-    justifyContent:'center',
-    alignItems:'center'
+    height: '45@ms',
+    marginTop: '10@ms',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

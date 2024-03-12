@@ -8,12 +8,13 @@ import MyInquiries from '../screens/Profile/views/MyInquiries';
 import AboutUs from '../screens/Profile/views/AboutUs';
 import Faq from '../screens/Profile/views/Faq';
 import Help from '../screens/Profile/views/Help';
-import Notification from '../screens/Home/views/Notification';
+import Notification from '../screens/Home/views/Notifications';
 import FiilterMain from '../screens/Search/views/FiilterMain';
 import FilterTiffins from '../screens/Search/views/FilterTiffins';
 import CatererProfile from '../screens/Profile/views/CatererProfile';
 import TiffinProfile from '../screens/Profile/views/TiffinProfile';
 import GalleryView from '../screens/Profile/views/ProfileModules/GalleryView';
+// import Notifications from '../screens/Home/views/Notifications';
 
 const Stack = createNativeStackNavigator();
 export default function PageStack() {
@@ -26,7 +27,7 @@ export default function PageStack() {
       <Stack.Screen name="AboutUs" component={AboutUs}/>
       <Stack.Screen name="Faq" component={Faq}/>
       <Stack.Screen name="Help" component={Help}/>
-      <Stack.Screen name="Notification" component={Notification}/>
+      <Stack.Screen name="Notifications" component={Notification}/>
       <Stack.Screen name='FilterMain' component={FiilterMain}/>
       <Stack.Screen name='FilterTiffins' component={FilterTiffins}/>
       <Stack.Screen name='CatererProfile' component={CatererProfile}/>

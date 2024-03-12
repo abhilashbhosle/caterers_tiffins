@@ -1,4 +1,12 @@
-import {View, Text, TouchableOpacity, useWindowDimensions, Platform, TouchableWithoutFeedback} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  Platform,
+  StatusBar,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import React, {useState} from 'react';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {gs} from '../../../../GlobalStyles';
@@ -13,12 +21,21 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import Badges from './Badges';
 import SearchList from './SearchList';
 import {ScaledSheet} from 'react-native-size-matters';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function SearchMain({route, navigation}) {
   const {width, height} = useWindowDimensions();
   const {from} = route.params;
-  const [selectedType, setSelectedType] = useState('');
-
+  const [selectedType, setSelectedType] = useState('All');
+  useFocusEffect(() => {
+    // ========TINT COLORS=========//
+    if(Platform.OS=='android')
+    if (from == 'Caterers') {
+      StatusBar.setBarStyle('light-content', true,{backgroundColor:ts.secondary});
+    } else {
+      StatusBar.setBarStyle('light-content',true,{backgroundColor:ts.primary});
+    }
+  });
   return (
     <ScreenWrapper>
       <View
@@ -37,7 +54,10 @@ export default function SearchMain({route, navigation}) {
             }}
             style={[gs.pb20]}>
             {/* ========SEARCH============ */}
-            <AntIcon name="arrowleft" style={[gs.fs22, {color: '#fff'},gs.mt10]} />
+            <AntIcon
+              name="arrowleft"
+              style={[gs.fs22, {color: '#fff'}, gs.mt10]}
+            />
           </TouchableOpacity>
           <SearchBar from={from} navigation={navigation} />
         </SafeAreaView>
@@ -92,25 +112,24 @@ export default function SearchMain({route, navigation}) {
           </Text>
         </Flex>
         <TouchableWithoutFeedback
-       onPress={() => {
-        from == 'Caterers' ?
-        navigation.navigate('PageStack', {
-          screen: 'FilterMain',
-        }):
-        navigation.navigate('PageStack', {
-          screen: 'FilterTiffins',
-        })
-      }}
-        >
-        <Flex direction="row" alignItems="center">
-          <MaterialIcons
-            name="filter"
-            style={[gs.fs22, {color: '#555'}, gs.mr5]}
-          />
-          <Text style={[{fontFamily: ts.secondary, color: '#222'}, gs.fs13]}>
-            Filters
-          </Text>
-        </Flex>
+          onPress={() => {
+            from == 'Caterers'
+              ? navigation.navigate('PageStack', {
+                  screen: 'FilterMain',
+                })
+              : navigation.navigate('PageStack', {
+                  screen: 'FilterTiffins',
+                });
+          }}>
+          <Flex direction="row" alignItems="center">
+            <MaterialIcons
+              name="filter"
+              style={[gs.fs22, {color: '#555'}, gs.mr5]}
+            />
+            <Text style={[{fontFamily: ts.secondary, color: '#222'}, gs.fs13]}>
+              Filters
+            </Text>
+          </Flex>
         </TouchableWithoutFeedback>
       </Flex>
       {/* ========SORTING BY TYPES========= */}
@@ -134,8 +153,8 @@ export default function SearchMain({route, navigation}) {
 }
 const styles = ScaledSheet.create({
   headercontainer: {
-	borderBottomLeftRadius: 10,
-	 borderBottomRightRadius: 10,
-	 height:Platform.OS=='ios'?'150@ms':'110@ms'
-	},
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    height: Platform.OS == 'ios' ? '150@ms' : '150@ms',
+  },
 });

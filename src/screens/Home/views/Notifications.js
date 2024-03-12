@@ -6,10 +6,12 @@ import {notifications} from '../../../constants/Constants';
 import {gs} from '../../../../GlobalStyles';
 import {ScaledSheet} from 'react-native-size-matters';
 import {ts} from '../../../../ThemeStyles';
+import { ScreenWrapper } from '../../../components/ScreenWrapper';
 
-export default function Notification({navigation}) {
+export default function Notifications({navigation}) {
   const renderNotifications = ({item, index}) => {
     return (
+      <ScreenWrapper>
       <View style={[gs.mv10]}>
         <Flex
           direction="row"
@@ -32,6 +34,7 @@ export default function Notification({navigation}) {
         </Flex>
         <Divider style={[gs.mt15]} />
       </View>
+      </ScreenWrapper>
     );
   };
   return (
