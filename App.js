@@ -5,9 +5,12 @@ import RootStack from './src/stacks/RootStack';
 import {PaperProvider} from 'react-native-paper';
 import {NativeBaseProvider} from 'native-base';
 import {NavigationContainer} from '@react-navigation/native';
+import { store } from './src/redux/store';
+import { Provider } from 'react-redux';
 
 export default function App() {
   return (
+    <Provider store={store}>
     <PaperProvider>
       <NativeBaseProvider>
         <NavigationContainer>
@@ -15,5 +18,6 @@ export default function App() {
         </NavigationContainer>
       </NativeBaseProvider>
     </PaperProvider>
+    </Provider>
   );
 }

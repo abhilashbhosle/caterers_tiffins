@@ -1,5 +1,5 @@
 import {View, Text, FlatList, Image, ImageBackground} from 'react-native';
-import React, {memo} from 'react';
+import React, {memo, useEffect} from 'react';
 import {useRoute} from '@react-navigation/native';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
@@ -7,17 +7,34 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {Card} from 'react-native-paper';
 import {india} from '../../../constants/Constants';
 import LinearGradient from 'react-native-linear-gradient';
+import {useDispatch, useSelector} from 'react-redux';
+import {getCities} from '../controllers/ExploreIndiaController';
+import CitySkel from '../../../components/skeletons/CitySkel';
+import EntypoIcon from 'react-native-vector-icons/Entypo'
 
 function ExploreIndia() {
   const route = useRoute();
+  const dispatch = useDispatch();
+  const {loading, data, error} = useSelector(state => state?.city);
+  useEffect(() => {
+    dispatch(getCities());
+  }, []);
   const renderItem = ({item}) => {
     return (
       <Card style={{backgroundColor: '#fff', marginBottom: 15}}>
-        <ImageBackground
-          source={item.img}
+        {
+          item?.file_name?.medium?
+          <ImageBackground
+          source={{uri:item?.file_name?.medium}}
           style={[styles.img]}
-          alt={item.name}
+          alt={item.city_name}
           imageStyle={gs.br12}></ImageBackground>
+          :
+          <View style={{...styles.img,justifyContent:'center',alignItems:'center'}}>
+          <EntypoIcon name='image-inverted' style={[{color:ts.secondarytext},gs.fs30]}/>
+          </View>
+        }
+       
         <View style={[styles.overlay, gs.br12]}></View>
         <LinearGradient
           colors={['#0004', 'transparent']}
@@ -31,10 +48,8 @@ function ExploreIndia() {
             },
             gs.h40,
             styles.txtoverlay,
-          ]}
-          >
-          <View
-           >
+          ]}>
+          <View>
             <Text
               style={[
                 {fontFamily: ts.primarymedium, color: '#fff'},
@@ -42,13 +57,38 @@ function ExploreIndia() {
                 gs.mr20,
                 gs.mt5,
               ]}>
-              {item.name}
+              {item.city_name}
             </Text>
           </View>
         </LinearGradient>
       </Card>
     );
   };
+  if (error?.message) {
+    return (
+      <View style={[gs.ph15, gs.mt15]}>
+        <Text
+          style={[
+            gs.fs15,
+            {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+            gs.fs13,
+            gs.mb10,
+          ]}>
+          {route.name == 'Caterings'
+            ? 'Explore Caterers around India'
+            : 'Explore Tiffin Service providers around India'}
+        </Text>
+          <Text
+          style={[
+            gs.fs8,
+            gs.p3,
+            {color: ts.primarytext, fontFamily: ts.secondarysemibold},
+          ]}>
+          No Cities found.
+        </Text>
+      </View>
+    );
+  }
   return (
     <View style={[gs.ph15, gs.mt15]}>
       <Text
@@ -62,13 +102,20 @@ function ExploreIndia() {
           ? 'Explore Caterers around India'
           : 'Explore Tiffin Service providers around India'}
       </Text>
-      <FlatList
-        data={india}
+      {
+        loading?
+        <CitySkel />
+        :
+        data &&
+        <FlatList
+        data={data}
         keyExtractor={(item, index) => String(index)}
         showsVerticalScrollIndicator={false}
         renderItem={renderItem}
         contentContainerStyle={{marginTop: 20}}
       />
+      }
+     
     </View>
   );
 }

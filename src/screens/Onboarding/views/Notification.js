@@ -53,11 +53,11 @@ export default function Notification({navigation}) {
               />
             </Center>
             <View style={[gs.mb15]}>
-              <TouchableOpacity activeOpacity={0.7} onPress={()=>{navigation.navigate('Register')}}>
+              <TouchableOpacity activeOpacity={0.7}>
                 <WhiteCoverBtn btntxt="Turn on Notification" />
               </TouchableOpacity>
               <Center>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=>{navigation.navigate('Register')}}>
               <Text style={[gs.btnPlaneWhite]}>Not Now</Text>
               </TouchableOpacity>
               </Center>

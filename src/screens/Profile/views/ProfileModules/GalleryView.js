@@ -9,7 +9,7 @@ import {
   Animated,
   SafeAreaView,
   Platform,
-  StatusBar
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {ScreenWrapper} from '../../../../components/ScreenWrapper';
@@ -59,7 +59,7 @@ export default function GalleryView({route, navigation}) {
         {/* =======TOP FLATLIST======== */}
         <View style={{height, position: 'relative'}}>
           <Carousel
-          loop={false}
+            loop={false}
             ref={topRef}
             width={width}
             height={height}
@@ -70,7 +70,10 @@ export default function GalleryView({route, navigation}) {
                 <View style={{height, width}}>
                   <ImageBackground
                     source={item.img}
-                    style={[StyleSheet.absoluteFillObject, {...styles.img,maxHeight:height-100}]}
+                    style={[
+                      StyleSheet.absoluteFillObject,
+                      {...styles.img, maxHeight: height - 100},
+                    ]}
                     imageStyle={{resizeMode: 'contain'}}
                   />
                 </View>
@@ -96,7 +99,7 @@ export default function GalleryView({route, navigation}) {
               {
                 ...styles.arrows,
                 padding: 10,
-                marginTop:Platform.OS=='android'&& StatusBar.currentHeight
+                marginTop: Platform.OS == 'android' && StatusBar.currentHeight,
               },
             ]}
             onPress={() => {
@@ -143,8 +146,7 @@ export default function GalleryView({route, navigation}) {
   );
 }
 const styles = ScaledSheet.create({
-  img: {
-  },
+  img: {},
   arrowcontainer: {
     height: '40@ms',
     width: '40@ms',

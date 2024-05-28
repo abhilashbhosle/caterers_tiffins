@@ -18,10 +18,13 @@ import AntIcon from 'react-native-vector-icons/AntDesign';
 import {gs} from '../../../../GlobalStyles';
 import {Center} from 'native-base';
 import WhiteCoverBtn from '../../../components/WhiteCoverBtn';
+import { useDispatch } from 'react-redux';
+import { getLocation } from '../controllers/AuthController';
 
 export default function Location({navigation}) {
   const scale = useRef(new Animated.Value(0)).current;
-  
+  const dispatch=useDispatch()
+
   React.useEffect(() => {
     Animated.spring(scale, {
       toValue: 1,
@@ -39,7 +42,11 @@ export default function Location({navigation}) {
                 activeOpacity={0.7}
                 onPress={() => {
                   navigation.goBack();
-                }} style={{marginTop:Platform.OS=='android'&&StatusBar.currentHeight}}>
+                }}
+                style={{
+                  marginTop:
+                    Platform.OS == 'android' && StatusBar.currentHeight,
+                }}>
                 <AntIcon
                   name="arrowleft"
                   style={[gs.fs22, {color: '#fff'}, gs.p5]}
@@ -61,11 +68,16 @@ export default function Location({navigation}) {
               </Center>
             </View>
             <View style={[gs.mb15]}>
-              <TouchableOpacity onPress={()=>{navigation.navigate('BottomBarStack')}}>
-              <WhiteCoverBtn btntxt="Allow location access" />
+              <TouchableOpacity
+                onPress={() => {
+                  // navigation.navigate('BottomBarStack');
+                  console.log("pressed")
+                  dispatch(getLocation({navigation}))
+                }}>
+                <WhiteCoverBtn btntxt="Allow location access" />
               </TouchableOpacity>
               <Center>
-                <TouchableOpacity>
+                <TouchableOpacity activeOpacity={0.7} onPress={()=>{navigation.navigate('BottomBarStack');}}>
                   <Text style={[gs.btnPlaneWhite]}>Not Now</Text>
                 </TouchableOpacity>
               </Center>
@@ -79,7 +91,7 @@ export default function Location({navigation}) {
 const styles = ScaledSheet.create({
   container: {
     paddingHorizontal: '20@ms',
-    paddingTop:Platform.OS=='ios'&&30,
+    paddingTop: Platform.OS == 'ios' && 30,
     height: '100%',
     justifyContent: 'space-between',
   },

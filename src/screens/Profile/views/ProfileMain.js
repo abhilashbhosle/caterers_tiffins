@@ -6,9 +6,9 @@ import {
   TouchableOpacity,
   ImageBackground,
   ScrollView,
-  StatusBar
+  StatusBar,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
 import {gs} from '../../../../GlobalStyles';
 import {Flex} from 'native-base';
@@ -19,251 +19,285 @@ import AntIcon from 'react-native-vector-icons/AntDesign';
 import EntypoIcons from 'react-native-vector-icons/Entypo';
 import LinearGradient from 'react-native-linear-gradient';
 import Share from 'react-native-share';
-import { useFocusEffect } from '@react-navigation/native';
-import { ScreenWrapper } from '../../../components/ScreenWrapper';
+import {useFocusEffect} from '@react-navigation/native';
+import {ScreenWrapper} from '../../../components/ScreenWrapper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch, useSelector} from 'react-redux';
+import {logout, startLoader} from '../../../redux/CommonSlicer';
+import {getUser} from '../../Onboarding/controllers/AuthController';
 
 export default function ProfileMain({navigation}) {
+  const dispatch = useDispatch();
+  const userDetails = useSelector(state => state.auth?.userInfo?.data);
+  const handleLogout = async () => {
+    await AsyncStorage.clear();
+    dispatch(startLoader(true));
+    setTimeout(() => {
+      dispatch(logout(true));
+    }, 1000);
+    setTimeout(() => {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'OnboardStack'}],
+      });
+      dispatch(logout(false));
+    }, 2000);
+  };
+  useEffect(() => {
+    dispatch(getUser());
+  }, []);
   return (
     <ScreenWrapper>
-    <View style={{flex: 1, backgroundColor: '#fff'}}>
-      <ThemeHeaderWrapper
-        lefttxt="My Profile"
-        goBack={() => navigation.goBack()}
-      />
-      <ScrollView style={[gs.ph20, {flex: 1}]} showsVerticalScrollIndicator={false}>
-        <Flex
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          style={[gs.mv15]}>
-          <Flex direction="row" align="center">
-            <ImageBackground
-              source={require('../../../assets/India/06.jpg')}
-              imageStyle={[{resizeMode: 'cover'}, gs.br10]}
-              style={[styles.profile]}
-            />
-            <View style={[gs.ml15]}>
-              <Text style={[gs.fs21, styles.name]}>Full Name</Text>
-              <Text style={[styles.mobile, gs.fs15]}>+91 9003451965</Text>
-            </View>
-          </Flex>
-          <TouchableOpacity activeOpacity={0.7}>
-            <MaterialIcon name="edit" style={styles.icon} />
-          </TouchableOpacity>
-        </Flex>
-        {/* =====MANAGE ACCOUNT========= */}
-        <View style={[gs.mv10]}>
-          <Text
-            style={[
-              gs.fs15,
-              {fontFamily: ts.secondaryregular, color: '#555'},
-              gs.fs13,
-            ]}>
-            Manage your account
-          </Text>
-        </View>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.cardlayout}
-          onPress={() => {
-            navigation.navigate('PageStack', {
-              screen: 'WishList',
-            });
-          }}>
+      <View style={{flex: 1, backgroundColor: '#fff'}}>
+        <ThemeHeaderWrapper
+          lefttxt="My Profile"
+          goBack={() => navigation.goBack()}
+        />
+        <ScrollView
+          style={[gs.ph20, {flex: 1}]}
+          showsVerticalScrollIndicator={false}>
           <Flex
             direction="row"
+            justifyContent="space-between"
             alignItems="center"
-            justifyContent="space-between">
-            <Flex direction="row" alignItems="center">
-              <AntIcon
-                name="hearto"
-                style={[gs.fs22, {color: ts.secondarytext}]}
-              />
-              <Text style={styles.cardtxt}>My Wishlist</Text>
-            </Flex>
-            <EntypoIcons
-              name="chevron-small-right"
-              style={[gs.fs26, {color: ts.secondarytext}]}
-            />
+            style={[gs.mv15]}>
+            {userDetails?.length && (
+              <Flex direction="row" align="center">
+                {/* <ImageBackground
+                  source={require('../../../assets/India/06.jpg')}
+                  imageStyle={[{resizeMode: 'cover'}, gs.br10]}
+                  style={[styles.profile]}
+                /> */}
+                <LinearGradient
+                  colors={[ts.secondary, ts.primary]}
+                  start={{x: 0.0, y: 0.0}}
+                  end={{x: 1.0, y: 0.0}}
+                  style={[
+                    {...styles.profile},
+                  ]}>
+                  <Text style={[gs.fs21, {...styles.name,color:'#fff'}]}>{userDetails[0]?.username?.slice(0, 1)}</Text>
+                </LinearGradient>
+                <View style={[gs.ml15]}>
+                  <Text style={[gs.fs21, styles.name]}>{userDetails[0]?.username}</Text>
+                  <Text style={[styles.mobile, gs.fs15]}>+91 {userDetails[0]?.phone_number}</Text>
+                </View>
+              </Flex>
+            )}
+
+            <TouchableOpacity activeOpacity={0.7}>
+              <MaterialIcon name="edit" style={styles.icon} />
+            </TouchableOpacity>
           </Flex>
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.cardlayout}
-          onPress={() => {
-            navigation.navigate('PageStack', {
-              screen: 'MyInquiries',
-            });
-          }}>
-          <Flex
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between">
-            <Flex direction="row" alignItems="center">
-              <MaterialIcon
-                name="edit-note"
-                style={[gs.fs22, {color: ts.secondarytext}]}
-              />
-              <Text style={styles.cardtxt}>My Inquiries</Text>
-            </Flex>
-            <EntypoIcons
-              name="chevron-small-right"
-              style={[gs.fs26, {color: ts.secondarytext}]}
-            />
-          </Flex>
-        </TouchableOpacity>
-        {/* =====LINKS======= */}
-        <View style={[gs.mt15, gs.mv5]}>
-          <Text
-            style={[
-              gs.fs15,
-              {fontFamily: ts.secondaryregular, color: '#555'},
-              gs.fs13,
-            ]}>
-            Links
-          </Text>
-        </View>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.cardlayout}
-          onPress={() => {
-            navigation.navigate('PageStack', {
-              screen: 'AboutUs',
-            });
-          }}>
-          <Flex
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between">
-            <Flex direction="row" alignItems="center">
-              <AntIcon
-                name="hearto"
-                style={[gs.fs22, {color: ts.secondarytext}]}
-              />
-              <Text style={styles.cardtxt}>About Us</Text>
-            </Flex>
-            <EntypoIcons
-              name="chevron-small-right"
-              style={[gs.fs26, {color: ts.secondarytext}]}
-            />
-          </Flex>
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.cardlayout}
-          onPress={() => {
-            navigation.navigate('PageStack', {
-              screen: 'Faq',
-            });
-          }}>
-          <Flex
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between">
-            <Flex direction="row" alignItems="center">
-              <AntIcon
-                name="question"
-                style={[gs.fs22, {color: ts.secondarytext}]}
-              />
-              <Text style={styles.cardtxt}>FAQ's</Text>
-            </Flex>
-            <EntypoIcons
-              name="chevron-small-right"
-              style={[gs.fs26, {color: ts.secondarytext}]}
-            />
-          </Flex>
-        </TouchableOpacity>
-        {/* ====GET IN TOUCH===== */}
-        <View style={[gs.mt15, gs.mv5]}>
-          <Text
-            style={[
-              gs.fs15,
-              {fontFamily: ts.secondaryregular, color: '#555'},
-              gs.fs13,
-            ]}>
-            Get in Touch
-          </Text>
-        </View>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.cardlayout}
-          onPress={() => {
-            navigation.navigate('PageStack', {
-              screen: 'Help',
-            });
-          }}>
-          <Flex
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between">
-            <Flex direction="row" alignItems="center">
-              <Text style={styles.cardtxt}>HelpDesk & Support</Text>
-            </Flex>
-            <EntypoIcons
-              name="chevron-small-right"
-              style={[gs.fs26, {color: ts.secondarytext}]}
-            />
-          </Flex>
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={styles.cardlayout}
-          onPress={() => {
-            Share.open({
-              title: "This is my report ",
-              message: "Message:",
-              url: "file:///storage/emulated/0/demo/test.pdf",
-              subject: "Report",
-          })
-              .then(res => {
-                console.log(res);
-              })
-              .catch(err => {
-                err && console.log(err);
+          {/* =====MANAGE ACCOUNT========= */}
+          <View style={[gs.mv10]}>
+            <Text
+              style={[
+                gs.fs15,
+                {fontFamily: ts.secondaryregular, color: '#555'},
+                gs.fs13,
+              ]}>
+              Manage your account
+            </Text>
+          </View>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.cardlayout}
+            onPress={() => {
+              navigation.navigate('PageStack', {
+                screen: 'WishList',
               });
-          }}>
-          <Flex
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between">
-            <Flex direction="row" alignItems="center">
-              <Text style={styles.cardtxt}>Share Caterings & Tiffins</Text>
-            </Flex>
-            <EntypoIcons
-              name="share"
-              style={[gs.fs24, {color: ts.secondarytext}]}
-            />
-          </Flex>
-        </TouchableOpacity>
-        <Flex direction="row" justifyContent="flex-end">
-          <LinearGradient
-            colors={[ts.secondary, ts.primary]}
-            start={{x: 0.0, y: 0.0}}
-            end={{x: 1.0, y: 0.0}}
-            style={[
-              gs.ph15,
-             styles.logout,
-              gs.mv20,
-              gs.br10
-            ]}>
+            }}>
             <Flex
               direction="row"
               alignItems="center"
               justifyContent="space-between">
-              <View style={[gs.pl10]}>
-                <MaterialIcon
-                  name="logout"
-                  style={[gs.fs24, {color: '#fff'}]}
+              <Flex direction="row" alignItems="center">
+                <AntIcon
+                  name="hearto"
+                  style={[gs.fs22, {color: ts.secondarytext}]}
                 />
-              </View>
-              <Text style={[gs.ph2, {...styles.cardtxt, color: '#fff'}]}>
-                Logout
-              </Text>
+                <Text style={styles.cardtxt}>My Wishlist</Text>
+              </Flex>
+              <EntypoIcons
+                name="chevron-small-right"
+                style={[gs.fs26, {color: ts.secondarytext}]}
+              />
             </Flex>
-          </LinearGradient>
-        </Flex>
-      </ScrollView>
-    </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.cardlayout}
+            onPress={() => {
+              navigation.navigate('PageStack', {
+                screen: 'MyInquiries',
+              });
+            }}>
+            <Flex
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between">
+              <Flex direction="row" alignItems="center">
+                <MaterialIcon
+                  name="edit-note"
+                  style={[gs.fs22, {color: ts.secondarytext}]}
+                />
+                <Text style={styles.cardtxt}>My Inquiries</Text>
+              </Flex>
+              <EntypoIcons
+                name="chevron-small-right"
+                style={[gs.fs26, {color: ts.secondarytext}]}
+              />
+            </Flex>
+          </TouchableOpacity>
+          {/* =====LINKS======= */}
+          <View style={[gs.mt15, gs.mv5]}>
+            <Text
+              style={[
+                gs.fs15,
+                {fontFamily: ts.secondaryregular, color: '#555'},
+                gs.fs13,
+              ]}>
+              Links
+            </Text>
+          </View>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.cardlayout}
+            onPress={() => {
+              navigation.navigate('PageStack', {
+                screen: 'AboutUs',
+              });
+            }}>
+            <Flex
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between">
+              <Flex direction="row" alignItems="center">
+                <AntIcon
+                  name="hearto"
+                  style={[gs.fs22, {color: ts.secondarytext}]}
+                />
+                <Text style={styles.cardtxt}>About Us</Text>
+              </Flex>
+              <EntypoIcons
+                name="chevron-small-right"
+                style={[gs.fs26, {color: ts.secondarytext}]}
+              />
+            </Flex>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.cardlayout}
+            onPress={() => {
+              navigation.navigate('PageStack', {
+                screen: 'Faq',
+              });
+            }}>
+            <Flex
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between">
+              <Flex direction="row" alignItems="center">
+                <AntIcon
+                  name="question"
+                  style={[gs.fs22, {color: ts.secondarytext}]}
+                />
+                <Text style={styles.cardtxt}>FAQ's</Text>
+              </Flex>
+              <EntypoIcons
+                name="chevron-small-right"
+                style={[gs.fs26, {color: ts.secondarytext}]}
+              />
+            </Flex>
+          </TouchableOpacity>
+          {/* ====GET IN TOUCH===== */}
+          <View style={[gs.mt15, gs.mv5]}>
+            <Text
+              style={[
+                gs.fs15,
+                {fontFamily: ts.secondaryregular, color: '#555'},
+                gs.fs13,
+              ]}>
+              Get in Touch
+            </Text>
+          </View>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.cardlayout}
+            onPress={() => {
+              navigation.navigate('PageStack', {
+                screen: 'Help',
+              });
+            }}>
+            <Flex
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between">
+              <Flex direction="row" alignItems="center">
+                <Text style={styles.cardtxt}>HelpDesk & Support</Text>
+              </Flex>
+              <EntypoIcons
+                name="chevron-small-right"
+                style={[gs.fs26, {color: ts.secondarytext}]}
+              />
+            </Flex>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.cardlayout}
+            onPress={() => {
+              Share.open({
+                title: 'This is my report ',
+                message: 'Message:',
+                url: 'file:///storage/emulated/0/demo/test.pdf',
+                subject: 'Report',
+              })
+                .then(res => {
+                  console.log(res);
+                })
+                .catch(err => {
+                  err && console.log(err);
+                });
+            }}>
+            <Flex
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between">
+              <Flex direction="row" alignItems="center">
+                <Text style={styles.cardtxt}>Share Caterings & Tiffins</Text>
+              </Flex>
+              <EntypoIcons
+                name="share"
+                style={[gs.fs24, {color: ts.secondarytext}]}
+              />
+            </Flex>
+          </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.7} onPress={handleLogout}>
+            <Flex direction="row" justifyContent="flex-end">
+              <LinearGradient
+                colors={[ts.secondary, ts.primary]}
+                start={{x: 0.0, y: 0.0}}
+                end={{x: 1.0, y: 0.0}}
+                style={[gs.ph15, styles.logout, gs.mv20, gs.br10]}>
+                <Flex
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between">
+                  <View style={[gs.pl10]}>
+                    <MaterialIcon
+                      name="logout"
+                      style={[gs.fs24, {color: '#fff'}]}
+                    />
+                  </View>
+                  <Text style={[gs.ph2, {...styles.cardtxt, color: '#fff'}]}>
+                    Logout
+                  </Text>
+                </Flex>
+              </LinearGradient>
+            </Flex>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
     </ScreenWrapper>
   );
 }
@@ -271,6 +305,9 @@ const styles = ScaledSheet.create({
   profile: {
     height: '48@ms',
     width: '48@ms',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
   },
   name: {
     color: ts.primarytext,
@@ -305,5 +342,5 @@ const styles = ScaledSheet.create({
     height: '40@ms',
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
 });

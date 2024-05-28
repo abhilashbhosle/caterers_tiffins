@@ -6,13 +6,13 @@ import {
   TouchableWithoutFeedback,
   TextInput,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
 import {Card} from 'react-native-paper';
 import {gs} from '../../../../GlobalStyles';
 import {ScaledSheet} from 'react-native-size-matters';
 import {ts} from '../../../../ThemeStyles';
-import {Center, Divider, Flex} from 'native-base';
+import {Center, Divider, Flex, Spinner} from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   catererbudget,
@@ -26,18 +26,25 @@ import FontistoIcon from 'react-native-vector-icons/Fontisto';
 import AntIcon from 'react-native-vector-icons/Ionicons';
 import ThemeSepBtn from '../../../components/ThemeSepBtn';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
+import {useDispatch, useSelector} from 'react-redux';
+import {getServing} from '../../Home/controllers/FilterMainController';
 
 export default function FiilterMain({navigation}) {
   const [tserviceSelect, setTserviceSelect] = useState(true);
   const [bserviceSelect, setBserviceSelect] = useState(false);
   const [selectedBudget, setSelectedBudget] = useState(catererbudget[0]);
-  const [headCount,setHeadCount]=useState('')
+  const [headCount, setHeadCount] = useState('');
   const [searchenabled, setSearchEnabled] = useState(false);
   const [cuisine, setCuisine] = useState(caterercuisine);
   const [occasion, setOccasion] = useState(occasions);
   const [deliverySelect, setDeliverySelect] = useState(true);
   const [takeawaySelect, setTakeawaySelect] = useState(false);
   const [selectedSort, setSelectedSort] = useState('');
+  const [serving, setServing] = useState([]);
+  const dispatch = useDispatch();
+  const {servingLoading, servingData, servingError} = useSelector(
+    state => state?.filterCater,
+  );
 
   const handleCuisineSelect = (item, index) => {
     let data = [...cuisine];
@@ -52,6 +59,14 @@ export default function FiilterMain({navigation}) {
     setOccasion(data);
   };
 
+  useEffect(() => {
+    dispatch(getServing());
+  }, []);
+  useEffect(() => {
+    if (servingData?.length) {
+      setServing(servingData);
+    }
+  }, [servingData]);
   return (
     <ScreenWrapper>
       <ThemeHeaderWrapper
@@ -64,92 +79,76 @@ export default function FiilterMain({navigation}) {
         enableOnAndroid={true}
         showsVerticalScrollIndicator={false}
         style={[{flex: 1, backgroundColor: '#fff'}, gs.ph10, gs.pv20]}>
-        {/* ====CATER SERVICE TYPE====== */}
+        {/* ====CATER SERVING TYPE====== */}
         <Card style={[gs.mh5, gs.pv10, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>
-            Cater Service Type
+            Cater Serving Type
           </Text>
           <Divider style={[gs.mv15]} />
           <Flex
             direction="row"
             alignItems="center"
             justifyContent="space-around">
-            {/* ===TABLE SERVICE======= */}
-            <Flex justify="center" alignItems="center">
-              <Image
-                alt="tableservice"
-                source={require('../../../assets/Search/tableservice.png')}
-                style={styles.img}
-              />
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  setTserviceSelect(prev => !prev);
-                  setBserviceSelect(false);
-                }}>
-                <Flex
-                  direction="row"
-                  alignItems="center"
-                  style={[gs.mt10, gs.mb5]}>
-                  <MaterialIcons
-                    name={!tserviceSelect ? 'circle-outline' : 'circle-slice-8'}
-                    style={[
-                      gs.fs20,
-                      gs.mr3,
-                      {
-                        color: tserviceSelect ? ts.secondary : ts.secondarytext,
-                      },
-                    ]}
-                  />
-                  <Text style={[styles.servicetxt, gs.fs13, gs.ml5]}>
-                    Table Service
-                  </Text>
-                </Flex>
-              </TouchableWithoutFeedback>
-            </Flex>
-            {/* ===BUFFET SERVICE======= */}
-            <Flex direction="row" alignItems="center">
-              <Flex justify="center" alignItems="center">
-                <Image
-                  alt="tableservice"
-                  source={require('../../../assets/Search/buffetservice.png')}
-                  style={styles.buffetimg}
-                />
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    setBserviceSelect(prev => !prev);
-                    setTserviceSelect(false);
-                  }}>
-                  <Flex
-                    direction="row"
-                    alignItems="center"
-                    style={[gs.mt10, gs.mb5]}>
-                    <MaterialIcons
-                      name={
-                        !bserviceSelect ? 'circle-outline' : 'circle-slice-8'
-                      }
-                      style={[
-                        gs.fs20,
-                        gs.mr3,
-                        {
-                          color: bserviceSelect
-                            ? ts.secondary
-                            : ts.secondarytext,
-                        },
-                      ]}
+            {servingLoading && (
+              <Center>
+                <Spinner color={ts.secondary}/>
+              </Center>
+            )}
+            {
+              servingError?.message && 
+              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>No Serving type found</Text>
+            }
+            {!servingLoading &&
+              serving.map((e, i) => (
+                <Flex justify="center" alignItems="center" key={i}>
+                  {e?.name == 'Table Service' ? (
+                    <Image
+                      alt="tableservice"
+                      source={require('../../../assets/Search/tableservice.png')}
+                      style={styles.img}
                     />
-                    <Text style={[styles.servicetxt, gs.fs13, gs.ml5]}>
-                      Buffet Service
-                    </Text>
-                  </Flex>
-                </TouchableWithoutFeedback>
-              </Flex>
-            </Flex>
+                  ) : (
+                    <Image
+                      alt="buffetservice"
+                      source={require('../../../assets/Search/buffetservice.png')}
+                      style={styles.buffetimg}
+                    />
+                  )}
+
+                  <TouchableWithoutFeedback>
+                    <Flex
+                      direction="row"
+                      alignItems="center"
+                      style={[gs.mt10, gs.mb5]}>
+                      <MaterialIcons
+                        name={
+                          !tserviceSelect ? 'circle-outline' : 'circle-slice-8'
+                        }
+                        style={[
+                          gs.fs20,
+                          gs.mr3,
+                          {
+                            color: tserviceSelect
+                              ? ts.secondary
+                              : ts.secondarytext,
+                          },
+                        ]}
+                      />
+                      <Text style={[styles.servicetxt, gs.fs13, gs.ml5]}>
+                        {e?.name}
+                      </Text>
+                    </Flex>
+                  </TouchableWithoutFeedback>
+                </Flex>
+              ))
+             
+            }
           </Flex>
         </Card>
         {/* =======HEAD COUNT========= */}
         <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>
-          Choose Head count
+            Choose Head count
           </Text>
           <Divider style={[gs.mv15]} />
           <View style={[gs.ph10]}>
@@ -162,15 +161,12 @@ export default function FiilterMain({navigation}) {
                 <Flex direction="row" justify="space-between" align="center">
                   <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>{e}</Text>
                   <MaterialIcons
-                    name={
-                      e == headCount ? 'check-circle' : 'circle-outline'
-                    }
+                    name={e == headCount ? 'check-circle' : 'circle-outline'}
                     style={[
                       gs.fs20,
                       gs.mr3,
                       {
-                        color:
-                          e == headCount ? ts.secondary : ts.alternate,
+                        color: e == headCount ? ts.secondary : ts.alternate,
                       },
                     ]}
                   />
@@ -466,9 +462,9 @@ const styles = ScaledSheet.create({
     height: '35@ms',
     width: '35@ms',
   },
-  buffetimg:{
-    height:'40@ms',
-    width:'40@ms'
+  buffetimg: {
+    height: '40@ms',
+    width: '40@ms',
   },
   servicetxt: {
     fontFamily: ts.secondaryregular,

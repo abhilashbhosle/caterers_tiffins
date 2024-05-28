@@ -58,6 +58,7 @@ export const ScreenWrapper = ({children}) => {
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && ts.secondary,
+            translucent: Platform.OS == 'android' && true,
           });
           break;
         case 'Tiffins':
@@ -66,6 +67,7 @@ export const ScreenWrapper = ({children}) => {
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && ts.primary,
+            translucent: Platform.OS == 'android' && true,
           });
           break;
         case 'SearchMain':
@@ -73,6 +75,7 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
+            translucent: Platform.OS == 'android' && true,
           });
           break;
         case 'ProfileMain':
@@ -144,6 +147,7 @@ export const ScreenWrapper = ({children}) => {
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && ts.secondary,
+            translucent: Platform.OS == 'android' && true,
           });
           break;
         case 'FilterTiffins':
@@ -152,6 +156,7 @@ export const ScreenWrapper = ({children}) => {
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && ts.primary,
+            translucent: Platform.OS == 'android' && true,
           });
           break;
         case 'TiffinProfile':
@@ -160,6 +165,7 @@ export const ScreenWrapper = ({children}) => {
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && ts.primary,
+            translucent: Platform.OS == 'android' && true,
           });
           break;
         case 'CatererProfile':
@@ -168,6 +174,7 @@ export const ScreenWrapper = ({children}) => {
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && ts.secondary,
+            translucent: Platform.OS == 'android' && true,
           });
           break;
         case 'GalleryView':
@@ -176,6 +183,7 @@ export const ScreenWrapper = ({children}) => {
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && '#000',
+            translucent: Platform.OS == 'android' && true,
           });
           break;
         default:

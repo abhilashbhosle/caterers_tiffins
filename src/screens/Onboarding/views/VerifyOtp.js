@@ -8,7 +8,7 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import ThemeWrapper from '../../../components/ThemeWrapper';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -23,7 +23,9 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-export default function VerifyOtp({navigation}) {
+import { resendLoginOtp, resendOtp, verifyLoginOtp, verifyOtp } from '../controllers/AuthController';
+import { useDispatch } from 'react-redux';
+export default function VerifyOtp({navigation, route}) {
   const CELL_COUNT = 6;
   const [value, setValue] = useState('');
   const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
@@ -31,7 +33,25 @@ export default function VerifyOtp({navigation}) {
     value,
     setValue,
   });
+  const [timer, setTimer] = useState(30);
+  let {phoneNumber,from} = route.params;
+  const dispatch=useDispatch()
+  // console.log(phoneNumber)
 
+  useEffect(() => {
+    let time;
+    time = setInterval(() => {
+      setTimer(prevTimer => (prevTimer > 0 ? prevTimer - 1 : 0));
+    }, 1000);
+    return () => clearInterval(time);
+  }, [timer]);
+  const handleResendOtp=()=>{
+      if(from=='register'){
+      dispatch(resendOtp({phoneNumber: phoneNumber,setTimer,setValue}));
+      }else if(from=='login'){
+      dispatch(resendLoginOtp({phoneNumber:phoneNumber,setTimer,setValue}))
+      }
+  }
   return (
     <ScreenWrapper>
       <ThemeWrapper>
@@ -46,8 +66,10 @@ export default function VerifyOtp({navigation}) {
                 onPress={() => {
                   navigation.goBack();
                 }}
-                style={{marginTop:Platform.OS=='android'&& StatusBar.currentHeight}}
-                >
+                style={{
+                  marginTop:
+                    Platform.OS == 'android' && StatusBar.currentHeight,
+                }}>
                 <AntIcon
                   name="arrowleft"
                   style={[gs.fs22, {color: '#fff'}, gs.p5]}
@@ -59,7 +81,7 @@ export default function VerifyOtp({navigation}) {
                   Verify with OTP sent to [Mobile number]
                 </Text>
               </View>
-              <Center style={{width:'100%'}}>
+              <Center style={{width: '100%'}}>
                 <CodeField
                   ref={ref}
                   {...props}
@@ -80,7 +102,7 @@ export default function VerifyOtp({navigation}) {
                   )}
                 />
               </Center>
-              <TouchableOpacity activeOpacity={0.7}>
+              {/* <TouchableOpacity activeOpacity={0.7}>
                 <Flex direction="row" alignItems="center">
                   <OctIcons name="circle" style={[gs.fs18, {color: '#fff'}]} />
                   <Text
@@ -92,24 +114,63 @@ export default function VerifyOtp({navigation}) {
                     Auto fetching OTP
                   </Text>
                 </Flex>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity
                 activeOpacity={0.7}
                 style={{marginTop: 40}}
                 onPress={() => {
-                  navigation.navigate('Location');
+                  from=='register'
+                  ?
+                  dispatch(
+                    verifyOtp({
+                      phoneNumber: phoneNumber,
+                      otp: value,
+                      navigation,
+                    }),
+                  )
+                  :
+                  dispatch(
+                    verifyLoginOtp({
+                      phoneNumber: phoneNumber,
+                      otp: value,
+                      navigation,
+                    }),
+                  )
                 }}>
                 <WhiteCoverBtn btntxt="Continue" />
               </TouchableOpacity>
               <Center>
-                <Text
-                  style={[
-                    {fontFamily: 'ReadexPro-Medium', color: '#fff'},
-                    gs.fs12,
-                    gs.mt20,
-                  ]}>
-                  Didn't receive it? Retry in 00:30
-                </Text>
+                <Flex direction="row" alignItems="center">
+                  <Text
+                    style={[
+                      {fontFamily: 'ReadexPro-Medium', color: '#fff'},
+                      gs.fs12,
+                      gs.mt20,
+                    ]}>
+                    Didn't receive it? {" "}
+                  </Text>
+                  {timer > 0 ? (
+                    <Text
+                      style={[
+                        {fontFamily: 'ReadexPro-Medium', color: '#fff'},
+                        gs.fs12,
+                        gs.mt20,
+                      ]}>
+                     Retry in 00: {timer}
+                    </Text>
+                  ) : (
+                    <TouchableOpacity onPress={handleResendOtp}>
+                      <Text
+                        style={[
+                          {fontFamily: 'ReadexPro-Medium', color: '#fff'},
+                          gs.fs12,
+                          gs.mt20,
+                        ]}>
+                        Resend Otp
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </Flex>
               </Center>
             </View>
           </TouchableWithoutFeedback>
@@ -124,7 +185,7 @@ const styles = ScaledSheet.create({
     paddingTop: 30,
   },
   codeFieldRoot: {
-    marginVertical: '20@ms'
+    marginVertical: '20@ms',
   },
   cell: {
     width: '40@ms',
@@ -134,12 +195,12 @@ const styles = ScaledSheet.create({
     borderWidth: 1,
     borderColor: '#f5f5f5',
     textAlign: 'center',
-    marginRight:'10@ms',
-    color:'#fff',
-    borderRadius:10
+    marginRight: '10@ms',
+    color: '#fff',
+    borderRadius: 10,
   },
   focusCell: {
     borderColor: '#fff',
-    borderWidth:2
+    borderWidth: 2,
   },
 });

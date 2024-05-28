@@ -24,7 +24,7 @@ export default function Caterers({navigation}) {
         style={styles.container}
         showsVerticalScrollIndicator={false}
         >
-        <RecentSearches />
+        {/* <RecentSearches /> */}
         <ExploreCusines />
         <Branded />
         <ExploreIndia />
