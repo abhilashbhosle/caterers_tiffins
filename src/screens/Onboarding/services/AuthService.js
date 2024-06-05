@@ -2,7 +2,7 @@ import axios from 'axios';
 import {endpoints} from '../../../endpoints';
 import {showMessage, hideMessage} from 'react-native-flash-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { clearRegStates } from '../controllers/AuthController';
+import { clearRegStates, getUser } from '../controllers/AuthController';
 import {GOOGLE_KEY} from '@env';
 import { startLoader } from '../../../redux/CommonSlicer';
 // import {setLocation, startLoader} from '../../redux/slicers/CommomSlicer';
@@ -258,6 +258,7 @@ export const getLocationService = async ({
 	longitude,
 	dispatch,
 	navigation,
+	from
   }) => {
 	try {
 	  dispatch(startLoader(true));
@@ -300,7 +301,7 @@ export const getLocationService = async ({
 		  place_id: res.data.results[0].place_id,
 		};
 		console.log("addressdata",addressData)
-		await updateLocationService({temp:addressData, navigation,dispatch});
+		await updateLocationService({temp:addressData, navigation,dispatch,from});
 	  }
 	//   dispatch(setLocation(res.data.results[0]));
 	} catch (error) {
@@ -316,7 +317,7 @@ export const getLocationService = async ({
 	return component ? component.long_name : '';
   };
   // ======UPDATE LOCATION=========//
-  export const updateLocationService = async ({temp, navigation,dispatch}) => {
+  export const updateLocationService = async ({temp, navigation,dispatch,from}) => {
 	try {
 	  dispatch(startLoader(true));
 	  let token = await AsyncStorage.getItem('token');
@@ -336,7 +337,14 @@ export const getLocationService = async ({
 		  description: 'Location Updated Successfully.',
 		  type: 'success',
 		});
+		if(!from){
 		navigation.navigate('BottomBarStack');
+		}
+		else{
+			setTimeout(()=>{
+				dispatch(getUser())
+			},1000)
+		}
 	  }
 	  return res;
 	} catch (error) {

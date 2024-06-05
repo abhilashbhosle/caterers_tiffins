@@ -12,6 +12,7 @@ import {gs} from '../../GlobalStyles';
 import {Flex} from 'native-base';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import {ScaledSheet} from 'react-native-size-matters';
+import { clearFilter } from '../screens/Home/controllers/FilterMainController';
 
 function ThemeHeaderWrapper(props) {
   const renderChildren = () => {
@@ -20,9 +21,7 @@ function ThemeHeaderWrapper(props) {
         <Flex
           direction="row"
           justifyContent="space-between"
-          alignItems="center"
-          
-          >
+          alignItems="center">
           <Flex direction="row" alignItems="center">
             <TouchableOpacity activeOpacity={0.7} onPress={props.goBack}>
               <IonIcons
@@ -38,10 +37,25 @@ function ThemeHeaderWrapper(props) {
               {props.lefttxt}
             </Text>
           </Flex>
-          <Text
-            style={[gs.fs12, {color: '#fff', fontFamily: ts.secondaryregular}]}>
-            {props.righttxt}
-          </Text>
+          {props?.righttxt === 'Clear All' ? (
+            <TouchableOpacity activeOpacity={0.7} onPress={()=>{props.dispatch(clearFilter())}}>
+              <Text
+                style={[
+                  gs.fs12,
+                  {color: '#fff', fontFamily: ts.secondaryregular},
+                ]}>
+                {props.righttxt}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <Text
+              style={[
+                gs.fs12,
+                {color: '#fff', fontFamily: ts.secondaryregular},
+              ]}>
+              {props.righttxt}
+            </Text>
+          )}
         </Flex>
       </SafeAreaView>
     );
@@ -65,6 +79,6 @@ export default memo(ThemeHeaderWrapper);
 const styles = ScaledSheet.create({
   container: {
     height: Platform.OS == 'ios' ? '100@ms' : '110@ms',
-    paddingTop:Platform.OS=='android'? '60@ms':'60@ms',
+    paddingTop: Platform.OS == 'android' ? '60@ms' : '60@ms',
   },
 });

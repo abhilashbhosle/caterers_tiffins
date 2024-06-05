@@ -21,11 +21,16 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SearchBar from './SearchBar';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import LocationSheet from '../../../components/LocationSheet';
+import {useDispatch, useSelector} from 'react-redux';
+import {getUser} from '../../Onboarding/controllers/AuthController';
 
 function HeaderView({from, navigation}) {
   const route = useRoute();
   const opacity = useRef(new Animated.Value(0)).current;
   const [locSheetOpen, setLocSheetOpen] = useState(false);
+  const userDetails = useSelector(state => state.auth?.userInfo?.data);
+
+  const dispatch = useDispatch();
   useFocusEffect(
     useCallback(() => {
       Animated.spring(opacity, {
@@ -36,6 +41,11 @@ function HeaderView({from, navigation}) {
       }).start();
     }, []),
   );
+
+  useEffect(() => {
+    dispatch(getUser());
+  }, []);
+  // console.log(userDetails)
   return (
     <Animated.View
       style={[
@@ -45,7 +55,7 @@ function HeaderView({from, navigation}) {
           opacity,
           borderBottomLeftRadius: 10,
           borderBottomRightRadius: 10,
-          paddingTop: Platform.OS == 'android' && StatusBar.currentHeight+10,
+          paddingTop: Platform.OS == 'android' && StatusBar.currentHeight + 10,
         },
         gs.p20,
       ]}>
@@ -63,11 +73,14 @@ function HeaderView({from, navigation}) {
               />
               <Text
                 style={[
-                  {fontFamily: ts.secondarymedium, color: '#fff'},
+                  {fontFamily: ts.secondarymedium, color: '#fff', width: '40%'},
                   gs.fs13,
                   gs.ml5,
-                ]}>
-                Location
+                ]}
+                numberOfLines={1}>
+                {userDetails?.length > 0 && userDetails[0]?.city
+                  ? userDetails[0].city
+                  : 'Location'}
               </Text>
               <IonIcons
                 name="chevron-down"
@@ -111,11 +124,30 @@ function HeaderView({from, navigation}) {
                 });
               }}>
               {/* <FontAwesome name="user" style={[gs.fs20, {color: '#fff'}]} /> */}
-              <Image
+              {/* <Image
                 source={require('../../../assets/India/06.jpg')}
                 alt="user"
                 style={styles.userimg}
-              />
+              /> */}
+              <View
+                style={{
+                  ...styles.userimg,
+                  backgroundColor: '#fff',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={[
+                    gs.fs14,
+                    {
+                      ...styles.name,
+                      color: from == 'Caterers' ? ts.secondary : ts.primary,
+                    },
+                  ]}>
+                  {userDetails?.length > 0 &&
+                    userDetails[0]?.username?.slice(0, 1)}
+                </Text>
+              </View>
             </TouchableOpacity>
           </Flex>
         </Flex>
@@ -139,5 +171,9 @@ const styles = ScaledSheet.create({
     height: '28@ms',
     width: '28@ms',
     borderRadius: 50,
+  },
+  name: {
+    fontFamily: ts.primarymedium,
+    fontWeight:'700'
   },
 });

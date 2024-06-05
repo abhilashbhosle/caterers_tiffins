@@ -5,6 +5,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   TextInput,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
@@ -14,59 +15,132 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {ts} from '../../../../ThemeStyles';
 import {Center, Divider, Flex, Spinner} from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {
-  catererbudget,
-  caterercuisine,
-  caterersort,
-  headcount,
-  occasions,
-} from '../../../constants/Constants';
+import {caterersort, headcount} from '../../../constants/Constants';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import FontistoIcon from 'react-native-vector-icons/Fontisto';
 import AntIcon from 'react-native-vector-icons/Ionicons';
 import ThemeSepBtn from '../../../components/ThemeSepBtn';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {useDispatch, useSelector} from 'react-redux';
-import {getServing} from '../../Home/controllers/FilterMainController';
+import {
+  getBudget,
+  getHeadCount,
+  getService,
+  getServing,
+  getSort,
+} from '../../Home/controllers/FilterMainController';
+import {getServService} from '../../Home/services/FilterMainService';
+import {getOccassions} from '../../Home/controllers/OccassionController';
+import {getCuisines} from '../../Home/controllers/ExploreCuisineController';
+import {
+  handleBudget,
+  handleChildrenCuisines,
+  handleCount,
+  handleOccassion,
+  handleParentCuisines,
+  handleService,
+  handleServing,
+  handleSort,
+} from '../../Home/controllers/FilterCommonController';
 
 export default function FiilterMain({navigation}) {
-  const [tserviceSelect, setTserviceSelect] = useState(true);
-  const [bserviceSelect, setBserviceSelect] = useState(false);
-  const [selectedBudget, setSelectedBudget] = useState(catererbudget[0]);
-  const [headCount, setHeadCount] = useState('');
+  const [budget, setBudget] = useState([]);
+  const [headCount, setHeadCount] = useState([]);
   const [searchenabled, setSearchEnabled] = useState(false);
-  const [cuisine, setCuisine] = useState(caterercuisine);
-  const [occasion, setOccasion] = useState(occasions);
-  const [deliverySelect, setDeliverySelect] = useState(true);
-  const [takeawaySelect, setTakeawaySelect] = useState(false);
+  const [cuisine, setCuisine] = useState([]);
+  const [occasion, setOccasion] = useState([]);
   const [selectedSort, setSelectedSort] = useState('');
   const [serving, setServing] = useState([]);
+  const [service, setService] = useState([]);
+  const [search, setSearch] = useState('');
+  const [expanded, setExpanded] = useState(-1);
   const dispatch = useDispatch();
-  const {servingLoading, servingData, servingError} = useSelector(
-    state => state?.filterCater,
-  );
+  const [sort, setSort] = useState([]);
 
-  const handleCuisineSelect = (item, index) => {
-    let data = [...cuisine];
-    let itemToInsert = {...item, selected: !item.selected};
-    data[index] = itemToInsert;
-    setCuisine(data);
-  };
-  const handleOccasionSelect = (item, index) => {
-    let data = [...occasion];
-    let itemToInsert = {...item, selected: !item.selected};
-    data[index] = itemToInsert;
-    setOccasion(data);
-  };
+  const {
+    servingLoading,
+    servingData,
+    servingError,
+    serviceLoading,
+    serviceData,
+    serviceError,
+    budgetLoading,
+    budgetData,
+    budgetError,
+    headLoading,
+    headData,
+    headError,
+    sortLoading,
+    sortData,
+    sortError,
+  } = useSelector(state => state?.filterCater);
+
+  const {loading, data, error} = useSelector(state => state?.occassion);
+  const cuisines_data = useSelector(state => state?.cuisine);
+  const cuisineData = cuisines_data?.data;
+  const cuisineLoading = cuisines_data?.loading;
+  const cuisineError = cuisines_data?.error;
 
   useEffect(() => {
     dispatch(getServing());
+    dispatch(getService());
+    dispatch(getOccassions());
+    dispatch(getBudget());
+    dispatch(getCuisines());
+    dispatch(getHeadCount());
+    dispatch(getSort());
   }, []);
   useEffect(() => {
     if (servingData?.length) {
       setServing(servingData);
     }
-  }, [servingData]);
+    if (serviceData?.length) {
+      setService(serviceData);
+    }
+    if (data?.length) {
+      setOccasion(data);
+    }
+    if (budgetData?.length) {
+      setBudget(budgetData);
+    }
+    if (cuisineData?.length) {
+      setCuisine(cuisineData);
+    }
+    if (headData?.length) {
+      setHeadCount(headData);
+    }
+    if (sortData?.length) {
+      setSort(sortData);
+    }
+  }, [
+    servingData,
+    serviceData,
+    data,
+    budgetData,
+    cuisineData,
+    headData,
+    sortData,
+  ]);
+  // =======SEARCH CUISINE========//
+  const handleSearch = text => {
+    setSearch(text);
+  };
+  useEffect(() => {
+    let data = [...cuisineData];
+    if (search?.length > 0) {
+      let finalData = data.filter((e, i) => {
+        let c1 = e.name.startsWith(search);
+        let c2 = e.children.filter(item => item.name.startsWith(search));
+        if (c1 || c2.length > 0) {
+          return e;
+        }
+      });
+      setCuisine(finalData);
+    } else {
+      setCuisine(cuisineData);
+    }
+  }, [search]);
+
   return (
     <ScreenWrapper>
       <ThemeHeaderWrapper
@@ -74,13 +148,14 @@ export default function FiilterMain({navigation}) {
         righttxt="Clear All"
         goBack={() => navigation.goBack()}
         bgColor={ts.secondary}
+        dispatch={dispatch}
       />
       <KeyboardAwareScrollView
         enableOnAndroid={true}
         showsVerticalScrollIndicator={false}
         style={[{flex: 1, backgroundColor: '#fff'}, gs.ph10, gs.pv20]}>
         {/* ====CATER SERVING TYPE====== */}
-        <Card style={[gs.mh5, gs.pv10, {backgroundColor: '#fff'}]}>
+        <Card style={[gs.mh5, gs.pv10, gs.mb15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>
             Cater Serving Type
           </Text>
@@ -91,14 +166,16 @@ export default function FiilterMain({navigation}) {
             justifyContent="space-around">
             {servingLoading && (
               <Center>
-                <Spinner color={ts.secondary}/>
+                <Spinner color={ts.secondary} />
               </Center>
             )}
-            {
-              servingError?.message && 
-              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>No Serving type found</Text>
-            }
+            {servingError?.message && (
+              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                No Serving type found
+              </Text>
+            )}
             {!servingLoading &&
+              !servingLoading &&
               serving.map((e, i) => (
                 <Flex justify="center" alignItems="center" key={i}>
                   {e?.name == 'Table Service' ? (
@@ -115,22 +192,24 @@ export default function FiilterMain({navigation}) {
                     />
                   )}
 
-                  <TouchableWithoutFeedback>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleServing({index: i, setServing, serving});
+                    }}>
                     <Flex
                       direction="row"
                       alignItems="center"
                       style={[gs.mt10, gs.mb5]}>
                       <MaterialIcons
                         name={
-                          !tserviceSelect ? 'circle-outline' : 'circle-slice-8'
+                          e.selected == 0 ? 'circle-outline' : 'circle-slice-8'
                         }
                         style={[
                           gs.fs20,
                           gs.mr3,
                           {
-                            color: tserviceSelect
-                              ? ts.secondary
-                              : ts.secondarytext,
+                            color:
+                              e.selected == 1 ? ts.secondary : ts.secondarytext,
                           },
                         ]}
                       />
@@ -138,11 +217,9 @@ export default function FiilterMain({navigation}) {
                         {e?.name}
                       </Text>
                     </Flex>
-                  </TouchableWithoutFeedback>
+                  </TouchableOpacity>
                 </Flex>
-              ))
-             
-            }
+              ))}
           </Flex>
         </Card>
         {/* =======HEAD COUNT========= */}
@@ -152,27 +229,44 @@ export default function FiilterMain({navigation}) {
           </Text>
           <Divider style={[gs.mv15]} />
           <View style={[gs.ph10]}>
-            {headcount.map((e, i) => (
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  setHeadCount(e);
-                }}
-                key={i}>
-                <Flex direction="row" justify="space-between" align="center">
-                  <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>{e}</Text>
-                  <MaterialIcons
-                    name={e == headCount ? 'check-circle' : 'circle-outline'}
-                    style={[
-                      gs.fs20,
-                      gs.mr3,
-                      {
-                        color: e == headCount ? ts.secondary : ts.alternate,
-                      },
-                    ]}
-                  />
-                </Flex>
-              </TouchableWithoutFeedback>
-            ))}
+            {headLoading && (
+              <Center>
+                <Spinner color={ts.secondary} />
+              </Center>
+            )}
+            {headError?.message && (
+              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                No Head count found
+              </Text>
+            )}
+            {!headError &&
+              !headLoading &&
+              headCount?.map((e, i) => (
+                <TouchableWithoutFeedback
+                  key={i}
+                  onPress={() => {
+                    handleCount({index: i, setHeadCount, headCount});
+                  }}>
+                  <Flex direction="row" justify="space-between" align="center">
+                    <Text
+                      style={[
+                        styles.servicetxt,
+                        gs.fs13,
+                        gs.mv10,
+                      ]}>{`${e.start} - ${e.end}`}</Text>
+                    <MaterialIcons
+                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
+                      style={[
+                        gs.fs20,
+                        gs.mr3,
+                        {
+                          color: e.selected == 1 ? ts.secondary : ts.alternate,
+                        },
+                      ]}
+                    />
+                  </Flex>
+                </TouchableWithoutFeedback>
+              ))}
           </View>
         </Card>
         {/* ========BUDGET SELECTION========= */}
@@ -182,30 +276,45 @@ export default function FiilterMain({navigation}) {
           </Text>
           <Divider style={[gs.mv15]} />
           <View style={[gs.ph10]}>
-            {catererbudget.map((e, i) => (
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  setSelectedBudget(e);
-                }}
-                key={i}>
-                <Flex direction="row" justify="space-between" align="center">
-                  <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>{e}</Text>
-                  <MaterialIcons
-                    name={
-                      e == selectedBudget ? 'check-circle' : 'circle-outline'
-                    }
-                    style={[
-                      gs.fs20,
-                      gs.mr3,
-                      {
-                        color:
-                          e == selectedBudget ? ts.secondary : ts.alternate,
-                      },
-                    ]}
-                  />
-                </Flex>
-              </TouchableWithoutFeedback>
-            ))}
+            {budgetLoading && (
+              <Center>
+                <Spinner color={ts.secondary} />
+              </Center>
+            )}
+            {budgetError?.message && (
+              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                No Budget found
+              </Text>
+            )}
+            {!budgetError &&
+              !budgetLoading &&
+              budget?.map((e, i) => (
+                <TouchableOpacity
+                  key={i}
+                  onPress={() => {
+                    handleBudget({index: i, setBudget, budget});
+                  }}
+                  activeOpacity={0.7}>
+                  <Flex direction="row" justify="space-between" align="center">
+                    <Text
+                      style={[
+                        styles.servicetxt,
+                        gs.fs13,
+                        gs.mv10,
+                      ]}>{`Rs. ${e.start_price} - Rs. ${e?.end_price}`}</Text>
+                    <MaterialIcons
+                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
+                      style={[
+                        gs.fs20,
+                        gs.mr3,
+                        {
+                          color: e.selected == 1 ? ts.secondary : ts.alternate,
+                        },
+                      ]}
+                    />
+                  </Flex>
+                </TouchableOpacity>
+              ))}
           </View>
         </Card>
         {/* ======CHOOSE CUISINE======= */}
@@ -231,6 +340,10 @@ export default function FiilterMain({navigation}) {
                 onBlur={() => {
                   setSearchEnabled(false);
                 }}
+                value={search}
+                onChangeText={text => {
+                  handleSearch(text);
+                }}
               />
               <View style={styles.searchcontainer}>
                 <FontistoIcon
@@ -242,42 +355,105 @@ export default function FiilterMain({navigation}) {
                 />
               </View>
             </View>
-            {cuisine.map((e, i) => (
-              <Flex
-                direction="row"
-                justify="space-between"
-                align="center"
-                key={i}>
-                <Flex direction="row" alignItems="center">
-                  <TouchableWithoutFeedback>
-                    <AntIcon
-                      name="chevron-down-outline"
-                      style={[gs.pr10, gs.pv10, gs.fs16, {color: '#777'}]}
-                    />
-                  </TouchableWithoutFeedback>
-                  <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                    {e.name}
-                  </Text>
-                </Flex>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    handleCuisineSelect(e, i);
-                  }}>
-                  <MaterialIcons
-                    name={
-                      e.selected ? 'checkbox-marked' : 'checkbox-blank-outline'
-                    }
-                    style={[
-                      gs.fs20,
-                      gs.mr3,
-                      {
-                        color: e.selected ? ts.secondary : ts.alternate,
-                      },
-                    ]}
-                  />
-                </TouchableWithoutFeedback>
-              </Flex>
-            ))}
+            {cuisineLoading && (
+              <Center>
+                <Spinner color={ts.secondary} />
+              </Center>
+            )}
+            {cuisineError?.message && (
+              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                No Cuisine found
+              </Text>
+            )}
+            {!cuisineError &&
+              !cuisineLoading &&
+              cuisine?.map((e, i) => (
+                <View key={i}>
+                  <Flex direction="row" justify="space-between" align="center">
+                    <Flex direction="row" alignItems="center">
+                      <TouchableOpacity
+                        onPress={() => {
+                          setExpanded(prev => (prev == i ? -1 : i));
+                        }}>
+                        <AntIcon
+                          name={
+                            expanded == i
+                              ? 'chevron-up-outline'
+                              : 'chevron-down-outline'
+                          }
+                          style={[gs.pr10, gs.pv10, gs.fs16, {color: '#777'}]}
+                        />
+                      </TouchableOpacity>
+                      <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                        {e.name}
+                      </Text>
+                    </Flex>
+                    <TouchableOpacity
+                      onPress={() =>
+                        handleParentCuisines(i, cuisine, setCuisine)
+                      }>
+                      <MaterialIcons
+                        name={
+                          e.selected == 1
+                            ? 'checkbox-marked'
+                            : 'checkbox-blank-outline'
+                        }
+                        style={[
+                          gs.fs20,
+                          gs.mr3,
+                          {
+                            color:
+                              e.selected == 1 ? ts.secondary : ts.alternate,
+                          },
+                        ]}
+                      />
+                    </TouchableOpacity>
+                  </Flex>
+                  {expanded == i &&
+                    e?.children?.map((child, index) => (
+                      <Flex
+                        direction="row"
+                        justify="space-between"
+                        align="center"
+                        key={index}
+                        style={[gs.ph20]}>
+                        <Flex direction="row" alignItems="center">
+                          <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                            {child.name}
+                          </Text>
+                        </Flex>
+                        <TouchableOpacity
+                          onPress={() => {
+                            handleChildrenCuisines(
+                              i,
+                              index,
+                              cuisine,
+                              setCuisine,
+                            );
+                          }}>
+                          <MaterialIcons
+                            name={
+                              child.selected == 1
+                                ? 'checkbox-marked'
+                                : 'checkbox-blank-outline'
+                            }
+                            style={[
+                              gs.fs20,
+                              gs.mr3,
+                              {
+                                color:
+                                  child.selected == 1
+                                    ? ts.secondary
+                                    : ts.alternate,
+                              },
+                            ]}
+                          />
+                        </TouchableOpacity>
+                      </Flex>
+                    ))}
+                  <Divider />
+                </View>
+              ))}
           </View>
         </Card>
         {/* ===SERVICE TYPE======= */}
@@ -290,76 +466,60 @@ export default function FiilterMain({navigation}) {
             direction="row"
             alignItems="center"
             justifyContent="space-around">
-            {/* ===DELIVERY SERVICE======= */}
-            <Flex justify="center" alignItems="center">
-              <Image
-                alt="tableservice"
-                source={require('../../../assets/Search/delivery.png')}
-                style={styles.img}
-              />
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  setDeliverySelect(prev => !prev);
-                  setTakeawaySelect(false);
-                }}>
-                <Flex
-                  direction="row"
-                  alignItems="center"
-                  style={[gs.mt10, gs.mb5]}>
-                  <MaterialIcons
-                    name={!deliverySelect ? 'circle-outline' : 'circle-slice-8'}
-                    style={[
-                      gs.fs20,
-                      gs.mr3,
-                      {
-                        color: deliverySelect ? ts.secondary : ts.secondarytext,
-                      },
-                    ]}
+            {serviceLoading && (
+              <Center>
+                <Spinner color={ts.secondary} />
+              </Center>
+            )}
+            {serviceError?.message && (
+              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                No Service type found
+              </Text>
+            )}
+            {!serviceLoading &&
+              !serviceError &&
+              service?.map((e, i) => (
+                <Flex justify="center" alignItems="center" key={i}>
+                  <Image
+                    alt="delivery"
+                    source={
+                      (e?.name == 'Delivery' &&
+                        require('../../../assets/Search/delivery.png')) ||
+                      (e?.name == 'Takeaway' &&
+                        require('../../../assets/Search/takeaway.png')) ||
+                      (e?.name == 'Dine In' &&
+                        require('../../../assets/Search/dinein.png'))
+                    }
+                    style={styles.img}
                   />
-                  <Text style={[styles.servicetxt, gs.fs13, gs.ml5]}>
-                    Delivery Service
-                  </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleService({index: i, setService, service});
+                    }}>
+                    <Flex
+                      direction="row"
+                      alignItems="center"
+                      style={[gs.mt10, gs.mb5]}>
+                      <MaterialIcons
+                        name={
+                          e.selected == 0 ? 'circle-outline' : 'circle-slice-8'
+                        }
+                        style={[
+                          gs.fs20,
+                          gs.mr3,
+                          {
+                            color:
+                              e.selected == 1 ? ts.secondary : ts.secondarytext,
+                          },
+                        ]}
+                      />
+                      <Text style={[styles.servicetxt, gs.fs13, gs.ml5]}>
+                        {e.name}
+                      </Text>
+                    </Flex>
+                  </TouchableOpacity>
                 </Flex>
-              </TouchableWithoutFeedback>
-            </Flex>
-            {/* ===TAKEAWAY SERVICE======= */}
-            <Flex direction="row" alignItems="center">
-              <Flex justify="center" alignItems="center">
-                <Image
-                  alt="tableservice"
-                  source={require('../../../assets/Search/takeaway.png')}
-                  style={styles.img}
-                />
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    setTakeawaySelect(prev => !prev);
-                    setDeliverySelect(false);
-                  }}>
-                  <Flex
-                    direction="row"
-                    alignItems="center"
-                    style={[gs.mt10, gs.mb5]}>
-                    <MaterialIcons
-                      name={
-                        !takeawaySelect ? 'circle-outline' : 'circle-slice-8'
-                      }
-                      style={[
-                        gs.fs20,
-                        gs.mr3,
-                        {
-                          color: takeawaySelect
-                            ? ts.secondary
-                            : ts.secondarytext,
-                        },
-                      ]}
-                    />
-                    <Text style={[styles.servicetxt, gs.fs13, gs.ml5]}>
-                      Takeaway
-                    </Text>
-                  </Flex>
-                </TouchableWithoutFeedback>
-              </Flex>
-            </Flex>
+              ))}
           </Flex>
         </Card>
         {/* ======CHOOSE OCCASION======= */}
@@ -369,32 +529,47 @@ export default function FiilterMain({navigation}) {
           </Text>
           <Divider style={[gs.mv15]} />
           <View style={[gs.ph15]}>
-            {occasion.map((e, i) => (
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  handleOccasionSelect(e, i);
-                }}
-                key={i}>
-                <Flex direction="row" justify="space-between" align="center">
-                  <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                    {e.name}
-                  </Text>
+            {loading && (
+              <Center>
+                <Spinner color={ts.secondary} />
+              </Center>
+            )}
+            {error?.message && (
+              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                No Occassions found
+              </Text>
+            )}
+            {!loading &&
+              !error &&
+              occasion?.map((e, i) => (
+                <TouchableOpacity
+                  key={i}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    handleOccassion({index: i, setOccasion, occasion});
+                  }}>
+                  <Flex direction="row" justify="space-between" align="center">
+                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                      {e.occasion_name}
+                    </Text>
 
-                  <MaterialIcons
-                    name={
-                      e.selected ? 'checkbox-marked' : 'checkbox-blank-outline'
-                    }
-                    style={[
-                      gs.fs20,
-                      gs.mr3,
-                      {
-                        color: e.selected ? ts.secondary : ts.alternate,
-                      },
-                    ]}
-                  />
-                </Flex>
-              </TouchableWithoutFeedback>
-            ))}
+                    <MaterialIcons
+                      name={
+                        e.selected == 1
+                          ? 'checkbox-marked'
+                          : 'checkbox-blank-outline'
+                      }
+                      style={[
+                        gs.fs20,
+                        gs.mr3,
+                        {
+                          color: e.selected == 1 ? ts.secondary : ts.alternate,
+                        },
+                      ]}
+                    />
+                  </Flex>
+                </TouchableOpacity>
+              ))}
           </View>
         </Card>
         {/* ========SORT BY========= */}
@@ -407,29 +582,43 @@ export default function FiilterMain({navigation}) {
           ]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By</Text>
           <Divider style={[gs.mv15]} />
-          <View style={[gs.ph10]}>
-            {caterersort.map((e, i) => (
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  setSelectedSort(e);
-                }}
-                key={i}>
-                <Flex direction="row" justify="space-between" align="center">
-                  <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>{e}</Text>
-                  <MaterialIcons
-                    name={e == selectedSort ? 'check-circle' : 'circle-outline'}
-                    style={[
-                      gs.fs20,
-                      gs.mr3,
-                      {
-                        color: e == selectedSort ? ts.secondary : ts.alternate,
-                      },
-                    ]}
-                  />
-                </Flex>
-              </TouchableWithoutFeedback>
-            ))}
-          </View>
+          {sortLoading && (
+            <Center>
+              <Spinner color={ts.secondary} />
+            </Center>
+          )}
+          {sortError?.message && (
+            <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+              No Sorts found
+            </Text>
+          )}
+          {!sortLoading && !sortError && sort?.length > 0 && (
+            <View style={[gs.ph10]}>
+              {sort.map((e, i) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    handleSort({index:i,setSort,sort})
+                  }}
+                  key={i}>
+                  <Flex direction="row" justify="space-between" align="center">
+                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                      {e.name}
+                    </Text>
+                    <MaterialIcons
+                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
+                      style={[
+                        gs.fs20,
+                        gs.mr3,
+                        {
+                          color: e.selected == 1 ? ts.secondary : ts.alternate,
+                        },
+                      ]}
+                    />
+                  </Flex>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </Card>
       </KeyboardAwareScrollView>
       <Card

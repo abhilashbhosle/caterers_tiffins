@@ -14,7 +14,7 @@ export default function Tiffins({navigation}) {
 	<ScreenWrapper>
 	 <HeaderView from='Tiffins' navigation={navigation}/>
 	 <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-	 <RecentSearches/>
+	 {/* <RecentSearches/> */}
 	 <Branded/>
 	 <ExploreIndia/>
 	 <TiffinProviders/>

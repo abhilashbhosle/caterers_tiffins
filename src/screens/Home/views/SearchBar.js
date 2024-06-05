@@ -7,9 +7,10 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   Image,
+  ScrollView,
 } from 'react-native';
-import React, {memo, useRef, useState} from 'react';
-import {Center, Flex, Modal, theme} from 'native-base';
+import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
+import {Center, Divider, Flex, Modal, Spinner, theme} from 'native-base';
 import {ScaledSheet} from 'react-native-size-matters';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {gs} from '../../../../GlobalStyles';
@@ -20,6 +21,10 @@ import WhiteCoverBtn from '../../../components/WhiteCoverBtn';
 import AntIcons from 'react-native-vector-icons/AntDesign';
 import moment from 'moment';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDispatch, useSelector} from 'react-redux';
+import {getLocation} from '../../Onboarding/controllers/AuthController';
+import {clearSearch, getLocations} from '../controllers/SearchController';
+import {debounce} from '../../../constants/Debounce';
 const minDate = new Date(); // Today
 const maxDate = new Date(2037, 6, 3);
 
@@ -33,9 +38,14 @@ function SearchBar({from, navigation}) {
   const [fromdate, setFromdate] = useState(null);
   const [enddate, setEnddate] = useState(null);
   const {width, height} = Dimensions.get('screen');
+  const [selectedSearch, setSelectedSearch] = useState('');
+  const [search, setSearch] = useState('');
+  const dispatch = useDispatch();
+  const {searchLoading, searchData, searchError} = useSelector(
+    state => state.location,
+  );
 
   const onDateChange = (date, type) => {
-    // console.log(date, type);
     if (type === 'END_DATE') {
       setSelectedEndDate(date);
       setEnddate(date ? moment(date).format('MMM DD') : null);
@@ -58,9 +68,25 @@ function SearchBar({from, navigation}) {
     handleReset();
   };
 
+  const handleOnChange = text => {
+    setSearch(text);
+    handleSearch(text);
+  };
+  const handleSearch = useCallback(
+    debounce(text => {
+      dispatch(getLocations({data: text}));
+    }, 1000),
+    []
+  );
+
+  const handleSelectedSearch = e => {
+    setSearch(e.formatted_address);
+    setSelectedSearch(e);
+    dispatch(clearSearch());
+  };
   return (
     <>
-      <Flex direction="row">
+      <Flex direction="row" alignItems="center">
         {/* =====CALENDAR====== */}
         <TouchableWithoutFeedback
           onPress={() => {
@@ -91,49 +117,89 @@ function SearchBar({from, navigation}) {
           </Flex>
         </TouchableWithoutFeedback>
         {/* ======SEARCH======= */}
-        <Flex direction="row" w={'100%'}>
-          {/* ======SEARCH INPUT======== */}
-          <TextInput
-            style={[
-              {...styles.searchTextInput, color: '#57636c'},
-              gs.fs11,
-              gs.ph10,
-            ]}
-            placeholder="Search"
-            placeholderTextColor="#57636c"
-          />
-          <TouchableOpacity
-            style={{
-              ...styles.searchIconContainer,
-              borderLeftWidth: 1,
-              borderLeftColor:
-                route.name == 'Caterings' || from == 'Caterers'
-                  ? ts.secondary
-                  : ts.primary,
-            }}
-            activeOpacity={0.9}
-            onPress={() => {
-              navigation.navigate('PageStack', {
-                screen: 'SearchMain',
-                params: {from},
-              });
-            }}>
-            <MaterialIcon
-              name="search"
-              style={[
-                gs.fs20,
-                {
-                  color:
-                    route.name == 'Caterings' || from == 'Caterers'
-                      ? ts.secondary
-                      : ts.primary,
-                },
-              ]}
-            />
-          </TouchableOpacity>
-        </Flex>
-      </Flex>
 
+        <View style={{width: '100%'}}>
+          <Flex direction="row">
+            {/* ======SEARCH INPUT======== */}
+            <TextInput
+              style={[
+                {...styles.searchTextInput, color: '#57636c'},
+                gs.fs11,
+                gs.ph10,
+              ]}
+              placeholder="Search"
+              placeholderTextColor="#57636c"
+              value={search}
+              onChangeText={text => handleOnChange(text)}
+            />
+            <TouchableOpacity
+              style={{
+                ...styles.searchIconContainer,
+                borderLeftWidth: 1,
+                borderLeftColor:
+                  route.name == 'Caterings' || from == 'Caterers'
+                    ? ts.secondary
+                    : ts.primary,
+              }}
+              activeOpacity={0.9}
+              onPress={() => {
+                navigation.navigate('PageStack', {
+                  screen: 'SearchMain',
+                  params: {from},
+                });
+              }}>
+              <MaterialIcon
+                name="search"
+                style={[
+                  gs.fs20,
+                  {
+                    color:
+                      route.name == 'Caterings' || from == 'Caterers'
+                        ? ts.secondary
+                        : ts.primary,
+                  },
+                ]}
+              />
+            </TouchableOpacity>
+          </Flex>
+        </View>
+      </Flex>
+      {/* ======SEARCH RESULTS========= */}
+      {searchData?.length > 0 &&
+        search?.length > 0 &&
+        !searchLoading &&
+        !searchError && (
+          <ScrollView style={styles.searchContainer}>
+            {searchData?.map((e, i) => (
+              <View key={i}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    handleSelectedSearch(e);
+                  }}>
+                  <Text style={styles.loctxt} numberOfLines={2}>
+                    {e?.formatted_address}
+                  </Text>
+                  <Divider
+                    backgroundColor={
+                      from == 'Caterers' ? ts.secondary : ts.primary
+                    }
+                  />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </ScrollView>
+        )}
+      {searchData?.loading && (
+        <Center>
+          <Spinner />
+        </Center>
+      )}
+      {/* {searchData?.length == 0 && search?.length>0 && (
+        <ScrollView style={styles.searchContainer}>
+              <Text style={styles.loctxt} numberOfLines={2}>No search results found</Text>
+        </ScrollView>
+      )} */}
       <Modal isOpen={openCalendarPicker} onClose={onClose}>
         <View
           style={[
@@ -144,7 +210,7 @@ function SearchBar({from, navigation}) {
             },
             gs.p10,
           ]}>
-          <Flex style={styles.rangecontainer} alignItems='center'>
+          <Flex style={styles.rangecontainer} alignItems="center">
             <Flex direction="row" style={[gs.mt15]}>
               <Text
                 style={[
@@ -160,14 +226,14 @@ function SearchBar({from, navigation}) {
                 <Image
                   source={require('../../../assets/Bottombar/chefhatf.png')}
                   style={styles.chefhat}
-                  tintColor='#fff'
+                  tintColor="#fff"
                 />
               ) : (
                 <Image
-                source={require('../../../assets/Bottombar/tiffinf.png')}
-                style={styles.chefhat}
-                tintColor='#fff'
-              />
+                  source={require('../../../assets/Bottombar/tiffinf.png')}
+                  style={styles.chefhat}
+                  tintColor="#fff"
+                />
               )}
             </View>
             <Flex direction="row" align="center" style={[gs.mt15]}>
@@ -180,7 +246,9 @@ function SearchBar({from, navigation}) {
               </Text>
             </Flex>
           </Flex>
-          <Flex style={{...styles.rangecontainer, marginVertical: 10}} alignItems='center'>
+          <Flex
+            style={{...styles.rangecontainer, marginVertical: 10}}
+            alignItems="center">
             <Text
               style={[gs.fs13, {color: '#fff', fontFamily: ts.primaryregular}]}>
               {fromdate}
@@ -268,4 +336,17 @@ const styles = ScaledSheet.create({
     width: '40@ms',
   },
   midicon: {color: '#fff', fontSize: '40@ms'},
+  searchContainer: {
+    backgroundColor: '#fff',
+    maxHeight: '200@ms',
+    width: '100%',
+    padding: '20@ms',
+    borderRadius: '6@ms',
+  },
+  loctxt: {
+    fontSize: '14@ms',
+    color: ts.primarytext,
+    fontFamily: ts.secondaryregular,
+    marginVertical: '5@ms',
+  },
 });

@@ -5,7 +5,6 @@ import { ts } from '../../ThemeStyles';
 
 export default function ThemeSepBtn(props) {
   return (
-    <TouchableWithoutFeedback>
       <View
         style={[
           gs.h40,
@@ -22,6 +21,5 @@ export default function ThemeSepBtn(props) {
           {props.btntxt}
         </Text>
       </View>
-    </TouchableWithoutFeedback>
   );
 }

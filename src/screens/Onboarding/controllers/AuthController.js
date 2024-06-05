@@ -127,7 +127,8 @@ export const verifyLoginOtp = createAsyncThunk(
 // ======GET LOCATION======//
 export const getLocation = createAsyncThunk(
 	'getLocation',
-	async ({navigation}, {dispatch}) => {
+	async ({navigation,from}, {dispatch}) => {
+    console.log('called')
 	  try {
 		dispatch(startLoader(true))
 		let res = await GetLocation.getCurrentPosition({
@@ -140,8 +141,10 @@ export const getLocation = createAsyncThunk(
 			longitude:res.longitude,
 			// latitude:13.1319,
 			// longitude:80.2644,
-			dispatch,navigation
+			dispatch,navigation,
+      from
 		}) 
+    
 		}
 		console.log('res in get location',res)
 		return res;

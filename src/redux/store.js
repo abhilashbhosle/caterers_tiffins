@@ -5,6 +5,8 @@ import ExploreCuisineController from '../screens/Home/controllers/ExploreCuisine
 import ExploreIndiaController from '../screens/Home/controllers/ExploreIndiaController'
 import OccassionController from '../screens/Home/controllers/OccassionController'
 import FilterMainController from '../screens/Home/controllers/FilterMainController'
+import FilterTiffinController from '../screens/Home/controllers/FilterTiffinController'
+import SearchController from '../screens/Home/controllers/SearchController'
 export const store = configureStore({
   reducer: {
 	common:commonreducer,
@@ -12,6 +14,8 @@ export const store = configureStore({
 	cuisine:ExploreCuisineController,
 	city:ExploreIndiaController,
 	occassion:OccassionController,
-	filterCater:FilterMainController
+	filterCater:FilterMainController,
+	filterTiffin:FilterTiffinController,
+	location:SearchController
   },
 })

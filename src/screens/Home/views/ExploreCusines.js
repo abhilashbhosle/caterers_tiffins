@@ -7,40 +7,59 @@ import {Center, FlatList, Flex} from 'native-base';
 import {explorecusines} from '../../../constants/Constants';
 import {Card} from 'react-native-paper';
 import {ScaledSheet} from 'react-native-size-matters';
-import {useDispatch, useSelector} from 'react-redux';
+import {shallowEqual, useDispatch, useSelector} from 'react-redux';
 import {getCuisines} from '../controllers/ExploreCuisineController';
 import CuisineSkel from '../../../components/skeletons/CuisineSkel';
-import EntypoIcon from 'react-native-vector-icons/Entypo'
+import EntypoIcon from 'react-native-vector-icons/Entypo';
 
 function ExploreCusines() {
   const route = useRoute();
-  const {loading, data, error} = useSelector(state => state?.cuisine);
+  const {loading, data, error} = useSelector(state => ({
+    loading: state?.cuisine?.loading,
+    data:state?.cuisine?.data,
+    error:state?.cuisine?.error
+  }),
+  shallowEqual
+);
   const dispatch = useDispatch();
   useEffect(() => {
+  console.log('explore cuisines called');
     dispatch(getCuisines());
   }, []);
-
   const renderItem = ({item}) => {
     return (
       <Card style={[{backgroundColor: '#fff'}, gs.mr15, gs.br8]}>
-        {
-          item?.file_name?.medium?
-          <Image source={{uri:item?.file_name?.medium}} style={[styles.img]} alt={item.name} />
-          :
-          <View style={{...styles.img,justifyContent:'center',alignItems:'center'}}>
-            <EntypoIcon name='image-inverted' style={[{color:ts.secondarytext},gs.fs25]}/>
+        {item?.file_name?.medium ? (
+          <Image
+            source={{uri: item?.file_name?.medium}}
+            style={[styles.img]}
+            alt={item.name}
+          />
+        ) : (
+          <View
+            style={{
+              ...styles.img,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <EntypoIcon
+              name="image-inverted"
+              style={[{color: ts.secondarytext}, gs.fs25]}
+            />
           </View>
-        }
+        )}
         <Center>
           <Text
             style={[
               gs.fs8,
               gs.p3,
-              {color: ts.primarytext, fontFamily: ts.secondarysemibold,width:styles.img.width},
-              
+              {
+                color: ts.primarytext,
+                fontFamily: ts.secondarysemibold,
+                width: styles.img.width,
+              },
             ]}
-            numberOfLines={1}
-            >
+            numberOfLines={1}>
             {item.name}
           </Text>
         </Center>
@@ -93,15 +112,16 @@ function ExploreCusines() {
           ))}
         </Flex>
       ) : (
-        data &&
-        <FlatList
-          data={data}
-          keyExtractor={(item, index) => String(index)}
-          renderItem={renderItem}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.contentContainerStyle}
-        />
+        data && (
+          <FlatList
+            data={data}
+            keyExtractor={(item, index) => String(index)}
+            renderItem={renderItem}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.contentContainerStyle}
+          />
+        )
       )}
     </>
   );
