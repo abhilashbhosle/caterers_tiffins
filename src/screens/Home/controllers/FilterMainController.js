@@ -3,11 +3,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   clearFilterService,
   getBudgetService,
+  getFoodTypesService,
   getHeadCountService,
   getServService,
   getServingService,
   getSortService,
+  getSubscriptionService,
 } from '../services/FilterMainService';
+import { getCatererSearchService } from '../services/SearchService';
 
 // ======GET SERVING TYPE=======//
 export const getServing = createAsyncThunk(
@@ -68,13 +71,40 @@ export const getSort = createAsyncThunk('getSort', async (_, {dispatch}) => {
   }
 });
 // =======CLEAR FILTERS======//
-export const clearFilter = createAsyncThunk('getSort', async (_, {dispatch}) => {
-  try {
-    const res = await clearFilterService({dispatch});
-  } catch (error) {
-    return rejectWithValue(error.message);
-  }
-});
+export const clearFilter = createAsyncThunk(
+  'getSort',
+  async (_, {dispatch}) => {
+    try {
+      const res = await clearFilterService({dispatch});
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+// =====GET FOOD TYPES======//
+export const getFoodTypes = createAsyncThunk(
+  'getFoodType',
+  async (_, {dispatch}) => {
+    try {
+      const res = await getFoodTypesService({dispatch});
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+// =====GET SUBSCRIPTION TYPES======//
+export const getSubscription = createAsyncThunk(
+  'getSubscription',
+  async ({from}, {dispatch}) => {
+    try {
+      const res = await getSubscriptionService({dispatch,from});
+      return res.subscription_types;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
 
 const filterSlice = createSlice({
   name: 'filter',
@@ -94,6 +124,12 @@ const filterSlice = createSlice({
     sortLoading: false,
     sortData: [],
     sortError: null,
+    foodTypeLoading: false,
+    foodTypeData: [],
+    foodTypeError: null,
+    subLoading: false,
+    subData: [],
+    subError: null,
   },
   reducers: {},
   extraReducers: builder => {
@@ -157,6 +193,30 @@ const filterSlice = createSlice({
       .addCase(getSort.rejected, (state, action) => {
         state.sortLoading = false;
         state.sortError = action.error;
+      })
+      .addCase(getFoodTypes.pending, (state, action) => {
+        state.foodTypeLoading = true;
+        state.foodTypeError = null;
+      })
+      .addCase(getFoodTypes.fulfilled, (state, action) => {
+        state.foodTypeLoading = false;
+        state.foodTypeData = action.payload;
+      })
+      .addCase(getFoodTypes.rejected, (state, action) => {
+        state.foodTypeLoading = false;
+        state.foodTypeError = action.error;
+      })
+      .addCase(getSubscription.pending, (state, action) => {
+        state.subLoading = true;
+        state.subError = null;
+      })
+      .addCase(getSubscription.fulfilled, (state, action) => {
+        state.subLoading = false;
+        state.subData = action.payload;
+      })
+      .addCase(getSubscription.rejected, (state, action) => {
+        state.subLoading = false;
+        state.subError = action.error;
       });
   },
 });

@@ -105,7 +105,6 @@ export const getHeadCountService = async () => {
 export const getSortService = async () => {
   try {
     let token = await AsyncStorage.getItem('token');
-    console.log(token);
     let res = await axios.get(
       `${endpoints.baseUrl}get-all-sort-orders?current_page=1&limit=100`,
       {
@@ -125,17 +124,17 @@ export const getSortService = async () => {
   }
 };
 //=======CLEAR FILTER  SERVICES=======//
-export const clearFilterService = async ({dispatch}) => {
+export const clearFilterService = async ({dispatch,from}) => {
   try {
     dispatch(startLoader(true));
     let token = await AsyncStorage.getItem('token');
-    console.log('inside clearfilter', token);
     let res = await axios.post(`${endpoints.baseUrl}clear-all-filters`, null, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: `Bearer ${token}`,
       },
     });
+    if(!from){
     showMessage({
       message: 'Success!',
       description: 'Filters cleared successfully!',
@@ -150,6 +149,7 @@ export const clearFilterService = async ({dispatch}) => {
       dispatch(getKitchen());
       dispatch(getMeal());
     }, 1000);
+  }
     return res.data;
   } catch (error) {
     if (error.response && error.response.data) {
@@ -164,5 +164,49 @@ export const clearFilterService = async ({dispatch}) => {
     }
   } finally {
     dispatch(startLoader(false));
+  }
+};
+//=======GET FOOD TYPE  SERVICES=======//
+export const getFoodTypesService = async () => {
+  try {
+    let token = await AsyncStorage.getItem('token');
+    let res = await axios.get(
+      `${endpoints.baseUrl}get-all-food-types?current_page=1&limit=3`,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return res.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error(error.message);
+    }
+  }
+};
+// =======GET SUBSCRIPTION TYPES======//
+export const getSubscriptionService = async ({from}) => {
+  try {
+    let token = await AsyncStorage.getItem('token');
+    let res = await axios.get(
+      `${endpoints.baseUrl}user-get-subscription-types?current_page=1&limit=100&vendor_type=${from=="Caterers"?"Caterer":"Tiffin"}`,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return res.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error(error.message);
+    }
   }
 };

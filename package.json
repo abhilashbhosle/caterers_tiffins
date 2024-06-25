@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@fawazahmed/react-native-read-more": "^3.0.4",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-navigation/bottom-tabs": "^6.5.12",
     "@react-navigation/native": "^6.1.10",

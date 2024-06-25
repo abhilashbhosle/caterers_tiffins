@@ -1,5 +1,5 @@
 import {View, Animated} from 'react-native';
-import React, {memo, useRef} from 'react';
+import React, {memo, useEffect, useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
 import {FlatList} from 'native-base';
 import {searchitems} from '../../../constants/Constants';
@@ -8,7 +8,7 @@ import SearchTiffinsCard from './SearchTiffinsCard';
 import {gs} from '../../../../GlobalStyles';
 import {searchStyles} from '../Searchstyles';
 
-function SearchList({from}) {
+function SearchList({from, fetchMoreData, renderFooter,data,location}) {
   let theme = from === 'Caterers' ? ts.secondary : ts.primary;
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -31,7 +31,7 @@ function SearchList({from}) {
     });
     return (
       <Animated.View style={{transform: [{scale}]}}>
-        <SearchCaterersCard item={item} />
+        <SearchCaterersCard item={item} from={from} location={location}/>
       </Animated.View>
     );
   };
@@ -53,15 +53,15 @@ function SearchList({from}) {
       outputRange: [1, 1, 1, 0],
     });
     return (
-      <Animated.View style={{transform: [{scale}],backgroundColor:'#fff'}}>
-        <SearchTiffinsCard item={item} from={from} />
+      <Animated.View style={{transform: [{scale}], backgroundColor: '#fff'}}>
+        <SearchTiffinsCard item={item} from={from} location={location}/>
       </Animated.View>
     );
   };
 
   return (
     <Animated.FlatList
-      data={searchitems}
+      data={data}
       keyExtractor={(item, index) => String(index)}
       renderItem={from === 'Caterers' ? renderCateringList : renderTiffinsList}
       onScroll={Animated.event(
@@ -77,6 +77,9 @@ function SearchList({from}) {
         {backgroundColor: '#fff', paddingTop: 10},
         gs.ph5,
       ]}
+      onEndReachedThreshold={0.6}
+      onEndReached={fetchMoreData}
+      ListFooterComponent={renderFooter}
     />
   );
 }

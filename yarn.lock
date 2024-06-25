@@ -1206,6 +1206,13 @@
   resolved "https://registry.npmjs.org/@eslint/js/-/js-8.56.0.tgz"
   integrity sha512-gMsVel9D7f2HLkBma9VbtzZRehRogVRfbr++f06nL2vnCGCNlzOD+/MUov/F4p8myyAHspEhVobgjpX64q5m6A==
 
+"@fawazahmed/react-native-read-more@^3.0.4":
+  version "3.0.4"
+  resolved "https://registry.npmjs.org/@fawazahmed/react-native-read-more/-/react-native-read-more-3.0.4.tgz"
+  integrity sha512-6cG7ANwmHlznJtz4ehvuY+K5ybFU7CMvEXaGeo71eTAy0Zx3u7ehD2ntiTnQi5kV2MmD4Y1cfjaBmDUe9unfpQ==
+  dependencies:
+    prop-types "^15.7.2"
+
 "@formatjs/ecma402-abstract@1.18.2":
   version "1.18.2"
   resolved "https://registry.npmjs.org/@formatjs/ecma402-abstract/-/ecma402-abstract-1.18.2.tgz"

@@ -9,7 +9,7 @@ import {
   Keyboard,
   StatusBar,
 } from 'react-native';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
 import {Center, Divider, Flex} from 'native-base';
 import AntIcon from 'react-native-vector-icons/AntDesign';
@@ -37,14 +37,32 @@ import {color} from 'native-base/lib/typescript/theme/styled-system';
 import PopularCatSlice from './ProfileModules/PopularCatSlice';
 import PopularTiffinsSlice from './ProfileModules/PopularTiffinsSlice';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  clearProfile,
+  getVendorProfile,
+} from '../../Home/controllers/VendorProfileController';
+import ReadMore from '@fawazahmed/react-native-read-more';
 
-export default function TiffinProfile({navigation}) {
+export default function TiffinProfile({navigation, route}) {
+  const {branch_id, vendor_id} = route.params;
   const {width, height} = Dimensions.get('screen');
   const [cmtfocus, setCmtfocus] = useState(false);
+  const {loading, data, error} = useSelector(state => state.vendor);
+  const [stretch, setStretch] = useState(false);
+  const [branchStretch, setBranchStretch] = useState(false);
+  const dispatch = useDispatch();
   const handleFocus = () => {
     setCmtfocus(true);
   };
+
+  useEffect(() => {
+    if (branch_id && vendor_id) {
+      dispatch(getVendorProfile({branch_id, vendor_id}));
+    }
+  }, [branch_id, vendor_id]);
+
   return (
     <ScreenWrapper>
       <View style={[gs.ph15, styles.headercontainer]}>
@@ -53,19 +71,16 @@ export default function TiffinProfile({navigation}) {
             direction="row"
             justifyContent="space-between"
             alignItems="center"
-            style={[Platform.OS=='ios'?gs.mt10:gs.mt5]}
-            >
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  navigation.goBack();
-                }}>
-                <AntIcon
-                  name="arrowleft"
-                  style={[gs.fs22, {color: '#fff'}]}
-                />
-              </TouchableOpacity>
-            <Flex direction="row" alignItems='center'>
+            style={[Platform.OS == 'ios' ? gs.mt10 : gs.mt5]}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                dispatch(clearProfile());
+                navigation.goBack();
+              }}>
+              <AntIcon name="arrowleft" style={[gs.fs22, {color: '#fff'}]} />
+            </TouchableOpacity>
+            <Flex direction="row" alignItems="center">
               <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]}>
                 <IonIcons
                   name="location-sharp"
@@ -88,54 +103,116 @@ export default function TiffinProfile({navigation}) {
         <View style={[gs.ph5, gs.pv10]}>
           <Flex direction="row" align="center" justify="space-between">
             <Text style={[gs.fs19, styles.heading]}>
-              Saravana Catering Service
+              {data?.vendor_service_name}
             </Text>
-            <TouchableOpacity activeOpacity={0.8}>
-              <View
-                style={{
-                  ...styles.labelcontainer,
-                  backgroundColor: ts.accent3,
-                }}>
-                <Text
-                  style={[
-                    gs.fs13,
-                    {color: '#fff', fontFamily: ts.secondaryregular},
-                  ]}>
-                  Popular
-                </Text>
-              </View>
-            </TouchableOpacity>
+            {data?.subscription_type_display && (
+              <TouchableOpacity activeOpacity={0.8}>
+                <View
+                  style={{
+                    ...styles.labelcontainer,
+                    backgroundColor: ts.branded,
+                  }}>
+                  <Text
+                    style={[
+                      gs.fs13,
+                      {color: '#fff', fontFamily: ts.secondaryregular},
+                    ]}>
+                    {data?.subscription_type_display?.slice(0, 8)}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
           </Flex>
-          <Text style={[gs.fs11, styles.area]}>
-            No.65, Nehru Road, 8th Cross Street, Near Kalyan Nagar Post,
-            Bangalore - 560084
-          </Text>
+          {data?.formatted_address && (
+            <ReadMore
+              style={[gs.fs11, styles.area]}
+              numberOfLines={2}
+              seeMoreText="read more"
+              seeLessText="read less"
+              seeLessStyle={{
+                color: ts.primary,
+                fontFamily: ts.secondaryregular,
+              }}
+              seeMoreStyle={{
+                color: ts.primary,
+                fontFamily: ts.secondaryregular,
+              }}>
+              {data.formatted_address}
+            </ReadMore>
+          )}
         </View>
         {/* =======BANNER SLIDERS======= */}
         <View>
-          <ProfileBanners catererBanners={catererBanners} />
-          <Flex direction="row" align="center" style={[gs.ph5, gs.pv15]}>
+          <ProfileBanners catererBanners={data?.bennerMenuMixGalleryImages} />
+          <Flex direction="row" align="center" style={[gs.ph5]}>
             <Text style={[styles.subtxt, gs.fs12]}>Food Type : </Text>
-            <Text style={[{...styles.subtxt, color: ts.accent3}, gs.fs12]}>
-              Veg{' '}
-            </Text>
-            <Text style={[styles.subtxt, gs.fs12]}>& </Text>
-            <Text style={[{...styles.subtxt, color: ts.accent4}, gs.fs12]}>
-              Non-Veg
-            </Text>
+            <Flex direction="row" align="center" style={[gs.ph5, gs.pv15]}>
+              {data?.foodTypes?.length &&
+                data.foodTypes.map((e, i) => (
+                  <Text
+                    style={[
+                      {
+                        ...styles.subtxt,
+                        color:
+                          e.food_type_name == 'All'
+                            ? ts.primarytext
+                            : e.food_type_name == 'Non Veg'
+                            ? ts.accent4
+                            : ts.accent3,
+                      },
+                      gs.fs12,
+                    ]}
+                    key={i}>
+                    {e?.food_type_name}{' '}
+                    <Text style={{color: ts.secondarytext}}>|</Text>{' '}
+                  </Text>
+                ))}
+            </Flex>
           </Flex>
-          <View style={[gs.ph5]}>
-            <Text style={[styles.subtxt, gs.fs12, gs.pb7]}>
-              Cuisines We Cater
-            </Text>
-            <Text
-              style={[
-                gs.fs14,
-                {fontFamily: ts.secondarymedium, color: ts.primary},
-              ]}>
-              South Indian, North Indian & Chinese
-            </Text>
-          </View>
+          {data?.cuisines?.length && (
+            <View style={[gs.ph5]}>
+              <Text style={[styles.subtxt, gs.fs12, gs.pb7]}>
+                Cuisines We Cater
+              </Text>
+              <Flex direction="row" align="center" flexWrap="wrap">
+                {data?.cuisines
+                  ?.slice(0, stretch ? data.cuisines.length : 4)
+                  ?.map((e, i) => (
+                    <Text
+                      style={[
+                        gs.fs14,
+                        {
+                          fontFamily: ts.secondarymedium,
+                          color: ts.primary,
+                        },
+                      ]}
+                      key={i}
+                      numberOfLines={2}>
+                      {e.cuisine_name}
+                      {i !== data?.cuisines?.length - 1 && ','}{' '}
+                    </Text>
+                  ))}
+                {data?.cuisines.length > 4 && (
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      setStretch(prev => !prev);
+                    }}>
+                    <Text
+                      style={[
+                        gs.fs12,
+                        {
+                          fontFamily: ts.secondaryregular,
+                          color: ts.primary,
+                        },
+                      ]}>
+                      {stretch ? 'read less' : 'read more'}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </Flex>
+            </View>
+          )}
         </View>
         {/* =======SERVICES=========== */}
         <View style={{paddingHorizontal: 15}}>
@@ -259,7 +336,7 @@ export default function TiffinProfile({navigation}) {
           </View>
         </Center>
         <View style={{paddingHorizontal: 15}}>
-          <GallerySlice data={caterersgallery.slice(0, 4)} />
+          <GallerySlice />
         </View>
         <TouchableOpacity
           onPress={() => {
@@ -268,12 +345,7 @@ export default function TiffinProfile({navigation}) {
             });
           }}>
           <Center style={[gs.pv15]}>
-            <Text
-              style={[
-                styles.subtxt,
-                gs.fs12,
-                {color: ts.primary},
-              ]}>
+            <Text style={[styles.subtxt, gs.fs12, {color: ts.primary}]}>
               View all
             </Text>
           </Center>
@@ -293,12 +365,7 @@ export default function TiffinProfile({navigation}) {
           <PopularTiffinsSlice data={searchitems} />
         </View>
         <Center style={[gs.pv15]}>
-          <Text
-            style={[
-              styles.subtxt,
-              gs.fs12,
-              {color: ts.primary},
-            ]}>
+          <Text style={[styles.subtxt, gs.fs12, {color: ts.primary}]}>
             See all
           </Text>
         </Center>
@@ -317,12 +384,7 @@ export default function TiffinProfile({navigation}) {
           </Text>
           <ReviewSlice data={reviews} />
           <Center>
-            <Text
-              style={[
-                styles.subtxt,
-                gs.fs12,
-                {color: ts.primary},
-              ]}>
+            <Text style={[styles.subtxt, gs.fs12, {color: ts.primary}]}>
               See all 238 reviews
             </Text>
           </Center>
@@ -351,7 +413,7 @@ export default function TiffinProfile({navigation}) {
                   borderColor: cmtfocus ? ts.primary : '#ccc',
                 },
                 gs.mh12,
-                gs.br10
+                gs.br10,
               ]}
               placeholderTextColor="#777"
               multiline
@@ -402,7 +464,7 @@ const styles = ScaledSheet.create({
   subtxt: {
     fontFamily: ts.secondaryregular,
     color: ts.secondarytext,
-    lineHeight:'17@ms'
+    lineHeight: '17@ms',
   },
   servicecontainer: {
     borderWidth: 1,
@@ -432,11 +494,11 @@ const styles = ScaledSheet.create({
     color: ts.primarytext,
     marginVertical: '5@ms',
     textAlignVertical: 'top',
-    fontSize:'13@ms'
+    fontSize: '13@ms',
   },
   headercontainer: {
     height: Platform.OS == 'ios' ? '100@ms' : '100@ms',
-    paddingTop:Platform.OS=='android'?StatusBar.currentHeight: '20@ms',
+    paddingTop: Platform.OS == 'android' ? StatusBar.currentHeight : '20@ms',
     backgroundColor: ts.primary,
   },
 });

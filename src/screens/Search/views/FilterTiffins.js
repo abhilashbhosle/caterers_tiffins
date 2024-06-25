@@ -1,4 +1,12 @@
-import {View, Text, Image, TouchableWithoutFeedback,TouchableOpacity,TextInput} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
 import {ts} from '../../../../ThemeStyles';
@@ -16,24 +24,35 @@ import {
   getMeal,
   getTiffinService,
 } from '../../Home/controllers/FilterTiffinController';
-import {getHeadCount, getSort, handleChildrenCuisines, handleParentCuisines} from '../../Home/controllers/FilterMainController';
+import {
+  clearFilter,
+  getHeadCount,
+  getSort,
+} from '../../Home/controllers/FilterMainController';
 import AntIcon from 'react-native-vector-icons/Ionicons';
 import {getCuisines} from '../../Home/controllers/ExploreCuisineController';
 import FontistoIcon from 'react-native-vector-icons/Fontisto';
-import { handleCount, handleKitchen, handleMeal, handleService, handleSort } from '../../Home/controllers/FilterCommonController';
+import {
+  handleCount,
+  handleKitchen,
+  handleMeal,
+  handleService,
+  handleSort,
+  handleParentCuisines,
+  handleChildrenCuisines,
+} from '../../Home/controllers/FilterCommonController';
 
-
-export default function FilterTiffins({navigation}) {
+export default function FilterTiffins({navigation, route}) {
+  const {address, ssd, sse, location, from} = route.params;
   const [service, setService] = useState([]);
   const [mealTime, setMealTime] = useState([]);
   const [kitchen, setKitchen] = useState([]);
   const [headCount, setHeadCount] = useState([]);
-  const [selectedSort, setSelectedSort] = useState('');
   const [cuisine, setCuisine] = useState([]);
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState(-1);
   const [searchenabled, setSearchEnabled] = useState(false);
-  const [sort,setSort]=useState([])
+  const [sort, setSort] = useState([]);
 
   const dispatch = useDispatch();
   const {
@@ -51,11 +70,12 @@ export default function FilterTiffins({navigation}) {
   const cuisineData = cuisines_data?.data;
   const cuisineLoading = cuisines_data?.loading;
   const cuisineError = cuisines_data?.error;
-  const {
-    sortLoading,
-    sortData,
-    sortError,
-  } = useSelector(state => state?.filterCater);
+  const {sortLoading, sortData, sortError} = useSelector(
+    state => state?.filterCater,
+  );
+  const {caterersLoading, caterersData, caterersError} = useSelector(
+    state => state.location,
+  );
 
   const {headLoading, headData, headError} = useSelector(
     state => state?.filterCater,
@@ -67,7 +87,7 @@ export default function FilterTiffins({navigation}) {
     dispatch(getKitchen());
     dispatch(getHeadCount());
     dispatch(getCuisines());
-    dispatch(getSort())
+    dispatch(getSort());
   }, []);
 
   useEffect(() => {
@@ -89,7 +109,7 @@ export default function FilterTiffins({navigation}) {
     if (sortData?.length) {
       setSort(sortData);
     }
-  }, [serviceData, mealData, kitchenData, headData, cuisineData,sortData]);
+  }, [serviceData, mealData, kitchenData, headData, cuisineData, sortData]);
   // =======SEARCH CUISINE========//
   const handleSearch = text => {
     setSearch(text);
@@ -110,12 +130,32 @@ export default function FilterTiffins({navigation}) {
     }
   }, [search]);
 
+  const handleGoBack = () => {
+    Alert.alert(
+      'Are you sure, you want to go back?',
+      'This will clear all your filters, select "show results" instead.',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            await dispatch(clearFilter());
+            navigation.goBack()
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <ScreenWrapper>
       <ThemeHeaderWrapper
         lefttxt="Filters"
         righttxt="Clear All"
-        goBack={() => navigation.goBack()}
+        goBack={() => handleGoBack()}
         bgColor={ts.primary}
         dispatch={dispatch}
       />
@@ -159,7 +199,20 @@ export default function FilterTiffins({navigation}) {
                     }
                     style={styles.img}
                   />
-                  <TouchableOpacity activeOpacity={0.7} onPress={()=>{handleService({index:i,setService,service})}}>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      handleService({
+                        index: i,
+                        setService,
+                        service,
+                        ssd,
+                        sse,
+                        location,
+                        from: 'Tiffins',
+                        dispatch,
+                      });
+                    }}>
                     <Flex
                       direction="row"
                       alignItems="center"
@@ -206,7 +259,21 @@ export default function FilterTiffins({navigation}) {
             {!headError &&
               !headLoading &&
               headCount?.map((e, i) => (
-                <TouchableOpacity key={i} activeOpacity={0.7} onPress={()=>{handleCount({index:i,setHeadCount,headCount})}}>
+                <TouchableOpacity
+                  key={i}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    handleCount({
+                      index: i,
+                      setHeadCount,
+                      headCount,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Tiffins',
+                      dispatch,
+                    });
+                  }}>
                   <Flex direction="row" justify="space-between" align="center">
                     <Text
                       style={[
@@ -302,7 +369,16 @@ export default function FilterTiffins({navigation}) {
                     </Flex>
                     <TouchableOpacity
                       onPress={() =>
-                        handleParentCuisines(i, cuisine, setCuisine)
+                        handleParentCuisines({
+                          index: i,
+                          cuisine,
+                          setCuisine,
+                          ssd,
+                          sse,
+                          location,
+                          from: 'Tiffins',
+                          dispatch,
+                        })
                       }>
                       <MaterialIcons
                         name={
@@ -314,8 +390,7 @@ export default function FilterTiffins({navigation}) {
                           gs.fs20,
                           gs.mr3,
                           {
-                            color:
-                              e.selected == 1 ? ts.primary : ts.alternate,
+                            color: e.selected == 1 ? ts.primary : ts.alternate,
                           },
                         ]}
                       />
@@ -336,12 +411,17 @@ export default function FilterTiffins({navigation}) {
                         </Flex>
                         <TouchableOpacity
                           onPress={() => {
-                            handleChildrenCuisines(
-                              i,
-                              index,
+                            handleChildrenCuisines({
+                              pi: i,
+                              i: index,
                               cuisine,
                               setCuisine,
-                            );
+                              ssd,
+                              sse,
+                              location,
+                              from: 'Tiffins',
+                              dispatch,
+                            });
                           }}>
                           <MaterialIcons
                             name={
@@ -388,7 +468,20 @@ export default function FilterTiffins({navigation}) {
             {!mealError &&
               !mealLoading &&
               mealTime?.map((e, i) => (
-                <TouchableOpacity key={i} onPress={()=>{handleMeal({index:i,setMealTime,mealTime})}}>
+                <TouchableOpacity
+                  key={i}
+                  onPress={() => {
+                    handleMeal({
+                      index: i,
+                      setMealTime,
+                      mealTime,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Tiffins',
+                      dispatch,
+                    });
+                  }}>
                   <Flex direction="row" justify="space-between" align="center">
                     <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
                       {e.name}
@@ -433,7 +526,20 @@ export default function FilterTiffins({navigation}) {
             {!kitchenError &&
               !kitchenLoading &&
               kitchen?.map((e, i) => (
-                <TouchableOpacity key={i} onPress={()=>{handleKitchen({index:i,setKitchen,kitchen})}}>
+                <TouchableOpacity
+                  key={i}
+                  onPress={() => {
+                    handleKitchen({
+                      index: i,
+                      setKitchen,
+                      kitchen,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Tiffins',
+                      dispatch,
+                    });
+                  }}>
                   <Flex direction="row" justify="space-between" align="center">
                     <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
                       {e.name}
@@ -478,7 +584,16 @@ export default function FilterTiffins({navigation}) {
               {sort.map((e, i) => (
                 <TouchableOpacity
                   onPress={() => {
-                    handleSort({index:i,setSort,sort})
+                    handleSort({
+                      index: i,
+                      setSort,
+                      sort,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Tiffins',
+                      dispatch,
+                    });
                   }}
                   key={i}>
                   <Flex direction="row" justify="space-between" align="center">
@@ -514,9 +629,33 @@ export default function FilterTiffins({navigation}) {
               gs.fs13,
               {color: ts.primary, fontFamily: ts.secondaryregular},
             ]}>
-            235 matching Caterers
+            {caterersLoading ? (
+              <Spinner color={from == 'Caterers' ? ts.secondary : ts.primary} />
+            ) : (
+              caterersData?.total_count
+            )}{' '}
+            matching Caterers
           </Text>
-          <ThemeSepBtn btntxt="Show results" themecolor={ts.primary} />
+          {caterersLoading ? (
+            <ThemeSepBtn btntxt="Show results" themecolor={'#D3D3D3'} />
+          ) : (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                navigation.push('PageStack', {
+                  screen: 'SearchMain',
+                  params: {
+                    from,
+                    address,
+                    ssd,
+                    sse,
+                    location,
+                  },
+                });
+              }}>
+              <ThemeSepBtn btntxt="Show results" themecolor={ts.primary} />
+            </TouchableOpacity>
+          )}
         </Flex>
       </Card>
     </ScreenWrapper>

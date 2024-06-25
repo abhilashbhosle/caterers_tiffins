@@ -1,5 +1,9 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {getKitchenService, getMealService, getTiffinServService} from '../services/FilterTiffinService';
+import {
+  getKitchenService,
+  getMealService,
+  getTiffinServService,
+} from '../services/FilterTiffinService';
 
 // ======GET SERVICE TYPE=======//
 export const getTiffinService = createAsyncThunk(
@@ -14,29 +18,26 @@ export const getTiffinService = createAsyncThunk(
   },
 );
 // ======GET MEAL TYPE=======//
-export const getMeal = createAsyncThunk(
-	'getMeal',
-	async (_, {dispatch}) => {
-	  try {
-		const res = await getMealService();
-		return res.data;
-	  } catch (error) {
-		return rejectWithValue(error.message);
-	  }
-	},
-  );
+export const getMeal = createAsyncThunk('getMeal', async (_, {dispatch}) => {
+  try {
+    const res = await getMealService();
+    return res.data;
+  } catch (error) {
+    return rejectWithValue(error.message);
+  }
+});
 // ======GET KITCHEN TYPE=======//
 export const getKitchen = createAsyncThunk(
-	'getKitchen',
-	async (_, {dispatch}) => {
-	  try {
-		const res = await getKitchenService();
-		return res.data;
-	  } catch (error) {
-		return rejectWithValue(error.message);
-	  }
-	},
-  );
+  'getKitchen',
+  async (_, {dispatch}) => {
+    try {
+      const res = await getKitchenService();
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
 const filterTiffinSlice = createSlice({
   name: 'filterTiffin',
   initialState: {
@@ -46,9 +47,9 @@ const filterTiffinSlice = createSlice({
     mealLoading: false,
     mealData: [],
     mealError: null,
-	kitchenLoading:false,
-	kitchenData:[],
-	kitchenError:null
+    kitchenLoading: false,
+    kitchenData: [],
+    kitchenError: null,
   },
   reducers: {},
   extraReducers: builder => {
@@ -77,7 +78,7 @@ const filterTiffinSlice = createSlice({
         state.mealLoading = false;
         state.mealError = action.error;
       })
-	  .addCase(getKitchen.pending, (state, action) => {
+      .addCase(getKitchen.pending, (state, action) => {
         state.kitchenLoading = true;
         state.kitchenError = null;
       })

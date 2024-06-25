@@ -7,6 +7,7 @@ import OccassionController from '../screens/Home/controllers/OccassionController
 import FilterMainController from '../screens/Home/controllers/FilterMainController'
 import FilterTiffinController from '../screens/Home/controllers/FilterTiffinController'
 import SearchController from '../screens/Home/controllers/SearchController'
+import VendorProfileController from '../screens/Home/controllers/VendorProfileController'
 export const store = configureStore({
   reducer: {
 	common:commonreducer,
@@ -16,6 +17,7 @@ export const store = configureStore({
 	occassion:OccassionController,
 	filterCater:FilterMainController,
 	filterTiffin:FilterTiffinController,
-	location:SearchController
+	location:SearchController,
+	vendor:VendorProfileController
   },
 })

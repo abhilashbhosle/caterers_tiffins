@@ -23,37 +23,85 @@ import moment from 'moment';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {getLocation} from '../../Onboarding/controllers/AuthController';
-import {clearSearch, getLocations} from '../controllers/SearchController';
+import {
+  clearCaterers,
+  clearSearch,
+  getLocations,
+  handleSearchResults,
+  setLocationres,
+  setSearchRes,
+  setSelectedLocRes,
+} from '../controllers/SearchController';
 import {debounce} from '../../../constants/Debounce';
+import {showMessage} from 'react-native-flash-message';
+import {getOccassions} from '../controllers/OccassionController';
+import {getCuisines} from '../controllers/ExploreCuisineController';
+import {
+  getBudget,
+  getFoodTypes,
+  getHeadCount,
+  getService,
+  getServing,
+  getSort,
+  getSubscription,
+} from '../controllers/FilterMainController';
+import {clearFilterService} from '../services/FilterMainService';
+import { getKitchen, getMeal } from '../controllers/FilterTiffinController';
 const minDate = new Date(); // Today
 const maxDate = new Date(2037, 6, 3);
 
-function SearchBar({from, navigation}) {
+function SearchBar({from, navigation, ssd, sse}) {
   const route = useRoute();
   const calendarRef = useRef();
   const [openCalendarPicker, setOpenCalendarPicker] = useState(false);
   const theme = from == 'Caterers' ? ts.secondary : ts.primary;
   const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
+  const [dates, setDates] = useState({start: null, end: null});
   const [fromdate, setFromdate] = useState(null);
   const [enddate, setEnddate] = useState(null);
-  const {width, height} = Dimensions.get('screen');
   const [selectedSearch, setSelectedSearch] = useState('');
   const [search, setSearch] = useState('');
   const dispatch = useDispatch();
+  const [selectedLocation, setSelectedLocation] = useState({
+    city: null,
+    longitude: null,
+    latitude: null,
+    pincode: 1,
+    place_id: null,
+  });
+  const userDetails = useSelector(state => state.auth?.userInfo?.data);
+  const searchRes=useSelector(state=>state.location?.searchRes)
+  const locationRes=useSelector(state=>state.location.locationRes)
+
+  useEffect(()=>{
+    if(searchRes){
+      setSearch(searchRes)
+    }
+    if(locationRes){
+      setSelectedLocation(locationRes)
+    }
+  },[searchRes,locationRes])
   const {searchLoading, searchData, searchError} = useSelector(
     state => state.location,
   );
-
   const onDateChange = (date, type) => {
     if (type === 'END_DATE') {
       setSelectedEndDate(date);
       setEnddate(date ? moment(date).format('MMM DD') : null);
+      setDates({
+        ...dates,
+        end: date ? moment(date).format('YYYY-MM-DD') : null,
+      });
     } else {
       setSelectedStartDate(date);
       setFromdate(date ? moment(date).format('MMM DD') : null);
       setSelectedEndDate(null);
       setEnddate(null);
+      setDates({
+        ...dates,
+        start: date ? moment(date).format('YYYY-MM-DD') : null,
+      });
     }
   };
   const handleReset = () => {
@@ -65,7 +113,7 @@ function SearchBar({from, navigation}) {
   };
   const onClose = () => {
     setOpenCalendarPicker(false);
-    handleReset();
+    // handleReset();
   };
 
   const handleOnChange = text => {
@@ -75,15 +123,62 @@ function SearchBar({from, navigation}) {
   const handleSearch = useCallback(
     debounce(text => {
       dispatch(getLocations({data: text}));
-    }, 1000),
-    []
+    }, 500),
+    [],
   );
 
-  const handleSelectedSearch = e => {
+  const handleSelectedSearch = async e => {
+    let tempData = e.formatted_address.split(',');
+    setSelectedLocation({
+      ...selectedLocation,
+      latitude: e.geometry.location.lat,
+      longitude: e.geometry.location.lng,
+      place_id: e.place_id,
+      city: tempData[tempData?.length - 2].trim(),
+    });
     setSearch(e.formatted_address);
     setSelectedSearch(e);
     dispatch(clearSearch());
   };
+
+  const handleCalendarPicker = () => {
+    if (!dates.start || !dates.end) {
+      showMessage({
+        message: 'Start or End Date Missing.',
+        description: 'Please select start and end date.',
+        type: 'info',
+      });
+    }
+    setOpenCalendarPicker(false);
+  };
+  useEffect(() => {
+    if (sse && ssd) {
+      setSelectedStartDate(ssd);
+      setSelectedEndDate(sse);
+      setEnddate(sse ? moment(sse).format('MMM DD') : null);
+      setFromdate(ssd ? moment(ssd).format('MMM DD') : null);
+      setDates({
+        ...dates,
+        end: sse ? moment(sse).format('YYYY-MM-DD') : null,
+        start: ssd ? moment(ssd).format('YYYY-MM-DD') : null,
+      });
+    }
+  }, [ssd, sse]);
+  useEffect(() => {
+    dispatch(getFoodTypes());
+    dispatch(getSubscription({from}))
+    dispatch(getServing());
+    dispatch(getService());
+    dispatch(getOccassions());
+    dispatch(getBudget());
+    dispatch(getCuisines());
+    dispatch(getHeadCount());
+    dispatch(getSort());
+    dispatch(getMeal())
+    dispatch(getKitchen())
+  }, []);
+
+
   return (
     <>
       <Flex direction="row" alignItems="center">
@@ -111,9 +206,15 @@ function SearchBar({from, navigation}) {
                 ]}
               />
             </View>
-            <Text style={[gs.fs11, {color: '#57636c'}, gs.ml4]}>
-              Feb 16 - 18
-            </Text>
+            {fromdate && enddate ? (
+              <Text style={[gs.fs11, ts.primarytext, gs.ml4]}>
+                {fromdate} - {enddate?.slice(4)}
+              </Text>
+            ) : (
+              <Text style={[gs.fs11, {color: '#57636c'}, gs.ml4]}>
+                Feb 14 - 16
+              </Text>
+            )}
           </Flex>
         </TouchableWithoutFeedback>
         {/* ======SEARCH======= */}
@@ -123,9 +224,10 @@ function SearchBar({from, navigation}) {
             {/* ======SEARCH INPUT======== */}
             <TextInput
               style={[
-                {...styles.searchTextInput, color: '#57636c'},
+                {...styles.searchTextInput},
                 gs.fs11,
                 gs.ph10,
+                ts.primarytext,
               ]}
               placeholder="Search"
               placeholderTextColor="#57636c"
@@ -142,10 +244,21 @@ function SearchBar({from, navigation}) {
                     : ts.primary,
               }}
               activeOpacity={0.9}
-              onPress={() => {
-                navigation.navigate('PageStack', {
-                  screen: 'SearchMain',
-                  params: {from},
+              onPress={async () => {
+                dispatch(clearCaterers())
+                dispatch(setSearchRes(search))
+                dispatch(setLocationres(selectedLocation))
+                // console.log("search",search)
+                 handleSearchResults({
+                  navigation,
+                  from,
+                  search,
+                  selectedStartDate,
+                  selectedEndDate,
+                  userDetails,
+                  selectedLocation,
+                  setSelectedLocation,
+                  setSearch,
                 });
               }}>
               <MaterialIcon
@@ -280,10 +393,14 @@ function SearchBar({from, navigation}) {
             nextComponent={
               <AntIcons name="arrowright" style={[gs.fs22, {color: '#fff'}]} />
             }
+            selectedStartDate={selectedStartDate}
+            selectedEndDate={selectedEndDate}
           />
-          <View style={[{width: '100%'}, gs.ph5, gs.mt10]}>
+          <TouchableOpacity
+            style={[{width: '100%'}, gs.ph5, gs.mt10]}
+            onPress={handleCalendarPicker}>
             <WhiteCoverBtn btntxt="Submit" color={theme} />
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleReset}>
             <Center style={[gs.mv15]}>
               <Text

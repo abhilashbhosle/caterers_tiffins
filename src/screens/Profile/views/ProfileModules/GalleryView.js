@@ -14,12 +14,16 @@ import {
 import React, {useEffect, useRef, useState} from 'react';
 import {ScreenWrapper} from '../../../../components/ScreenWrapper';
 import {caterersgallery} from '../../../../constants/Constants';
-import {FlatList} from 'native-base';
+import {FlatList, Spinner} from 'native-base';
 import {gs} from '../../../../../GlobalStyles';
 import {ScaledSheet} from 'react-native-size-matters';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import Carousel from 'react-native-reanimated-carousel';
+import {useSelector} from 'react-redux';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
+import {ts} from '../../../../../ThemeStyles';
+import {color} from 'native-base/lib/typescript/theme/styled-system';
 
 export default function GalleryView({route, navigation}) {
   const [images, setImages] = useState(null);
@@ -27,31 +31,44 @@ export default function GalleryView({route, navigation}) {
   const IMAGE_SIZE = styles.imgsize.height;
   const SPACING = styles.imgsize.padding;
   const [activeIndex, setActiveIndex] = React.useState(0);
+  const {loading, data, error} = useSelector(state => state.vendor);
+  const {selectedImageIndex} = route?.params;
+  const [topImgLoad, setTopImgLoad] = useState(false);
+  const [bottomImgLoad, setBottomImgLoad] = useState(false);
   //========REFS========//
   const topRef = useRef(null);
   const bottomRef = useRef(null);
 
   useEffect(() => {
-    setImages(caterersgallery);
-  }, [route]);
-  if (!images) {
-    return <Text>Loading</Text>;
-  }
+    if (data?.galleryImages?.length) {
+      setImages(data.galleryImages);
+    }
+  }, [data]);
   const scrollToIndex = index => {
     setActiveIndex(index);
-    topRef.current.scrollTo({index: index});
+    topRef.current?.scrollTo({index: index});
     if (index * (IMAGE_SIZE + SPACING) > width / 2) {
-      bottomRef.current.scrollToOffset({
+      bottomRef.current?.scrollToOffset({
         offset: index * (IMAGE_SIZE + SPACING) + IMAGE_SIZE / 2 - width / 2,
         animated: true,
       });
     } else {
-      bottomRef.current.scrollToOffset({
+      bottomRef.current?.scrollToOffset({
         offset: index,
         animated: true,
       });
     }
   };
+  useEffect(() => {
+    if (selectedImageIndex && images) {
+      // scrollToIndex(selectedImageIndex);
+      scrollToIndex(selectedImageIndex);
+    }
+  }, [selectedImageIndex, images]);
+
+  if (!images) {
+    return <Text>Loading</Text>;
+  }
 
   return (
     <ScreenWrapper>
@@ -69,13 +86,23 @@ export default function GalleryView({route, navigation}) {
               return (
                 <View style={{height, width}}>
                   <ImageBackground
-                    source={item.img}
+                    source={{uri: item?.image_names[0]?.medium}}
                     style={[
                       StyleSheet.absoluteFillObject,
-                      {...styles.img, maxHeight: height - 100},
+                      {
+                        ...styles.img,
+                        maxHeight: height - 100,
+                      },
                     ]}
-                    imageStyle={{resizeMode: 'contain'}}
-                  />
+                    onLoadStart={() => setTopImgLoad(true)}
+                    onLoadEnd={() => setTopImgLoad(false)}>
+                    {topImgLoad && (
+                      <EntypoIcon
+                        name="image-inverted"
+                        style={[{color: '#fff'}, gs.fs30]}
+                      />
+                    )}
+                  </ImageBackground>
                 </View>
               );
             }}
@@ -120,17 +147,28 @@ export default function GalleryView({route, navigation}) {
           keyExtractor={(item, index) => String(index)}
           renderItem={({item, index}) => (
             <TouchableOpacity onPress={() => scrollToIndex(index)}>
-              <Image
-                source={item.img}
+              <ImageBackground
+                source={{uri: item?.image_names[0]?.small}}
                 style={{
                   height: activeIndex == index ? IMAGE_SIZE + 10 : IMAGE_SIZE,
                   width: IMAGE_SIZE,
                   marginRight: SPACING,
-                  borderRadius: 10,
-                  borderColor: activeIndex == index ? '#fff' : 'transparent',
-                  borderWidth: 2,
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
-              />
+                imageStyle={{
+                  borderRadius: 10,
+                  borderWidth: 2,
+                  borderColor: activeIndex == index ? '#fff' : 'transparent',
+                }}
+                onLoadStart={() => {
+                  setBottomImgLoad(true);
+                }}
+                onLoadEnd={() => {
+                  setBottomImgLoad(false);
+                }}>
+                {bottomImgLoad && <Spinner color="#f5f5f5" />}
+              </ImageBackground>
             </TouchableOpacity>
           )}
           style={{position: 'absolute', bottom: IMAGE_SIZE}}
@@ -146,7 +184,10 @@ export default function GalleryView({route, navigation}) {
   );
 }
 const styles = ScaledSheet.create({
-  img: {},
+  img: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   arrowcontainer: {
     height: '40@ms',
     width: '40@ms',

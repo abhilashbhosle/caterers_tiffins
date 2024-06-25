@@ -82,16 +82,16 @@ export const resendLoginOtp = createAsyncThunk(
 // ======VERIFY OTP=======//
 export const verifyOtp = createAsyncThunk(
   'verifyOtp',
-  async ({phoneNumber, otp, navigation}, {dispatch}) => {
+  async ({phoneNumber, otp, navigation,name}, {dispatch}) => {
     try {
       dispatch(startLoader(true));
       const res = await verifyOtpService({
         phoneNumber,
         otp,
         navigation,
+        name,
         dispatch,
       });
-      console.log('res', res.data);
       await AsyncStorage.setItem('token', res.data.data.token);
       dispatch(clearRegStates());
       return res.data;

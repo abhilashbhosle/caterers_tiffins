@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   TouchableOpacity,
+  Alert
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
@@ -23,6 +24,7 @@ import ThemeSepBtn from '../../../components/ThemeSepBtn';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {useDispatch, useSelector} from 'react-redux';
 import {
+  clearFilter,
   getBudget,
   getHeadCount,
   getService,
@@ -43,13 +45,13 @@ import {
   handleSort,
 } from '../../Home/controllers/FilterCommonController';
 
-export default function FiilterMain({navigation}) {
+export default function FiilterMain({navigation, route}) {
+  const {address, ssd, sse, location, from} = route.params;
   const [budget, setBudget] = useState([]);
   const [headCount, setHeadCount] = useState([]);
   const [searchenabled, setSearchEnabled] = useState(false);
   const [cuisine, setCuisine] = useState([]);
   const [occasion, setOccasion] = useState([]);
-  const [selectedSort, setSelectedSort] = useState('');
   const [serving, setServing] = useState([]);
   const [service, setService] = useState([]);
   const [search, setSearch] = useState('');
@@ -80,6 +82,9 @@ export default function FiilterMain({navigation}) {
   const cuisineData = cuisines_data?.data;
   const cuisineLoading = cuisines_data?.loading;
   const cuisineError = cuisines_data?.error;
+  const {caterersLoading, caterersData, caterersError} = useSelector(
+    state => state.location,
+  );
 
   useEffect(() => {
     dispatch(getServing());
@@ -141,12 +146,32 @@ export default function FiilterMain({navigation}) {
     }
   }, [search]);
 
+  const handleGoBack = () => {
+    Alert.alert(
+      'Are you sure, you want to go back?',
+      'This will clear all your filters, select "show results" instead.',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            await dispatch(clearFilter());
+            navigation.goBack();
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <ScreenWrapper>
       <ThemeHeaderWrapper
         lefttxt="Filters"
         righttxt="Clear All"
-        goBack={() => navigation.goBack()}
+        goBack={() => handleGoBack()}
         bgColor={ts.secondary}
         dispatch={dispatch}
       />
@@ -194,7 +219,16 @@ export default function FiilterMain({navigation}) {
 
                   <TouchableOpacity
                     onPress={() => {
-                      handleServing({index: i, setServing, serving});
+                      handleServing({
+                        index: i,
+                        setServing,
+                        serving,
+                        ssd,
+                        sse,
+                        location,
+                        from: 'Caterers',
+                        dispatch,
+                      });
                     }}>
                     <Flex
                       direction="row"
@@ -245,7 +279,16 @@ export default function FiilterMain({navigation}) {
                 <TouchableWithoutFeedback
                   key={i}
                   onPress={() => {
-                    handleCount({index: i, setHeadCount, headCount});
+                    handleCount({
+                      index: i,
+                      setHeadCount,
+                      headCount,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Caterers',
+                      dispatch,
+                    });
                   }}>
                   <Flex direction="row" justify="space-between" align="center">
                     <Text
@@ -292,7 +335,16 @@ export default function FiilterMain({navigation}) {
                 <TouchableOpacity
                   key={i}
                   onPress={() => {
-                    handleBudget({index: i, setBudget, budget});
+                    handleBudget({
+                      index: i,
+                      setBudget,
+                      budget,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Caterers',
+                      dispatch,
+                    });
                   }}
                   activeOpacity={0.7}>
                   <Flex direction="row" justify="space-between" align="center">
@@ -390,7 +442,16 @@ export default function FiilterMain({navigation}) {
                     </Flex>
                     <TouchableOpacity
                       onPress={() =>
-                        handleParentCuisines(i, cuisine, setCuisine)
+                        handleParentCuisines({
+                          index: i,
+                          cuisine,
+                          setCuisine,
+                          ssd,
+                          sse,
+                          location,
+                          from: 'Caterers',
+                          dispatch,
+                        })
                       }>
                       <MaterialIcons
                         name={
@@ -424,12 +485,17 @@ export default function FiilterMain({navigation}) {
                         </Flex>
                         <TouchableOpacity
                           onPress={() => {
-                            handleChildrenCuisines(
-                              i,
-                              index,
+                            handleChildrenCuisines({
+                              pi: i,
+                              i: index,
                               cuisine,
                               setCuisine,
-                            );
+                              ssd,
+                              sse,
+                              location,
+                              from: 'Caterers',
+                              dispatch,
+                            });
                           }}>
                           <MaterialIcons
                             name={
@@ -494,7 +560,16 @@ export default function FiilterMain({navigation}) {
                   />
                   <TouchableOpacity
                     onPress={() => {
-                      handleService({index: i, setService, service});
+                      handleService({
+                        index: i,
+                        setService,
+                        service,
+                        ssd,
+                        sse,
+                        location,
+                        from: 'Caterers',
+                        dispatch,
+                      });
                     }}>
                     <Flex
                       direction="row"
@@ -546,7 +621,16 @@ export default function FiilterMain({navigation}) {
                   key={i}
                   activeOpacity={0.7}
                   onPress={() => {
-                    handleOccassion({index: i, setOccasion, occasion});
+                    handleOccassion({
+                      index: i,
+                      setOccasion,
+                      occasion,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Caterers',
+                      dispatch,
+                    });
                   }}>
                   <Flex direction="row" justify="space-between" align="center">
                     <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
@@ -597,7 +681,16 @@ export default function FiilterMain({navigation}) {
               {sort.map((e, i) => (
                 <TouchableOpacity
                   onPress={() => {
-                    handleSort({index:i,setSort,sort})
+                    handleSort({
+                      index: i,
+                      setSort,
+                      sort,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Caterers',
+                      dispatch,
+                    });
                   }}
                   key={i}>
                   <Flex direction="row" justify="space-between" align="center">
@@ -633,9 +726,33 @@ export default function FiilterMain({navigation}) {
               gs.fs13,
               {color: ts.secondary, fontFamily: ts.secondaryregular},
             ]}>
-            235 matching Caterers
+            {caterersLoading ? (
+              <Spinner color={from == 'Caterers' ? ts.secondary : ts.primary} />
+            ) : (
+              caterersData?.total_count
+            )}{' '}
+            matching Caterers
           </Text>
-          <ThemeSepBtn btntxt="Show results" themecolor={ts.secondary} />
+          {caterersLoading ? (
+           
+            <ThemeSepBtn btntxt="Show results" themecolor={'#D3D3D3'} />
+          ) : (
+            <TouchableOpacity activeOpacity={0.7} onPress={()=>{
+              navigation.push('PageStack', {
+                screen: 'SearchMain',
+                params: {
+                  from,
+                  address,
+                  ssd,
+                  sse,
+                  location
+                },
+              });
+            }}>
+            <ThemeSepBtn btntxt="Show results" themecolor={ts.secondary} />
+            </TouchableOpacity>
+
+          )}
         </Flex>
       </Card>
     </ScreenWrapper>

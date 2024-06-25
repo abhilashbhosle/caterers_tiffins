@@ -34,7 +34,7 @@ export default function VerifyOtp({navigation, route}) {
     setValue,
   });
   const [timer, setTimer] = useState(30);
-  let {phoneNumber,from} = route.params;
+  let {phoneNumber,name,from} = route.params;
   const dispatch=useDispatch()
   // console.log(phoneNumber)
 
@@ -126,6 +126,7 @@ export default function VerifyOtp({navigation, route}) {
                       phoneNumber: phoneNumber,
                       otp: value,
                       navigation,
+                      name
                     }),
                   )
                   :
