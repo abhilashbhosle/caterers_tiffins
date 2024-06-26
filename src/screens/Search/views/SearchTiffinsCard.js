@@ -16,10 +16,13 @@ import {ts} from '../../../../ThemeStyles';
 import EntypoIcons from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import { updateWishList, wishDetails } from '../../Home/controllers/WishListController';
+import { useDispatch } from 'react-redux';
 
 function SearchTiffinsCard({item, from, location}) {
   const navigation = useNavigation();
   const {height, width} = useWindowDimensions();
+  const dispatch=useDispatch()
   return (
     <Card style={styles.cardcontainer}>
       <TouchableWithoutFeedback
@@ -51,7 +54,18 @@ function SearchTiffinsCard({item, from, location}) {
                 start={{x: 0.0, y: 0.0}}
                 end={{x: 0.0, y: 1.0}}>
                 <Flex direction="row" style={[gs.p5]} align="center">
-                  <TouchableOpacity style={styles.likecontainer}>
+                  <TouchableOpacity style={styles.likecontainer}
+                   onPress={() => {
+                    dispatch(wishDetails(item.vendor_id));
+                    dispatch(
+                      updateWishList({
+                        branch_id: item.id,
+                        vendor_type: 'Tiffin',
+                        status: item?.is_wishlisted == true ? 0 : 1,
+                      }),
+                    );
+                  }}
+                  >
                     <EntypoIcons
                       name={item?.is_wishlisted ? 'heart' : 'heart-outlined'}
                       style={{

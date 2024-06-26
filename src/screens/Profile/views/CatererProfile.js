@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
-import {Center, Divider, Flex} from 'native-base';
+import {Center, Divider, Flex, Spinner} from 'native-base';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import {gs} from '../../../../GlobalStyles';
 import IonIcons from 'react-native-vector-icons/Ionicons';
@@ -45,6 +45,8 @@ import {
   getVendorProfile,
 } from '../../Home/controllers/VendorProfileController';
 import ReadMore from '@fawazahmed/react-native-read-more';
+import {createReview} from '../../Home/controllers/ReviewController';
+import { updateWishList, wishDetails } from '../../Home/controllers/WishListController';
 
 export default function CatererProfile({navigation, route}) {
   const {branch_id, vendor_id} = route.params;
@@ -54,11 +56,20 @@ export default function CatererProfile({navigation, route}) {
   const {loading, data, error} = useSelector(state => state.vendor);
   const [stretch, setStretch] = useState(false);
   const [branchStretch, setBranchStretch] = useState(false);
+  const [review, setReview] = useState(null);
+  const {createLoading} = useSelector(state => state.review);
+  const [profile,setProfile]=useState(null)
+
   useEffect(() => {
     if (branch_id && vendor_id) {
       dispatch(getVendorProfile({branch_id, vendor_id}));
     }
   }, [branch_id, vendor_id]);
+  useEffect(()=>{
+    if(data){
+      setProfile(data)
+    }
+  },[data])
 
   return (
     <ScreenWrapper>
@@ -87,8 +98,20 @@ export default function CatererProfile({navigation, route}) {
               <TouchableOpacity activeOpacity={0.7} style={[gs.ph15]}>
                 <EntypoIcons name="share" style={[gs.fs22, {color: '#fff'}]} />
               </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]}>
-                <AntIcon name="hearto" style={[gs.fs22, {color: '#fff'}]} />
+              <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]}onPress={()=>{
+                dispatch(wishDetails(vendor_id));
+                 dispatch(
+                  updateWishList({
+                    branch_id: branch_id,
+                    vendor_type: 'Caterer',
+                    status: profile?.is_wishlisted == true ? 0 : 1,
+                  }),
+                );
+                let temp={...profile}
+                let updated={...temp,is_wishlisted:!temp.is_wishlisted}
+                setProfile(updated)
+              }}>
+                <AntIcon name={profile?.is_wishlisted?"heart":"hearto"} style={[gs.fs22, {color: '#fff'}]} />
               </TouchableOpacity>
             </Flex>
           </Flex>
@@ -102,9 +125,9 @@ export default function CatererProfile({navigation, route}) {
         <View style={[gs.ph5, gs.pv10]}>
           <Flex direction="row" align="center" justify="space-between">
             <Text style={[gs.fs19, styles.heading]}>
-              {data?.vendor_service_name}
+              {profile?.vendor_service_name}
             </Text>
-            {data?.subscription_type_display && (
+            {profile?.subscription_type_display && (
               <TouchableOpacity activeOpacity={0.8}>
                 <View
                   style={{
@@ -116,13 +139,13 @@ export default function CatererProfile({navigation, route}) {
                       gs.fs13,
                       {color: '#fff', fontFamily: ts.secondaryregular},
                     ]}>
-                    {data?.subscription_type_display}
+                    {profile?.subscription_type_display}
                   </Text>
                 </View>
               </TouchableOpacity>
             )}
           </Flex>
-          {data?.formatted_address && (
+          {profile?.formatted_address && (
             <ReadMore
               style={[gs.fs11, styles.area]}
               numberOfLines={2}
@@ -136,18 +159,18 @@ export default function CatererProfile({navigation, route}) {
                 color: ts.secondary,
                 fontFamily: ts.secondaryregular,
               }}>
-              {data.formatted_address}
+              {profile.formatted_address}
             </ReadMore>
           )}
         </View>
         {/* =======BANNER SLIDERS======= */}
         <View>
-          <ProfileBanners catererBanners={data?.bennerMenuMixGalleryImages} />
+          <ProfileBanners catererBanners={profile?.bennerMenuMixGalleryImages} />
           <Flex direction="row" align="center" style={[gs.ph5]}>
             <Text style={[styles.subtxt, gs.fs12]}>Food Type : </Text>
             <Flex direction="row" align="center" style={[gs.ph5, gs.pv15]}>
-              {data?.foodTypes?.length &&
-                data.foodTypes.map((e, i) => (
+              {profile?.foodTypes?.length &&
+                profile.foodTypes.map((e, i) => (
                   <Text
                     style={[
                       {
@@ -168,14 +191,14 @@ export default function CatererProfile({navigation, route}) {
                 ))}
             </Flex>
           </Flex>
-          {data?.cuisines?.length && (
+          {profile?.cuisines?.length && (
             <View style={[gs.ph5]}>
               <Text style={[styles.subtxt, gs.fs12, gs.pb7]}>
                 Cuisines We Cater
               </Text>
               <Flex direction="row" align="center" flexWrap="wrap">
-                {data?.cuisines
-                  ?.slice(0, stretch ? data.cuisines.length : 4)
+                {profile?.cuisines
+                  ?.slice(0, stretch ? profile.cuisines.length : 4)
                   ?.map((e, i) => (
                     <Text
                       style={[
@@ -188,10 +211,10 @@ export default function CatererProfile({navigation, route}) {
                       key={i}
                       numberOfLines={2}>
                       {e.cuisine_name}
-                      {i !== data?.cuisines?.length - 1 && ','}{' '}
+                      {i !== profile?.cuisines?.length - 1 && ','}{' '}
                     </Text>
                   ))}
-                {data?.cuisines.length > 4 && (
+                {profile?.cuisines.length > 4 && (
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => {
@@ -220,7 +243,7 @@ export default function CatererProfile({navigation, route}) {
             alignItems="center"
             justifyContent="center"
             style={{paddingVertical: 15}}>
-            {data?.serviceTypes?.length && (
+            {profile?.serviceTypes?.length && (
               <View
                 style={[
                   {width: width / 2 - 22.5},
@@ -233,7 +256,7 @@ export default function CatererProfile({navigation, route}) {
                   Service Type
                 </Text>
                 <Flex direction="row">
-                  {data?.serviceTypes?.slice(0, 2)?.map((e, i) => (
+                  {profile?.serviceTypes?.slice(0, 2)?.map((e, i) => (
                     <Text
                       style={[styles.servicedesc, gs.fs13, gs.mt5]}
                       numberOfLines={1}
@@ -259,8 +282,8 @@ export default function CatererProfile({navigation, route}) {
               <Text
                 style={[styles.servicedesc, gs.fs13, gs.mt5]}
                 numberOfLines={1}>
-                {data?.minimum_capacity ? data.minimum_capacity : '0'} -{' '}
-                {data?.maximum_capacity ? data.maximum_capacity : 'N/A'} Plates
+                {profile?.minimum_capacity ? profile.minimum_capacity : '0'} -{' '}
+                {profile?.maximum_capacity ? profile.maximum_capacity : 'N/A'} Plates
               </Text>
             </View>
           </Flex>
@@ -276,8 +299,8 @@ export default function CatererProfile({navigation, route}) {
               <Text
                 style={[styles.servicedesc, gs.fs13, gs.mt5]}
                 numberOfLines={1}>
-                {data?.start_day} - {data?.end_day} {data?.start_time} -{' '}
-                {data?.end_time}
+                {profile?.start_day} - {profile?.end_day} {profile?.start_time} -{' '}
+                {profile?.end_time}
               </Text>
             </View>
           </Flex>
@@ -308,7 +331,7 @@ export default function CatererProfile({navigation, route}) {
               <Text
                 style={[styles.servicedesc, gs.fs13, gs.mt5]}
                 numberOfLines={1}>
-                {data?.total_staffs_approx ? data.total_staffs_approx : '-'}
+                {profile?.total_staffs_approx ? profile.total_staffs_approx : '-'}
               </Text>
             </View>
             <View
@@ -324,7 +347,7 @@ export default function CatererProfile({navigation, route}) {
               <Text
                 style={[styles.servicedesc, gs.fs13, gs.mt5]}
                 numberOfLines={1}>
-                {data?.working_since ? data.working_since : '-'}
+                {profile?.working_since ? profile.working_since : '-'}
               </Text>
             </View>
           </Flex>
@@ -346,7 +369,7 @@ export default function CatererProfile({navigation, route}) {
             seeLessStyle={{color: ts.teritary}}
             seeMoreStyle={{color: ts.teritary}}
             numberOfLines={5}>
-            {data?.about_description}{' '}
+            {profile?.about_description}{' '}
           </ReadMore>
         </View>
         <View style={[gs.ph5]}>
@@ -359,19 +382,19 @@ export default function CatererProfile({navigation, route}) {
             Our Branches
           </Text>
           <Flex direction="row" align="center" flexWrap="wrap">
-            {data?.branches?.length ? (
-              data?.branches
-                ?.slice(0, branchStretch ? data.branches.length : 5)
+            {profile?.branches?.length ? (
+              profile?.branches
+                ?.slice(0, branchStretch ? profile.branches.length : 5)
                 .map((e, i) => (
                   <Text style={[styles.subtxt, gs.fs12]}>
                     {e?.city}
-                    {i !== data?.branches?.length - 1 ? ',' : '.'}{' '}
+                    {i !== profile?.branches?.length - 1 ? ',' : '.'}{' '}
                   </Text>
                 ))
             ) : (
               <Text style={[styles.subtxt, gs.fs12]}>-</Text>
             )}
-            {data?.branches?.length > 5 && (
+            {profile?.branches?.length > 5 && (
               <TouchableOpacity
                 onPress={() => {
                   setBranchStretch(!branchStretch);
@@ -384,7 +407,7 @@ export default function CatererProfile({navigation, route}) {
           </Flex>
         </View>
         {/* ==========GALLERY========= */}
-        {data?.galleryImages?.length > 0 && (
+        {profile?.galleryImages?.length > 0 && (
           <>
             <Center>
               <View style={[gs.pt20, gs.pb15]}>
@@ -403,7 +426,7 @@ export default function CatererProfile({navigation, route}) {
           </>
         )}
 
-        {data?.galleryImages?.length ? (
+        {profile?.galleryImages?.length ? (
           <View>
             <TouchableOpacity
               onPress={() => {
@@ -421,7 +444,9 @@ export default function CatererProfile({navigation, route}) {
               </Center>
             </TouchableOpacity>
           </View>
-        ) : <View style={gs.pb10}></View>}
+        ) : (
+          <View style={gs.pb10}></View>
+        )}
 
         <View style={[gs.ph5, gs.pb15]}>
           <Divider />
@@ -455,13 +480,7 @@ export default function CatererProfile({navigation, route}) {
             ]}>
             Reviews : See what customers loved the most
           </Text>
-          <ReviewSlice data={reviews} />
-          <Center>
-            <Text
-              style={[styles.subtxt, gs.fs12, {color: ts.secondary}, gs.mt5]}>
-              See all 238 reviews
-            </Text>
-          </Center>
+          <ReviewSlice vendor_id={vendor_id} from={'Caterers'} />
         </View>
         <View style={[gs.ph5, gs.pv15]}>
           <Divider />
@@ -484,6 +503,7 @@ export default function CatererProfile({navigation, route}) {
               {
                 ...styles.issuecontainer,
                 borderColor: cmtfocus ? ts.secondary : '#ccc',
+                fontFamily:ts.secondaryregular
               },
               gs.mh12,
               gs.br10,
@@ -492,10 +512,28 @@ export default function CatererProfile({navigation, route}) {
             multiline
             onFocus={() => setCmtfocus(true)}
             onBlur={() => setCmtfocus(false)}
+            value={review}
+            onChangeText={text => setReview(text)}
           />
-          <TouchableOpacity style={[gs.mh14, gs.mv10]}>
-            <ThemeSepBtn btntxt="Submit" themecolor={ts.secondary} />
-          </TouchableOpacity>
+          {!createLoading ? (
+            <TouchableOpacity
+              style={[gs.mh14, gs.mv10]}
+              onPress={() => {
+                review &&
+                  dispatch(createReview({vendor_id, review_text: review}));
+                setReview(null);
+              }}
+              activeOpacity={0.7}>
+              <ThemeSepBtn
+                btntxt="Submit"
+                themecolor={review ? ts.secondary : '#D3D3D3'}
+              />
+            </TouchableOpacity>
+          ) : (
+            <Center>
+              <Spinner color={ts.secondary} />
+            </Center>
+          )}
           {/*         
         </View>
         <View style={{bottom: cmtfocus && 500}}> */}
@@ -519,7 +557,7 @@ export default function CatererProfile({navigation, route}) {
               {color: ts.secondarytext, fontFamily: ts.secondaryregular},
             ]}>
             Starting Price / Plate -{' '}
-            <Text style={[{color: ts.secondary}, gs.fs16]}>₹ 250</Text>
+            <Text style={[{color: ts.secondary}, gs.fs16]}>₹ {profile?.start_price?profile.start_price:"N/A"}</Text>
           </Text>
           <ThemeSepBtn btntxt="Contact Now" themecolor={ts.secondary} />
         </Flex>

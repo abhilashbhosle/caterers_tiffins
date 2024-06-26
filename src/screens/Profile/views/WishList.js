@@ -1,5 +1,5 @@
 import {View, Text, useWindowDimensions} from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import {ts} from '../../../../ThemeStyles';
@@ -16,22 +16,23 @@ export default function WishList({navigation}) {
     {key: 'first', title: 'Caterers'},
     {key: 'second', title: 'Tiffins'},
   ]);
+  const [total,setTotal]=useState(0)
 // =========CATERERS==========//
   const Caterers = () => (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <Center>
-        <Text style={styles.cardtxt}>Total : 12 Saved</Text>
+        <Text style={styles.cardtxt}>Total : {total} Saved</Text>
       </Center>
-	  <CaterersWish/>
+	  <CaterersWish total={total} setTotal={setTotal}/>
     </View>
   );
 
   const Tiffins = () => (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
 		 <Center>
-        <Text style={styles.cardtxt}>Total : 12 Saved</Text>
+        <Text style={styles.cardtxt}>Total : {total} Saved</Text>
       </Center>
-	  <TiffinsWish/>
+	  <TiffinsWish total={total} setTotal={setTotal}/>
 	</View>
   );
   const renderScene = SceneMap({

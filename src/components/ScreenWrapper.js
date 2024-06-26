@@ -185,6 +185,14 @@ export const ScreenWrapper = ({children}) => {
             backgroundColor: Platform.OS == 'android' && '#000',
             translucent: Platform.OS == 'android' && true,
           });
+        case 'Reviews':
+          StatusBar.pushStackEntry({
+            barStyle: 'light-content',
+            animated: true,
+            hidden: false,
+            backgroundColor: Platform.OS == 'android' && '#000',
+            translucent: Platform.OS == 'android' && true,
+          });
           break;
         default:
           StatusBar.pushStackEntry({barStyle: 'light-content', hidden: true});

@@ -8,6 +8,8 @@ import FilterMainController from '../screens/Home/controllers/FilterMainControll
 import FilterTiffinController from '../screens/Home/controllers/FilterTiffinController'
 import SearchController from '../screens/Home/controllers/SearchController'
 import VendorProfileController from '../screens/Home/controllers/VendorProfileController'
+import ReviewController from '../screens/Home/controllers/ReviewController'
+import WishListController from '../screens/Home/controllers/WishListController'
 export const store = configureStore({
   reducer: {
 	common:commonreducer,
@@ -18,6 +20,8 @@ export const store = configureStore({
 	filterCater:FilterMainController,
 	filterTiffin:FilterTiffinController,
 	location:SearchController,
-	vendor:VendorProfileController
+	vendor:VendorProfileController,
+	review:ReviewController,
+	wish:WishListController
   },
 })

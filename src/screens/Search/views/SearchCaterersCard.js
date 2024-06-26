@@ -16,20 +16,26 @@ import {ts} from '../../../../ThemeStyles';
 import EntypoIcons from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import {useDispatch} from 'react-redux';
+import {
+  updateWishList,
+  wishDetails,
+} from '../../Home/controllers/WishListController';
 
 function SearchCaterersCard({item, from, location}) {
   const {height, width} = useWindowDimensions();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   return (
     <Card style={styles.cardcontainer}>
       <TouchableWithoutFeedback
         onPress={() => {
           navigation.navigate('PageStack', {
             screen: 'CatererProfile',
-            params:{
-              branch_id:item?.id,
-              vendor_id:item?.vendor_id
-            }
+            params: {
+              branch_id: item?.id,
+              vendor_id: item?.vendor_id,
+            },
           });
           // console.log(item)
         }}>
@@ -49,7 +55,18 @@ function SearchCaterersCard({item, from, location}) {
                 start={{x: 0.0, y: 0.0}}
                 end={{x: 0.0, y: 1.0}}>
                 <Flex direction="row" style={[gs.p5]} align="center">
-                  <TouchableOpacity style={styles.likecontainer}>
+                  <TouchableOpacity
+                    style={styles.likecontainer}
+                    onPress={() => {
+                      dispatch(wishDetails(item.vendor_id));
+                      dispatch(
+                        updateWishList({
+                          branch_id: item.id,
+                          vendor_type: 'Caterer',
+                          status: item?.is_wishlisted == true ? 0 : 1,
+                        }),
+                      );
+                    }}>
                     <EntypoIcons
                       name={item?.is_wishlisted ? 'heart' : 'heart-outlined'}
                       style={{
@@ -132,37 +149,37 @@ function SearchCaterersCard({item, from, location}) {
                 {item?.maximum_capacity ? item.maximum_capacity : 0}
               </Text>
             </Flex> */}
-              <Flex direction="row" align="center" style={[gs.mt8]}>
-                {item?.service_types?.map((e, i) => (
-                  <View
-                    key={i}
+            <Flex direction="row" align="center" style={[gs.mt8]}>
+              {item?.service_types?.map((e, i) => (
+                <View
+                  key={i}
+                  style={[
+                    {
+                      backgroundColor:
+                        from == 'Caterers'
+                          ? 'rgba(195, 51, 50,0.4 )'
+                          : ts.primary,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    },
+                    gs.br10,
+                    gs.mr2,
+                  ]}>
+                  <Text
                     style={[
                       {
-                        backgroundColor:
-                          from == 'Caterers'
-                            ? 'rgba(195, 51, 50,0.4 )'
-                            : ts.primary,
-                        justifyContent: 'center',
-                        alignItems: 'center',
+                        color: from == 'Caterers' ? ts.secondary : ts.primary,
+                        fontFamily: ts.secondarymedium,
                       },
-                      gs.br10,
-                      gs.mr2,
+                      gs.fs10,
+                      gs.ph10,
+                      gs.pv2,
                     ]}>
-                    <Text
-                      style={[
-                        {
-                          color: from == 'Caterers' ? ts.secondary : ts.primary,
-                          fontFamily: ts.secondarymedium,
-                        },
-                        gs.fs10,
-                        gs.ph10,
-                        gs.pv2,
-                      ]}>
-                      {e}
-                    </Text>
-                  </View>
-                ))}
-              </Flex>
+                    {e}
+                  </Text>
+                </View>
+              ))}
+            </Flex>
 
             <Flex
               alignItems="flex-end"
@@ -197,7 +214,7 @@ const styles = ScaledSheet.create({
     height: '170@ms',
     marginVertical: '10@ms',
     backgroundColor: '#fff',
-    borderRadius:'10@ms'
+    borderRadius: '10@ms',
   },
   img: {
     height: '170@ms',

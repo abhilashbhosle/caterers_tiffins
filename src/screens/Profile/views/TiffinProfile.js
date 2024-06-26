@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
-import {Center, Divider, Flex} from 'native-base';
+import {Center, Divider, Flex, Spinner} from 'native-base';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import {gs} from '../../../../GlobalStyles';
 import IonIcons from 'react-native-vector-icons/Ionicons';
@@ -44,24 +44,34 @@ import {
   getVendorProfile,
 } from '../../Home/controllers/VendorProfileController';
 import ReadMore from '@fawazahmed/react-native-read-more';
+import {createReview} from '../../Home/controllers/ReviewController';
+import { updateWishList, wishDetails } from '../../Home/controllers/WishListController';
 
 export default function TiffinProfile({navigation, route}) {
   const {branch_id, vendor_id} = route.params;
   const {width, height} = Dimensions.get('screen');
   const [cmtfocus, setCmtfocus] = useState(false);
   const {loading, data, error} = useSelector(state => state.vendor);
+  const [profile,setProfile]=useState(null)
+  const {createLoading} = useSelector(state => state.review);
   const [stretch, setStretch] = useState(false);
-  const [branchStretch, setBranchStretch] = useState(false);
+  const [review, setReview] = useState(null);
   const dispatch = useDispatch();
   const handleFocus = () => {
     setCmtfocus(true);
   };
-
+  useEffect(()=>{
+    if(data){
+      setProfile(data)
+    }
+  },[data])
   useEffect(() => {
     if (branch_id && vendor_id) {
       dispatch(getVendorProfile({branch_id, vendor_id}));
     }
   }, [branch_id, vendor_id]);
+
+  // console.log(branch_id)
 
   return (
     <ScreenWrapper>
@@ -90,8 +100,20 @@ export default function TiffinProfile({navigation, route}) {
               <TouchableOpacity activeOpacity={0.7} style={[gs.ph15]}>
                 <EntypoIcons name="share" style={[gs.fs22, {color: '#fff'}]} />
               </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]}>
-                <AntIcon name="hearto" style={[gs.fs22, {color: '#fff'}]} />
+              <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]} onPress={()=>{
+                dispatch(wishDetails(vendor_id));
+                 dispatch(
+                  updateWishList({
+                    branch_id: branch_id,
+                    vendor_type: 'Tiffin',
+                    status: profile?.is_wishlisted == true ? 0 : 1,
+                  }),
+                );
+                let temp={...profile}
+                let updated={...temp,is_wishlisted:!temp.is_wishlisted}
+                setProfile(updated)
+              }}>
+                <AntIcon name={profile?.is_wishlisted?"heart":"hearto"} style={[gs.fs22, {color: '#fff'}]} />
               </TouchableOpacity>
             </Flex>
           </Flex>
@@ -103,9 +125,9 @@ export default function TiffinProfile({navigation, route}) {
         <View style={[gs.ph5, gs.pv10]}>
           <Flex direction="row" align="center" justify="space-between">
             <Text style={[gs.fs19, styles.heading]}>
-              {data?.vendor_service_name}
+              {profile?.vendor_service_name}
             </Text>
-            {data?.subscription_type_display && (
+            {profile?.subscription_type_display && (
               <TouchableOpacity activeOpacity={0.8}>
                 <View
                   style={{
@@ -117,13 +139,13 @@ export default function TiffinProfile({navigation, route}) {
                       gs.fs13,
                       {color: '#fff', fontFamily: ts.secondaryregular},
                     ]}>
-                    {data?.subscription_type_display?.slice(0, 8)}
+                    {profile?.subscription_type_display?.slice(0, 8)}
                   </Text>
                 </View>
               </TouchableOpacity>
             )}
           </Flex>
-          {data?.formatted_address && (
+          {profile?.formatted_address && (
             <ReadMore
               style={[gs.fs11, styles.area]}
               numberOfLines={2}
@@ -137,18 +159,18 @@ export default function TiffinProfile({navigation, route}) {
                 color: ts.primary,
                 fontFamily: ts.secondaryregular,
               }}>
-              {data.formatted_address}
+              {profile.formatted_address}
             </ReadMore>
           )}
         </View>
         {/* =======BANNER SLIDERS======= */}
         <View>
-          <ProfileBanners catererBanners={data?.bennerMenuMixGalleryImages} />
+          <ProfileBanners catererBanners={profile?.bennerMenuMixGalleryImages} />
           <Flex direction="row" align="center" style={[gs.ph5]}>
             <Text style={[styles.subtxt, gs.fs12]}>Food Type : </Text>
             <Flex direction="row" align="center" style={[gs.ph5, gs.pv15]}>
-              {data?.foodTypes?.length &&
-                data.foodTypes.map((e, i) => (
+              {profile?.foodTypes?.length &&
+                profile.foodTypes.map((e, i) => (
                   <Text
                     style={[
                       {
@@ -169,14 +191,14 @@ export default function TiffinProfile({navigation, route}) {
                 ))}
             </Flex>
           </Flex>
-          {data?.cuisines?.length && (
+          {profile?.cuisines?.length && (
             <View style={[gs.ph5]}>
               <Text style={[styles.subtxt, gs.fs12, gs.pb7]}>
                 Cuisines We Cater
               </Text>
               <Flex direction="row" align="center" flexWrap="wrap">
-                {data?.cuisines
-                  ?.slice(0, stretch ? data.cuisines.length : 4)
+                {profile?.cuisines
+                  ?.slice(0, stretch ? profile.cuisines.length : 4)
                   ?.map((e, i) => (
                     <Text
                       style={[
@@ -189,10 +211,10 @@ export default function TiffinProfile({navigation, route}) {
                       key={i}
                       numberOfLines={2}>
                       {e.cuisine_name}
-                      {i !== data?.cuisines?.length - 1 && ','}{' '}
+                      {i !== profile?.cuisines?.length - 1 && ','}{' '}
                     </Text>
                   ))}
-                {data?.cuisines.length > 4 && (
+                {profile?.cuisines.length > 4 && (
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => {
@@ -230,11 +252,17 @@ export default function TiffinProfile({navigation, route}) {
               ]}>
               <MaterialIcons name="room-service" style={styles.serviceicon} />
               <Text style={[styles.subtxt, gs.fs12, gs.pv7]}>Service Type</Text>
-              <Text
-                style={[styles.servicedesc, gs.fs11, gs.mt5]}
-                numberOfLines={1}>
-                Delivery, Takeaway & Dine In
-              </Text>
+              <Flex direction="row">
+                {profile?.serviceTypes?.map((e, i) => (
+                  <Text
+                    style={[styles.servicedesc, gs.fs11, gs.mt5]}
+                    numberOfLines={1}
+                    key={i}>
+                    {e.service_type_name}
+                    {i != profile?.serviceTypes?.length - 1 && ','}{' '}
+                  </Text>
+                ))}
+              </Flex>
             </View>
             <View
               style={[
@@ -249,7 +277,7 @@ export default function TiffinProfile({navigation, route}) {
               <Text
                 style={[styles.servicedesc, gs.fs13, gs.mt5]}
                 numberOfLines={1}>
-                1987
+                {profile?.working_since ? profile.working_since : '-'}
               </Text>
             </View>
           </Flex>
@@ -265,11 +293,20 @@ export default function TiffinProfile({navigation, route}) {
               <Text style={[styles.subtxt, gs.fs12, gs.pv7]} numberOfLines={1}>
                 Meal Times
               </Text>
-              <Text
-                style={[styles.servicedesc, gs.fs13, gs.mt5]}
-                numberOfLines={1}>
-                Breakfast | Lunch | Dinner | Snacks
-              </Text>
+              <Flex direction="row" align="center">
+                {profile?.mealTimes?.length ? (
+                  profile?.mealTimes?.slice(0, 5)?.map((e, i) => (
+                    <Text
+                      style={[styles.servicedesc, gs.fs13, gs.mt5]}
+                      numberOfLines={1}
+                      key={i}>
+                      {e?.meal_time_name} {i != 4 && '|'}{' '}
+                    </Text>
+                  ))
+                ) : (
+                  <Text style={[styles.servicedesc, gs.fs13, gs.mt5]}>-</Text>
+                )}
+              </Flex>
             </View>
           </Flex>
         </View>
@@ -284,7 +321,8 @@ export default function TiffinProfile({navigation, route}) {
               <Text
                 style={[styles.servicedesc, gs.fs13, gs.mt5]}
                 numberOfLines={1}>
-                Monday - Saturday 8am - 10pm
+                {profile?.start_day} - {profile?.end_day} {profile?.start_time} -{' '}
+                {profile?.end_time}
               </Text>
             </View>
           </Flex>
@@ -342,6 +380,9 @@ export default function TiffinProfile({navigation, route}) {
           onPress={() => {
             navigation.navigate('PageStack', {
               screen: 'GalleryView',
+              params: {
+                selectedImageIndex: 0,
+              },
             });
           }}>
           <Center style={[gs.pv15]}>
@@ -382,12 +423,7 @@ export default function TiffinProfile({navigation, route}) {
             ]}>
             Reviews : See what customers loved the most
           </Text>
-          <ReviewSlice data={reviews} />
-          <Center>
-            <Text style={[styles.subtxt, gs.fs12, {color: ts.primary}]}>
-              See all 238 reviews
-            </Text>
-          </Center>
+          <ReviewSlice vendor_id={vendor_id} from={'Tiffins'} />
         </View>
         <View style={[gs.ph5, gs.pv15]}>
           <Divider />
@@ -411,6 +447,7 @@ export default function TiffinProfile({navigation, route}) {
                 {
                   ...styles.issuecontainer,
                   borderColor: cmtfocus ? ts.primary : '#ccc',
+                  fontFamily: ts.primaryregular,
                 },
                 gs.mh12,
                 gs.br10,
@@ -419,10 +456,28 @@ export default function TiffinProfile({navigation, route}) {
               multiline
               onFocus={handleFocus}
               onBlur={() => setCmtfocus(false)}
+              value={review}
+              onChangeText={text => setReview(text)}
             />
-            <TouchableOpacity style={[gs.mh14, gs.mv10]}>
-              <ThemeSepBtn btntxt="Submit" themecolor={ts.primary} />
-            </TouchableOpacity>
+            {!createLoading ? (
+              <TouchableOpacity
+                style={[gs.mh14, gs.mv10]}
+                onPress={() => {
+                  review &&
+                    dispatch(createReview({vendor_id, review_text: review}));
+                    setReview(null)
+                }}
+                activeOpacity={0.7}>
+                <ThemeSepBtn
+                  btntxt="Submit"
+                  themecolor={review ? ts.primary : '#D3D3D3'}
+                />
+              </TouchableOpacity>
+            ) : (
+              <Center>
+                <Spinner color={ts.primary} />
+              </Center>
+            )}
           </View>
         </View>
       </KeyboardAwareScrollView>

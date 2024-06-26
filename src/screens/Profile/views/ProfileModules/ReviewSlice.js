@@ -1,55 +1,79 @@
-import {View, Text, FlatList, Image} from 'react-native';
-import React, {memo} from 'react';
+import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
+import React, {memo, useEffect, useState} from 'react';
 import {Item} from 'react-native-paper/lib/typescript/components/Drawer/Drawer';
-import {Divider, Flex} from 'native-base';
+import {Center, Divider, Flex, Spinner} from 'native-base';
 import {ScaledSheet} from 'react-native-size-matters';
 import {gs} from '../../../../../GlobalStyles';
 import {ts} from '../../../../../ThemeStyles';
+import {useDispatch, useSelector} from 'react-redux';
+import {getReviews} from '../../../Home/controllers/ReviewController';
+import ReadMore from '@fawazahmed/react-native-read-more';
+import {useNavigation} from '@react-navigation/native';
+import {timeSince} from '../../../../components/TimeFormat';
+import ReviewCard from '../../../Home/views/ReviewCard';
 
-function ReviewSlice({data}) {
+function ReviewSlice({data, vendor_id, from}) {
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(3);
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const {reviewLoading, reviewData, reviewError} = useSelector(
+    state => state.review,
+  );
+  useEffect(() => {
+    if (vendor_id && page && limit) {
+      dispatch(getReviews({page, limit, vendor_id}));
+    }
+  }, [vendor_id, page, limit]);
+
   const renderItem = ({item, index}) => {
     return (
-      <View>
-        <Flex direction="row" alignItems="center">
-          <Image source={item.img} style={styles.img} />
-          <View style={[gs.ml10]}>
-            <Text style={[styles.name, gs.mb3]}>{item.name}</Text>
-            <Text style={[styles.subtxt, gs.fs12]}>{item.date}</Text>
-          </View>
-        </Flex>
-        <Text style={[styles.subtxt, gs.fs12, gs.mv5]}>{item.comment}</Text>
-        {data.length-1>index && <Divider style={[gs.mv15]} />}
-      </View>
+      <ReviewCard item={item} index={index} from={from} reviews={reviewData?.data}/>
     );
   };
-  return (
+  return reviewData?.data?.length == 0 ? (
+    <Text style={[styles.name, gs.mb3]}>No Reviews</Text>
+  ) : (
     <View>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => String(index)}
-        showsVerticalScrollIndicator={false}
-     
-      />
+      {reviewLoading && (
+        <Spinner color={from == 'Tiffins' ? ts.primary : ts.secondary} />
+      )}
+      {!reviewLoading && !reviewError && (
+        <FlatList
+          data={reviewData?.data}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => String(index)}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
+      {reviewData?.total_count > 3 && (
+        <Center>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('PageStack', {
+                screen: 'Reviews',
+                params: {
+                  from,
+                  vendor_id,
+                },
+              });
+            }}>
+            <Text
+              style={[
+                styles.subtxt,
+                gs.fs12,
+                {color: from == 'Tiffins' ? ts.primary : ts.secondary},
+              ]}>
+              See all {reviewData?.total_count} reviews
+            </Text>
+          </TouchableOpacity>
+        </Center>
+      )}
     </View>
   );
 }
 export default memo(ReviewSlice);
 
 const styles = ScaledSheet.create({
-  img: {
-    height: '30@ms',
-    width: '30@ms',
-    borderRadius: '15@ms',
-  },
-  name: {
-    fontFamily: ts.secondaryregular,
-    color: ts.primarytext,
-    fontSize: '13@ms',
-  },
-  subtxt: {
-    fontFamily: ts.secondaryregular,
-    color: ts.secondarytext,
-    lineHeight: '17@ms',
-  },
+ 
 });

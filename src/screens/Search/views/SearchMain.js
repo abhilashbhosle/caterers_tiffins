@@ -331,7 +331,8 @@ export default function SearchMain({route, navigation}) {
         from={from}
         fetchMoreData={fetchMoreData}
         renderFooter={renderFooter}
-        data={vendorData}
+        vendorData={vendorData}
+        setVendorData={setVendorData}
         location={location}
       />
     </ScreenWrapper>
