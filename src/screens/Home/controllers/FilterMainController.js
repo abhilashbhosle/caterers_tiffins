@@ -10,7 +10,7 @@ import {
   getSortService,
   getSubscriptionService,
 } from '../services/FilterMainService';
-import { getCatererSearchService } from '../services/SearchService';
+import {getCatererSearchService} from '../services/SearchService';
 
 // ======GET SERVING TYPE=======//
 export const getServing = createAsyncThunk(
@@ -73,9 +73,10 @@ export const getSort = createAsyncThunk('getSort', async (_, {dispatch}) => {
 // =======CLEAR FILTERS======//
 export const clearFilter = createAsyncThunk(
   'getSort',
-  async (_, {dispatch}) => {
+  async ({params,navigation}, {dispatch}) => {
     try {
-      const res = await clearFilterService({dispatch});
+      const res = await clearFilterService({dispatch,params,navigation});
+      return res
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -98,7 +99,7 @@ export const getSubscription = createAsyncThunk(
   'getSubscription',
   async ({from}, {dispatch}) => {
     try {
-      const res = await getSubscriptionService({dispatch,from});
+      const res = await getSubscriptionService({dispatch, from});
       return res.subscription_types;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -131,7 +132,23 @@ const filterSlice = createSlice({
     subData: [],
     subError: null,
   },
-  reducers: {},
+  reducers: {
+    updateBudget: (state, action) => {
+      state.budgetData = action.payload;
+    },
+    updateServing: (state, action) => {
+      state.servingData = action.payload;
+    },
+    updateHeadCount: (state, action) => {
+      state.headData = action.payload;
+    },
+    updateservice: (state, action) => {
+      state.serviceData = action.payload;
+    },
+    updateSort: (state, action) => {
+      state.sortData = action.payload;
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(getServing.pending, (state, action) => {
@@ -220,5 +237,11 @@ const filterSlice = createSlice({
       });
   },
 });
-export const {} = filterSlice.actions;
+export const {
+  updateBudget,
+  updateServing,
+  updateHeadCount,
+  updateservice,
+  updateSort,
+} = filterSlice.actions;
 export default filterSlice.reducer;

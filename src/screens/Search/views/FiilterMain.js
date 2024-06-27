@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   TouchableOpacity,
-  Alert
+  Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
@@ -16,24 +16,13 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {ts} from '../../../../ThemeStyles';
 import {Center, Divider, Flex, Spinner} from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {caterersort, headcount} from '../../../constants/Constants';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import FontistoIcon from 'react-native-vector-icons/Fontisto';
 import AntIcon from 'react-native-vector-icons/Ionicons';
 import ThemeSepBtn from '../../../components/ThemeSepBtn';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  clearFilter,
-  getBudget,
-  getHeadCount,
-  getService,
-  getServing,
-  getSort,
-} from '../../Home/controllers/FilterMainController';
-import {getServService} from '../../Home/services/FilterMainService';
-import {getOccassions} from '../../Home/controllers/OccassionController';
-import {getCuisines} from '../../Home/controllers/ExploreCuisineController';
+import {clearFilter} from '../../Home/controllers/FilterMainController';
 import {
   handleBudget,
   handleChildrenCuisines,
@@ -44,6 +33,7 @@ import {
   handleServing,
   handleSort,
 } from '../../Home/controllers/FilterCommonController';
+import {handleSearchSegregation} from '../../Home/controllers/SearchController';
 
 export default function FiilterMain({navigation, route}) {
   const {address, ssd, sse, location, from} = route.params;
@@ -58,6 +48,20 @@ export default function FiilterMain({navigation, route}) {
   const [expanded, setExpanded] = useState(-1);
   const dispatch = useDispatch();
   const [sort, setSort] = useState([]);
+  const [segre, setSegre] = useState({
+    serving_types_filter: [],
+    service_types_filter: [],
+    occasions_filter: [],
+    price_ranges: [],
+    head_count_ranges: [],
+    order_by_filter: [],
+    cuisines_filter: [],
+    search_term: '',
+    food_types_filter: [],
+    subscription_types_filter: [],
+    meal_times_filter: [],
+    kitchen_types_filter: [],
+  });
 
   const {
     servingLoading,
@@ -75,6 +79,8 @@ export default function FiilterMain({navigation, route}) {
     sortLoading,
     sortData,
     sortError,
+    foodTypeData,
+    subData,
   } = useSelector(state => state?.filterCater);
 
   const {loading, data, error} = useSelector(state => state?.occassion);
@@ -86,15 +92,7 @@ export default function FiilterMain({navigation, route}) {
     state => state.location,
   );
 
-  useEffect(() => {
-    dispatch(getServing());
-    dispatch(getService());
-    dispatch(getOccassions());
-    dispatch(getBudget());
-    dispatch(getCuisines());
-    dispatch(getHeadCount());
-    dispatch(getSort());
-  }, []);
+  const {mealData, kitchenData} = useSelector(state => state?.filterTiffin);
   useEffect(() => {
     if (servingData?.length) {
       setServing(servingData);
@@ -117,6 +115,22 @@ export default function FiilterMain({navigation, route}) {
     if (sortData?.length) {
       setSort(sortData);
     }
+    (async () => {
+      await handleSearchSegregation({
+        setSegre,
+        foodTypeData,
+        serviceData,
+        servingData,
+        occasion,
+        headData,
+        sortData,
+        cuisines_data: cuisineData,
+        budgetData,
+        subData,
+        mealData,
+        kitchenData,
+      });
+    })();
   }, [
     servingData,
     serviceData,
@@ -159,13 +173,21 @@ export default function FiilterMain({navigation, route}) {
           text: 'OK',
           onPress: async () => {
             await dispatch(clearFilter());
-            navigation.goBack();
+            navigation.navigate('PageStack', {
+              screen: 'SearchMain',
+              params: {
+                from,
+                address,
+                ssd,
+                sse,
+                location,
+              },
+            });
           },
         },
       ],
     );
   };
-
   return (
     <ScreenWrapper>
       <ThemeHeaderWrapper
@@ -228,6 +250,8 @@ export default function FiilterMain({navigation, route}) {
                         location,
                         from: 'Caterers',
                         dispatch,
+                        segre,
+                        setSegre,
                       });
                     }}>
                     <Flex
@@ -288,6 +312,8 @@ export default function FiilterMain({navigation, route}) {
                       location,
                       from: 'Caterers',
                       dispatch,
+                      segre,
+                      setSegre,
                     });
                   }}>
                   <Flex direction="row" justify="space-between" align="center">
@@ -344,6 +370,8 @@ export default function FiilterMain({navigation, route}) {
                       location,
                       from: 'Caterers',
                       dispatch,
+                      segre,
+                      setSegre,
                     });
                   }}
                   activeOpacity={0.7}>
@@ -451,6 +479,8 @@ export default function FiilterMain({navigation, route}) {
                           location,
                           from: 'Caterers',
                           dispatch,
+                          segre,
+                          setSegre,
                         })
                       }>
                       <MaterialIcons
@@ -495,6 +525,8 @@ export default function FiilterMain({navigation, route}) {
                               location,
                               from: 'Caterers',
                               dispatch,
+                              segre,
+                              setSegre,
                             });
                           }}>
                           <MaterialIcons
@@ -569,6 +601,8 @@ export default function FiilterMain({navigation, route}) {
                         location,
                         from: 'Caterers',
                         dispatch,
+                        segre,
+                        setSegre,
                       });
                     }}>
                     <Flex
@@ -630,6 +664,8 @@ export default function FiilterMain({navigation, route}) {
                       location,
                       from: 'Caterers',
                       dispatch,
+                      segre,
+                      setSegre,
                     });
                   }}>
                   <Flex direction="row" justify="space-between" align="center">
@@ -690,6 +726,8 @@ export default function FiilterMain({navigation, route}) {
                       location,
                       from: 'Caterers',
                       dispatch,
+                      segre,
+                      setSegre,
                     });
                   }}
                   key={i}>
@@ -734,24 +772,24 @@ export default function FiilterMain({navigation, route}) {
             matching Caterers
           </Text>
           {caterersLoading ? (
-           
             <ThemeSepBtn btntxt="Show results" themecolor={'#D3D3D3'} />
           ) : (
-            <TouchableOpacity activeOpacity={0.7} onPress={()=>{
-              navigation.push('PageStack', {
-                screen: 'SearchMain',
-                params: {
-                  from,
-                  address,
-                  ssd,
-                  sse,
-                  location
-                },
-              });
-            }}>
-            <ThemeSepBtn btntxt="Show results" themecolor={ts.secondary} />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                navigation.navigate('PageStack', {
+                  screen: 'SearchMain',
+                  params: {
+                    from,
+                    address,
+                    ssd,
+                    sse,
+                    location,
+                  },
+                });
+              }}>
+              <ThemeSepBtn btntxt="Show results" themecolor={ts.secondary} />
             </TouchableOpacity>
-
           )}
         </Flex>
       </Card>

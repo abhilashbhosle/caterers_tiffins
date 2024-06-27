@@ -41,6 +41,7 @@ import {
   handleParentCuisines,
   handleChildrenCuisines,
 } from '../../Home/controllers/FilterCommonController';
+import {handleSearchSegregation} from '../../Home/controllers/SearchController';
 
 export default function FilterTiffins({navigation, route}) {
   const {address, ssd, sse, location, from} = route.params;
@@ -56,9 +57,6 @@ export default function FilterTiffins({navigation, route}) {
 
   const dispatch = useDispatch();
   const {
-    serviceLoading,
-    serviceData,
-    serviceError,
     mealLoading,
     mealData,
     mealError,
@@ -70,9 +68,18 @@ export default function FilterTiffins({navigation, route}) {
   const cuisineData = cuisines_data?.data;
   const cuisineLoading = cuisines_data?.loading;
   const cuisineError = cuisines_data?.error;
-  const {sortLoading, sortData, sortError} = useSelector(
-    state => state?.filterCater,
-  );
+  const {
+    sortLoading,
+    sortData,
+    sortError,
+    foodTypeData,
+    subData,
+    budgetData,
+    servingData,
+    serviceData,
+    serviceLoading,
+    serviceError,
+  } = useSelector(state => state?.filterCater);
   const {caterersLoading, caterersData, caterersError} = useSelector(
     state => state.location,
   );
@@ -81,14 +88,20 @@ export default function FilterTiffins({navigation, route}) {
     state => state?.filterCater,
   );
 
-  useEffect(() => {
-    dispatch(getTiffinService());
-    dispatch(getMeal());
-    dispatch(getKitchen());
-    dispatch(getHeadCount());
-    dispatch(getCuisines());
-    dispatch(getSort());
-  }, []);
+  const [segre, setSegre] = useState({
+    serving_types_filter: [],
+    service_types_filter: [],
+    occasions_filter: [],
+    price_ranges: [],
+    head_count_ranges: [],
+    order_by_filter: [],
+    cuisines_filter: [],
+    search_term: '',
+    food_types_filter: [],
+    subscription_types_filter: [],
+    meal_times_filter: [],
+    kitchen_types_filter: [],
+  });
 
   useEffect(() => {
     if (serviceData?.length) {
@@ -109,7 +122,34 @@ export default function FilterTiffins({navigation, route}) {
     if (sortData?.length) {
       setSort(sortData);
     }
-  }, [serviceData, mealData, kitchenData, headData, cuisineData, sortData]);
+    (async () => {
+      await handleSearchSegregation({
+        setSegre,
+        foodTypeData,
+        serviceData,
+        headData,
+        sortData,
+        cuisines_data: cuisineData,
+        budgetData,
+        subData,
+        mealData,
+        kitchenData,
+        servingData,
+      });
+    })();
+  }, [
+    serviceData,
+    mealData,
+    kitchenData,
+    headData,
+    cuisineData,
+    sortData,
+    foodTypeData,
+    serviceData,
+    budgetData,
+    subData,
+    servingData,
+  ]);
   // =======SEARCH CUISINE========//
   const handleSearch = text => {
     setSearch(text);
@@ -143,7 +183,7 @@ export default function FilterTiffins({navigation, route}) {
           text: 'OK',
           onPress: async () => {
             await dispatch(clearFilter());
-            navigation.goBack()
+            navigation.goBack();
           },
         },
       ],
@@ -211,6 +251,8 @@ export default function FilterTiffins({navigation, route}) {
                         location,
                         from: 'Tiffins',
                         dispatch,
+                        segre,
+                        setSegre,
                       });
                     }}>
                     <Flex
@@ -272,6 +314,8 @@ export default function FilterTiffins({navigation, route}) {
                       location,
                       from: 'Tiffins',
                       dispatch,
+                      segre,
+                      setSegre,
                     });
                   }}>
                   <Flex direction="row" justify="space-between" align="center">
@@ -378,6 +422,8 @@ export default function FilterTiffins({navigation, route}) {
                           location,
                           from: 'Tiffins',
                           dispatch,
+                          segre,
+                          setSegre,
                         })
                       }>
                       <MaterialIcons
@@ -421,6 +467,8 @@ export default function FilterTiffins({navigation, route}) {
                               location,
                               from: 'Tiffins',
                               dispatch,
+                              segre,
+                              setSegre,
                             });
                           }}>
                           <MaterialIcons
@@ -480,6 +528,8 @@ export default function FilterTiffins({navigation, route}) {
                       location,
                       from: 'Tiffins',
                       dispatch,
+                      segre,
+                      setSegre,
                     });
                   }}>
                   <Flex direction="row" justify="space-between" align="center">
@@ -538,6 +588,8 @@ export default function FilterTiffins({navigation, route}) {
                       location,
                       from: 'Tiffins',
                       dispatch,
+                      segre,
+                      setSegre,
                     });
                   }}>
                   <Flex direction="row" justify="space-between" align="center">
@@ -593,6 +645,8 @@ export default function FilterTiffins({navigation, route}) {
                       location,
                       from: 'Tiffins',
                       dispatch,
+                      segre,
+                      setSegre,
                     });
                   }}
                   key={i}>

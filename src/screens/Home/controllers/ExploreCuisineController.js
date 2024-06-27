@@ -22,7 +22,11 @@ export const getCuisines = createAsyncThunk(
 	 data:[],
 	 error:null
 	},
-	reducers: {},
+	reducers: {
+		updateCuisine:(state,action)=>{
+			state.data=action.payload
+		}
+	},
 	extraReducers: builder => {
 	  builder
 		.addCase(getCuisines.pending, (state, action) => {
@@ -39,5 +43,5 @@ export const getCuisines = createAsyncThunk(
 		})
 	},
   });
-  export const {} = cuisineSlice.actions;
+  export const {updateCuisine} = cuisineSlice.actions;
   export default cuisineSlice.reducer;

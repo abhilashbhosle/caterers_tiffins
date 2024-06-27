@@ -1,7 +1,7 @@
 import {View, Animated, Text} from 'react-native';
 import React, {memo, useEffect, useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
-import {FlatList, Spinner} from 'native-base';
+import {Center, FlatList, Spinner} from 'native-base';
 import {searchitems} from '../../../constants/Constants';
 import {gs} from '../../../../GlobalStyles';
 import SearchCaterersCard from '../../Search/views/SearchCaterersCard';
@@ -9,8 +9,9 @@ import SearchTiffinsCard from '../../Search/views/SearchTiffinsCard';
 import {searchStyles} from '../../Search/Searchstyles';
 import {useDispatch, useSelector} from 'react-redux';
 import {getCaterersWish} from '../../Home/controllers/WishListController';
+import {ScaledSheet} from 'react-native-size-matters';
 
-function CaterersWish({total,setTotal}) {
+function CaterersWish() {
   const scrollY = useRef(new Animated.Value(0)).current;
   const [limit, setLimit] = useState(5);
   const [page, setPage] = useState(1);
@@ -18,6 +19,7 @@ function CaterersWish({total,setTotal}) {
   const {catererLoading, catererData, catererError} = useSelector(
     state => state.wish,
   );
+  const [total, setTotal] = useState(0);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -26,16 +28,16 @@ function CaterersWish({total,setTotal}) {
     }
   }, [limit, page]);
 
-  useEffect(()=>{
-	if (catererData?.data) {
-		if (page == 1) {
-		  setWishData(catererData.data);
-		} else {
-		  setWishData([...wishData, ...catererData.data]);
-		}
-		setTotal(catererData?.total_count);
-	  }
-  },[catererData])
+  useEffect(() => {
+    if (catererData?.data) {
+      if (page == 1) {
+        setWishData(catererData.data);
+      } else {
+        setWishData([...wishData, ...catererData.data]);
+      }
+      setTotal(catererData?.total_count);
+    }
+  }, [catererData]);
 
   const renderFooter = () => {
     if (catererLoading) {
@@ -44,8 +46,8 @@ function CaterersWish({total,setTotal}) {
   };
 
   const fetchMoreData = () => {
-    if (wishData?.length < total || catererData?.length==0) {
-        setPage(page + 1);
+    if (wishData?.length < total) {
+      setPage(page + 1);
     }
   };
 
@@ -66,7 +68,7 @@ function CaterersWish({total,setTotal}) {
       inputRange,
       outputRange: [1, 1, 1, 0],
     });
-	
+
     return (
       <Animated.View style={{transform: [{scale}]}}>
         <SearchCaterersCard item={item} from="Caterers" />
@@ -74,32 +76,53 @@ function CaterersWish({total,setTotal}) {
     );
   };
 
+  // console.log(wishData?.length)
+
   return (
-    <Animated.FlatList
-      data={wishData}
-      keyExtractor={(item, index) => String(index)}
-      renderItem={renderCateringList}
-      onScroll={Animated.event(
-        [
-          {
-            nativeEvent: {contentOffset: {y: scrollY}},
-          },
-        ],
-        {useNativeDriver: true},
-      )}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={[
-        {backgroundColor: '#fff', paddingTop: 10},
-        gs.ph5,
-      ]}
-	  onEndReachedThreshold={0.6}
-	  onEndReached={fetchMoreData}
-	  ListFooterComponent={renderFooter}
-	  ListEmptyComponent={()=>
-		!catererLoading && wishData?.length==0 &&
-		<Text style={[{color:ts.secondarytext},gs.fs12]}>Wishlist is empty</Text>
-	  }
-    />
+    <>
+      <Center>
+        <Text style={styles.cardtxt}>Total : {total} Saved</Text>
+      </Center>
+      <Animated.FlatList
+        data={wishData}
+        keyExtractor={(item, index) => String(index)}
+        renderItem={renderCateringList}
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {contentOffset: {y: scrollY}},
+            },
+          ],
+          {useNativeDriver: true},
+        )}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[
+          {backgroundColor: '#fff', paddingTop: 10},
+          gs.ph5,
+        ]}
+        onEndReachedThreshold={0.6}
+        onEndReached={fetchMoreData}
+        ListFooterComponent={renderFooter}
+        ListEmptyComponent={() =>
+          !catererLoading &&
+          wishData?.length == 0 && (
+            <Text style={[{color: ts.secondarytext}, gs.fs12]}>
+              Wishlist is empty
+            </Text>
+          )
+        }
+      />
+    </>
   );
 }
 export default memo(CaterersWish);
+
+const styles = ScaledSheet.create({
+  cardtxt: {
+    fontSize: '12@ms',
+    marginLeft: '10@ms',
+    fontFamily: ts.secondaryregular,
+    color: ts.primarytext,
+    marginTop: '10@ms',
+  },
+});

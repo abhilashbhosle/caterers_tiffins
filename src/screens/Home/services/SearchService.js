@@ -33,6 +33,7 @@ export const getCatererSearchService = async ({params, dispatch,filterKey}) => {
     });
     return res.data;
   } catch (error) {
+    console.log("error in search",error)
     if (error.response && error.response.data) {
       throw new Error(error.response.data.message);
     } else {

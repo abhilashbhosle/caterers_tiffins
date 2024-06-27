@@ -11,6 +11,8 @@ import {
   getSort,
 } from '../controllers/FilterMainController';
 import {getKitchen, getMeal} from '../controllers/FilterTiffinController';
+import { getOccassions } from '../controllers/OccassionController';
+import { getCuisines } from '../controllers/ExploreCuisineController';
 
 //   =======GET SERVING======//
 export const getServingService = async () => {
@@ -141,13 +143,7 @@ export const clearFilterService = async ({dispatch,from}) => {
       type: 'success',
     });
     setTimeout(() => {
-      dispatch(getServing());
-      dispatch(getService());
-      dispatch(getBudget());
-      dispatch(getHeadCount());
-      dispatch(getSort());
-      dispatch(getKitchen());
-      dispatch(getMeal());
+     
     }, 1000);
   }
     return res.data;
@@ -164,6 +160,15 @@ export const clearFilterService = async ({dispatch,from}) => {
     }
   } finally {
     dispatch(startLoader(false));
+    dispatch(getServing());
+    dispatch(getService());
+    dispatch(getBudget());
+    dispatch(getHeadCount());
+    dispatch(getSort());
+    dispatch(getKitchen());
+    dispatch(getMeal());
+    dispatch(getOccassions())
+    dispatch(getCuisines())
   }
 };
 //=======GET FOOD TYPE  SERVICES=======//

@@ -51,7 +51,14 @@ const filterTiffinSlice = createSlice({
     kitchenData: [],
     kitchenError: null,
   },
-  reducers: {},
+  reducers: {
+    updateMeal: (state, action) => {
+      state.mealData = action.payload;
+    },
+    updateKitchen: (state, action) => {
+      state.kitchenData = action.payload;
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(getTiffinService.pending, (state, action) => {
@@ -92,5 +99,5 @@ const filterTiffinSlice = createSlice({
       });
   },
 });
-export const {} = filterTiffinSlice.actions;
+export const {updateKitchen,updateMeal} = filterTiffinSlice.actions;
 export default filterTiffinSlice.reducer;

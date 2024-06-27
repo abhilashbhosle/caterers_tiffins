@@ -7,8 +7,16 @@ import {
 import {showMessage} from 'react-native-flash-message';
 import {Alert} from 'react-native';
 import moment from 'moment';
-import {startLoader} from '../../../redux/CommonSlicer';
-import {getFoodTypes, getSubscription} from './FilterMainController';
+import {
+  updateBudget,
+  updateHeadCount,
+  updateServing,
+  updateSort,
+  updateservice,
+} from './FilterMainController';
+import {updateCuisine} from './ExploreCuisineController';
+import {updateOccassion} from './OccassionController';
+import { updateKitchen, updateMeal } from './FilterTiffinController';
 
 // ======GET LOCATIONs=======//
 export const getLocations = createAsyncThunk(
@@ -33,7 +41,7 @@ export const handleSearchResults = ({
   selectedLocation,
   setSelectedLocation,
   setSearch,
-  dispatch
+  dispatch,
 }) => {
   let flag = false;
   if (!selectedStartDate || !selectedEndDate) {
@@ -108,7 +116,6 @@ export const handleSearchSegregation = async ({
   subData,
   mealData,
   kitchenData,
-  
 }) => {
   const food_filter = await foodTypeData.map(e => ({
     id: parseInt(e.id),
@@ -147,13 +154,15 @@ export const handleSearchSegregation = async ({
     selected: e.selected,
   }));
   setSegre(prev => ({...prev, service_types_filter: service_types_filter}));
-  const occasions_filter = await occasion.map(e => ({
-    id: parseInt(e.occasion_id),
-    selected: e.selected,
-  }));
-  setSegre(prev => ({...prev, occasions_filter: occasions_filter}));
-
-  const order_by_filter = await sortData?.filter(e => e.selected === 1)
+  if (occasion?.length) {
+    const occasions_filter = await occasion.map(e => ({
+      id: parseInt(e.occasion_id),
+      selected: e.selected,
+    }));
+    setSegre(prev => ({...prev, occasions_filter: occasions_filter}));
+  }
+  const order_by_filter = await sortData
+    ?.filter(e => e.selected === 1)
     .map(e => ({id: e.id, value: e.sort_text}));
   setSegre(prev => ({...prev, order_by_filter: order_by_filter}));
   let temp = [];
@@ -202,111 +211,96 @@ export const getCaterersSearch = createAsyncThunk(
       page,
       limit,
       segre,
-      screen,
+      updated_response,
     },
-    {dispatch, getState},
+    {dispatch},
   ) => {
-    let params = {};
-    if (screen) {
-      params = {
-        search_term: '',
-        order_by_filter:
-          filterKey == 'sort'
-            ? JSON.stringify(filteredData)
-            : JSON.stringify(getState().filterCater?.sortData),
-        save_filter: 1,
-        meal_times_filter:
-          filterKey == 'mealTime'
-            ? JSON.stringify(filteredData)
-            : JSON.stringify(getState().filterTiffin?.mealData),
-        kitchen_types_filter:
-          filterKey == 'kitchenTypes'
-            ? JSON.stringify(filteredData)
-            : JSON.stringify(getState().filterTiffin?.kitchenData),
-        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
-        app_type: 'app',
-        start_date: moment(ssd).format('YYYY-MM-DD'),
-        end_date: moment(sse).format('YYYY-MM-DD'),
-        service_types_filter:
-          filterKey == 'service'
-            ? JSON.stringify(filteredData)
-            : JSON.stringify(getState()?.filterCater?.serviceData),
-        occasions_filter:
-          filterKey == 'occasion'
-            ? JSON.stringify(filteredData)
-            : JSON.stringify(getState()?.occassion?.data),
-        serving_types_filter:
-          filterKey == 'servingType'
-            ? JSON.stringify(filteredData)
-            : JSON.stringify(getState()?.filterCater?.servingData),
-        food_types_filter: JSON.stringify(
-          getState()?.filterCater?.foodTypeData,
-        ),
-        subscription_types_filter: JSON.stringify(
-          getState()?.filterCater?.subData,
-        ),
-        cuisines_filter:
-          filterKey == 'cuisine'
-            ? JSON.stringify(filteredData)
-            : JSON.stringify(getState()?.cuisine?.data),
-        price_ranges:
-          filterKey == 'budget'
-            ? JSON.stringify(filteredData)
-            : JSON.stringify(getState()?.filterCater?.budgetData),
-        head_count_ranges:
-          filterKey == 'headCount'
-            ? JSON.stringify(filteredData)
-            : JSON.stringify(getState()?.filterCater?.headData),
-        latitude: location.latitude,
-        longitude: location.longitude,
-        city: location.city,
-        pincode: location.pincode,
-        place_id: location.place_id,
-        limit: 1,
-        current_page: 1,
-      };
-    } else {
-      params = {
-        search_term: '',
-        order_by_filter: JSON.stringify(segre.order_by_filter),
-        save_filter: 1,
-        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
-        app_type: 'app',
-        start_date: moment(ssd).format('YYYY-MM-DD'),
-        end_date: moment(sse).format('YYYY-MM-DD'),
-        service_types_filter: JSON.stringify(segre.service_types_filter),
-        occasions_filter: JSON.stringify(segre.occasions_filter),
-        serving_types_filter: JSON.stringify(segre.serving_types_filter),
-        meal_times_filter:JSON.stringify(segre.meal_times_filter),
-        kitchen_types_filter:JSON.stringify(segre.kitchen_types_filter),
-        food_types_filter:
-          filterKey == 'foodType'
-            ? JSON.stringify(filteredData)
-            : JSON.stringify(segre.food_types_filter),
-        subscription_types_filter:
-          filterKey == 'subscription'
-            ? JSON.stringify(filteredData)
-            : JSON.stringify(segre.subscription_types_filter),
-        cuisines_filter: JSON.stringify(segre.cuisines_filter),
-        price_ranges: JSON.stringify(segre.price_ranges),
-        head_count_ranges: JSON.stringify(segre.head_count_ranges),
-        latitude: location.latitude,
-        longitude: location.longitude,
-        city: location.city,
-        pincode: location.pincode,
-        place_id: location.place_id,
-        limit: limit,
-        current_page: page,
-      };
-    }
+    let params = {
+      search_term: '',
+      order_by_filter:
+        filterKey == 'sort'
+          ? JSON.stringify(filteredData)
+          : JSON.stringify(segre.order_by_filter),
+      save_filter: 1,
+      vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+      app_type: 'app',
+      start_date: moment(ssd).format('YYYY-MM-DD'),
+      end_date: moment(sse).format('YYYY-MM-DD'),
+      service_types_filter:
+        filterKey == 'service'
+          ? JSON.stringify(filteredData)
+          : JSON.stringify(segre.service_types_filter),
+      occasions_filter:
+        filterKey == 'occasion'
+          ? JSON.stringify(filteredData)
+          : JSON.stringify(segre.occasions_filter),
+      serving_types_filter:
+        filterKey == 'servingType'
+          ? JSON.stringify(filteredData)
+          : JSON.stringify(segre.serving_types_filter),
+      meal_times_filter:
+        filterKey == 'mealTime'
+          ? JSON.stringify(filteredData)
+          : JSON.stringify(segre.meal_times_filter),
+      kitchen_types_filter:
+        filterKey == 'kitchenTypes'
+          ? JSON.stringify(kitchenTypes)
+          : JSON.stringify(segre.kitchen_types_filter),
+      food_types_filter:
+        filterKey == 'foodType'
+          ? JSON.stringify(filteredData)
+          : JSON.stringify(segre.food_types_filter),
+      subscription_types_filter:
+        filterKey == 'subscription'
+          ? JSON.stringify(filteredData)
+          : JSON.stringify(segre.subscription_types_filter),
+      cuisines_filter:
+        filterKey == 'cuisine'
+          ? JSON.stringify(filteredData)
+          : JSON.stringify(segre.cuisines_filter),
+      price_ranges:
+        filterKey == 'budget'
+          ? JSON.stringify(filteredData)
+          : JSON.stringify(segre.price_ranges),
+      head_count_ranges:
+        filterKey == 'headCount'
+          ? JSON.stringify(filteredData)
+          : JSON.stringify(segre.head_count_ranges),
+      latitude: location.latitude,
+      longitude: location.longitude,
+      city: location.city,
+      pincode: location.pincode,
+      place_id: location.place_id,
+      limit: limit,
+      current_page: page,
+    };
     try {
       const res = await getCatererSearchService({params, dispatch, filterKey});
-
+      if (filterKey == 'servingType') {
+        dispatch(updateServing(updated_response));
+      } else if (filterKey == 'budget') {
+        dispatch(updateBudget(updated_response));
+      } else if (filterKey == 'headCount') {
+        dispatch(updateHeadCount(updated_response));
+      } else if (filterKey == 'cuisine') {
+        dispatch(updateCuisine(updated_response));
+      } else if (filterKey == 'service') {
+        dispatch(updateservice(updated_response));
+      } else if (filterKey == 'occasion') {
+        dispatch(updateOccassion(updated_response));
+      } else if (filterKey == 'sort') {
+        dispatch(updateSort(updated_response));
+      }else if(filterKey=="mealTime"){
+        dispatch(updateMeal(updated_response))
+      }
+      else if(filterKey=="kitchenTypes"){
+        dispatch(updateKitchen(updated_response))
+      }
+      
       return res.data;
     } catch (error) {
       return rejectWithValue(error.message);
     } finally {
-      // dispatch(startLoader(false));
     }
   },
 );
@@ -320,22 +314,23 @@ const searchSlice = createSlice({
     caterersLoading: false,
     caterersData: [],
     caterersError: null,
-    searchRes:null,
-    locationRes:null,
-    selectedLocRes:null
+    searchRes: null,
+    locationRes: null,
+    selectedLocRes: null,
+    foodTypes: [],
   },
   reducers: {
     clearSearch: (state, action) => {
       state.searchData = [];
     },
-    clearCaterers:(state,action)=>{
-      state.caterersData=[]
+    clearCaterers: (state, action) => {
+      state.caterersData = [];
     },
-    setSearchRes:(state,action)=>{
-      state.searchRes=action.payload
+    setSearchRes: (state, action) => {
+      state.searchRes = action.payload;
     },
-    setLocationres:(state,action)=>{
-      state.locationRes=action.payload
+    setLocationres: (state, action) => {
+      state.locationRes = action.payload;
     },
   },
   extraReducers: builder => {
@@ -367,5 +362,12 @@ const searchSlice = createSlice({
       });
   },
 });
-export const {clearSearch,clearCaterers,setSearchRes,setLocationres,setSelectedLocRes} = searchSlice.actions;
+export const {
+  clearSearch,
+  clearCaterers,
+  setSearchRes,
+  setLocationres,
+  setSelectedLocRes,
+  segreFoodType,
+} = searchSlice.actions;
 export default searchSlice.reducer;

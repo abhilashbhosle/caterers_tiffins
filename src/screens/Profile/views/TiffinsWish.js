@@ -6,11 +6,12 @@ import SearchTiffinsCard from '../../Search/views/SearchTiffinsCard';
 import {searchStyles} from '../../Search/Searchstyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTiffinsWish } from '../../Home/controllers/WishListController';
-import { Spinner } from 'native-base';
+import { Center, Spinner } from 'native-base';
 import { ts } from '../../../../ThemeStyles';
 import { color } from 'native-base/lib/typescript/theme/styled-system';
+import { ScaledSheet } from 'react-native-size-matters';
 
-function TiffinsWish({total,setTotal}) {
+function TiffinsWish() {
   const scrollY = useRef(new Animated.Value(0)).current;
   const [limit, setLimit] = useState(5);
   const [page, setPage] = useState(1);
@@ -19,6 +20,7 @@ function TiffinsWish({total,setTotal}) {
     state => state.wish,
   );
   const dispatch = useDispatch();
+  const [total,setTotal]=useState(0)
 
   useEffect(() => {
     if ((limit, page)) {
@@ -74,6 +76,10 @@ function TiffinsWish({total,setTotal}) {
   };
 
   return (
+    <>
+    		 <Center>
+        <Text style={styles.cardtxt}>Total : {total} Saved</Text>
+      </Center>
     <Animated.FlatList
       data={wishData}
       keyExtractor={(item, index) => String(index)}
@@ -99,6 +105,16 @@ function TiffinsWish({total,setTotal}) {
 		<Text style={[{color:ts.secondarytext},gs.fs12]}>Wishlist is empty</Text>
 	  }
     />
+    </>
   );
 }
 export default memo(TiffinsWish);
+const styles = ScaledSheet.create({
+  cardtxt: {
+    fontSize: '12@ms',
+    marginLeft: '10@ms',
+    fontFamily: ts.secondaryregular,
+    color: ts.primarytext,
+    marginTop: '10@ms',
+  },
+});

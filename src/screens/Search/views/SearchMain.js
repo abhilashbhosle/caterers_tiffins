@@ -53,10 +53,7 @@ export default function SearchMain({route, navigation}) {
     foodTypeError,
     subData,
   } = useSelector(state => state?.filterCater);
-  const {
-    mealData,
-    kitchenData
-  }=useSelector(state=>state?.filterTiffin)
+  const {mealData, kitchenData} = useSelector(state => state?.filterTiffin);
   const cuisines_data = useSelector(state => state?.cuisine.data);
   const occasion = useSelector(state => state?.occassion?.data);
   const [segre, setSegre] = useState({
@@ -79,7 +76,7 @@ export default function SearchMain({route, navigation}) {
   const {caterersLoading, caterersData, caterersError} = useSelector(
     state => state.location,
   );
-  const location=useSelector(state=>state.location.locationRes)
+  const location = useSelector(state => state.location.locationRes);
   useFocusEffect(() => {
     // ========TINT COLORS=========//
     if (Platform.OS == 'android')
@@ -95,8 +92,7 @@ export default function SearchMain({route, navigation}) {
   });
   // =========SETTING UP ALL THE FILTERS======//
   useEffect(() => {
-    setTotal(0)
-    setVendorData([])
+    setFlag(false)
     setPage(1)
     if (foodTypeData?.length) {
       setFoodType(foodTypeData);
@@ -124,7 +120,7 @@ export default function SearchMain({route, navigation}) {
   }, [
     foodTypeData,
     serviceData,
-    serviceData,
+    servingData,
     budgetData,
     headData,
     sortData,
@@ -133,24 +129,24 @@ export default function SearchMain({route, navigation}) {
     subData,
     mealData,
     kitchenData,
-    route
   ]);
-
 
   useEffect(() => {
     if (caterersData?.vendors) {
-      if (page == 1) {
+      if (page == 1 || caterersData?.current_page == 1) {
         setVendorData(caterersData.vendors);
       } else {
         setVendorData([...vendorData, ...caterersData.vendors]);
       }
+      if(caterersData?.total_count){
       setTotal(caterersData?.total_count);
+      }
     }
   }, [caterersData]);
 
   useEffect(() => {
     if (page && flag) {
-      dispatch(clearCaterers())
+      dispatch(clearCaterers());
       dispatch(
         getCaterersSearch({
           from,
@@ -201,12 +197,7 @@ export default function SearchMain({route, navigation}) {
               style={[gs.fs22, {color: '#fff'}, gs.mt10]}
             />
           </TouchableOpacity>
-          <SearchBar
-            from={from}
-            navigation={navigation}
-            ssd={ssd}
-            sse={sse}
-          />
+          <SearchBar from={from} navigation={navigation} ssd={ssd} sse={sse} />
         </SafeAreaView>
       </View>
       {/* ========TOP SELECTOR============ */}

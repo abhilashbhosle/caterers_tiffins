@@ -8,6 +8,7 @@ import {ScaledSheet} from 'react-native-size-matters';
 import CaterersWish from './CaterersWish';
 import TiffinsWish from './TiffinsWish';
 import { ScreenWrapper } from '../../../components/ScreenWrapper';
+import { useSelector } from 'react-redux';
 
 export default function WishList({navigation}) {
   const layout = useWindowDimensions();
@@ -16,29 +17,25 @@ export default function WishList({navigation}) {
     {key: 'first', title: 'Caterers'},
     {key: 'second', title: 'Tiffins'},
   ]);
-  const [total,setTotal]=useState(0)
 // =========CATERERS==========//
   const Caterers = () => (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
-      <Center>
-        <Text style={styles.cardtxt}>Total : {total} Saved</Text>
-      </Center>
-	  <CaterersWish total={total} setTotal={setTotal}/>
+     
+	  <CaterersWish/>
     </View>
   );
 
   const Tiffins = () => (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
-		 <Center>
-        <Text style={styles.cardtxt}>Total : {total} Saved</Text>
-      </Center>
-	  <TiffinsWish total={total} setTotal={setTotal}/>
+
+	  <TiffinsWish/>
 	</View>
   );
   const renderScene = SceneMap({
     first: Caterers,
     second: Tiffins,
   });
+
 
   return (
     <ScreenWrapper>
