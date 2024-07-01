@@ -159,7 +159,7 @@ export const clearFilterService = async ({dispatch,from}) => {
       throw new Error(error.message);
     }
   } finally {
-    dispatch(startLoader(false));
+    if(!from){
     dispatch(getServing());
     dispatch(getService());
     dispatch(getBudget());
@@ -169,6 +169,9 @@ export const clearFilterService = async ({dispatch,from}) => {
     dispatch(getMeal());
     dispatch(getOccassions())
     dispatch(getCuisines())
+    }
+    dispatch(startLoader(false));
+
   }
 };
 //=======GET FOOD TYPE  SERVICES=======//

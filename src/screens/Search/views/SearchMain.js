@@ -7,7 +7,7 @@ import {
   StatusBar,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
@@ -16,7 +16,6 @@ import SearchBar from '../../Home/views/SearchBar';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Flex, Spinner} from 'native-base';
-import {labels} from '../../../constants/Checks';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import Badges from './Badges';
 import SearchList from './SearchList';
@@ -25,18 +24,23 @@ import {useFocusEffect} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {handleFoodType} from '../../Home/controllers/FilterCommonController';
-import {getOccassions} from '../../Home/controllers/OccassionController';
-import {getCuisines} from '../../Home/controllers/ExploreCuisineController';
 import {
   clearCaterers,
   getCaterersSearch,
   handleSearchSegregation,
+  setLocationres,
+  setSearchRes,
+  setSelectedLocRes,
 } from '../../Home/controllers/SearchController';
-import {doSegregate} from '../../Home/controllers/FilterMainController';
+import {clearFilterService} from '../../Home/services/FilterMainService';
+import {
+  getSubscription,
+  updateSubscriptions,
+} from '../../Home/controllers/FilterMainController';
 
 export default function SearchMain({route, navigation}) {
   const {width, height} = useWindowDimensions();
-  const {from, ssd, sse} = route.params;
+  const {from, ssd, sse,move} = route.params;
   const [vendorData, setVendorData] = useState([]);
   const [subType, setSubType] = useState([]);
   const [foodType, setFoodType] = useState([]);
@@ -48,9 +52,7 @@ export default function SearchMain({route, navigation}) {
     budgetData,
     headData,
     sortData,
-    foodTypeLoading,
     foodTypeData,
-    foodTypeError,
     subData,
   } = useSelector(state => state?.filterCater);
   const {mealData, kitchenData} = useSelector(state => state?.filterTiffin);
@@ -77,23 +79,23 @@ export default function SearchMain({route, navigation}) {
     state => state.location,
   );
   const location = useSelector(state => state.location.locationRes);
-  useFocusEffect(() => {
-    // ========TINT COLORS=========//
-    if (Platform.OS == 'android')
-      if (from == 'Caterers') {
-        StatusBar.setBarStyle('light-content', true, {
-          backgroundColor: ts.secondary,
-        });
-      } else {
-        StatusBar.setBarStyle('light-content', true, {
-          backgroundColor: ts.primary,
-        });
+  useFocusEffect(
+    useCallback(() => {
+      if (Platform.OS === 'android') {
+        StatusBar.setBarStyle('light-content', true);
+        StatusBar.setBackgroundColor(
+          from === 'Caterers' ? ts.secondary : ts.primary,
+        );
       }
-  });
+      // setFlag(false);
+    }, [from]),
+  );
   // =========SETTING UP ALL THE FILTERS======//
   useEffect(() => {
-    setFlag(false)
-    setPage(1)
+    setFlag(false);
+    setVendorData([]);
+    setPage(1);
+    setTotal(0);
     if (foodTypeData?.length) {
       setFoodType(foodTypeData);
     }
@@ -130,7 +132,6 @@ export default function SearchMain({route, navigation}) {
     mealData,
     kitchenData,
   ]);
-
   useEffect(() => {
     if (caterersData?.vendors) {
       if (page == 1 || caterersData?.current_page == 1) {
@@ -138,8 +139,8 @@ export default function SearchMain({route, navigation}) {
       } else {
         setVendorData([...vendorData, ...caterersData.vendors]);
       }
-      if(caterersData?.total_count){
-      setTotal(caterersData?.total_count);
+      if (caterersData?.total_count) {
+        setTotal(caterersData?.total_count);
       }
     }
   }, [caterersData]);
@@ -169,11 +170,12 @@ export default function SearchMain({route, navigation}) {
       }
     }
   };
-  const renderFooter = () => {
-    if (caterersLoading) {
-      return <Spinner color={ts.secondarytext} />;
-    }
-  };
+  const renderFooter = useMemo(() => {
+    if (caterersLoading) return <Spinner color={ts.secondarytext} />;
+    return null;
+  }, [caterersLoading]);
+
+
   return (
     <ScreenWrapper>
       <View
@@ -187,8 +189,11 @@ export default function SearchMain({route, navigation}) {
         <SafeAreaView>
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => {
+            onPress={async () => {
+              await clearFilterService({dispatch, from});
+               dispatch(setLocationres(""))
               navigation.navigate('BottomBarStack');
+              setVendorData(0);
             }}
             style={[gs.pb20]}>
             {/* ========SEARCH============ */}

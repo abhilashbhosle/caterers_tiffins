@@ -1,5 +1,5 @@
 import {View, Text, Image, Platform} from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Caterers from '../screens/Home/views/Caterers';
 import Tiffins from '../screens/Home/views/Tiffins';
@@ -7,10 +7,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {ts} from '../../ThemeStyles';
 import {gs} from '../../GlobalStyles';
 import {ScaledSheet} from 'react-native-size-matters';
+import { useDispatch } from 'react-redux';
 
 const Tab = createBottomTabNavigator();
 
 export default function BottomBarStack() {
+const dispatch=useDispatch()
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({

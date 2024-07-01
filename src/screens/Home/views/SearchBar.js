@@ -28,9 +28,14 @@ import {
   clearSearch,
   getLocations,
   handleSearchResults,
+  setEdate,
+  setEndFullDate,
   setLocationres,
+  setSdate,
   setSearchRes,
   setSelectedLocRes,
+  setStartDate,
+  setStartFullDate,
 } from '../controllers/SearchController';
 import {debounce} from '../../../constants/Debounce';
 import {showMessage} from 'react-native-flash-message';
@@ -45,8 +50,7 @@ import {
   getSort,
   getSubscription,
 } from '../controllers/FilterMainController';
-import {clearFilterService} from '../services/FilterMainService';
-import { getKitchen, getMeal } from '../controllers/FilterTiffinController';
+import {getKitchen, getMeal} from '../controllers/FilterTiffinController';
 const minDate = new Date(); // Today
 const maxDate = new Date(2037, 6, 3);
 
@@ -63,6 +67,7 @@ function SearchBar({from, navigation, ssd, sse}) {
   const [selectedSearch, setSelectedSearch] = useState('');
   const [search, setSearch] = useState('');
   const dispatch = useDispatch();
+
   const [selectedLocation, setSelectedLocation] = useState({
     city: null,
     longitude: null,
@@ -71,17 +76,18 @@ function SearchBar({from, navigation, ssd, sse}) {
     place_id: null,
   });
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
-  const searchRes=useSelector(state=>state.location?.searchRes)
-  const locationRes=useSelector(state=>state.location.locationRes)
+  const searchRes = useSelector(state => state.location?.searchRes);
+  const locationRes = useSelector(state => state.location.locationRes);
 
-  useEffect(()=>{
-    if(searchRes){
-      setSearch(searchRes)
+
+  useEffect(() => {
+    if (searchRes) {
+      setSearch(searchRes);
     }
-    if(locationRes){
-      setSelectedLocation(locationRes)
+    if (locationRes) {
+      setSelectedLocation(locationRes);
     }
-  },[searchRes,locationRes])
+  }, [searchRes, locationRes]);
   const {searchLoading, searchData, searchError} = useSelector(
     state => state.location,
   );
@@ -134,7 +140,7 @@ function SearchBar({from, navigation, ssd, sse}) {
       latitude: e.geometry.location.lat,
       longitude: e.geometry.location.lng,
       place_id: e.place_id,
-      city: tempData[tempData?.length - 2].trim(),
+      city: tempData[tempData.length - 3].trim(),
     });
     setSearch(e.formatted_address);
     setSelectedSearch(e);
@@ -164,9 +170,10 @@ function SearchBar({from, navigation, ssd, sse}) {
       });
     }
   }, [ssd, sse]);
+
   useEffect(() => {
     dispatch(getFoodTypes());
-    dispatch(getSubscription({from}))
+    dispatch(getSubscription({from}));
     dispatch(getServing());
     dispatch(getService());
     dispatch(getOccassions());
@@ -174,10 +181,9 @@ function SearchBar({from, navigation, ssd, sse}) {
     dispatch(getCuisines());
     dispatch(getHeadCount());
     dispatch(getSort());
-    dispatch(getMeal())
-    dispatch(getKitchen())
+    dispatch(getMeal());
+    dispatch(getKitchen());
   }, []);
-
 
   return (
     <>
@@ -207,11 +213,11 @@ function SearchBar({from, navigation, ssd, sse}) {
               />
             </View>
             {fromdate && enddate ? (
-              <Text style={[gs.fs11, ts.primarytext, gs.ml4]}>
+              <Text style={[gs.fs11, {color: ts.primarytext}, gs.ml4]}>
                 {fromdate} - {enddate?.slice(4)}
               </Text>
             ) : (
-              <Text style={[gs.fs11, {color: '#57636c'}, gs.ml4]}>
+              <Text style={[gs.fs11, {color: ts.primarytext}, gs.ml4]}>
                 Feb 14 - 16
               </Text>
             )}
@@ -245,11 +251,11 @@ function SearchBar({from, navigation, ssd, sse}) {
               }}
               activeOpacity={0.9}
               onPress={async () => {
-                dispatch(clearCaterers())
-                dispatch(setSearchRes(search))
-                dispatch(setLocationres(selectedLocation))
+                dispatch(clearCaterers());
+                dispatch(setSearchRes(search));
+                dispatch(setLocationres(selectedLocation));
                 // console.log("search",search)
-                 handleSearchResults({
+                handleSearchResults({
                   navigation,
                   from,
                   search,
@@ -259,6 +265,7 @@ function SearchBar({from, navigation, ssd, sse}) {
                   selectedLocation,
                   setSelectedLocation,
                   setSearch,
+                  dispatch,
                 });
               }}>
               <MaterialIcon
@@ -303,9 +310,11 @@ function SearchBar({from, navigation, ssd, sse}) {
             ))}
           </ScrollView>
         )}
-      {searchData?.loading && (
+      {searchLoading && (
         <Center>
-          <Spinner />
+          <View style={{...styles.searchContainer}}>
+          <Spinner color={ts.secondarytext}/>
+          </View>
         </Center>
       )}
       {/* {searchData?.length == 0 && search?.length>0 && (
@@ -378,8 +387,10 @@ function SearchBar({from, navigation, ssd, sse}) {
             minDate={minDate}
             maxDate={maxDate}
             todayBackgroundColor="#fffa"
-            selectedDayColor={theme}
-            selectedDayTextColor={ts.secondary}
+            selectedDayColor={from == 'Caterers' ? ts.secondary : ts.primary}
+            selectedDayTextColor={
+              from == 'Caterers' ? ts.secondary : ts.primary
+            }
             onDateChange={onDateChange}
             yearTitleStyle={{color: '#fff'}}
             monthTitleStyle={{color: '#fff'}}

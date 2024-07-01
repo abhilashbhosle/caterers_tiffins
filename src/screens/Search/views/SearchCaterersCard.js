@@ -35,6 +35,7 @@ function SearchCaterersCard({item, from, location}) {
             params: {
               branch_id: item?.id,
               vendor_id: item?.vendor_id,
+              location:location
             },
           });
           // console.log(item)
@@ -42,64 +43,124 @@ function SearchCaterersCard({item, from, location}) {
         <Flex direction="row">
           {/* ======IMAGE====== */}
           <View>
-            <ImageBackground
-              source={item.img}
-              imageStyle={[{...styles.img, width: width / 2.7}, gs.br10]}
-              style={{
-                ...styles.img,
-                width: width / 2.7,
-                justifyContent: 'space-between',
-              }}>
-              <LinearGradient
-                colors={['#0004', 'transparent']}
-                start={{x: 0.0, y: 0.0}}
-                end={{x: 0.0, y: 1.0}}>
-                <Flex direction="row" style={[gs.p5]} align="center">
-                  <TouchableOpacity
-                    style={styles.likecontainer}
-                    onPress={() => {
-                      dispatch(wishDetails(item.vendor_id));
-                      dispatch(
-                        updateWishList({
-                          branch_id: item.id,
-                          vendor_type: 'Caterer',
-                          status: item?.is_wishlisted == true ? 0 : 1,
-                        }),
-                      );
+            {item?.brand_logo?.medium ? (
+              <ImageBackground
+                source={{uri: item.brand_logo.medium}}
+                imageStyle={[{...styles.img, width: width / 2.7}, gs.br10]}
+                style={{
+                  ...styles.img,
+                  width: width / 2.7,
+                  justifyContent: 'space-between',
+                }}>
+                <LinearGradient
+                  colors={['#0004', 'transparent']}
+                  start={{x: 0.0, y: 0.0}}
+                  end={{x: 0.0, y: 1.0}}>
+                  <Flex direction="row" style={[gs.p5]} align="center">
+                    <TouchableOpacity
+                      style={styles.likecontainer}
+                      onPress={() => {
+                        dispatch(wishDetails(item.vendor_id));
+                        dispatch(
+                          updateWishList({
+                            branch_id: item.id,
+                            vendor_type: 'Caterer',
+                            status: item?.is_wishlisted == true ? 0 : 1,
+                          }),
+                        );
+                      }}>
+                      <EntypoIcons
+                        name={item?.is_wishlisted ? 'heart' : 'heart-outlined'}
+                        style={{
+                          ...styles.wishicon,
+                          color: item?.is_wishlisted
+                            ? from == 'Caterers'
+                              ? ts.secondary
+                              : ts.primary
+                            : '#fff',
+                        }}
+                      />
+                    </TouchableOpacity>
+                    <Text style={[gs.fs11, styles.reviews]}>
+                      {item?.review_count ? item.review_count : 0} reviews
+                    </Text>
+                  </Flex>
+                </LinearGradient>
+                <View
+                  style={{
+                    ...styles.popularcontainer,
+                    backgroundColor:
+                      item?.subscription_type_display == 'Branded'
+                        ? ts.branded
+                        : ts.accent3,
+                  }}>
+                  <Text
+                    style={{
+                      ...styles.popular,
                     }}>
-                    <EntypoIcons
-                      name={item?.is_wishlisted ? 'heart' : 'heart-outlined'}
-                      style={{
-                        ...styles.wishicon,
-                        color: item?.is_wishlisted
-                          ? from == 'Caterers'
-                            ? ts.secondary
-                            : ts.primary
-                          : '#fff',
-                      }}
-                    />
-                  </TouchableOpacity>
-                  <Text style={[gs.fs11, styles.reviews]}>
-                    {item?.review_count ? item.review_count : 0} reviews
+                    {item?.subscription_type_display}
                   </Text>
-                </Flex>
-              </LinearGradient>
+                </View>
+              </ImageBackground>
+            ) : (
               <View
                 style={{
-                  ...styles.popularcontainer,
-                  backgroundColor:
-                    item?.subscription_type_display == 'Branded'
-                      ? ts.branded
-                      : ts.accent3,
+                  ...styles.img,
+                  width: width / 2.7,
+                  justifyContent: 'space-between',
+                  backgroundColor: '#fff',
                 }}>
-                <Text
+                <LinearGradient
+                  colors={['#0004', 'transparent']}
+                  start={{x: 0.0, y: 0.0}}
+                  end={{x: 0.0, y: 1.0}}>
+                  <Flex direction="row" style={[gs.p5]} align="center">
+                    <TouchableOpacity
+                      style={styles.likecontainer}
+                      onPress={() => {
+                        dispatch(wishDetails(item.vendor_id));
+                        dispatch(
+                          updateWishList({
+                            branch_id: item.id,
+                            vendor_type: 'Caterer',
+                            status: item?.is_wishlisted == true ? 0 : 1,
+                          }),
+                        );
+                      }}>
+                      <EntypoIcons
+                        name={item?.is_wishlisted ? 'heart' : 'heart-outlined'}
+                        style={{
+                          ...styles.wishicon,
+                          color: item?.is_wishlisted
+                            ? from == 'Caterers'
+                              ? ts.secondary
+                              : ts.primary
+                            : '#fff',
+                        }}
+                      />
+                    </TouchableOpacity>
+                    <Text style={[gs.fs11, styles.reviews]}>
+                      {item?.review_count ? item.review_count : 0} reviews
+                    </Text>
+                  </Flex>
+                </LinearGradient>
+                <View
                   style={{
-                    ...styles.popular,
+                    ...styles.popularcontainer,
+                    backgroundColor:
+                      item?.subscription_type_display == 'Branded'
+                        ? ts.branded
+                        : ts.accent3,
                   }}>
-                  {item?.subscription_type_display}
-                </Text>
+                  <Text
+                    style={{
+                      ...styles.popular,
+                    }}>
+                    {item?.subscription_type_display}
+                  </Text>
+                </View>
               </View>
-            </ImageBackground>
+            )}
           </View>
           {/* ======CONTENT========= */}
           <View
@@ -116,16 +177,31 @@ function SearchCaterersCard({item, from, location}) {
               {item?.area?.length ? item?.area : location?.city}
             </Text>
 
-            <Flex direction="row" align="center" style={gs.mt7}>
+            <Flex direction="row" align="center" style={[gs.mt7, gs.mb5]}>
               {item?.food_types?.map((e, i) => (
-                <Text
-                  key={i}
-                  style={[
-                    gs.fs11,
-                    {color: '#266920', fontFamily: ts.secondaryregular},
-                  ]}>
-                  {e}
-                </Text>
+                <Flex direction="row" alignItems="center" key={i}>
+                  {e == 'Veg' ? (
+                    <Image
+                      source={require('../../../assets/Common/veg.png')}
+                      style={styles.foodTypeimg}
+                    />
+                  ) : (
+                    <Image
+                      source={require('../../../assets/Common/nonveg.png')}
+                      style={styles.foodTypeimg}
+                    />
+                  )}
+                  <Text
+                    style={[
+                      gs.fs11,
+                      {
+                        color: e == 'Veg' ? '#266920' : ts.accent4,
+                        fontFamily: ts.secondaryregular,
+                      },
+                    ]}>
+                    {e}{' '}
+                  </Text>
+                </Flex>
               ))}
             </Flex>
             <Flex direction="row" align="center">
@@ -276,5 +352,10 @@ const styles = ScaledSheet.create({
   },
   wishicon: {
     fontSize: '18@ms',
+  },
+  foodTypeimg: {
+    height: '15@ms',
+    width: '15@ms',
+    marginRight: '2@ms',
   },
 });

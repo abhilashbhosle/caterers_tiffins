@@ -10,6 +10,7 @@ import SearchController from '../screens/Home/controllers/SearchController'
 import VendorProfileController from '../screens/Home/controllers/VendorProfileController'
 import ReviewController from '../screens/Home/controllers/ReviewController'
 import WishListController from '../screens/Home/controllers/WishListController'
+import HomeController from '../screens/Home/controllers/HomeController'
 export const store = configureStore({
   reducer: {
 	common:commonreducer,
@@ -22,6 +23,7 @@ export const store = configureStore({
 	location:SearchController,
 	vendor:VendorProfileController,
 	review:ReviewController,
-	wish:WishListController
+	wish:WishListController,
+	home:HomeController
   },
 })

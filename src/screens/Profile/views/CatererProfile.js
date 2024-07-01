@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback,
   StatusBar,
   Image,
+  Linking,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
@@ -46,10 +47,16 @@ import {
 } from '../../Home/controllers/VendorProfileController';
 import ReadMore from '@fawazahmed/react-native-read-more';
 import {createReview} from '../../Home/controllers/ReviewController';
-import { updateWishList, wishDetails } from '../../Home/controllers/WishListController';
+import {
+  updateWishList,
+  wishDetails,
+} from '../../Home/controllers/WishListController';
+import Ratings from '../../../components/Ratings';
+import { getUser } from '../../Onboarding/controllers/AuthController';
+import { getSubscription } from '../../Home/controllers/FilterMainController';
 
 export default function CatererProfile({navigation, route}) {
-  const {branch_id, vendor_id} = route.params;
+  const {branch_id, vendor_id,location} = route.params;
   const {width, height} = Dimensions.get('screen');
   const [cmtfocus, setCmtfocus] = useState(false);
   const dispatch = useDispatch();
@@ -58,18 +65,22 @@ export default function CatererProfile({navigation, route}) {
   const [branchStretch, setBranchStretch] = useState(false);
   const [review, setReview] = useState(null);
   const {createLoading} = useSelector(state => state.review);
-  const [profile,setProfile]=useState(null)
+  const [profile, setProfile] = useState(null);
+  const [rating,setRating]=useState(0)
 
   useEffect(() => {
     if (branch_id && vendor_id) {
       dispatch(getVendorProfile({branch_id, vendor_id}));
+      dispatch(getUser());
+      dispatch(getSubscription({from:"Caterers"}))
     }
   }, [branch_id, vendor_id]);
-  useEffect(()=>{
-    if(data){
-      setProfile(data)
+  useEffect(() => {
+    if (data) {
+      setProfile(data);
     }
-  },[data])
+  }, [data]);
+
 
   return (
     <ScreenWrapper>
@@ -98,20 +109,26 @@ export default function CatererProfile({navigation, route}) {
               <TouchableOpacity activeOpacity={0.7} style={[gs.ph15]}>
                 <EntypoIcons name="share" style={[gs.fs22, {color: '#fff'}]} />
               </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]}onPress={()=>{
-                dispatch(wishDetails(vendor_id));
-                 dispatch(
-                  updateWishList({
-                    branch_id: branch_id,
-                    vendor_type: 'Caterer',
-                    status: profile?.is_wishlisted == true ? 0 : 1,
-                  }),
-                );
-                let temp={...profile}
-                let updated={...temp,is_wishlisted:!temp.is_wishlisted}
-                setProfile(updated)
-              }}>
-                <AntIcon name={profile?.is_wishlisted?"heart":"hearto"} style={[gs.fs22, {color: '#fff'}]} />
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={[gs.ph10]}
+                onPress={() => {
+                  dispatch(wishDetails(vendor_id));
+                  dispatch(
+                    updateWishList({
+                      branch_id: branch_id,
+                      vendor_type: 'Caterer',
+                      status: profile?.is_wishlisted == true ? 0 : 1,
+                    }),
+                  );
+                  let temp = {...profile};
+                  let updated = {...temp, is_wishlisted: !temp.is_wishlisted};
+                  setProfile(updated);
+                }}>
+                <AntIcon
+                  name={profile?.is_wishlisted ? 'heart' : 'hearto'}
+                  style={[gs.fs22, {color: '#fff'}]}
+                />
               </TouchableOpacity>
             </Flex>
           </Flex>
@@ -165,7 +182,9 @@ export default function CatererProfile({navigation, route}) {
         </View>
         {/* =======BANNER SLIDERS======= */}
         <View>
-          <ProfileBanners catererBanners={profile?.bennerMenuMixGalleryImages} />
+          <ProfileBanners
+            catererBanners={profile?.bennerMenuMixGalleryImages}
+          />
           <Flex direction="row" align="center" style={[gs.ph5]}>
             <Text style={[styles.subtxt, gs.fs12]}>Food Type : </Text>
             <Flex direction="row" align="center" style={[gs.ph5, gs.pv15]}>
@@ -283,7 +302,8 @@ export default function CatererProfile({navigation, route}) {
                 style={[styles.servicedesc, gs.fs13, gs.mt5]}
                 numberOfLines={1}>
                 {profile?.minimum_capacity ? profile.minimum_capacity : '0'} -{' '}
-                {profile?.maximum_capacity ? profile.maximum_capacity : 'N/A'} Plates
+                {profile?.maximum_capacity ? profile.maximum_capacity : 'N/A'}{' '}
+                Plates
               </Text>
             </View>
           </Flex>
@@ -299,8 +319,8 @@ export default function CatererProfile({navigation, route}) {
               <Text
                 style={[styles.servicedesc, gs.fs13, gs.mt5]}
                 numberOfLines={1}>
-                {profile?.start_day} - {profile?.end_day} {profile?.start_time} -{' '}
-                {profile?.end_time}
+                {profile?.start_day} - {profile?.end_day} {profile?.start_time}{' '}
+                - {profile?.end_time}
               </Text>
             </View>
           </Flex>
@@ -331,7 +351,9 @@ export default function CatererProfile({navigation, route}) {
               <Text
                 style={[styles.servicedesc, gs.fs13, gs.mt5]}
                 numberOfLines={1}>
-                {profile?.total_staffs_approx ? profile.total_staffs_approx : '-'}
+                {profile?.total_staffs_approx
+                  ? profile.total_staffs_approx
+                  : '-'}
               </Text>
             </View>
             <View
@@ -460,13 +482,9 @@ export default function CatererProfile({navigation, route}) {
             ]}>
             Similar / Popular Caterers in your area
           </Text>
-          <PopularCat data={searchitems} />
+          <PopularCat data={searchitems} location={location} vendorType="Caterer"/>
         </View>
-        <Center style={[gs.pv15]}>
-          <Text style={[styles.subtxt, gs.fs12, {color: ts.secondary}]}>
-            See all
-          </Text>
-        </Center>
+      
         <View style={[gs.ph5, gs.pb15]}>
           <Divider />
         </View>
@@ -497,13 +515,16 @@ export default function CatererProfile({navigation, route}) {
               Write a Review
             </Text>
           </Center>
+          <View style={[gs.mh12, gs.mv12]}>
+            <Ratings rating={rating} setRating={setRating} from="Caterer" vendorName={profile?.vendor_service_name}/>
+          </View>
           <TextInput
             placeholder="Add Comments"
             style={[
               {
                 ...styles.issuecontainer,
                 borderColor: cmtfocus ? ts.secondary : '#ccc',
-                fontFamily:ts.secondaryregular
+                fontFamily: ts.secondaryregular,
               },
               gs.mh12,
               gs.br10,
@@ -519,14 +540,14 @@ export default function CatererProfile({navigation, route}) {
             <TouchableOpacity
               style={[gs.mh14, gs.mv10]}
               onPress={() => {
-                review &&
-                  dispatch(createReview({vendor_id, review_text: review}));
+                review && rating &&
+                  dispatch(createReview({vendor_id, review_text: review,rating:rating}));
                 setReview(null);
               }}
               activeOpacity={0.7}>
               <ThemeSepBtn
                 btntxt="Submit"
-                themecolor={review ? ts.secondary : '#D3D3D3'}
+                themecolor={review && rating ? ts.secondary : '#D3D3D3'}
               />
             </TouchableOpacity>
           ) : (
@@ -557,9 +578,16 @@ export default function CatererProfile({navigation, route}) {
               {color: ts.secondarytext, fontFamily: ts.secondaryregular},
             ]}>
             Starting Price / Plate -{' '}
-            <Text style={[{color: ts.secondary}, gs.fs16]}>₹ {profile?.start_price?profile.start_price:"N/A"}</Text>
+            <Text style={[{color: ts.secondary}, gs.fs16]}>
+              ₹ {profile?.start_price ? profile.start_price : 'N/A'}
+            </Text>
           </Text>
-          <ThemeSepBtn btntxt="Contact Now" themecolor={ts.secondary} />
+          <TouchableOpacity
+            onPress={() => {
+              Linking.openURL(`tel:${profile?.phone_number}`);
+            }}>
+            <ThemeSepBtn btntxt="Contact Now" themecolor={ts.secondary} />
+          </TouchableOpacity>
         </Flex>
       </Card>
     </ScreenWrapper>

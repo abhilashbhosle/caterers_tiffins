@@ -10,9 +10,6 @@ import Occasions from './Occasions';
 import {ScrollView} from 'react-native-virtualized-view';
 import {ScaledSheet} from 'react-native-size-matters';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
-import {shallowEqual, useSelector} from 'react-redux';
-import {Divider} from 'native-base';
-import {ts} from '../../../../ThemeStyles';
 
 const MemoizedHeaderView = React.memo(HeaderView);
 const MemoizedExploreCusines = React.memo(ExploreCusines);
@@ -30,8 +27,8 @@ export default function Caterers({navigation}) {
         {/* <RecentSearches /> */}
         <MemoizedExploreCusines />
         <MemoizedBranded />
-        <MemoizedExploreIndia />
         <MemoizedPopularCaterers />
+        <MemoizedExploreIndia />
         <MemoizedOccasions />
       </ScrollView>
     </ScreenWrapper>

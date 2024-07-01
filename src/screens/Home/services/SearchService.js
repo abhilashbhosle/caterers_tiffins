@@ -42,24 +42,4 @@ export const getCatererSearchService = async ({params, dispatch,filterKey}) => {
   }
 
 };
-//=======GET CATERERS SEARCH SERVICES=======//
-export const updateSearchService = async ({params}) => {
-  try {
-    let token = await AsyncStorage.getItem('token');
-    let res = await axios.get(`${endpoints.baseUrl}search-vendors-update`, {
-      params: params,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return res.data;
-  } catch (error) {
-    if (error.response && error.response.data) {
-      throw new Error(error.response.data.message);
-    } else {
-      throw new Error(error.message);
-    }
-  }
 
-};

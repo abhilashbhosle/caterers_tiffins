@@ -7,7 +7,7 @@ export const getCitiesService = async () => {
 	try {
 	  let token = await AsyncStorage.getItem('token');
 	  let res = await axios.get(
-		`${endpoints.baseUrl}get-all-cities?current_page=1&limit=1000`,
+		`${endpoints.baseUrl}list-explore-cities?current_page=1&limit=100`,
 		{
 		  headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',

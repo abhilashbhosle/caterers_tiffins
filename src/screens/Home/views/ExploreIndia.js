@@ -1,6 +1,13 @@
-import {View, Text, FlatList, Image, ImageBackground} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  ImageBackground,
+  TouchableOpacity,
+} from 'react-native';
 import React, {memo, useEffect} from 'react';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -10,7 +17,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch, useSelector} from 'react-redux';
 import {getCities} from '../controllers/ExploreIndiaController';
 import CitySkel from '../../../components/skeletons/CitySkel';
-import EntypoIcon from 'react-native-vector-icons/Entypo'
+import EntypoIcon from 'react-native-vector-icons/Entypo';
+import {setLocationres} from '../controllers/SearchController';
 
 function ExploreIndia() {
   const route = useRoute();
@@ -19,48 +27,86 @@ function ExploreIndia() {
   useEffect(() => {
     dispatch(getCities());
   }, []);
+  const navigation = useNavigation();
+
+  const handleCities = async location => {
+    try {
+      let loc = {
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        city: location?.name,
+        place_id: 133333,
+        pincode: 1211111,
+      };
+      dispatch(setLocationres(loc));
+      let today = new Date();
+      let dateAfter7Days = new Date();
+      dateAfter7Days.setDate(today.getDate() + 7);
+      navigation.push('PageStack', {
+        screen: 'SearchMain',
+        params: {
+          from: route?.name == 'Caterings' ? 'Caterers' : 'Tiffin',
+          ssd: today,
+          sse: dateAfter7Days,
+        },
+      });
+    } catch (err) {
+      console.log('error in handlecities');
+    }
+  };
   const renderItem = ({item}) => {
     return (
       <Card style={{backgroundColor: '#fff', marginBottom: 15}}>
-        {
-          item?.file_name?.medium?
-          <ImageBackground
-          source={{uri:item?.file_name?.medium}}
-          style={[styles.img]}
-          alt={item.city_name}
-          imageStyle={gs.br12}></ImageBackground>
-          :
-          <View style={{...styles.img,justifyContent:'center',alignItems:'center'}}>
-          <EntypoIcon name='image-inverted' style={[{color:ts.secondarytext},gs.fs30]}/>
-          </View>
-        }
-       
-        <View style={[styles.overlay, gs.br12]}></View>
-        <LinearGradient
-          colors={['#0004', 'transparent']}
-          start={{x: 0.0, y: 0.0}}
-          end={{x: 0.0, y: 1}}
-          style={[
-            {
-              ...styles.overlay,
-              justifyContent: 'flex-end',
-              flexDirection: 'row',
-            },
-            gs.h40,
-            styles.txtoverlay,
-          ]}>
-          <View>
-            <Text
-              style={[
-                {fontFamily: ts.primarymedium, color: '#fff'},
-                gs.fs21,
-                gs.mr20,
-                gs.mt5,
-              ]}>
-              {item.city_name}
-            </Text>
-          </View>
-        </LinearGradient>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => handleCities(item)}>
+          {item?.file_name?.medium ? (
+            <ImageBackground
+              source={{uri: item?.file_name?.medium}}
+              style={[styles.img]}
+              alt={item.city_name}
+              imageStyle={gs.br12}></ImageBackground>
+          ) : (
+            <View
+              style={{
+                ...styles.img,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <EntypoIcon
+                name="image-inverted"
+                style={[{color: ts.secondarytext}, gs.fs30]}
+              />
+            </View>
+          )}
+
+          <View style={[styles.overlay, gs.br12]}></View>
+          <LinearGradient
+            colors={['#0004', 'transparent']}
+            start={{x: 0.0, y: 0.0}}
+            end={{x: 0.0, y: 1}}
+            style={[
+              {
+                ...styles.overlay,
+                justifyContent: 'flex-end',
+                flexDirection: 'row',
+              },
+              gs.h40,
+              styles.txtoverlay,
+            ]}>
+            <View>
+              <Text
+                style={[
+                  {fontFamily: ts.primarymedium, color: '#fff'},
+                  gs.fs21,
+                  gs.mr20,
+                  gs.mt5,
+                ]}>
+                {item.name}
+              </Text>
+            </View>
+          </LinearGradient>
+        </TouchableOpacity>
       </Card>
     );
   };
@@ -78,7 +124,7 @@ function ExploreIndia() {
             ? 'Explore Caterers around India'
             : 'Explore Tiffin Service providers around India'}
         </Text>
-          <Text
+        <Text
           style={[
             gs.fs8,
             gs.p3,
@@ -102,20 +148,19 @@ function ExploreIndia() {
           ? 'Explore Caterers around India'
           : 'Explore Tiffin Service providers around India'}
       </Text>
-      {
-        loading?
+      {loading ? (
         <CitySkel />
-        :
-        data &&
-        <FlatList
-        data={data}
-        keyExtractor={(item, index) => String(index)}
-        showsVerticalScrollIndicator={false}
-        renderItem={renderItem}
-        contentContainerStyle={{marginTop: 20}}
-      />
-      }
-     
+      ) : (
+        data && (
+          <FlatList
+            data={data}
+            keyExtractor={(item, index) => String(index)}
+            showsVerticalScrollIndicator={false}
+            renderItem={renderItem}
+            contentContainerStyle={{marginTop: 20}}
+          />
+        )
+      )}
     </View>
   );
 }

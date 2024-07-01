@@ -87,6 +87,8 @@ function SearchList({
   }, [wish_id]);
 
   return (
+    <>
+    
     <Animated.FlatList
       data={vendorData}
       keyExtractor={(item, index) => String(index)}
@@ -108,6 +110,7 @@ function SearchList({
       onEndReached={fetchMoreData}
       ListFooterComponent={renderFooter}
     />
+    </>
   );
 }
 export default memo(SearchList);

@@ -7104,10 +7104,15 @@ react-native-snap-carousel@^3.9.1:
     prop-types "^15.6.1"
     react-addons-shallow-compare "15.6.2"
 
-react-native-svg@*:
-  version "14.1.0"
-  resolved "https://registry.npmjs.org/react-native-svg/-/react-native-svg-14.1.0.tgz"
-  integrity sha512-HeseElmEk+AXGwFZl3h56s0LtYD9HyGdrpg8yd9QM26X+d7kjETrRQ9vCjtxuT5dCZEIQ5uggU1dQhzasnsCWA==
+react-native-star-rating-widget@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.npmjs.org/react-native-star-rating-widget/-/react-native-star-rating-widget-1.8.0.tgz"
+  integrity sha512-6YzfOWz0NMLXoYJeCuiiflTYJkdp9Lu1/FHF+hO+y03srIoEJwjkuieNFO8zwSa4GtMBEUME6ebsZ5t8IZ2noA==
+
+react-native-svg@*, react-native-svg@^15.3.0:
+  version "15.3.0"
+  resolved "https://registry.npmjs.org/react-native-svg/-/react-native-svg-15.3.0.tgz"
+  integrity sha512-mBHu/fdlzUbpGX8SZFxgbKvK/sgqLfDLP8uh8G7Us+zJgdjO8OSEeqHQs+kPRdQmdLJQiqPJX2WXgCl7ToTWqw==
   dependencies:
     css-select "^5.1.0"
     css-tree "^1.1.3"

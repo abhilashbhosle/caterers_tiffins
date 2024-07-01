@@ -17,7 +17,7 @@ import AntIcon from 'react-native-vector-icons/AntDesign';
 import {useDispatch, useSelector} from 'react-redux';
 import {getReviews} from '../controllers/ReviewController';
 import ReadMore from '@fawazahmed/react-native-read-more';
-import { timeSince } from '../../../components/TimeFormat';
+import {timeSince} from '../../../components/TimeFormat';
 import ReviewCard from './ReviewCard';
 
 export default function Reviews({route, navigation}) {
@@ -49,15 +49,13 @@ export default function Reviews({route, navigation}) {
 
   const fetchMoreData = () => {
     if (reviews?.length < total) {
-        setPage(page + 1);
+      setPage(page + 1);
     }
   };
 
-
-
   const renderItem = ({item, index}) => {
     return (
-     <ReviewCard item={item} index={index} from={from} reviews={reviews}/>
+      <ReviewCard item={item} index={index} from={from} reviews={reviews} />
     );
   };
   const renderFooter = () => {
@@ -65,7 +63,6 @@ export default function Reviews({route, navigation}) {
       return <Spinner color={ts.secondarytext} />;
     }
   };
-
   return (
     <ScreenWrapper>
       <View
@@ -86,7 +83,7 @@ export default function Reviews({route, navigation}) {
               activeOpacity={0.7}
               onPress={() => {
                 navigation.goBack();
-				dispatch(getReviews({page:1, limit:3, vendor_id}));
+                dispatch(getReviews({page: 1, limit: 3, vendor_id}));
               }}>
               <AntIcon name="arrowleft" style={[gs.fs22, {color: '#fff'}]} />
             </TouchableOpacity>
@@ -112,5 +109,4 @@ const styles = ScaledSheet.create({
     height: '100@ms',
     paddingTop: Platform.OS == 'android' ? StatusBar.currentHeight : '20@ms',
   },
- 
 });

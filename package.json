@@ -42,6 +42,8 @@
     "react-native-share": "^10.0.2",
     "react-native-size-matters": "^0.4.2",
     "react-native-snap-carousel": "^3.9.1",
+    "react-native-star-rating-widget": "^1.8.0",
+    "react-native-svg": "^15.3.0",
     "react-native-tab-view": "^3.5.2",
     "react-native-vector-icons": "^10.0.3",
     "react-native-virtualized-view": "^1.0.0",

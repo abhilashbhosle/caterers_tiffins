@@ -3,7 +3,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {startLoader} from '../../../redux/CommonSlicer';
 
-//   =======GET CITIES======//
+//   =======GET VENDOR PROFILE SERVICE======//
 export const getVendorProfileService = async ({
   vendor_id,
   branch_id,
@@ -31,4 +31,49 @@ export const getVendorProfileService = async ({
   }finally{
 	dispatch(startLoader(false))
   }
+};
+
+// ========GET POPULAR CATERERS SERVICE=========//
+export const getPopularCaterersService = async ({params}) => {
+  console.log(params)
+  try {
+    let token = await AsyncStorage.getItem('token');
+    let res = await axios.get(`${endpoints.baseUrl}search-vendors`, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Bearer ${token}`,
+      },
+      params: params,
+    });
+    return res.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error(error.message);
+    }
+  }
+
+};
+
+// ========GET POPULAR TIFFINS SERVICE=========//
+export const getPopularTiffinService = async ({params}) => {
+  try {
+    let token = await AsyncStorage.getItem('token');
+    let res = await axios.get(`${endpoints.baseUrl}search-vendors`, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Bearer ${token}`,
+      },
+      params: params,
+    });
+    return res.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error(error.message);
+    }
+  }
+
 };

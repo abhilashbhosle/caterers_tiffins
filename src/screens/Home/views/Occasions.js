@@ -1,5 +1,11 @@
-import {View, Text, ImageBackground, useWindowDimensions} from 'react-native';
-import React, {memo, useEffect} from 'react';
+import {
+  View,
+  Text,
+  ImageBackground,
+  useWindowDimensions,
+  TouchableOpacity,
+} from 'react-native';
+import React, {memo, useEffect, useState} from 'react';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
 import {Center, FlatList} from 'native-base';
@@ -8,41 +14,133 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {Card} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch, useSelector} from 'react-redux';
-import {getOccassions} from '../controllers/OccassionController';
+import {getOccassions, updateOccassion} from '../controllers/OccassionController';
 import OccassionSkel from '../../../components/skeletons/OccassionSkel';
+import {useNavigation} from '@react-navigation/native';
+import {getCaterersSearch, setLocationres} from '../controllers/SearchController';
+import { checkLocation, updateSearch } from '../controllers/HomeController';
+import { startLoader } from '../../../redux/CommonSlicer';
 
 function Occasions() {
   const {width, height} = useWindowDimensions();
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const {loading, data, error} = useSelector(state => state?.occassion);
+  const locationRes = useSelector(state => state.location.locationRes);
+  const userDetails = useSelector(state => state.auth?.userInfo?.data);
+  const [segre, setSegre] = useState({
+    serving_types_filter: [],
+    service_types_filter: [],
+    occasions_filter: [],
+    price_ranges: [],
+    head_count_ranges: [],
+    order_by_filter: [],
+    cuisines_filter: [],
+    search_term: '',
+    food_types_filter: [],
+    subscription_types_filter: [],
+    meal_times_filter: [],
+    kitchen_types_filter: [],
+  });
+
   useEffect(() => {
     dispatch(getOccassions());
   }, []);
-  const renderItem = ({item}) => {
+
+  const handleOccassionPress = async ({index}) => {
+    try {
+      dispatch(startLoader(true))
+      let res = await checkLocation({
+        formattedLocation: locationRes,
+        userLocation: userDetails,
+        dispatch,
+        navigation,
+      });
+      if (res?.location?.city) {
+        let updated = data?.map((e, i) =>
+          index == i ? {...e, selected: e.selected == 1 ? 0 : 1} : e,
+        );
+        const occasions_filter = updated.map(e => ({
+          id: parseInt(e.occasion_id),
+          selected: e.selected,
+        }));
+        dispatch(setLocationres(res?.location));
+        if (updated?.length) {
+          await dispatch(
+            getCaterersSearch({
+              filterKey: 'occasion',
+              filteredData: occasions_filter,
+              from:'Caterers',
+              ssd:res?.startData,
+              sse:res?.endDate,
+              location:res.location,
+              segre,
+              setSegre,
+              updated_response:updated
+            }),
+          );
+          await dispatch(updateOccassion(updated));
+          navigation.navigate('PageStack', {
+            screen: 'SearchMain',
+            params: {
+              from: 'Caterers',
+              ssd: res.startData,
+              sse: res.endDate,
+            },
+          });
+        }
+        // dispatch(
+        //   updateSearch({
+        //     location: res?.location,
+        //     filterKey:"occassion",
+        //     filterData:occasions_filter,
+        //     vendorType:"Caterer",
+        //     startDate:res?.startData,
+        //     endDate:res?.endDate,
+        //     navigation,
+        //     from:"Caterers",
+        //     updated_response:updated,
+        //   }),
+        // );
+      }
+    } catch (err) {
+      console.log('error in handleOccassion', err);
+    }finally{
+      setTimeout(()=>{
+        dispatch(startLoader(false))
+      },1000)
+    }
+  };
+
+  const renderItem = ({item,index}) => {
     return (
       <Card style={[{backgroundColor: '#fff'}, gs.mb10, gs.mh5]}>
-        <ImageBackground
-          source={{uri: item?.file_name?.medium}}
-          style={[
-            {...styles.img, width: width / 2.2, justifyContent: 'flex-end'},
-          ]}
-          imageStyle={[gs.br12]}
-          alt={item.occassion_name}>
-          <LinearGradient
-            colors={['#000', 'transparent']}
-            start={{x: 0.0, y: 1.2}}
-            end={{x: 0.0, y: 0.0}}
+        <TouchableOpacity activeOpacity={0.7} onPress={()=>{
+          handleOccassionPress({index})
+        }}>
+          <ImageBackground
+            source={{uri: item?.file_name?.medium}}
             style={[
-              {
-                ...styles.overlay,
-              },
-              gs.br12,
-            ]}>
-            <Text style={[gs.fs14, styles.title, gs.ml15, gs.mb8, gs.h25]}>
-              {item.occasion_name}
-            </Text>
-          </LinearGradient>
-        </ImageBackground>
+              {...styles.img, width: width / 2.2, justifyContent: 'flex-end'},
+            ]}
+            imageStyle={[gs.br12]}
+            alt={item.occassion_name}>
+            <LinearGradient
+              colors={['#000', 'transparent']}
+              start={{x: 0.0, y: 1.2}}
+              end={{x: 0.0, y: 0.0}}
+              style={[
+                {
+                  ...styles.overlay,
+                },
+                gs.br12,
+              ]}>
+              <Text style={[gs.fs14, styles.title, gs.ml15, gs.mb8, gs.h25]}>
+                {item.occasion_name}
+              </Text>
+            </LinearGradient>
+          </ImageBackground>
+        </TouchableOpacity>
       </Card>
     );
   };
@@ -58,7 +156,8 @@ function Occasions() {
           ]}>
           Explore Caterers by Occasions
         </Text>
-        <Text   style={[
+        <Text
+          style={[
             gs.fs8,
             gs.p3,
             {color: ts.primarytext, fontFamily: ts.secondarysemibold},

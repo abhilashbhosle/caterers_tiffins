@@ -2,7 +2,6 @@ import {
   View,
   Text,
   Image,
-  TouchableWithoutFeedback,
   TouchableOpacity,
   TextInput,
   Alert,
@@ -20,17 +19,9 @@ import ThemeSepBtn from '../../../components/ThemeSepBtn';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-  getKitchen,
-  getMeal,
-  getTiffinService,
-} from '../../Home/controllers/FilterTiffinController';
-import {
   clearFilter,
-  getHeadCount,
-  getSort,
 } from '../../Home/controllers/FilterMainController';
 import AntIcon from 'react-native-vector-icons/Ionicons';
-import {getCuisines} from '../../Home/controllers/ExploreCuisineController';
 import FontistoIcon from 'react-native-vector-icons/Fontisto';
 import {
   handleCount,
@@ -696,7 +687,7 @@ export default function FilterTiffins({navigation, route}) {
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => {
-                navigation.push('PageStack', {
+                navigation.navigate('PageStack', {
                   screen: 'SearchMain',
                   params: {
                     from,

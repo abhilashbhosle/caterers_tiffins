@@ -17,7 +17,7 @@ export const getReviews = createAsyncThunk(
 //   =========CREATE REVIEW==========//
 export const createReview = createAsyncThunk(
   'createReview',
-  async ({vendor_id, rating = 4, review_text}, {dispatch}) => {
+  async ({vendor_id, rating, review_text}, {dispatch}) => {
 	let body={
 		vendor_id,
 		rating,

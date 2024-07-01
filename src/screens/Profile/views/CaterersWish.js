@@ -8,7 +8,10 @@ import SearchCaterersCard from '../../Search/views/SearchCaterersCard';
 import SearchTiffinsCard from '../../Search/views/SearchTiffinsCard';
 import {searchStyles} from '../../Search/Searchstyles';
 import {useDispatch, useSelector} from 'react-redux';
-import {getCaterersWish} from '../../Home/controllers/WishListController';
+import {
+  getCaterersWish,
+  wishDetails,
+} from '../../Home/controllers/WishListController';
 import {ScaledSheet} from 'react-native-size-matters';
 
 function CaterersWish() {
@@ -19,6 +22,8 @@ function CaterersWish() {
   const {catererLoading, catererData, catererError} = useSelector(
     state => state.wish,
   );
+  const {wish_id} = useSelector(state => state.wish);
+
   const [total, setTotal] = useState(0);
   const dispatch = useDispatch();
 
@@ -38,6 +43,23 @@ function CaterersWish() {
       setTotal(catererData?.total_count);
     }
   }, [catererData]);
+  useEffect(() => {
+    if (Number(wish_id > 0)) {
+      let data = [...wishData];
+      let updated = data
+        .map(e =>
+          e.vendor_id == wish_id
+            ? {
+                ...e,
+                is_wishlisted: !e.is_wishlisted,
+              }
+            : e,
+        )
+        .filter(e => e.is_wishlisted);
+      setWishData(updated);
+      dispatch(wishDetails(0));
+    }
+  }, [wish_id]);
 
   const renderFooter = () => {
     if (catererLoading) {
@@ -75,8 +97,6 @@ function CaterersWish() {
       </Animated.View>
     );
   };
-
-  // console.log(wishData?.length)
 
   return (
     <>

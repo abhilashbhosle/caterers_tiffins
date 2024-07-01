@@ -16,7 +16,7 @@ import {
 } from './FilterMainController';
 import {updateCuisine} from './ExploreCuisineController';
 import {updateOccassion} from './OccassionController';
-import { updateKitchen, updateMeal } from './FilterTiffinController';
+import {updateKitchen, updateMeal} from './FilterTiffinController';
 
 // ======GET LOCATIONs=======//
 export const getLocations = createAsyncThunk(
@@ -81,6 +81,13 @@ export const handleSearchResults = ({
               place_id: userDetails[0]?.place_id,
               pincode: userDetails[0]?.pincode,
             });
+            dispatch(setLocationres({
+              latitude: userDetails[0]?.latitude,
+              longitude: userDetails[0]?.longitude,
+              city: userDetails[0]?.city,
+              place_id: userDetails[0]?.place_id,
+              pincode: userDetails[0]?.pincode,
+            }))
           },
         },
       ],
@@ -98,6 +105,7 @@ export const handleSearchResults = ({
         from,
         ssd: selectedStartDate,
         sse: selectedEndDate,
+        move:"forward"
       },
     });
   }
@@ -239,13 +247,17 @@ export const getCaterersSearch = createAsyncThunk(
           ? JSON.stringify(filteredData)
           : JSON.stringify(segre.serving_types_filter),
       meal_times_filter:
-        filterKey == 'mealTime'
-          ? JSON.stringify(filteredData)
-          : JSON.stringify(segre.meal_times_filter),
+        from !== 'Caterers'
+          ? filterKey == 'mealTime'
+            ? JSON.stringify(filteredData)
+            : JSON.stringify(segre.meal_times_filter)
+          : [],
       kitchen_types_filter:
-        filterKey == 'kitchenTypes'
-          ? JSON.stringify(kitchenTypes)
-          : JSON.stringify(segre.kitchen_types_filter),
+        from !== 'Caterers'
+          ? filterKey == 'kitchenTypes'
+            ? JSON.stringify(filteredData)
+            : JSON.stringify(segre.kitchen_types_filter)
+          : [],
       food_types_filter:
         filterKey == 'foodType'
           ? JSON.stringify(filteredData)
@@ -290,13 +302,12 @@ export const getCaterersSearch = createAsyncThunk(
         dispatch(updateOccassion(updated_response));
       } else if (filterKey == 'sort') {
         dispatch(updateSort(updated_response));
-      }else if(filterKey=="mealTime"){
-        dispatch(updateMeal(updated_response))
+      } else if (filterKey == 'mealTime') {
+        dispatch(updateMeal(updated_response));
+      } else if (filterKey == 'kitchenTypes') {
+        dispatch(updateKitchen(updated_response));
       }
-      else if(filterKey=="kitchenTypes"){
-        dispatch(updateKitchen(updated_response))
-      }
-      
+
       return res.data;
     } catch (error) {
       return rejectWithValue(error.message);

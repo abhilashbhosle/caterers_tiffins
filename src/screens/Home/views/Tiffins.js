@@ -8,6 +8,7 @@ import { ScrollView } from 'react-native-virtualized-view';
 import TiffinProviders from './TiffinProviders'
 import { ScaledSheet } from 'react-native-size-matters'
 import { ScreenWrapper } from '../../../components/ScreenWrapper'
+import PopularTiffins from './PopularTiffins'
 
 export default function Tiffins({navigation}) {
   return (
@@ -15,7 +16,8 @@ export default function Tiffins({navigation}) {
 	 <HeaderView from='Tiffins' navigation={navigation}/>
 	 <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 	 {/* <RecentSearches/> */}
-	 <Branded/>
+	 {/* <Branded/> */}
+	 <PopularTiffins/>
 	 <ExploreIndia/>
 	 <TiffinProviders/>
 	 </ScrollView>

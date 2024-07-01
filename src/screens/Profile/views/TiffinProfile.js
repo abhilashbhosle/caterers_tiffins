@@ -45,33 +45,41 @@ import {
 } from '../../Home/controllers/VendorProfileController';
 import ReadMore from '@fawazahmed/react-native-read-more';
 import {createReview} from '../../Home/controllers/ReviewController';
-import { updateWishList, wishDetails } from '../../Home/controllers/WishListController';
+import {
+  updateWishList,
+  wishDetails,
+} from '../../Home/controllers/WishListController';
+import Ratings from '../../../components/Ratings';
+import { getUser } from '../../Onboarding/controllers/AuthController';
+import { getSubscription } from '../../Home/controllers/FilterMainController';
 
 export default function TiffinProfile({navigation, route}) {
-  const {branch_id, vendor_id} = route.params;
+  const {branch_id, vendor_id,location} = route.params;
   const {width, height} = Dimensions.get('screen');
   const [cmtfocus, setCmtfocus] = useState(false);
   const {loading, data, error} = useSelector(state => state.vendor);
-  const [profile,setProfile]=useState(null)
+  const [profile, setProfile] = useState(null);
   const {createLoading} = useSelector(state => state.review);
   const [stretch, setStretch] = useState(false);
   const [review, setReview] = useState(null);
   const dispatch = useDispatch();
+  const [rating, setRating] = useState(0);
   const handleFocus = () => {
     setCmtfocus(true);
   };
-  useEffect(()=>{
-    if(data){
-      setProfile(data)
+  useEffect(() => {
+    if (data) {
+      setProfile(data);
     }
-  },[data])
+  }, [data]);
   useEffect(() => {
     if (branch_id && vendor_id) {
       dispatch(getVendorProfile({branch_id, vendor_id}));
+      dispatch(getUser())
+      dispatch(getSubscription({from:"Tiffins"}))
     }
   }, [branch_id, vendor_id]);
 
-  // console.log(branch_id)
 
   return (
     <ScreenWrapper>
@@ -100,20 +108,26 @@ export default function TiffinProfile({navigation, route}) {
               <TouchableOpacity activeOpacity={0.7} style={[gs.ph15]}>
                 <EntypoIcons name="share" style={[gs.fs22, {color: '#fff'}]} />
               </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]} onPress={()=>{
-                dispatch(wishDetails(vendor_id));
-                 dispatch(
-                  updateWishList({
-                    branch_id: branch_id,
-                    vendor_type: 'Tiffin',
-                    status: profile?.is_wishlisted == true ? 0 : 1,
-                  }),
-                );
-                let temp={...profile}
-                let updated={...temp,is_wishlisted:!temp.is_wishlisted}
-                setProfile(updated)
-              }}>
-                <AntIcon name={profile?.is_wishlisted?"heart":"hearto"} style={[gs.fs22, {color: '#fff'}]} />
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={[gs.ph10]}
+                onPress={() => {
+                  dispatch(wishDetails(vendor_id));
+                  dispatch(
+                    updateWishList({
+                      branch_id: branch_id,
+                      vendor_type: 'Tiffin',
+                      status: profile?.is_wishlisted == true ? 0 : 1,
+                    }),
+                  );
+                  let temp = {...profile};
+                  let updated = {...temp, is_wishlisted: !temp.is_wishlisted};
+                  setProfile(updated);
+                }}>
+                <AntIcon
+                  name={profile?.is_wishlisted ? 'heart' : 'hearto'}
+                  style={[gs.fs22, {color: '#fff'}]}
+                />
               </TouchableOpacity>
             </Flex>
           </Flex>
@@ -165,7 +179,9 @@ export default function TiffinProfile({navigation, route}) {
         </View>
         {/* =======BANNER SLIDERS======= */}
         <View>
-          <ProfileBanners catererBanners={profile?.bennerMenuMixGalleryImages} />
+          <ProfileBanners
+            catererBanners={profile?.bennerMenuMixGalleryImages}
+          />
           <Flex direction="row" align="center" style={[gs.ph5]}>
             <Text style={[styles.subtxt, gs.fs12]}>Food Type : </Text>
             <Flex direction="row" align="center" style={[gs.ph5, gs.pv15]}>
@@ -321,8 +337,8 @@ export default function TiffinProfile({navigation, route}) {
               <Text
                 style={[styles.servicedesc, gs.fs13, gs.mt5]}
                 numberOfLines={1}>
-                {profile?.start_day} - {profile?.end_day} {profile?.start_time} -{' '}
-                {profile?.end_time}
+                {profile?.start_day} - {profile?.end_day} {profile?.start_time}{' '}
+                - {profile?.end_time}
               </Text>
             </View>
           </Flex>
@@ -403,13 +419,9 @@ export default function TiffinProfile({navigation, route}) {
             ]}>
             Similar / Popular Tiffins in your area
           </Text>
-          <PopularTiffinsSlice data={searchitems} />
+          <PopularTiffinsSlice data={searchitems} location={location} vendorType="Tiffins"/>
         </View>
-        <Center style={[gs.pv15]}>
-          <Text style={[styles.subtxt, gs.fs12, {color: ts.primary}]}>
-            See all
-          </Text>
-        </Center>
+       
         <View style={[gs.ph5, gs.pb15]}>
           <Divider />
         </View>
@@ -440,6 +452,14 @@ export default function TiffinProfile({navigation, route}) {
               Write a Review
             </Text>
           </Center>
+          <View style={[gs.mh12, gs.mv12]}>
+            <Ratings
+              rating={rating}
+              setRating={setRating}
+              from="Tiffins"
+              vendorName={profile?.vendor_service_name}
+            />
+          </View>
           <View style={{marginBottom: cmtfocus ? 500 : 0}}>
             <TextInput
               placeholder="Add Comments"
@@ -463,9 +483,10 @@ export default function TiffinProfile({navigation, route}) {
               <TouchableOpacity
                 style={[gs.mh14, gs.mv10]}
                 onPress={() => {
-                  review &&
-                    dispatch(createReview({vendor_id, review_text: review}));
-                    setReview(null)
+                  review && rating &&
+                    dispatch(createReview({vendor_id, review_text: review,rating:rating}));
+                  setReview(null);
+                  setRating(0)
                 }}
                 activeOpacity={0.7}>
                 <ThemeSepBtn

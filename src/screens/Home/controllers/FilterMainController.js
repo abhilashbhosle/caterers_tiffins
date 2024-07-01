@@ -72,10 +72,12 @@ export const getSort = createAsyncThunk('getSort', async (_, {dispatch}) => {
 });
 // =======CLEAR FILTERS======//
 export const clearFilter = createAsyncThunk(
-  'getSort',
-  async ({params,navigation}, {dispatch}) => {
+  'clearFilter',
+  async (_, {dispatch}) => {
+    console.log("cleqar filter")
+
     try {
-      const res = await clearFilterService({dispatch,params,navigation});
+      const res = await clearFilterService({dispatch});
       return res
     } catch (error) {
       return rejectWithValue(error.message);
@@ -148,6 +150,10 @@ const filterSlice = createSlice({
     updateSort: (state, action) => {
       state.sortData = action.payload;
     },
+    updateSubscriptions:(state,action)=>{
+      console.log("updated response in subscriptions",action.payload)
+      state.subData=action.payload
+    }
   },
   extraReducers: builder => {
     builder
@@ -243,5 +249,6 @@ export const {
   updateHeadCount,
   updateservice,
   updateSort,
+  updateSubscriptions
 } = filterSlice.actions;
 export default filterSlice.reducer;

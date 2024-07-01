@@ -12,9 +12,19 @@ import {gs} from '../../GlobalStyles';
 import {Flex} from 'native-base';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import {ScaledSheet} from 'react-native-size-matters';
-import { clearFilter } from '../screens/Home/controllers/FilterMainController';
+import {clearFilter} from '../screens/Home/controllers/FilterMainController';
+import { removeWishListService } from '../screens/Home/services/WishListService';
+import { useDispatch, useSelector } from 'react-redux';
+import { showMessage } from 'react-native-flash-message';
 
 function ThemeHeaderWrapper(props) {
+  const dispatch=useDispatch()
+  const {catererData} = useSelector(
+    state => state.wish,
+  );
+  const {tiffinData} = useSelector(
+    state => state.wish,
+  );
   const renderChildren = () => {
     return (
       <SafeAreaView>
@@ -37,17 +47,19 @@ function ThemeHeaderWrapper(props) {
               {props.lefttxt}
             </Text>
           </Flex>
-          {props?.righttxt === 'Clear All' ? (
-            <TouchableOpacity activeOpacity={0.7} onPress={()=>{props.dispatch(clearFilter())}}>
-              <Text
-                style={[
-                  gs.fs12,
-                  {color: '#fff', fontFamily: ts.secondaryregular},
-                ]}>
-                {props.righttxt}
-              </Text>
-            </TouchableOpacity>
-          ) : (
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              props?.righttxt == 'Clear All'? props.dispatch(clearFilter()):null;
+              props?.righttxt=="Remove All" && (catererData?.data?.length || tiffinData?.data?.length)? removeWishListService({dispatch}):
+              props?.righttxt=="Remove All" &&
+              showMessage({
+                message: 'Nothing found!',
+                description: 'You have no items added to wishlist.',
+                type: 'warning',
+              });
+            }}>
             <Text
               style={[
                 gs.fs12,
@@ -55,7 +67,7 @@ function ThemeHeaderWrapper(props) {
               ]}>
               {props.righttxt}
             </Text>
-          )}
+          </TouchableOpacity>
         </Flex>
       </SafeAreaView>
     );
