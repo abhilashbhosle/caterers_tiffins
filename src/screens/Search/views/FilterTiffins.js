@@ -18,9 +18,7 @@ import {ScaledSheet} from 'react-native-size-matters';
 import ThemeSepBtn from '../../../components/ThemeSepBtn';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  clearFilter,
-} from '../../Home/controllers/FilterMainController';
+import {clearFilter} from '../../Home/controllers/FilterMainController';
 import AntIcon from 'react-native-vector-icons/Ionicons';
 import FontistoIcon from 'react-native-vector-icons/Fontisto';
 import {
@@ -31,6 +29,7 @@ import {
   handleSort,
   handleParentCuisines,
   handleChildrenCuisines,
+  handleRating,
 } from '../../Home/controllers/FilterCommonController';
 import {handleSearchSegregation} from '../../Home/controllers/SearchController';
 
@@ -58,6 +57,7 @@ export default function FilterTiffins({navigation, route}) {
   const cuisines_data = useSelector(state => state?.cuisine);
   const cuisineData = cuisines_data?.data;
   const cuisineLoading = cuisines_data?.loading;
+  const [rating,setRating]=useState([])
   const cuisineError = cuisines_data?.error;
   const {
     sortLoading,
@@ -70,6 +70,9 @@ export default function FilterTiffins({navigation, route}) {
     serviceData,
     serviceLoading,
     serviceError,
+    ratingData,
+    ratingError,
+    ratingLoading
   } = useSelector(state => state?.filterCater);
   const {caterersLoading, caterersData, caterersError} = useSelector(
     state => state.location,
@@ -92,6 +95,7 @@ export default function FilterTiffins({navigation, route}) {
     subscription_types_filter: [],
     meal_times_filter: [],
     kitchen_types_filter: [],
+    ratings_filter:[]
   });
 
   useEffect(() => {
@@ -113,6 +117,9 @@ export default function FilterTiffins({navigation, route}) {
     if (sortData?.length) {
       setSort(sortData);
     }
+    if(ratingData?.length){
+      setRating(ratingData)
+    }
     (async () => {
       await handleSearchSegregation({
         setSegre,
@@ -126,6 +133,7 @@ export default function FilterTiffins({navigation, route}) {
         mealData,
         kitchenData,
         servingData,
+        ratingData
       });
     })();
   }, [
@@ -140,6 +148,7 @@ export default function FilterTiffins({navigation, route}) {
     budgetData,
     subData,
     servingData,
+    ratingData
   ]);
   // =======SEARCH CUISINE========//
   const handleSearch = text => {
@@ -608,7 +617,7 @@ export default function FilterTiffins({navigation, route}) {
             gs.mh5,
             gs.pv10,
             gs.mt15,
-            {backgroundColor: '#fff', marginBottom: 80},
+            {backgroundColor: '#fff'},
           ]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By</Text>
           <Divider style={[gs.mv15]} />
@@ -644,6 +653,65 @@ export default function FilterTiffins({navigation, route}) {
                   <Flex direction="row" justify="space-between" align="center">
                     <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
                       {e.name}
+                    </Text>
+                    <MaterialIcons
+                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
+                      style={[
+                        gs.fs20,
+                        gs.mr3,
+                        {
+                          color: e.selected == 1 ? ts.primary : ts.alternate,
+                        },
+                      ]}
+                    />
+                  </Flex>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </Card>
+        {/* ========SORT BY RATINGs========= */}
+        <Card
+          style={[
+            gs.mh5,
+            gs.pv10,
+            gs.mt15,
+            {backgroundColor: '#fff', marginBottom: 80},
+          ]}>
+          <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By Rating</Text>
+          <Divider style={[gs.mv15]} />
+          {ratingLoading && (
+            <Center>
+              <Spinner color={ts.secondary} />
+            </Center>
+          )}
+          {ratingError?.message && (
+            <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+              No Ratings found
+            </Text>
+          )}
+          {!ratingLoading && !ratingError && rating?.length > 0 && (
+            <View style={[gs.ph10]}>
+              {rating.map((e, i) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    handleRating({
+                      index: i,
+                      setRating,
+                      rating,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Tiffins',
+                      dispatch,
+                      segre,
+                      setSegre,
+                    });
+                  }}
+                  key={i}>
+                  <Flex direction="row" justify="space-between" align="center">
+                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                      {e.rating}
                     </Text>
                     <MaterialIcons
                       name={e.selected == 1 ? 'check-circle' : 'circle-outline'}

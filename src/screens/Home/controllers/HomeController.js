@@ -2,6 +2,7 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {getLocation} from '../../Onboarding/controllers/AuthController';
 import {
   getHomePageService,
+  getSimilarTiffinService,
   updateSearchService,
 } from '../services/HomeServices';
 import moment from 'moment';
@@ -154,6 +155,47 @@ export const getPopular = createAsyncThunk(
   },
 );
 
+// =======GET SIMILAR TIFFINS======//
+
+export const getSimilarTiffins = createAsyncThunk(
+  'getSimilarTiffins',
+  async (
+    {
+      latitude,
+      longitude,
+      city,
+      pinCode,
+      placeId,
+      startDate,
+      endDate,
+      vendorType,
+    },
+    {dispatch},
+  ) => {
+    let params = {
+      latitude,
+      longitude,
+      city,
+      pincode: pinCode,
+      place_id: placeId,
+      limit: 5,
+      current_page: 1,
+      start_date: moment(startDate).format('YYYY-MM-DD'),
+      end_date: moment(endDate).format('YYYY-MM-DD'),
+      vendor_type: vendorType,
+      save_filter:0,
+      app_type:"app",
+      search_term:''
+    };
+    try {
+      const res = await getSimilarTiffinService({params});
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 const homeSlice = createSlice({
   name: 'home',
   initialState: {
@@ -166,6 +208,9 @@ const homeSlice = createSlice({
     popularTLoading: false,
     popularTData: [],
     popularTError: null,
+    tiffinLoading: false,
+    tiffinData: [],
+    tiffinError: null,
   },
   reducers: {},
   extraReducers: builder => {
@@ -205,6 +250,18 @@ const homeSlice = createSlice({
       .addCase(getPopulaTiffin.rejected, (state, action) => {
         state.popularTLoading = false;
         state.popularTError = action.error;
+      })
+      .addCase(getSimilarTiffins.pending, (state, action) => {
+        state.tiffinLoading = true;
+        state.tiffinError = null;
+      })
+      .addCase(getSimilarTiffins.fulfilled, (state, action) => {
+        state.tiffinLoading = false;
+        state.tiffinData = action.payload;
+      })
+      .addCase(getSimilarTiffins.rejected, (state, action) => {
+        state.tiffinLoading = false;
+        state.tiffinError = action.error;
       });
   },
 });

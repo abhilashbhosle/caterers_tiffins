@@ -6,6 +6,7 @@ import {startLoader} from '../../../redux/CommonSlicer';
 import {
   getBudget,
   getHeadCount,
+  getRatings,
   getService,
   getServing,
   getSort,
@@ -169,6 +170,7 @@ export const clearFilterService = async ({dispatch,from}) => {
     dispatch(getMeal());
     dispatch(getOccassions())
     dispatch(getCuisines())
+    dispatch(getRatings())
     }
     dispatch(startLoader(false));
 
@@ -202,6 +204,29 @@ export const getSubscriptionService = async ({from}) => {
     let token = await AsyncStorage.getItem('token');
     let res = await axios.get(
       `${endpoints.baseUrl}user-get-subscription-types?current_page=1&limit=100&vendor_type=${from=="Caterers"?"Caterer":"Tiffin"}`,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return res.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error(error.message);
+    }
+  }
+};
+
+// =======GET RATINGS======//
+export const getRatingsService = async () => {
+  try {
+    let token = await AsyncStorage.getItem('token');
+    let res = await axios.get(
+      `${endpoints.baseUrl}get-all-ratings?limit=10&current_page=1`,
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

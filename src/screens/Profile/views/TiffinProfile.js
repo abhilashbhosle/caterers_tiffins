@@ -52,6 +52,7 @@ import {
 import Ratings from '../../../components/Ratings';
 import { getUser } from '../../Onboarding/controllers/AuthController';
 import { getSubscription } from '../../Home/controllers/FilterMainController';
+import CuisinesExpanded from '../../../components/CuisinesExpanded';
 
 export default function TiffinProfile({navigation, route}) {
   const {branch_id, vendor_id,location} = route.params;
@@ -99,7 +100,16 @@ export default function TiffinProfile({navigation, route}) {
               <AntIcon name="arrowleft" style={[gs.fs22, {color: '#fff'}]} />
             </TouchableOpacity>
             <Flex direction="row" alignItems="center">
-              <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]}>
+              <TouchableOpacity activeOpacity={0.7} style={[gs.ph10]}  onPress={()=>{
+                 navigation.navigate('PageStack', {
+                  screen: 'MapSingle',
+                  params: {
+                    initialRegion: location,
+                    profile,
+                    from:"Tiffins"
+                  },
+                });
+              }}>
                 <IonIcons
                   name="location-sharp"
                   style={[gs.fs22, {color: '#fff'}]}
@@ -135,7 +145,8 @@ export default function TiffinProfile({navigation, route}) {
       </View>
       <KeyboardAwareScrollView
         style={{flex: 1, backgroundColor: '#fff'}}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        >
         <View style={[gs.ph5, gs.pv10]}>
           <Flex direction="row" align="center" justify="space-between">
             <Text style={[gs.fs19, styles.heading]}>
@@ -160,21 +171,12 @@ export default function TiffinProfile({navigation, route}) {
             )}
           </Flex>
           {profile?.formatted_address && (
-            <ReadMore
+            <Text
               style={[gs.fs11, styles.area]}
-              numberOfLines={2}
-              seeMoreText="read more"
-              seeLessText="read less"
-              seeLessStyle={{
-                color: ts.primary,
-                fontFamily: ts.secondaryregular,
-              }}
-              seeMoreStyle={{
-                color: ts.primary,
-                fontFamily: ts.secondaryregular,
-              }}>
+              numberOfLines={3}
+             >
               {profile.formatted_address}
-            </ReadMore>
+            </Text>
           )}
         </View>
         {/* =======BANNER SLIDERS======= */}
@@ -214,7 +216,7 @@ export default function TiffinProfile({navigation, route}) {
               </Text>
               <Flex direction="row" align="center" flexWrap="wrap">
                 {profile?.cuisines
-                  ?.slice(0, stretch ? profile.cuisines.length : 4)
+                  ?.slice(0, 4)
                   ?.map((e, i) => (
                     <Text
                       style={[
@@ -248,6 +250,12 @@ export default function TiffinProfile({navigation, route}) {
                     </Text>
                   </TouchableOpacity>
                 )}
+                  <CuisinesExpanded
+                    cuisines={profile?.cuisines}
+                    stretch={stretch}
+                    setStretch={setStretch}
+                    from={"Tiffins"}
+                  />
               </Flex>
             </View>
           )}

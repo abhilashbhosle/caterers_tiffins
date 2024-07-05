@@ -193,6 +193,14 @@ export const ScreenWrapper = ({children}) => {
             backgroundColor: Platform.OS == 'android' && '#000',
             translucent: Platform.OS == 'android' && true,
           });
+          case 'MapSingle':
+            StatusBar.pushStackEntry({
+              barStyle: 'dark-content',
+              animated: true,
+              hidden: false,
+              backgroundColor: Platform.OS == 'android' && '#000',
+              translucent: Platform.OS == 'android' && true,
+            });
           break;
         default:
           StatusBar.pushStackEntry({barStyle: 'light-content', hidden: true});

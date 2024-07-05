@@ -16,6 +16,7 @@ import {
 import {debounce} from '../constants/Debounce';
 import {
   clearSearch,
+  getLocationData,
   getLocations,
 } from '../screens/Home/controllers/SearchController';
 import {getLocationService} from '../screens/Onboarding/services/AuthService';
@@ -27,9 +28,12 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
   const [focused, setFocused] = useState(false);
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
   const [location, setLocation] = useState('');
-  const {searchLoading, searchData, searchError} = useSelector(
-    state => state.location,
-  );
+  // const {searchLoading, searchData, searchError} = useSelector(
+  //   state => state.location,
+  // );
+  const searchLoading=useSelector(state=>state.location.locationLoading);
+  const searchData=useSelector(state=>state.location.locationData);
+  const searchError=useSelector(state=>state.location.locationError)
   const navigation = useNavigation();
 
   const dispatch = useDispatch();
@@ -54,7 +58,7 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
 
   const handleSearch = useCallback(
     debounce(text => {
-      dispatch(getLocations({data: text}));
+      dispatch(getLocationData({data: text}));
     }, 1000),
     [],
   );

@@ -374,6 +374,40 @@ export const handleSort = async ({
   }
 };
 
+// ==========HANDLE RATINGS==========//
+export const handleRating = async ({
+  index,
+  setRating,
+  rating,
+  ssd,
+  sse,
+  location,
+  from,
+  dispatch,
+  segre,
+  setSegre
+}) => {
+  let data = [...rating];
+  let res = await handleSelection(data, setRating, index);
+  setSegre({...segre,ratings_filter:res})
+  if (res?.length) {
+    dispatch(
+      getCaterersSearch({
+        filterKey: 'rating',
+        filteredData: res,
+        from,
+        ssd,
+        sse,
+        location,
+        page: 1,
+        limit: 5,
+        segre,
+        updated_response:res
+      }),
+    );
+  }
+};
+
 // ======HANDLE MEALTIME=====//
 export const handleMeal = async ({
   index,

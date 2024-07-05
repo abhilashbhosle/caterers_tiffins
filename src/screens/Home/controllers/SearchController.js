@@ -10,6 +10,7 @@ import moment from 'moment';
 import {
   updateBudget,
   updateHeadCount,
+  updateRating,
   updateServing,
   updateSort,
   updateservice,
@@ -21,6 +22,18 @@ import {updateKitchen, updateMeal} from './FilterTiffinController';
 // ======GET LOCATIONs=======//
 export const getLocations = createAsyncThunk(
   'getLocations',
+  async ({data}, {dispatch}) => {
+    try {
+      const res = await getLocationService(data);
+      return res;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+// ======GET LOCATION=======//
+export const getLocationData = createAsyncThunk(
+  'getLocation',
   async ({data}, {dispatch}) => {
     try {
       const res = await getLocationService(data);
@@ -42,6 +55,7 @@ export const handleSearchResults = ({
   setSelectedLocation,
   setSearch,
   dispatch,
+  locationData,
 }) => {
   let flag = false;
   if (!selectedStartDate || !selectedEndDate) {
@@ -81,13 +95,15 @@ export const handleSearchResults = ({
               place_id: userDetails[0]?.place_id,
               pincode: userDetails[0]?.pincode,
             });
-            dispatch(setLocationres({
-              latitude: userDetails[0]?.latitude,
-              longitude: userDetails[0]?.longitude,
-              city: userDetails[0]?.city,
-              place_id: userDetails[0]?.place_id,
-              pincode: userDetails[0]?.pincode,
-            }))
+            dispatch(
+              setLocationres({
+                latitude: userDetails[0]?.latitude,
+                longitude: userDetails[0]?.longitude,
+                city: userDetails[0]?.city,
+                place_id: userDetails[0]?.place_id,
+                pincode: userDetails[0]?.pincode,
+              }),
+            );
           },
         },
       ],
@@ -105,7 +121,7 @@ export const handleSearchResults = ({
         from,
         ssd: selectedStartDate,
         sse: selectedEndDate,
-        move:"forward"
+        move: 'forward',
       },
     });
   }
@@ -124,6 +140,7 @@ export const handleSearchSegregation = async ({
   subData,
   mealData,
   kitchenData,
+  ratingData,
 }) => {
   const food_filter = await foodTypeData.map(e => ({
     id: parseInt(e.id),
@@ -157,6 +174,13 @@ export const handleSearchSegregation = async ({
     selected: e.selected,
   }));
   setSegre(prev => ({...prev, serving_types_filter: serving_types_filter}));
+
+  const ratings_filter = await ratingData.map(e => ({
+    rating: e.rating,
+    selected: e.selected,
+  }));
+  setSegre(prev => ({...prev, ratings_filter: ratings_filter}));
+
   const service_types_filter = await serviceData.map(e => ({
     id: parseInt(e.id),
     selected: e.selected,
@@ -204,8 +228,6 @@ export const handleSearchSegregation = async ({
   setSegre(prev => ({...prev, head_count_ranges: head}));
   return true;
 };
-
-// ======GET CATERERS SEARCH=======//
 export const getCaterersSearch = createAsyncThunk(
   'getCaterersSearch',
   async (
@@ -278,6 +300,7 @@ export const getCaterersSearch = createAsyncThunk(
         filterKey == 'headCount'
           ? JSON.stringify(filteredData)
           : JSON.stringify(segre.head_count_ranges),
+      ratings_filter: filterKey == 'rating' ? JSON.stringify(filteredData) : JSON.stringify(segre?.ratings_filter),
       latitude: location.latitude,
       longitude: location.longitude,
       city: location.city,
@@ -306,6 +329,8 @@ export const getCaterersSearch = createAsyncThunk(
         dispatch(updateMeal(updated_response));
       } else if (filterKey == 'kitchenTypes') {
         dispatch(updateKitchen(updated_response));
+      } else if (filterKey == 'rating') {
+        dispatch(updateRating(updated_response));
       }
 
       return res.data;
@@ -315,6 +340,36 @@ export const getCaterersSearch = createAsyncThunk(
     }
   },
 );
+// ======GET MAP=======//
+export const getMap = createAsyncThunk(
+  'getMap',
+  async ({from, ssd, sse, location, page, limit}, {dispatch}) => {
+    let params = {
+      search_term: '',
+      order_by_filter: [],
+      save_filter: 1,
+      vendor_type: from,
+      app_type: 'app',
+      start_date: moment(ssd).format('YYYY-MM-DD'),
+      end_date: moment(sse).format('YYYY-MM-DD'),
+      latitude: location.latitude,
+      longitude: location.longitude,
+      city: location.city,
+      pincode: location.pincode,
+      place_id: location.place_id,
+      limit: limit,
+      current_page: page,
+    };
+    try {
+      const res = await getCatererSearchService({params});
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    } finally {
+    }
+  },
+);
+// ========GET MAP SEARCH=========//
 
 const searchSlice = createSlice({
   name: 'search',
@@ -329,10 +384,17 @@ const searchSlice = createSlice({
     locationRes: null,
     selectedLocRes: null,
     foodTypes: [],
+    mapLoading: false,
+    mapData: [],
+    mapError: null,
+    locationLoading: false,
+    locationData: [],
+    locationError: null,
   },
   reducers: {
     clearSearch: (state, action) => {
       state.searchData = [];
+      state.locationData = [];
     },
     clearCaterers: (state, action) => {
       state.caterersData = [];
@@ -357,8 +419,7 @@ const searchSlice = createSlice({
       .addCase(getLocations.rejected, (state, action) => {
         state.searchLoading = false;
         state.searchError = action.error;
-      });
-    builder
+      })
       .addCase(getCaterersSearch.pending, (state, action) => {
         state.caterersLoading = true;
         state.caterersError = null;
@@ -370,6 +431,30 @@ const searchSlice = createSlice({
       .addCase(getCaterersSearch.rejected, (state, action) => {
         state.caterersLoading = false;
         state.caterersError = action.error;
+      })
+      .addCase(getMap.pending, (state, action) => {
+        state.mapLoading = true;
+        state.mapError = null;
+      })
+      .addCase(getMap.fulfilled, (state, action) => {
+        state.mapLoading = false;
+        state.mapData = action.payload;
+      })
+      .addCase(getMap.rejected, (state, action) => {
+        state.mapLoading = false;
+        state.mapError = action.error;
+      })
+      .addCase(getLocationData.pending, (state, action) => {
+        state.locationLoading = true;
+        state.locationError = null;
+      })
+      .addCase(getLocationData.fulfilled, (state, action) => {
+        state.locationLoading = false;
+        state.locationData = action.payload;
+      })
+      .addCase(getLocationData.rejected, (state, action) => {
+        state.locationLoading = false;
+        state.locationError = action.error;
       });
   },
 });

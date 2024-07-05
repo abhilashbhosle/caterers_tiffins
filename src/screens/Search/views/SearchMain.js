@@ -28,9 +28,7 @@ import {
   clearCaterers,
   getCaterersSearch,
   handleSearchSegregation,
-  setLocationres,
-  setSearchRes,
-  setSelectedLocRes,
+
 } from '../../Home/controllers/SearchController';
 import {clearFilterService} from '../../Home/services/FilterMainService';
 import {
@@ -40,7 +38,7 @@ import {
 
 export default function SearchMain({route, navigation}) {
   const {width, height} = useWindowDimensions();
-  const {from, ssd, sse,move} = route.params;
+  const {from, ssd, sse, move} = route.params;
   const [vendorData, setVendorData] = useState([]);
   const [subType, setSubType] = useState([]);
   const [foodType, setFoodType] = useState([]);
@@ -54,6 +52,7 @@ export default function SearchMain({route, navigation}) {
     sortData,
     foodTypeData,
     subData,
+    ratingData
   } = useSelector(state => state?.filterCater);
   const {mealData, kitchenData} = useSelector(state => state?.filterTiffin);
   const cuisines_data = useSelector(state => state?.cuisine.data);
@@ -71,6 +70,7 @@ export default function SearchMain({route, navigation}) {
     subscription_types_filter: [],
     meal_times_filter: [],
     kitchen_types_filter: [],
+    ratings_filter:[]
   });
   const [flag, setFlag] = useState(false);
   const [page, setPage] = useState(1);
@@ -116,6 +116,7 @@ export default function SearchMain({route, navigation}) {
         subData,
         mealData,
         kitchenData,
+        ratingData
       });
       setFlag(res);
     })();
@@ -131,6 +132,7 @@ export default function SearchMain({route, navigation}) {
     subData,
     mealData,
     kitchenData,
+    ratingData
   ]);
   useEffect(() => {
     if (caterersData?.vendors) {
@@ -175,7 +177,6 @@ export default function SearchMain({route, navigation}) {
     return null;
   }, [caterersLoading]);
 
-
   return (
     <ScreenWrapper>
       <View
@@ -191,7 +192,6 @@ export default function SearchMain({route, navigation}) {
             activeOpacity={0.7}
             onPress={async () => {
               await clearFilterService({dispatch, from});
-               dispatch(setLocationres(""))
               navigation.navigate('BottomBarStack');
               setVendorData(0);
             }}
@@ -255,15 +255,29 @@ export default function SearchMain({route, navigation}) {
             </TouchableOpacity>
           ))}
         </Flex>
-        <Flex direction="row" alignItems="center">
-          <IonIcons
-            name="location-sharp"
-            style={[gs.fs22, {color: '#555'}, gs.mr5]}
-          />
-          <Text style={[{fontFamily: ts.secondary, color: '#222'}, gs.fs13]}>
-            Map
-          </Text>
-        </Flex>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => {
+            let data=[...vendorData]
+            navigation.navigate('PageStack', {
+              screen: 'MapMultiple',
+              params: {
+               initialRegion:location,
+               profile:data,
+               from:from=="Caterers"?"Caterer":"Tiffin",
+              },
+            });
+          }}>
+          <Flex direction="row" alignItems="center">
+            <IonIcons
+              name="location-sharp"
+              style={[gs.fs22, {color: '#555'}, gs.mr5]}
+            />
+            <Text style={[{fontFamily: ts.secondary, color: '#222'}, gs.fs13]}>
+              Map
+            </Text>
+          </Flex>
+        </TouchableOpacity>
         <TouchableWithoutFeedback
           onPress={() => {
             from == 'Caterers'

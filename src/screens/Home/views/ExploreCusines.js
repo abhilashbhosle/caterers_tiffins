@@ -31,7 +31,6 @@ function ExploreCusines() {
   );
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log('explore cuisines called');
     dispatch(getCuisines());
   }, []);
   const [segre, setSegre] = useState({

@@ -55,7 +55,9 @@ function SearchCaterersCard({item, from, location}) {
                 <LinearGradient
                   colors={['#0004', 'transparent']}
                   start={{x: 0.0, y: 0.0}}
-                  end={{x: 0.0, y: 1.0}}>
+                  end={{x: 0.0, y: 1.0}}
+                  style={[gs.br10]}
+                  >
                   <Flex direction="row" style={[gs.p5]} align="center">
                     <TouchableOpacity
                       style={styles.likecontainer}
@@ -113,7 +115,9 @@ function SearchCaterersCard({item, from, location}) {
                 <LinearGradient
                   colors={['#0004', 'transparent']}
                   start={{x: 0.0, y: 0.0}}
-                  end={{x: 0.0, y: 1.0}}>
+                  end={{x: 0.0, y: 1.0}}
+                  style={[gs.br10]}
+                  >
                   <Flex direction="row" style={[gs.p5]} align="center">
                     <TouchableOpacity
                       style={styles.likecontainer}
@@ -226,7 +230,7 @@ function SearchCaterersCard({item, from, location}) {
               </Text>
             </Flex> */}
             <Flex direction="row" align="center" style={[gs.mt8]}>
-              {item?.service_types?.map((e, i) => (
+              {item?.serving_types?.map((e, i) => (
                 <View
                   key={i}
                   style={[
@@ -294,6 +298,7 @@ const styles = ScaledSheet.create({
   },
   img: {
     height: '170@ms',
+    borderRadius:'10@ms',
   },
   buffeticon: {
     height: '30@ms',

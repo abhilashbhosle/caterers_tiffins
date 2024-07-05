@@ -72,6 +72,7 @@ function Ratings({rating, setRating, from, vendorName}) {
                   {rate}
                 </Text>
               </Center>
+              <Center>
               <View style={[gs.mb20]}>
                 <StarRating
                   rating={rate}
@@ -81,6 +82,7 @@ function Ratings({rating, setRating, from, vendorName}) {
                   enableHalfStar={false}
                 />
               </View>
+              </Center>
             </View>
             <TouchableOpacity
               style={[{width: '100%'}, gs.mb20]}

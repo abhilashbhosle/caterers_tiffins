@@ -5,6 +5,7 @@ import {
   getBudgetService,
   getFoodTypesService,
   getHeadCountService,
+  getRatingsService,
   getServService,
   getServingService,
   getSortService,
@@ -109,6 +110,19 @@ export const getSubscription = createAsyncThunk(
   },
 );
 
+// =====GET SUBSCRIPTION TYPES======//
+export const getRatings = createAsyncThunk(
+  'getRatings',
+  async (_, {dispatch}) => {
+    try {
+      const res = await getRatingsService();
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 const filterSlice = createSlice({
   name: 'filter',
   initialState: {
@@ -133,6 +147,9 @@ const filterSlice = createSlice({
     subLoading: false,
     subData: [],
     subError: null,
+    ratingLoading:false,
+    ratingData:[],
+    ratingError:null
   },
   reducers: {
     updateBudget: (state, action) => {
@@ -151,8 +168,10 @@ const filterSlice = createSlice({
       state.sortData = action.payload;
     },
     updateSubscriptions:(state,action)=>{
-      console.log("updated response in subscriptions",action.payload)
       state.subData=action.payload
+    },
+    updateRating:(state,action)=>{
+      state.ratingData=action.payload
     }
   },
   extraReducers: builder => {
@@ -240,6 +259,18 @@ const filterSlice = createSlice({
       .addCase(getSubscription.rejected, (state, action) => {
         state.subLoading = false;
         state.subError = action.error;
+      })
+      .addCase(getRatings.pending, (state, action) => {
+        state.ratingLoading = true;
+        state.ratingError = null;
+      })
+      .addCase(getRatings.fulfilled, (state, action) => {
+        state.ratingLoading = false;
+        state.ratingData = action.payload;
+      })
+      .addCase(getRatings.rejected, (state, action) => {
+        state.ratingLoading = false;
+        state.ratingError = action.error;
       });
   },
 });
@@ -249,6 +280,7 @@ export const {
   updateHeadCount,
   updateservice,
   updateSort,
-  updateSubscriptions
+  updateSubscriptions,
+  updateRating
 } = filterSlice.actions;
 export default filterSlice.reducer;

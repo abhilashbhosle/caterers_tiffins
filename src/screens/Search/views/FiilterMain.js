@@ -29,6 +29,7 @@ import {
   handleCount,
   handleOccassion,
   handleParentCuisines,
+  handleRating,
   handleService,
   handleServing,
   handleSort,
@@ -46,6 +47,7 @@ export default function FiilterMain({navigation, route}) {
   const [service, setService] = useState([]);
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState(-1);
+  const [rating,setRating]=useState([])
   const dispatch = useDispatch();
   const [sort, setSort] = useState([]);
   const [segre, setSegre] = useState({
@@ -61,6 +63,7 @@ export default function FiilterMain({navigation, route}) {
     subscription_types_filter: [],
     meal_times_filter: [],
     kitchen_types_filter: [],
+    ratings_filter:[]
   });
 
   const {
@@ -81,6 +84,9 @@ export default function FiilterMain({navigation, route}) {
     sortError,
     foodTypeData,
     subData,
+    ratingData,
+    ratingError,
+    ratingLoading
   } = useSelector(state => state?.filterCater);
 
   const {loading, data, error} = useSelector(state => state?.occassion);
@@ -115,6 +121,9 @@ export default function FiilterMain({navigation, route}) {
     if (sortData?.length) {
       setSort(sortData);
     }
+    if(ratingData?.length){
+      setRating(ratingData)
+    }
     (async () => {
       await handleSearchSegregation({
         setSegre,
@@ -129,6 +138,7 @@ export default function FiilterMain({navigation, route}) {
         subData,
         mealData,
         kitchenData,
+        ratingData
       });
     })();
   }, [
@@ -139,12 +149,14 @@ export default function FiilterMain({navigation, route}) {
     cuisineData,
     headData,
     sortData,
+    ratingData
   ]);
   // =======SEARCH CUISINE========//
   const handleSearch = text => {
     setSearch(text);
   };
   useEffect(() => {
+
     let data = [...cuisineData];
     if (search?.length > 0) {
       let finalData = data.filter((e, i) => {
@@ -698,7 +710,7 @@ export default function FiilterMain({navigation, route}) {
             gs.mh5,
             gs.pv10,
             gs.mt15,
-            {backgroundColor: '#fff', marginBottom: 80},
+            {backgroundColor: '#fff'},
           ]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By</Text>
           <Divider style={[gs.mv15]} />
@@ -734,6 +746,65 @@ export default function FiilterMain({navigation, route}) {
                   <Flex direction="row" justify="space-between" align="center">
                     <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
                       {e.name}
+                    </Text>
+                    <MaterialIcons
+                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
+                      style={[
+                        gs.fs20,
+                        gs.mr3,
+                        {
+                          color: e.selected == 1 ? ts.secondary : ts.alternate,
+                        },
+                      ]}
+                    />
+                  </Flex>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </Card>
+          {/* ========SORT BY RATINGS========= */}
+          <Card
+          style={[
+            gs.mh5,
+            gs.pv10,
+            gs.mt15,
+            {backgroundColor: '#fff', marginBottom: 80},
+          ]}>
+          <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By Rating</Text>
+          <Divider style={[gs.mv15]} />
+          {ratingLoading && (
+            <Center>
+              <Spinner color={ts.secondary} />
+            </Center>
+          )}
+          {ratingError?.message && (
+            <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+              No Sorts found
+            </Text>
+          )}
+          {!ratingLoading && !ratingError && rating?.length > 0 && (
+            <View style={[gs.ph10]}>
+              {rating.map((e, i) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    handleRating({
+                      index: i,
+                      setRating,
+                      rating,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Caterers',
+                      dispatch,
+                      segre,
+                      setSegre,
+                    });
+                  }}
+                  key={i}>
+                  <Flex direction="row" justify="space-between" align="center">
+                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                      {e.rating}
                     </Text>
                     <MaterialIcons
                       name={e.selected == 1 ? 'check-circle' : 'circle-outline'}

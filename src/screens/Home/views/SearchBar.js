@@ -45,6 +45,7 @@ import {
   getBudget,
   getFoodTypes,
   getHeadCount,
+  getRatings,
   getService,
   getServing,
   getSort,
@@ -78,7 +79,6 @@ function SearchBar({from, navigation, ssd, sse}) {
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
   const searchRes = useSelector(state => state.location?.searchRes);
   const locationRes = useSelector(state => state.location.locationRes);
-
 
   useEffect(() => {
     if (searchRes) {
@@ -183,6 +183,7 @@ function SearchBar({from, navigation, ssd, sse}) {
     dispatch(getSort());
     dispatch(getMeal());
     dispatch(getKitchen());
+    dispatch(getRatings())
   }, []);
 
   return (
@@ -217,8 +218,8 @@ function SearchBar({from, navigation, ssd, sse}) {
                 {fromdate} - {enddate?.slice(4)}
               </Text>
             ) : (
-              <Text style={[gs.fs11, {color: ts.primarytext}, gs.ml4]}>
-                Feb 14 - 16
+              <Text style={[gs.fs11, {color: ts.secondarytext}, gs.ml10]}>
+                Date
               </Text>
             )}
           </Flex>
@@ -230,10 +231,9 @@ function SearchBar({from, navigation, ssd, sse}) {
             {/* ======SEARCH INPUT======== */}
             <TextInput
               style={[
-                {...styles.searchTextInput},
+                {...styles.searchTextInput, color: ts.primarytext},
                 gs.fs11,
                 gs.ph10,
-                ts.primarytext,
               ]}
               placeholder="Search"
               placeholderTextColor="#57636c"
@@ -313,7 +313,7 @@ function SearchBar({from, navigation, ssd, sse}) {
       {searchLoading && (
         <Center>
           <View style={{...styles.searchContainer}}>
-          <Spinner color={ts.secondarytext}/>
+            <Spinner color={ts.secondarytext} />
           </View>
         </Center>
       )}

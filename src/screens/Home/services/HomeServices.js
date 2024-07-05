@@ -121,3 +121,27 @@ export const getHomePageService = async ({params}) => {
   } finally {
   }
 };
+
+// =======GET SIMILAR TIFFINS SERVICE=======//
+
+export const getSimilarTiffinService = async ({params}) => {
+  try {
+    let token = await AsyncStorage.getItem('token');
+    let res = await axios.get(`${endpoints.baseUrl}search-vendors`, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Bearer ${token}`,
+      },
+      params,
+    });
+    return res.data;
+  } catch (error) {
+    console.log('error in ', error);
+    if (error.response && error.response.data) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error(error.message);
+    }
+  } finally {
+  }
+};

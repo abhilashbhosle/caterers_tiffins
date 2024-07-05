@@ -15,6 +15,8 @@ import CatererProfile from '../screens/Profile/views/CatererProfile';
 import TiffinProfile from '../screens/Profile/views/TiffinProfile';
 import GalleryView from '../screens/Profile/views/ProfileModules/GalleryView';
 import Reviews from '../screens/Home/views/Reviews';
+import MapSingle from '../screens/Maps/MapSingle';
+import  MapMultiple  from '../screens/Maps/MapMultiple';
 // import Notifications from '../screens/Home/views/Notifications';
 
 const Stack = createNativeStackNavigator();
@@ -35,6 +37,8 @@ export default function PageStack() {
       <Stack.Screen name='TiffinProfile' component={TiffinProfile}/>
       <Stack.Screen name='GalleryView' component={GalleryView}/>
       <Stack.Screen name="Reviews" component={Reviews}/>
+      <Stack.Screen name="MapSingle" component={MapSingle}/>
+      <Stack.Screen name="MapMultiple" component={MapMultiple}/>
     </Stack.Navigator>
   );
 }

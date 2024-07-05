@@ -85,7 +85,7 @@ export default function Login({navigation}) {
                       </Text>
 
                       <TextField
-                        placeholder="+91 | Mobile Number"
+                        placeholder="Enter 10 Digits Mobile Number"
                         value={values.phoneNumber}
                         onChangeText={handleChange('phoneNumber')}
                         onBlur={handleBlur('phoneNumber')}
