@@ -64,24 +64,7 @@ export const explorecusines = [
   },
 ];
 export const branded = [
-  {
-    img: require('../assets/Search/cardimg.jpg'),
-    id: 1,
-    name: 'img1',
-    profile:require('../assets/Banners/c1.png')
-  },
-  {
-    img: require('../assets/Search/cardimg.jpg'),
-    id: 2,
-    name: 'img2',
-    profile:require('../assets/Banners/c1.png')
-  },
-  {
-    img:require('../assets/Search/cardimg.jpg'),
-    id: 3,
-    name: 'img3',
-    profile:require('../assets/Banners/c1.png')
-  },
+  
   
 ];
 export const india = [
@@ -534,18 +517,7 @@ export const caterersort = [
 ];
 
 export const catererBanners = [
-  {
-    img: require('../assets/Banners/c1.png'),
-  },
-  {
-    img: require('../assets/Banners/c2.png'),
-  },
-  {
-    img: require('../assets/Banners/c3.jpg'),
-  },
-  {
-    img: require('../assets/Banners/c4.jpg'),
-  },
+
 ];
 export const caterersgallery = [
   {
