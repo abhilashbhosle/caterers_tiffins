@@ -11,6 +11,7 @@ import {
   StatusBar,
   Image,
   Linking,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
@@ -56,6 +57,7 @@ import {getUser} from '../../Onboarding/controllers/AuthController';
 import {getSubscription} from '../../Home/controllers/FilterMainController';
 import {ProfileSkeleton} from '../../../components/skeletons/ProfileSkeleton';
 import CuisinesExpanded from '../../../components/CuisinesExpanded';
+import moment from 'moment';
 
 export default function CatererProfile({navigation, route}) {
   const {branch_id, vendor_id, location} = route.params;
@@ -73,6 +75,8 @@ export default function CatererProfile({navigation, route}) {
   const [showReviews, setShowReviews] = useState(false);
   const scrollViewRef = useRef(null);
 
+  console.log(branch_id, vendor_id);
+
   useEffect(() => {
     if (branch_id && vendor_id) {
       dispatch(getVendorProfile({branch_id, vendor_id}));
@@ -85,6 +89,8 @@ export default function CatererProfile({navigation, route}) {
       setProfile(data);
     }
   }, [data]);
+
+  console.log(profile?.start_time);
 
   return (
     <ScreenWrapper>
@@ -158,7 +164,7 @@ export default function CatererProfile({navigation, route}) {
           showsVerticalScrollIndicator={false}
           enableOnAndroid={true}
           nestedScrollEnabled={true}
-          extraScrollHeight={Platform.OS=="ios"?100:180}
+          extraScrollHeight={Platform.OS == 'ios' ? 100 : 180}
           ref={scrollViewRef}>
           <View style={[gs.ph5, gs.pv10]}>
             <Flex direction="row" align="center" justify="space-between">
@@ -367,7 +373,13 @@ export default function CatererProfile({navigation, route}) {
                     style={[styles.servicedesc, gs.fs13, gs.mt5]}
                     numberOfLines={1}>
                     {profile?.start_day} - {profile?.end_day}{' '}
-                    {profile?.start_time} - {profile?.end_time}
+                    {profile?.start_time
+                      ? moment(profile.start_time, 'HH:mm:ss').format('hh:mm A')
+                      : null}{' '}
+                    -{' '}
+                    {profile?.end_time
+                      ? moment(profile.end_time, 'HH:mm:ss').format('hh:mm A')
+                      : null}
                   </Text>
                 </View>
               </Flex>
@@ -680,7 +692,9 @@ export default function CatererProfile({navigation, route}) {
             </Text>
             <TouchableOpacity
               onPress={() => {
-                Linking.openURL(`tel:${profile?.phone_number}`);
+                profile?.business_phone_number
+                  ? Linking.openURL(`tel:${profile?.business_phone_number}`)
+                  : Alert.alert('No Phone Number Found.');
               }}>
               <ThemeSepBtn btntxt="Contact Now" themecolor={ts.secondary} />
             </TouchableOpacity>
