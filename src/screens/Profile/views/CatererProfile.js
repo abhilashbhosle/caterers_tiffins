@@ -69,6 +69,9 @@ export default function CatererProfile({navigation, route}) {
   const {createLoading} = useSelector(state => state.review);
   const [profile, setProfile] = useState(null);
   const [rating, setRating] = useState(0);
+  const [showPopular, setShowPopular] = useState(false);
+  const [showReviews, setShowReviews] = useState(false);
+  const scrollViewRef = useRef(null);
 
   useEffect(() => {
     if (branch_id && vendor_id) {
@@ -82,8 +85,6 @@ export default function CatererProfile({navigation, route}) {
       setProfile(data);
     }
   }, [data]);
-
-  console.log(loading);
 
   return (
     <ScreenWrapper>
@@ -156,7 +157,9 @@ export default function CatererProfile({navigation, route}) {
           style={{flex: 1, backgroundColor: '#fff'}}
           showsVerticalScrollIndicator={false}
           enableOnAndroid={true}
-          nestedScrollEnabled={true}>
+          nestedScrollEnabled={true}
+          extraScrollHeight={Platform.OS=="ios"?100:180}
+          ref={scrollViewRef}>
           <View style={[gs.ph5, gs.pv10]}>
             <Flex direction="row" align="center" justify="space-between">
               <Text style={[gs.fs19, styles.heading]}>
@@ -192,28 +195,45 @@ export default function CatererProfile({navigation, route}) {
               catererBanners={profile?.bennerMenuMixGalleryImages}
             />
             <Flex direction="row" align="center" style={[gs.ph5]}>
-              <Text style={[styles.subtxt, gs.fs12]}>Food Type : </Text>
+              {profile?.foodTypes?.length ? (
+                <Text style={[styles.subtxt, gs.fs12]}>Food Type : </Text>
+              ) : null}
               <Flex direction="row" align="center" style={[gs.ph5, gs.pv15]}>
-                {profile?.foodTypes?.length &&
-                  profile.foodTypes.map((e, i) => (
-                    <Text
-                      style={[
-                        {
-                          ...styles.subtxt,
-                          color:
-                            e.food_type_name == 'All'
-                              ? ts.primarytext
-                              : e.food_type_name == 'Non Veg'
-                              ? ts.accent4
-                              : ts.accent3,
-                        },
-                        gs.fs12,
-                      ]}
-                      key={i}>
-                      {e?.food_type_name}{' '}
-                      <Text style={{color: ts.secondarytext}}>|</Text>{' '}
-                    </Text>
-                  ))}
+                {profile?.foodTypes?.length
+                  ? profile.foodTypes.map((e, i) => (
+                      <Flex direction="row" alignItems="center" key={i}>
+                        <Text
+                          style={[
+                            {
+                              ...styles.subtxt,
+                              color:
+                                e.food_type_name == 'All'
+                                  ? ts.primarytext
+                                  : e.food_type_name == 'Non Veg'
+                                  ? ts.accent4
+                                  : ts.accent3,
+                            },
+                            gs.fs12,
+                          ]}>
+                          {e?.food_type_name}{' '}
+                        </Text>
+                        {e?.food_type_name == 'Veg' ? (
+                          <Image
+                            source={require('../../../assets/Common/veg.png')}
+                            style={styles.foodTypeimg}
+                          />
+                        ) : (
+                          <Image
+                            source={require('../../../assets/Common/nonveg.png')}
+                            style={styles.foodTypeimg}
+                          />
+                        )}
+                        <Text style={{color: ts.secondarytext}}>
+                          {profile?.foodTypes?.length - 1 != i ? '|' : null}{' '}
+                        </Text>
+                      </Flex>
+                    ))
+                  : null}
               </Flex>
             </Flex>
             {profile?.cuisines?.length && (
@@ -259,7 +279,7 @@ export default function CatererProfile({navigation, route}) {
                     cuisines={profile?.cuisines}
                     stretch={stretch}
                     setStretch={setStretch}
-                    from={"Caterers"}
+                    from={'Caterers'}
                   />
                 </Flex>
               </View>
@@ -271,7 +291,7 @@ export default function CatererProfile({navigation, route}) {
               direction="row"
               alignItems="center"
               justifyContent="center"
-              style={{paddingVertical: 15}}>
+              style={{paddingVertical: profile?.serviceTypes?.length ? 15 : 0}}>
               {profile?.serviceTypes?.length ? (
                 <View
                   style={[
@@ -427,44 +447,47 @@ export default function CatererProfile({navigation, route}) {
               {profile?.about_description}{' '}
             </ReadMore>
           </View>
-          <View style={[gs.ph5]}>
-            <Text
-              style={[
-                gs.fs14,
-                gs.pv5,
-                {fontFamily: ts.secondaryregular, color: ts.secondary},
-              ]}>
-              Our Branches
-            </Text>
-            <Flex direction="row" align="center" flexWrap="wrap">
-              {profile?.branches?.length ? (
-                profile?.branches
-                  ?.slice(0, branchStretch ? profile.branches.length : 5)
-                  .map((e, i) => (
-                    <Text style={[styles.subtxt, gs.fs12]}>
-                      {e?.city}
-                      {i !== profile?.branches?.length - 1 ? ',' : '.'}{' '}
+          {profile?.branches?.length ? (
+            <View style={[gs.ph5]}>
+              <Text
+                style={[
+                  gs.fs14,
+                  gs.pv5,
+                  {fontFamily: ts.secondaryregular, color: ts.secondary},
+                ]}>
+                Our Branches
+              </Text>
+              <Flex direction="row" align="center" flexWrap="wrap">
+                {profile?.branches?.length ? (
+                  profile?.branches
+                    ?.slice(0, branchStretch ? profile.branches.length : 5)
+                    .map((e, i) => (
+                      <Text style={[styles.subtxt, gs.fs12]}>
+                        {e?.city}
+                        {i !== profile?.branches?.length - 1 ? ',' : '.'}{' '}
+                      </Text>
+                    ))
+                ) : (
+                  <Text style={[styles.subtxt, gs.fs12]}>-</Text>
+                )}
+                {profile?.branches?.length > 5 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setBranchStretch(!branchStretch);
+                    }}>
+                    <Text
+                      style={[styles.subtxt, gs.fs10, {color: ts.secondary}]}>
+                      {!branchStretch ? 'View all' : 'View less'}
                     </Text>
-                  ))
-              ) : (
-                <Text style={[styles.subtxt, gs.fs12]}>-</Text>
-              )}
-              {profile?.branches?.length > 5 && (
-                <TouchableOpacity
-                  onPress={() => {
-                    setBranchStretch(!branchStretch);
-                  }}>
-                  <Text style={[styles.subtxt, gs.fs10, {color: ts.secondary}]}>
-                    {!branchStretch ? 'View all' : 'View less'}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </Flex>
-          </View>
+                  </TouchableOpacity>
+                )}
+              </Flex>
+            </View>
+          ) : null}
           {/* ==========GALLERY========= */}
-          {profile?.galleryImages?.length > 0 && (
+          {profile?.galleryImages?.length > 0 ? (
             <>
-              <Center>
+              <Center width={'100%'}>
                 <View style={[gs.pt20, gs.pb15]}>
                   <Text
                     style={[
@@ -479,7 +502,7 @@ export default function CatererProfile({navigation, route}) {
                 <GallerySlice />
               </View>
             </>
-          )}
+          ) : null}
 
           {profile?.galleryImages?.length ? (
             <View>
@@ -508,38 +531,55 @@ export default function CatererProfile({navigation, route}) {
           </View>
           {/*======SIMILAR/POPULAR CATERERS====== */}
           <View style={[gs.ph5]}>
-            <Text
-              style={[
-                {fontFamily: ts.secondarymedium, color: ts.primarytext},
-                gs.fs15,
-              ]}>
-              Similar / Popular Caterers in your area
-            </Text>
+            {showPopular ? (
+              <Text
+                style={[
+                  {fontFamily: ts.secondarymedium, color: ts.primarytext},
+                  gs.fs15,
+                ]}>
+                Similar / Popular Caterers in your area
+              </Text>
+            ) : (
+              false
+            )}
+
             <PopularCat
               data={searchitems}
               location={location}
               vendorType="Caterer"
+              setShowPopular={setShowPopular}
             />
           </View>
+          {showPopular ? (
+            <View style={[gs.ph5, gs.pb15]}>
+              <Divider />
+            </View>
+          ) : null}
 
-          <View style={[gs.ph5, gs.pb15]}>
-            <Divider />
-          </View>
           {/* =======REVIEWS========== */}
           <View style={[gs.ph5]}>
-            <Text
-              style={[
-                {fontFamily: ts.secondarymedium, color: ts.primarytext},
-                gs.fs15,
-                gs.pb15,
-              ]}>
-              Reviews : See what customers loved the most
-            </Text>
-            <ReviewSlice vendor_id={vendor_id} from={'Caterers'} />
+            {showReviews ? (
+              <Text
+                style={[
+                  {fontFamily: ts.secondarymedium, color: ts.primarytext},
+                  gs.fs15,
+                  gs.pb15,
+                ]}>
+                Reviews : See what customers loved the most
+              </Text>
+            ) : null}
+
+            <ReviewSlice
+              vendor_id={vendor_id}
+              from={'Caterers'}
+              setShowReviews={setShowReviews}
+            />
           </View>
-          <View style={[gs.ph5, gs.pv15]}>
-            <Divider />
-          </View>
+          {showReviews ? (
+            <View style={[gs.ph5, gs.pv15]}>
+              <Divider />
+            </View>
+          ) : null}
           {/* =====WRITE REVIEW======== */}
           <View style={[gs.ph5]}>
             <Center>
@@ -573,7 +613,12 @@ export default function CatererProfile({navigation, route}) {
               ]}
               placeholderTextColor="#777"
               multiline
-              onFocus={() => setCmtfocus(true)}
+              onFocus={() => {
+                setCmtfocus(true);
+                // setTimeout(() => {
+                //   scrollViewRef.current.scrollToEnd({animated: true});
+                // }, 300);
+              }}
               onBlur={() => setCmtfocus(false)}
               value={review}
               onChangeText={text => setReview(text)}
@@ -702,5 +747,10 @@ const styles = ScaledSheet.create({
     height: Platform.OS == 'ios' ? '100@ms' : '100@ms',
     paddingTop: Platform.OS == 'android' ? StatusBar.currentHeight : '20@ms',
     backgroundColor: ts.secondary,
+  },
+  foodTypeimg: {
+    height: '15@ms',
+    width: '15@ms',
+    marginRight: '2@ms',
   },
 });

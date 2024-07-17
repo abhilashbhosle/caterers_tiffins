@@ -130,7 +130,9 @@ export default function MapMultiple({route, navigation}) {
             }}
             title={'You'}
             description={'You are here!'}
-            pinColor="#000"></Marker>
+            pinColor="#000">
+              <MyCustomMarkerView from="me"/>
+            </Marker>
           {profileData?.map((e, i) => (
             <Marker
               coordinate={{

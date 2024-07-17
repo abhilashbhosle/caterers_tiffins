@@ -13,7 +13,7 @@ import { startLoader } from '../../../../redux/CommonSlicer';
 import { getCaterersSearch, setLocationres } from '../../../Home/controllers/SearchController';
 import { updateSubscriptions } from '../../../Home/controllers/FilterMainController';
 
-function PopularTiffinsSlice({data, location, vendorType}) {
+function PopularTiffinsSlice({data, location, vendorType,setShowPopular}) {
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
   const {popularTLoading, popularTData, popularTError} = useSelector(
     state => state.vendor,
@@ -132,6 +132,7 @@ function PopularTiffinsSlice({data, location, vendorType}) {
   useEffect(() => {
     if (popularTData?.length) {
       setPopular(popularTData);
+      setShowPopular(true)
     }
   }, [popularTData]);
 

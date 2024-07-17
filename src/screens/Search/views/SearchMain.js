@@ -28,7 +28,6 @@ import {
   clearCaterers,
   getCaterersSearch,
   handleSearchSegregation,
-
 } from '../../Home/controllers/SearchController';
 import {clearFilterService} from '../../Home/services/FilterMainService';
 import {
@@ -52,7 +51,7 @@ export default function SearchMain({route, navigation}) {
     sortData,
     foodTypeData,
     subData,
-    ratingData
+    ratingData,
   } = useSelector(state => state?.filterCater);
   const {mealData, kitchenData} = useSelector(state => state?.filterTiffin);
   const cuisines_data = useSelector(state => state?.cuisine.data);
@@ -70,11 +69,12 @@ export default function SearchMain({route, navigation}) {
     subscription_types_filter: [],
     meal_times_filter: [],
     kitchen_types_filter: [],
-    ratings_filter:[]
+    ratings_filter: [],
   });
   const [flag, setFlag] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
+  const [firstItemVisible, setFirstItemVisible] = useState(true);
   const {caterersLoading, caterersData, caterersError} = useSelector(
     state => state.location,
   );
@@ -116,7 +116,7 @@ export default function SearchMain({route, navigation}) {
         subData,
         mealData,
         kitchenData,
-        ratingData
+        ratingData,
       });
       setFlag(res);
     })();
@@ -132,7 +132,7 @@ export default function SearchMain({route, navigation}) {
     subData,
     mealData,
     kitchenData,
-    ratingData
+    ratingData,
   ]);
   useEffect(() => {
     if (caterersData?.vendors) {
@@ -206,124 +206,135 @@ export default function SearchMain({route, navigation}) {
         </SafeAreaView>
       </View>
       {/* ========TOP SELECTOR============ */}
-      <Flex
-        style={[{width, backgroundColor: '#fff'}, gs.ph10, gs.pt15]}
-        direction="row"
-        alignItems="center"
-        justifyContent={'space-between'}>
-        <Flex direction="row" alignItems="center">
-          {foodType?.map((e, i) => (
-            <TouchableOpacity
-              onPress={() => {
-                // setSelectedType(e.type);
-                handleFoodType({
-                  index: i,
-                  setFoodType,
-                  foodType,
-                  dispatch,
-                  segre,
-                  setVendorData,
-                  ssd,
-                  sse,
-                  location,
-                  from,
-                  setSegre,
-                });
-              }}
-              key={i}>
-              <Flex direction="row" alignItems="center" style={[gs.pr10]}>
-                <MaterialIcons
-                  name={e.selected != 1 ? 'circle-outline' : 'circle-slice-8'}
-                  style={[
-                    gs.fs20,
-                    gs.mr3,
-                    {
-                      color:
-                        e.selected != 1
-                          ? '#555'
-                          : from == 'Caterers'
-                          ? ts.secondary
-                          : ts.primary,
+      {firstItemVisible ? (
+        <Flex
+          style={[{width, backgroundColor: '#fff'}, gs.ph10, gs.pt15]}
+          direction="row"
+          alignItems="center"
+          justifyContent={'space-between'}>
+          <Flex direction="row" alignItems="center">
+            {foodType?.map((e, i) => (
+              <TouchableOpacity
+                onPress={() => {
+                  // setSelectedType(e.type);
+                  handleFoodType({
+                    index: i,
+                    setFoodType,
+                    foodType,
+                    dispatch,
+                    segre,
+                    setVendorData,
+                    ssd,
+                    sse,
+                    location,
+                    from,
+                    setSegre,
+                  });
+                }}
+                key={i}>
+                <Flex direction="row" alignItems="center" style={[gs.pr10]}>
+                  <MaterialIcons
+                    name={e.selected != 1 ? 'circle-outline' : 'circle-slice-8'}
+                    style={[
+                      gs.fs20,
+                      gs.mr3,
+                      {
+                        color:
+                          e.selected != 1
+                            ? '#555'
+                            : from == 'Caterers'
+                            ? ts.secondary
+                            : ts.primary,
+                      },
+                    ]}
+                  />
+                  <Text
+                    style={[
+                      {fontFamily: ts.secondary, color: '#222'},
+                      gs.fs13,
+                    ]}>
+                    {e.name}
+                  </Text>
+                </Flex>
+              </TouchableOpacity>
+            ))}
+          </Flex>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              let data = [...vendorData];
+              navigation.navigate('PageStack', {
+                screen: 'MapMultiple',
+                params: {
+                  initialRegion: location,
+                  profile: data,
+                  from: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+                },
+              });
+            }}>
+            <Flex direction="row" alignItems="center">
+              <IonIcons
+                name="location-sharp"
+                style={[gs.fs22, {color: '#555'}, gs.mr5]}
+              />
+              <Text
+                style={[{fontFamily: ts.secondary, color: '#222'}, gs.fs13]}>
+                Map
+              </Text>
+            </Flex>
+          </TouchableOpacity>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              from == 'Caterers'
+                ? navigation.navigate('PageStack', {
+                    screen: 'FilterMain',
+                    params: {
+                      ssd,
+                      sse,
+                      location,
+                      from,
                     },
-                  ]}
-                />
-                <Text
-                  style={[{fontFamily: ts.secondary, color: '#222'}, gs.fs13]}>
-                  {e.name}
-                </Text>
-              </Flex>
-            </TouchableOpacity>
-          ))}
+                  })
+                : navigation.navigate('PageStack', {
+                    screen: 'FilterTiffins',
+                    params: {
+                      ssd,
+                      sse,
+                      location,
+                      from,
+                    },
+                  });
+            }}>
+            <Flex direction="row" alignItems="center">
+              <MaterialIcons
+                name="filter"
+                style={[gs.fs22, {color: '#555'}, gs.mr5]}
+              />
+              <Text
+                style={[{fontFamily: ts.secondary, color: '#222'}, gs.fs13]}>
+                Filters
+              </Text>
+            </Flex>
+          </TouchableWithoutFeedback>
         </Flex>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={() => {
-            let data=[...vendorData]
-            navigation.navigate('PageStack', {
-              screen: 'MapMultiple',
-              params: {
-               initialRegion:location,
-               profile:data,
-               from:from=="Caterers"?"Caterer":"Tiffin",
-              },
-            });
-          }}>
-          <Flex direction="row" alignItems="center">
-            <IonIcons
-              name="location-sharp"
-              style={[gs.fs22, {color: '#555'}, gs.mr5]}
-            />
-            <Text style={[{fontFamily: ts.secondary, color: '#222'}, gs.fs13]}>
-              Map
-            </Text>
-          </Flex>
-        </TouchableOpacity>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            from == 'Caterers'
-              ? navigation.navigate('PageStack', {
-                  screen: 'FilterMain',
-                  params: {
-                    ssd,
-                    sse,
-                    location,
-                    from,
-                  },
-                })
-              : navigation.navigate('PageStack', {
-                  screen: 'FilterTiffins',
-                  params: {
-                    ssd,
-                    sse,
-                    location,
-                    from,
-                  },
-                });
-          }}>
-          <Flex direction="row" alignItems="center">
-            <MaterialIcons
-              name="filter"
-              style={[gs.fs22, {color: '#555'}, gs.mr5]}
-            />
-            <Text style={[{fontFamily: ts.secondary, color: '#222'}, gs.fs13]}>
-              Filters
-            </Text>
-          </Flex>
-        </TouchableWithoutFeedback>
-      </Flex>
+      ) : null}
+
       {/* ========SORTING BY TYPES========= */}
-      <Badges
-        from={from}
-        subType={subType}
-        setSubType={setSubType}
-        segre={segre}
-        setVendorData={setVendorData}
-        ssd={ssd}
-        sse={sse}
-        location={location}
-        setPage={setPage}
-        setSegre={setSegre}
-      />
+      {firstItemVisible ? (
+        <Badges
+          from={from}
+          subType={subType}
+          setSubType={setSubType}
+          segre={segre}
+          setVendorData={setVendorData}
+          ssd={ssd}
+          sse={sse}
+          location={location}
+          setPage={setPage}
+          setSegre={setSegre}
+        />
+      ) : null}
+
       {/* ========SEARCH CARDS======== */}
       <View style={[{paddingHorizontal: 5, backgroundColor: '#fff'}]}>
         <Text
@@ -331,10 +342,19 @@ export default function SearchMain({route, navigation}) {
             gs.fs15,
             {fontFamily: ts.secondarymedium, color: '#555'},
             gs.fs13,
-          ]}>
+          ]}
+          numberOfLines={1}>
           {from == 'Tiffins'
-            ? `${location?.city}: ${total} Tiffin service providers found`
-            : `${location?.city}: ${total} Catering service providers found`}
+            ? `${
+                location?.area ? location?.area : location?.city
+              }: ${total} Tiffins found in ${location?.area}${
+                location?.area ? ',' : null
+              } ${location?.city}`
+            : `${
+                location?.area ? location?.area : location?.city
+              }: ${total} Caterers found in ${location?.area}${
+                location?.area ? ',' : null
+              } ${location?.city}`}
         </Text>
       </View>
       <SearchList
@@ -344,6 +364,7 @@ export default function SearchMain({route, navigation}) {
         vendorData={vendorData}
         setVendorData={setVendorData}
         location={location}
+        setFirstItemVisible={setFirstItemVisible}
       />
     </ScreenWrapper>
   );

@@ -28,9 +28,9 @@ export const getServing = createAsyncThunk(
 // ======GET SERVICE TYPE=======//
 export const getService = createAsyncThunk(
   'getService',
-  async (_, {dispatch}) => {
+  async ({type}, {dispatch}) => {
     try {
-      const res = await getServService();
+      const res = await getServService({type});
       return res.data;
     } catch (error) {
       return rejectWithValue(error.message);

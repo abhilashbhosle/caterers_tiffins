@@ -14,7 +14,7 @@ import {wishDetails} from '../../../Home/controllers/WishListController';
 import { getCaterersSearch, setLocationres } from '../../../Home/controllers/SearchController';
 import { startLoader } from '../../../../redux/CommonSlicer';
 
-function PopularCatSlice({data, location, vendorType}) {
+function PopularCatSlice({data, location, vendorType,setShowPopular}) {
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
   const {popularLoading, popularData, popularError} = useSelector(
     state => state.vendor,
@@ -87,6 +87,8 @@ function PopularCatSlice({data, location, vendorType}) {
   useEffect(() => {
     if (popularData?.length) {
       setPopular(popularData);
+      setShowPopular(true)
+      
     }
   }, [popularData]);
 

@@ -86,7 +86,7 @@ export default function GalleryView({route, navigation}) {
               return (
                 <View style={{height, width}}>
                   <ImageBackground
-                    source={{uri: item?.image_names[0]?.medium}}
+                    source={{uri: item?.image_names[0]?.large}}
                     style={[
                       StyleSheet.absoluteFillObject,
                       {
@@ -94,6 +94,7 @@ export default function GalleryView({route, navigation}) {
                         maxHeight: height - 100,
                       },
                     ]}
+                    imageStyle={{resizeMode:'contain'}}
                     onLoadStart={() => setTopImgLoad(true)}
                     onLoadEnd={() => setTopImgLoad(false)}>
                     {topImgLoad && (

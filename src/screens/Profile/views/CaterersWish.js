@@ -101,7 +101,7 @@ function CaterersWish() {
   return (
     <>
       <Center>
-        <Text style={styles.cardtxt}>Total : {total} Saved</Text>
+        <Text style={styles.cardtxt}>Caterers ({total})</Text>
       </Center>
       <Animated.FlatList
         data={wishData}

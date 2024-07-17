@@ -12,7 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 import {timeSince} from '../../../../components/TimeFormat';
 import ReviewCard from '../../../Home/views/ReviewCard';
 
-function ReviewSlice({data, vendor_id, from}) {
+function ReviewSlice({data, vendor_id, from, setShowReviews}) {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(3);
   const dispatch = useDispatch();
@@ -25,14 +25,24 @@ function ReviewSlice({data, vendor_id, from}) {
       dispatch(getReviews({page, limit, vendor_id}));
     }
   }, [vendor_id, page, limit]);
+  useEffect(() => {
+    if (reviewData?.data?.length) {
+      setShowReviews(true);
+    }
+  }, [reviewData]);
 
   const renderItem = ({item, index}) => {
     return (
-      <ReviewCard item={item} index={index} from={from} reviews={reviewData?.data}/>
+      <ReviewCard
+        item={item}
+        index={index}
+        from={from}
+        reviews={reviewData?.data}
+      />
     );
   };
   return reviewData?.data?.length == 0 ? (
-    <Text style={[styles.name, gs.mb3]}>No Reviews</Text>
+    <Text style={[styles.name, gs.mb3]}></Text>
   ) : (
     <View>
       {reviewLoading && (
@@ -74,6 +84,4 @@ function ReviewSlice({data, vendor_id, from}) {
 }
 export default memo(ReviewSlice);
 
-const styles = ScaledSheet.create({
- 
-});
+const styles = ScaledSheet.create({});

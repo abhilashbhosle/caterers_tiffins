@@ -75,6 +75,7 @@ function SearchBar({from, navigation, ssd, sse}) {
     latitude: null,
     pincode: 1,
     place_id: null,
+    area:null
   });
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
   const searchRes = useSelector(state => state.location?.searchRes);
@@ -135,12 +136,14 @@ function SearchBar({from, navigation, ssd, sse}) {
 
   const handleSelectedSearch = async e => {
     let tempData = e.formatted_address.split(',');
+    console.log(e.formatted_address.split(','))
     setSelectedLocation({
       ...selectedLocation,
       latitude: e.geometry.location.lat,
       longitude: e.geometry.location.lng,
       place_id: e.place_id,
       city: tempData[tempData.length - 3].trim(),
+      area: tempData[0].trim(),
     });
     setSearch(e.formatted_address);
     setSelectedSearch(e);
@@ -175,7 +178,7 @@ function SearchBar({from, navigation, ssd, sse}) {
     dispatch(getFoodTypes());
     dispatch(getSubscription({from}));
     dispatch(getServing());
-    dispatch(getService());
+    dispatch(getService({type:from=="Caterers"?"Caterer":"Tiffin"}));
     dispatch(getOccassions());
     dispatch(getBudget());
     dispatch(getCuisines());

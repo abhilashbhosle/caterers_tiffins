@@ -36,8 +36,8 @@ export const MyCustomCalloutView = ({profile, from, single}) => {
               gs.fs14,
               {color: ts.primarytext, fontFamily: ts.primarymedium},
             ]}>
-            {profile?.vendor_service_name?.slice(0, 30)}{' '}
-            {profile?.vendor_service_name?.length > 30 ? '..' : ' '}
+            {profile?.vendor_service_name?.slice(0, 25)}{' '}
+            {profile?.vendor_service_name?.length > 25 ? '..' : ' '}
           </Text>
 
           <Flex direction="row" align="center" style={[gs.mt7, gs.mb5]}>

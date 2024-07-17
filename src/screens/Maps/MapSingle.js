@@ -29,10 +29,11 @@ export default function MapSingle({route, navigation}) {
     <ScreenWrapper>
       <TouchableOpacity
         style={styles.backButton}
-        onPress={() => navigation.goBack()}>
+        onPress={() => navigation.goBack()}
+
+        >
         <AntIcon name="arrowleft" style={styles.backIcon} />
       </TouchableOpacity>
-
       {initialRegion?.latitude && profile?.latitude ? (
         <MapView
           provider={PROVIDER_GOOGLE}
@@ -60,7 +61,9 @@ export default function MapSingle({route, navigation}) {
             }}
             title={'You'}
             description={'You are here!'}
-            pinColor="#000"></Marker>
+            pinColor="#000">
+              <MyCustomMarkerView from={"me"}/>
+            </Marker>
           <Marker
             coordinate={{
               latitude: parseFloat(profile?.latitude),
@@ -87,7 +90,7 @@ const styles = ScaledSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: Platform?.OS == 'ios' ? '40@ms' : '40@ms',
+    top: Platform?.OS == 'ios' ? '40@ms' : '60@ms',
     left: '10@ms',
     zIndex: 1,
     backgroundColor: '#fff',

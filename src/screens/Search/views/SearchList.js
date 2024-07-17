@@ -1,5 +1,5 @@
 import {View, Animated} from 'react-native';
-import React, {memo, useEffect, useRef, useState} from 'react';
+import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
 import {FlatList} from 'native-base';
 import {searchitems} from '../../../constants/Constants';
@@ -9,6 +9,7 @@ import {gs} from '../../../../GlobalStyles';
 import {searchStyles} from '../Searchstyles';
 import {useDispatch, useSelector} from 'react-redux';
 import {wishDetails} from '../../Home/controllers/WishListController';
+import {debounce} from 'lodash';
 
 function SearchList({
   from,
@@ -17,6 +18,7 @@ function SearchList({
   vendorData,
   location,
   setVendorData,
+  setFirstItemVisible,
 }) {
   let theme = from === 'Caterers' ? ts.secondary : ts.primary;
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -77,7 +79,7 @@ function SearchList({
         e.vendor_id == wish_id
           ? {
               ...e,
-              is_wishlisted: !e.is_wishlisted
+              is_wishlisted: !e.is_wishlisted,
             }
           : e,
       );
@@ -86,30 +88,51 @@ function SearchList({
     }
   }, [wish_id]);
 
+  const debouncedSetFirstItemVisible = useCallback(
+    debounce(visible => {
+      setFirstItemVisible(visible);
+    }, 100), // Adjust the debounce delay as needed
+    [],
+  );
+
+  const onViewableItemsChanged = ({viewableItems}) => {
+    if (viewableItems.length > 0 && viewableItems[0].index === 0) {
+      debouncedSetFirstItemVisible(true);
+    } else {
+      debouncedSetFirstItemVisible(false);
+    }
+  };
+
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 50,
+  };
   return (
     <>
-    
-    <Animated.FlatList
-      data={vendorData}
-      keyExtractor={(item, index) => String(index)}
-      renderItem={from === 'Caterers' ? renderCateringList : renderTiffinsList}
-      onScroll={Animated.event(
-        [
-          {
-            nativeEvent: {contentOffset: {y: scrollY}},
-          },
-        ],
-        {useNativeDriver: true},
-      )}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={[
-        {backgroundColor: '#fff', paddingTop: 10},
-        gs.ph5,
-      ]}
-      onEndReachedThreshold={0.6}
-      onEndReached={fetchMoreData}
-      ListFooterComponent={renderFooter}
-    />
+      <Animated.FlatList
+        data={vendorData}
+        keyExtractor={(item, index) => String(index)}
+        renderItem={
+          from === 'Caterers' ? renderCateringList : renderTiffinsList
+        }
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {contentOffset: {y: scrollY}},
+            },
+          ],
+          {useNativeDriver: true},
+        )}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[
+          {backgroundColor: '#fff', paddingTop: 10},
+          gs.ph5,
+        ]}
+        onEndReachedThreshold={0.6}
+        onEndReached={fetchMoreData}
+        ListFooterComponent={renderFooter}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+      />
     </>
   );
 }

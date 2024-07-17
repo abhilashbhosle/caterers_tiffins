@@ -100,7 +100,7 @@ function TiffinsWish() {
   return (
     <>
       <Center>
-        <Text style={styles.cardtxt}>Total : {total} Saved</Text>
+        <Text style={styles.cardtxt}>Tiffins ({total})</Text>
       </Center>
       <Animated.FlatList
         data={wishData}

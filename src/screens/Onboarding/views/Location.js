@@ -71,7 +71,6 @@ export default function Location({navigation}) {
               <TouchableOpacity
                 onPress={() => {
                   // navigation.navigate('BottomBarStack');
-                  console.log("pressed")
                   dispatch(getLocation({navigation}))
                 }}>
                 <WhiteCoverBtn btntxt="Allow location access" />

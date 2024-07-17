@@ -95,6 +95,7 @@ function PopularTiffins() {
         city: userDetails[0]?.city,
         place_id: userDetails[0]?.place_id,
         pincode: userDetails[0]?.pincode,
+        area:userDetails[0]?.area
       };
 
       dispatch(setLocationres(location));

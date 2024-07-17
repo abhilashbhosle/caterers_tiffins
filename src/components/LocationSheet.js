@@ -6,6 +6,7 @@ import {ts} from '../../ThemeStyles';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {TextInput} from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntIcons from 'react-native-vector-icons/AntDesign';
 import {gs} from '../../GlobalStyles';
 import ThemeSepBtn from './ThemeSepBtn';
 import {useDispatch, useSelector} from 'react-redux';
@@ -31,9 +32,9 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
   // const {searchLoading, searchData, searchError} = useSelector(
   //   state => state.location,
   // );
-  const searchLoading=useSelector(state=>state.location.locationLoading);
-  const searchData=useSelector(state=>state.location.locationData);
-  const searchError=useSelector(state=>state.location.locationError)
+  const searchLoading = useSelector(state => state.location.locationLoading);
+  const searchData = useSelector(state => state.location.locationData);
+  const searchError = useSelector(state => state.location.locationError);
   const navigation = useNavigation();
 
   const dispatch = useDispatch();
@@ -71,15 +72,16 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
       dispatch,
       from: 'internal',
     });
-    setTimeout(()=>{
-      dispatch(getUser())
-    },1000)
+    setTimeout(() => {
+      dispatch(getUser());
+    }, 1000);
     setFocused(false);
     setLocSheetOpen(false);
   };
   const checkLocation = () => {
-    dispatch(getLocation({navigation,from:'internal'}));
+    dispatch(getLocation({navigation, from: 'internal'}));
   };
+  console.log(location);
   return (
     <Actionsheet isOpen={locSheetOpen} onClose={handleClose}>
       <Actionsheet.Content style={[{height: height / 1.3}]}>
@@ -105,6 +107,11 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
               onChangeText={text => {
                 handleOnChange(text);
               }}
+              right={
+                  // <TouchableOpacity>
+                    <TextInput.Icon icon="close" onPress={()=>{setLocation("")}}/>
+                  // </TouchableOpacity>
+              }
             />
             <View style={[{position: 'absolute', left: 20}, gs.mt18]}>
               <MaterialIcons
@@ -186,12 +193,13 @@ export default memo(LocationSheet);
 const styles = ScaledSheet.create({
   inputcontainer: {
     width: '100%',
-    height: '45@ms',
+    // height: '45@ms',
     borderRadius: '10@ms',
     color: ts.primarytext,
     fontSize: '14@ms',
     paddingLeft: '30@ms',
     backgroundColor: '#fff',
+    // paddingRight: '30@ms',
   },
   border: {
     width: '46%',

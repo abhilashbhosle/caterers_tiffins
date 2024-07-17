@@ -33,9 +33,9 @@ export default function GallerySlice() {
           source={{uri:item?.image_names[0]?.medium}}
           style={[
             styles.img,
-            {width: width / 2 - 22.5, marginHorizontal: 7, marginVertical: 7},
+            {width: width / 2.4, marginHorizontal: 7, marginVertical: 7},
           ]}
-          imageStyle={[gs.br10]}
+          imageStyle={[gs.br10,{resizeMode:'cover'}]}
         />
       </TouchableWithoutFeedback>
     );
@@ -54,6 +54,6 @@ export default function GallerySlice() {
 }
 const styles = ScaledSheet.create({
   img: {
-    height: '180@ms',
+    height: '150@ms',
   },
 });
