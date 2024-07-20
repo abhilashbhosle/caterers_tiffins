@@ -52,6 +52,7 @@ import {
   getSubscription,
 } from '../controllers/FilterMainController';
 import {getKitchen, getMeal} from '../controllers/FilterTiffinController';
+import { setSearchJson } from '../controllers/SearchCommonController';
 const minDate = new Date(); // Today
 const maxDate = new Date(2037, 6, 3);
 
@@ -258,6 +259,7 @@ function SearchBar({from, navigation, ssd, sse}) {
                 dispatch(setSearchRes(search));
                 dispatch(setLocationres(selectedLocation));
                 // console.log("search",search)
+                await setSearchJson({userDetails,from,selectedStartDate,selectedEndDate})
                 handleSearchResults({
                   navigation,
                   from,

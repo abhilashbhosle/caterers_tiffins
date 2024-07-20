@@ -30,6 +30,7 @@ import {
   updateSubscriptions,
 } from '../controllers/FilterMainController';
 import {startLoader} from '../../../redux/CommonSlicer';
+import PopularCatSkel from '../../../components/skeletons/PopularCatSkel';
 function PopularCaterers() {
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
   const {popularLoading, popularData, popularError} = useSelector(
@@ -83,7 +84,7 @@ function PopularCaterers() {
         city: userDetails[0]?.city,
         place_id: userDetails[0]?.place_id,
         pincode: userDetails[0]?.pincode,
-        area:userDetails[0]?.area
+        area: userDetails[0]?.area,
       };
 
       dispatch(setLocationres(location));
@@ -133,11 +134,9 @@ function PopularCaterers() {
     }
   };
 
- 
-
   const renderItem = ({item}) => {
     return (
-      <Card style={{...styles.cardContainer, width}}>
+      <Card style={{...styles.cardContainer, width: width - 100}}>
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => {
@@ -162,7 +161,7 @@ function PopularCaterers() {
                 uri: item?.gallery_images?.['vendor-banner'][0]?.image_name[0]
                   ?.medium,
               }}
-              style={[{...styles.img, width: width}]}
+              style={[{...styles.img, width: '100%'}]}
               imageStyle={styles.imageStyle}
               alt={item.name}
             />
@@ -172,13 +171,13 @@ function PopularCaterers() {
           )}
 
           <LinearGradient
-            colors={['#c33332', '#0005']}
+            colors={['#0005', '#0005']}
             start={{x: 0.0, y: Platform.OS == 'ios' ? 1.2 : 1.8}}
             end={{x: 0.0, y: 0.0}}
             style={[
               {
                 ...styles.overlay,
-                width: width,
+                width: width - 100,
               },
             ]}>
             <View></View>
@@ -255,15 +254,27 @@ function PopularCaterers() {
           </TouchableOpacity>
         </Flex>
       </View>
-      {/* <FlatList
-        data={popularcaterers}
-        keyExtractor={(item, index) => String(index)}
-        renderItem={renderItem}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.contentContainerStyle}
-      /> */}
-      {popularData?.length ? (
+      {popularLoading ? (
+        <Flex direction="row" style={[gs.ph15]}>
+          {[1, 2]?.map((e, i) => (
+            <View style={{...styles.cardContainer, width: width - 100}} key={i}>
+              <PopularCatSkel />
+            </View>
+          ))}
+        </Flex>
+      ) : null}
+      {popularData?.length && !popularLoading && !popularError? (
+        <FlatList
+          data={popularData}
+          keyExtractor={(item, index) => String(index)}
+          renderItem={renderItem}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.contentContainerStyle}
+        />
+      ) : null}
+
+      {/* {popularData?.length ? (
         <Center>
           <Carousel
             loop
@@ -280,7 +291,7 @@ function PopularCaterers() {
             parallaxScrollingScale={0.9}
           />
         </Center>
-      ) : null}
+      ) : null} */}
     </>
   );
 }
@@ -301,10 +312,12 @@ const styles = ScaledSheet.create({
     height: '130@ms',
     backgroundColor: '#fff',
     borderRadius: '10@ms',
+    marginRight: '10@ms',
   },
   contentContainerStyle: {
     paddingBottom: '20@ms',
-    paddingTop: '15@ms',
+    paddingTop: '10@ms',
+    paddingHorizontal: '15@ms',
   },
   imageStyle: {
     borderRadius: '10@ms',

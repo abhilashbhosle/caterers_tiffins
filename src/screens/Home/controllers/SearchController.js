@@ -18,6 +18,7 @@ import {
 import {updateCuisine} from './ExploreCuisineController';
 import {updateOccassion} from './OccassionController';
 import {updateKitchen, updateMeal} from './FilterTiffinController';
+import { setSearchJson } from './SearchCommonController';
 
 // ======GET LOCATIONs=======//
 export const getLocations = createAsyncThunk(
@@ -85,7 +86,7 @@ export const handleSearchResults = ({
         },
         {
           text: 'OK',
-          onPress: () => {
+          onPress: async () => {
             setSearch(userDetails[0]?.formatted_address);
             setSelectedLocation({
               ...selectedLocation,
@@ -106,6 +107,7 @@ export const handleSearchResults = ({
                 area:userDetails[0]?.area
               }),
             );
+            await setSearchJson({userDetails,from,selectedStartDate,selectedEndDate})
           },
         },
       ],
