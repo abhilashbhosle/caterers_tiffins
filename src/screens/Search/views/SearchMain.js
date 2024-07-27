@@ -23,13 +23,10 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {useFocusEffect} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {handleFoodType} from '../../Home/controllers/FilterCommonController';
-import {
-  clearCaterers,
-  getCaterersSearch,
-  handleSearchSegregation,
-} from '../../Home/controllers/SearchController';
+import {clearCaterers, getCaterersSearch} from '../../Home/controllers/SearchController';
 import {clearFilterService} from '../../Home/services/FilterMainService';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   getSubscription,
   updateSubscriptions,
@@ -43,35 +40,8 @@ export default function SearchMain({route, navigation}) {
   const [foodType, setFoodType] = useState([]);
   const [total, setTotal] = useState(0);
   const dispatch = useDispatch();
-  const {
-    servingData,
-    serviceData,
-    budgetData,
-    headData,
-    sortData,
-    foodTypeData,
-    subData,
-    ratingData,
-  } = useSelector(state => state?.filterCater);
-  const {mealData, kitchenData} = useSelector(state => state?.filterTiffin);
-  const cuisines_data = useSelector(state => state?.cuisine.data);
-  const occasion = useSelector(state => state?.occassion?.data);
-  const [segre, setSegre] = useState({
-    serving_types_filter: [],
-    service_types_filter: [],
-    occasions_filter: [],
-    price_ranges: [],
-    head_count_ranges: [],
-    order_by_filter: [],
-    cuisines_filter: [],
-    search_term: '',
-    food_types_filter: [],
-    subscription_types_filter: [],
-    meal_times_filter: [],
-    kitchen_types_filter: [],
-    ratings_filter: [],
-  });
-  const [flag, setFlag] = useState(false);
+  const {foodTypeData, subData} = useSelector(state => state?.filterCater);
+
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
   const [firstItemVisible, setFirstItemVisible] = useState(true);
@@ -87,53 +57,38 @@ export default function SearchMain({route, navigation}) {
           from === 'Caterers' ? ts.secondary : ts.primary,
         );
       }
-      // setFlag(false);
     }, [from]),
   );
-  // =========SETTING UP ALL THE FILTERS======//
+
   useEffect(() => {
-    setFlag(false);
-    setVendorData([]);
-    setPage(1);
-    setTotal(0);
     if (foodTypeData?.length) {
       setFoodType(foodTypeData);
     }
-    if (subData?.length) {
+  }, [foodTypeData]);
+
+  useEffect(() => {
+    if (subType?.length == 0) {
       setSubType(subData);
     }
+  }, [subData]);
+
+  useEffect(() => {
     (async () => {
-      let res = await handleSearchSegregation({
-        setSegre,
-        foodTypeData,
-        serviceData,
-        servingData,
-        occasion,
-        headData,
-        sortData,
-        cuisines_data,
-        budgetData,
-        subData,
-        mealData,
-        kitchenData,
-        ratingData,
-      });
-      setFlag(res);
+      let searchJson = await AsyncStorage.getItem('searchJson');
+      let searchData = await JSON.parse(searchJson);
+      let params = searchData;
+      dispatch(
+        getCaterersSearch({
+          params: {
+            ...params,
+            current_page: page,
+            limit,
+          },
+        }),
+      );
     })();
-  }, [
-    foodTypeData,
-    serviceData,
-    servingData,
-    budgetData,
-    headData,
-    sortData,
-    cuisines_data,
-    occasion,
-    subData,
-    mealData,
-    kitchenData,
-    ratingData,
-  ]);
+  }, [page]);
+
   useEffect(() => {
     if (caterersData?.vendors) {
       if (page == 1 || caterersData?.current_page == 1) {
@@ -141,28 +96,10 @@ export default function SearchMain({route, navigation}) {
       } else {
         setVendorData([...vendorData, ...caterersData.vendors]);
       }
-      if (caterersData?.total_count) {
-        setTotal(caterersData?.total_count);
-      }
+      setTotal(caterersData?.total_count);
     }
   }, [caterersData]);
 
-  useEffect(() => {
-    if (page && flag) {
-      dispatch(clearCaterers());
-      dispatch(
-        getCaterersSearch({
-          from,
-          ssd,
-          sse,
-          location,
-          page,
-          limit,
-          segre,
-        }),
-      );
-    }
-  }, [page, flag]);
   const fetchMoreData = () => {
     if (vendorData?.length < total) {
       if (vendorData?.length == 0) {
@@ -177,6 +114,43 @@ export default function SearchMain({route, navigation}) {
     return null;
   }, [caterersLoading]);
 
+  const handleSelection = async (arr, setData, index) => {
+    const updatedFoodTypes = await arr.map((item, i) =>
+      i === index
+        ? {...item, selected: (item.selected = '1')}
+        : {...item, selected: '0'},
+    );
+
+    setData(updatedFoodTypes);
+    return updatedFoodTypes;
+  };
+
+  const handleFoodTypes = async index => {
+    let data = [...foodType];
+    let res = await handleSelection(data, setFoodType, index);
+    let searchJson = await AsyncStorage.getItem('searchJson');
+    let search = JSON.parse(searchJson);
+    let params = {
+      ...search,
+      food_types_filter: JSON.stringify(res),
+    };
+    await AsyncStorage.setItem('searchJson', JSON.stringify(params));
+    dispatch(
+      getCaterersSearch({
+        params: {
+          ...params,
+          current_page: 1,
+          limit: 5,
+        },
+      }),
+    );
+    setVendorData([]);
+    setPage(1);
+  };
+
+  // console.log('vendordata', vendorData);
+  // console.log('page', page);
+  // console.log('caterersData', caterersData);
   return (
     <ScreenWrapper>
       <View
@@ -216,20 +190,7 @@ export default function SearchMain({route, navigation}) {
             {foodType?.map((e, i) => (
               <TouchableOpacity
                 onPress={() => {
-                  // setSelectedType(e.type);
-                  handleFoodType({
-                    index: i,
-                    setFoodType,
-                    foodType,
-                    dispatch,
-                    segre,
-                    setVendorData,
-                    ssd,
-                    sse,
-                    location,
-                    from,
-                    setSegre,
-                  });
+                  handleFoodTypes(i);
                 }}
                 key={i}>
                 <Flex direction="row" alignItems="center" style={[gs.pr10]}>
@@ -285,6 +246,9 @@ export default function SearchMain({route, navigation}) {
           </TouchableOpacity>
           <TouchableWithoutFeedback
             onPress={() => {
+              setPage(1)
+              setVendorData([])
+              dispatch(clearCaterers())
               from == 'Caterers'
                 ? navigation.navigate('PageStack', {
                     screen: 'FilterMain',
@@ -325,13 +289,8 @@ export default function SearchMain({route, navigation}) {
           from={from}
           subType={subType}
           setSubType={setSubType}
-          segre={segre}
-          setVendorData={setVendorData}
-          ssd={ssd}
-          sse={sse}
-          location={location}
           setPage={setPage}
-          setSegre={setSegre}
+          setVendorData={setVendorData}
         />
       ) : null}
 
@@ -344,17 +303,17 @@ export default function SearchMain({route, navigation}) {
             gs.fs13,
           ]}
           numberOfLines={1}>
-          {from == 'Tiffins'
+          {from == 'Caterers'
             ? `${
                 location?.area ? location?.area : location?.city
-              }: ${total} Tiffins found in ${location?.area}${
-                location?.area ? ',' : null
-              } ${location?.city}`
+              }: ${total} Caterers found in ${
+                location?.area ? location?.area : ''
+              }${location?.area ? ',' : ''} ${location?.city}`
             : `${
                 location?.area ? location?.area : location?.city
-              }: ${total} Caterers found in ${location?.area}${
-                location?.area ? ',' : null
-              } ${location?.city}`}
+              }: ${total} Tiffins found in ${
+                location?.area ? location?.area : ''
+              }${location?.area ? ',' : ''} ${location?.city}`}
         </Text>
       </View>
       <SearchList

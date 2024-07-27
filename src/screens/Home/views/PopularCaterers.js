@@ -22,6 +22,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {getUser} from '../../Onboarding/controllers/AuthController';
 import {getPopular, updateSearch} from '../controllers/HomeController';
 import {
+  clearCaterers,
   getCaterersSearch,
   setLocationres,
 } from '../controllers/SearchController';
@@ -31,12 +32,13 @@ import {
 } from '../controllers/FilterMainController';
 import {startLoader} from '../../../redux/CommonSlicer';
 import PopularCatSkel from '../../../components/skeletons/PopularCatSkel';
+import { setSearchHomeJson } from '../controllers/SearchCommonController';
 function PopularCaterers() {
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
   const {popularLoading, popularData, popularError} = useSelector(
     state => state.home,
   );
-  const {subData} = useSelector(state => state?.filterCater);
+  const {subData,foodTypeData} = useSelector(state => state?.filterCater);
   const {height, width} = Dimensions.get('screen');
   const ref = useRef();
 
@@ -47,20 +49,6 @@ function PopularCaterers() {
   useEffect(() => {
     dispatch(getUser());
   }, []);
-  const [segre, setSegre] = useState({
-    serving_types_filter: [],
-    service_types_filter: [],
-    occasions_filter: [],
-    price_ranges: [],
-    head_count_ranges: [],
-    order_by_filter: [],
-    cuisines_filter: [],
-    search_term: '',
-    food_types_filter: [],
-    subscription_types_filter: [],
-    meal_times_filter: [],
-    kitchen_types_filter: [],
-  });
 
   useEffect(() => {
     if (userDetails?.length && userDetails[0]?.formatted_address) {
@@ -103,18 +91,22 @@ function PopularCaterers() {
         selected: e.selected,
       }));
       if (subscription_types_filter?.length) {
-        await dispatch(
-          getCaterersSearch({
-            filterKey: 'subscription',
-            filteredData: subscription_types_filter,
-            from: 'Caterers',
-            ssd: today,
-            sse: dateAfter7Days,
-            location: location,
-            segre,
-          }),
-        );
+      
         await dispatch(updateSubscriptions(result));
+        dispatch(clearCaterers());
+        await setSearchHomeJson({
+          latitude: location?.latitude,
+          longitude: location?.longitude,
+          city: location?.city,
+          place_id: location?.place_id,
+          pincode: location?.pincode,
+          area: location?.area,
+          from: 'Caterers',
+          selectedStartDate: today,
+          selectedEndDate: dateAfter7Days,
+          foodTypeData,
+          subData: result,
+        });
         navigation.navigate('PageStack', {
           screen: 'SearchMain',
           params: {
@@ -126,7 +118,7 @@ function PopularCaterers() {
         });
       }
     } catch (err) {
-      console.log('error in handleBranded');
+      console.log('error in handleBranded',err);
     } finally {
       setTimeout(() => {
         dispatch(startLoader(false));

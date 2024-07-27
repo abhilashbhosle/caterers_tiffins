@@ -19,11 +19,13 @@ import {getCities} from '../controllers/ExploreIndiaController';
 import CitySkel from '../../../components/skeletons/CitySkel';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {setLocationres} from '../controllers/SearchController';
+import { setSearchHomeJson } from '../controllers/SearchCommonController';
 
 function ExploreIndia() {
   const route = useRoute();
   const dispatch = useDispatch();
   const {loading, data, error} = useSelector(state => state?.city);
+  const {subData, foodTypeData} = useSelector(state => state?.filterCater);
   useEffect(() => {
     dispatch(getCities());
   }, []);
@@ -42,6 +44,19 @@ function ExploreIndia() {
       let today = new Date();
       let dateAfter7Days = new Date();
       dateAfter7Days.setDate(today.getDate() + 7);
+      // console.log(location)
+      await setSearchHomeJson({
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        city: location?.name,
+        place_id: 133333,
+        pincode: 1211111,
+        from:route?.name == 'Caterings' ? 'Caterers' : 'Tiffin',
+        selectedStartDate:today,
+        selectedEndDate:dateAfter7Days,
+        foodTypeData,
+        subData
+      });
       navigation.push('PageStack', {
         screen: 'SearchMain',
         params: {

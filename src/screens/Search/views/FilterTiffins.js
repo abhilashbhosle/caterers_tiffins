@@ -18,7 +18,7 @@ import {ScaledSheet} from 'react-native-size-matters';
 import ThemeSepBtn from '../../../components/ThemeSepBtn';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {useDispatch, useSelector} from 'react-redux';
-import {clearFilter} from '../../Home/controllers/FilterMainController';
+import {clearFilter, getBudget, getHeadCount, getRatings, getService, getSort} from '../../Home/controllers/FilterMainController';
 import AntIcon from 'react-native-vector-icons/Ionicons';
 import FontistoIcon from 'react-native-vector-icons/Fontisto';
 import {
@@ -31,7 +31,13 @@ import {
   handleChildrenCuisines,
   handleRating,
 } from '../../Home/controllers/FilterCommonController';
-import {handleSearchSegregation} from '../../Home/controllers/SearchController';
+import {getCaterersSearch, handleSearchSegregation, updateFilterData} from '../../Home/controllers/SearchController';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getOccassions } from '../../Home/controllers/OccassionController';
+import { getCuisines } from '../../Home/controllers/ExploreCuisineController';
+import { getKitchen, getMeal } from '../../Home/controllers/FilterTiffinController';
+import { setSearchHomeJson } from '../../Home/controllers/SearchCommonController';
+import moment from 'moment';
 
 export default function FilterTiffins({navigation, route}) {
   const {address, ssd, sse, location, from} = route.params;
@@ -72,31 +78,33 @@ export default function FilterTiffins({navigation, route}) {
     serviceError,
     ratingData,
     ratingError,
-    ratingLoading
+    ratingLoading,
   } = useSelector(state => state?.filterCater);
-  const {caterersLoading, caterersData, caterersError} = useSelector(
+  const {caterersLoading, caterersData, caterersError, 
+    filterData,
+    filterLoading,
+    filterError,} = useSelector(
     state => state.location,
   );
 
   const {headLoading, headData, headError} = useSelector(
     state => state?.filterCater,
   );
-
-  const [segre, setSegre] = useState({
-    serving_types_filter: [],
-    service_types_filter: [],
-    occasions_filter: [],
-    price_ranges: [],
-    head_count_ranges: [],
-    order_by_filter: [],
-    cuisines_filter: [],
-    search_term: '',
-    food_types_filter: [],
-    subscription_types_filter: [],
-    meal_times_filter: [],
-    kitchen_types_filter: [],
-    ratings_filter:[]
-  });
+  const [foodSortData, setFoodSortData] = useState([]);
+  const [subSortData, setSubSortData] = useState([]);
+  const [cuisineSortData, setCuisineSortData] = useState([]);
+  const [occasionSortData, setOccassionSortData] = useState([]);
+  useEffect(() => {
+    dispatch(getService({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
+    dispatch(getBudget());
+    dispatch(getCuisines());
+    dispatch(getHeadCount());
+    dispatch(getSort());
+    dispatch(getMeal());
+    dispatch(getKitchen());
+    dispatch(getRatings());
+  }, []);
+  
 
   useEffect(() => {
     if (serviceData?.length) {
@@ -120,21 +128,14 @@ export default function FilterTiffins({navigation, route}) {
     if(ratingData?.length){
       setRating(ratingData)
     }
+    
     (async () => {
-      await handleSearchSegregation({
-        setSegre,
-        foodTypeData,
-        serviceData,
-        headData,
-        sortData,
-        cuisines_data: cuisineData,
-        budgetData,
-        subData,
-        mealData,
-        kitchenData,
-        servingData,
-        ratingData
-      });
+      let asyncData = await AsyncStorage.getItem('searchJson');
+      let parsed = JSON.parse(asyncData);
+      setFoodSortData(parsed?.food_types_filter);
+      setSubSortData(parsed?.subscription_types_filter);
+      setCuisineSortData(parsed?.cuisines_filter);
+      setOccassionSortData(parsed?.occasions_filter);
     })();
   }, [
     serviceData,
@@ -143,11 +144,8 @@ export default function FilterTiffins({navigation, route}) {
     headData,
     cuisineData,
     sortData,
-    foodTypeData,
     serviceData,
     budgetData,
-    subData,
-    servingData,
     ratingData
   ]);
   // =======SEARCH CUISINE========//
@@ -183,12 +181,61 @@ export default function FilterTiffins({navigation, route}) {
           text: 'OK',
           onPress: async () => {
             await dispatch(clearFilter());
-            navigation.goBack();
+            await setSearchHomeJson({
+              latitude: location?.latitude,
+              longitude: location?.longitude,
+              city: location?.city,
+              pincode: location?.pincode,
+              place_id: location?.place_id,
+              from,
+              selectedStartDate: ssd,
+              selectedEndDate: sse,
+              foodTypeData,
+              subData,
+              cuisines_filter: cuisineSortData,
+              occasions_filter: occasionSortData,
+            });
+            dispatch(updateFilterData());
+            let params = {
+              latitude: location?.latitude,
+              longitude: location?.longitude,
+              city: location?.city,
+              pincode: location?.pincode,
+              place_id: location?.place_id,
+              vendor_type:'Tiffin',
+              app_type: 'app',
+              start_date: moment(ssd).format('YYYY-MM-DD'),
+              end_date: moment(sse).format('YYYY-MM-DD'),
+              food_types_filter: foodSortData,
+              subscription_types_filter: subSortData,
+              cuisines_filter: cuisineSortData,
+              occasions_filter: occasionSortData,
+              search_term: '',
+              save_filter: 1,
+            };
+            dispatch(
+              getCaterersSearch({
+                params: {
+                  ...params,
+                  current_page: 1,
+                  limit: 5,
+                },
+              }),
+            );
+            navigation.navigate('PageStack', {
+              screen: 'SearchMain',
+              params: {
+                from,
+                ssd,
+                sse,
+              },
+            });
           },
         },
       ],
     );
   };
+
 
   return (
     <ScreenWrapper>
@@ -250,9 +297,11 @@ export default function FilterTiffins({navigation, route}) {
                         sse,
                         location,
                         from: 'Tiffins',
+                        subData: subSortData,
+                        foodTypeData: foodSortData,
+                        occassionData: occasionSortData,
+                        cuisineData: cuisineSortData,
                         dispatch,
-                        segre,
-                        setSegre,
                       });
                     }}>
                     <Flex
@@ -313,9 +362,11 @@ export default function FilterTiffins({navigation, route}) {
                       sse,
                       location,
                       from: 'Tiffins',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
                       dispatch,
-                      segre,
-                      setSegre,
                     });
                   }}>
                   <Flex direction="row" justify="space-between" align="center">
@@ -421,9 +472,11 @@ export default function FilterTiffins({navigation, route}) {
                           sse,
                           location,
                           from: 'Tiffins',
+                          subData: subSortData,
+                          foodTypeData: foodSortData,
+                          occassionData: occasionSortData,
+                          cuisineData: cuisineSortData,
                           dispatch,
-                          segre,
-                          setSegre,
                         })
                       }>
                       <MaterialIcons
@@ -466,9 +519,11 @@ export default function FilterTiffins({navigation, route}) {
                               sse,
                               location,
                               from: 'Tiffins',
+                              subData: subSortData,
+                              foodTypeData: foodSortData,
+                              occassionData: occasionSortData,
+                              cuisineData: cuisineSortData,
                               dispatch,
-                              segre,
-                              setSegre,
                             });
                           }}>
                           <MaterialIcons
@@ -527,9 +582,11 @@ export default function FilterTiffins({navigation, route}) {
                       sse,
                       location,
                       from: 'Tiffins',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
                       dispatch,
-                      segre,
-                      setSegre,
                     });
                   }}>
                   <Flex direction="row" justify="space-between" align="center">
@@ -587,9 +644,11 @@ export default function FilterTiffins({navigation, route}) {
                       sse,
                       location,
                       from: 'Tiffins',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
                       dispatch,
-                      segre,
-                      setSegre,
                     });
                   }}>
                   <Flex direction="row" justify="space-between" align="center">
@@ -644,9 +703,11 @@ export default function FilterTiffins({navigation, route}) {
                       sse,
                       location,
                       from: 'Tiffins',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
                       dispatch,
-                      segre,
-                      setSegre,
                     });
                   }}
                   key={i}>
@@ -703,9 +764,11 @@ export default function FilterTiffins({navigation, route}) {
                       sse,
                       location,
                       from: 'Tiffins',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
                       dispatch,
-                      segre,
-                      setSegre,
                     });
                   }}
                   key={i}>
@@ -742,19 +805,49 @@ export default function FilterTiffins({navigation, route}) {
               gs.fs13,
               {color: ts.primary, fontFamily: ts.secondaryregular},
             ]}>
-            {caterersLoading ? (
+            {filterLoading ? (
               <Spinner color={from == 'Caterers' ? ts.secondary : ts.primary} />
             ) : (
-              caterersData?.total_count
+              filterData?.total_count>=0?filterData?.total_count:null
             )}{' '}
-            matching Caterers
+            {filterData?.total_count >= 0 ? ' matching Tiffins' : null}
           </Text>
-          {caterersLoading ? (
+          {filterLoading ? (
             <ThemeSepBtn btntxt="Show results" themecolor={'#D3D3D3'} />
           ) : (
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => {
+              onPress={async() => {
+                if (filterData?.total_count) {
+                  let data = await AsyncStorage.getItem('searchFilterJson');
+                  await AsyncStorage.setItem('searchJson', data);
+                  dispatch(updateFilterData());
+                  let searchData = await JSON.parse(data);
+                  let params = searchData;
+                  console.log("search data",searchData)
+                  dispatch(
+                    getCaterersSearch({
+                      params: {
+                        ...params,
+                        current_page: 1,
+                        limit: 5,
+                      },
+                    }),
+                  );
+                } else {
+                  let data = await AsyncStorage.getItem('searchJson');
+                  let searchData = await JSON.parse(data);
+                  let params = searchData;
+                  dispatch(
+                    getCaterersSearch({
+                      params: {
+                        ...params,
+                        current_page: 1,
+                        limit: 5,
+                      },
+                    }),
+                  );
+                }
                 navigation.navigate('PageStack', {
                   screen: 'SearchMain',
                   params: {

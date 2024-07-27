@@ -2,23 +2,12 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {
   getCatererSearchService,
   getLocationService,
-  updateSearchService,
+  getSearchFilterService,
 } from '../services/SearchService';
 import {showMessage} from 'react-native-flash-message';
 import {Alert} from 'react-native';
 import moment from 'moment';
-import {
-  updateBudget,
-  updateHeadCount,
-  updateRating,
-  updateServing,
-  updateSort,
-  updateservice,
-} from './FilterMainController';
-import {updateCuisine} from './ExploreCuisineController';
-import {updateOccassion} from './OccassionController';
-import {updateKitchen, updateMeal} from './FilterTiffinController';
-import { setSearchJson } from './SearchCommonController';
+import {setSearchHomeJson, setSearchJson} from './SearchCommonController';
 
 // ======GET LOCATIONs=======//
 export const getLocations = createAsyncThunk(
@@ -57,6 +46,8 @@ export const handleSearchResults = ({
   setSearch,
   dispatch,
   locationData,
+  foodTypeData,
+  subData
 }) => {
   let flag = false;
   if (!selectedStartDate || !selectedEndDate) {
@@ -95,7 +86,7 @@ export const handleSearchResults = ({
               city: userDetails[0]?.city,
               place_id: userDetails[0]?.place_id,
               pincode: userDetails[0]?.pincode,
-              area:userDetails[0]?.area
+              area: userDetails[0]?.area,
             });
             dispatch(
               setLocationres({
@@ -104,10 +95,22 @@ export const handleSearchResults = ({
                 city: userDetails[0]?.city,
                 place_id: userDetails[0]?.place_id,
                 pincode: userDetails[0]?.pincode,
-                area:userDetails[0]?.area
+                area: userDetails[0]?.area,
               }),
             );
-            await setSearchJson({userDetails,from,selectedStartDate,selectedEndDate})
+            await setSearchHomeJson({
+              latitude: userDetails[0]?.latitude,
+              longitude: userDetails[0]?.longitude,
+              city: userDetails[0]?.city,
+              place_id: userDetails[0]?.place_id,
+              pincode: userDetails[0]?.pincode,
+              area: userDetails[0]?.area,
+              from,
+              selectedStartDate,
+              selectedEndDate,
+              foodTypeData,
+              subData
+            });
           },
         },
       ],
@@ -232,111 +235,19 @@ export const handleSearchSegregation = async ({
   setSegre(prev => ({...prev, head_count_ranges: head}));
   return true;
 };
+
+// ========SEARCH=========//
 export const getCaterersSearch = createAsyncThunk(
   'getCaterersSearch',
   async (
     {
-      filterKey,
-      filteredData,
-      from,
-      ssd,
-      sse,
-      location,
-      page,
-      limit,
-      segre,
-      updated_response,
+      params,
     },
     {dispatch},
   ) => {
-    let params = {
-      search_term: '',
-      order_by_filter:
-        filterKey == 'sort'
-          ? JSON.stringify(filteredData)
-          : JSON.stringify(segre.order_by_filter),
-      save_filter: 1,
-      vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
-      app_type: 'app',
-      start_date: moment(ssd).format('YYYY-MM-DD'),
-      end_date: moment(sse).format('YYYY-MM-DD'),
-      service_types_filter:
-        filterKey == 'service'
-          ? JSON.stringify(filteredData)
-          : JSON.stringify(segre.service_types_filter),
-      occasions_filter:
-        filterKey == 'occasion'
-          ? JSON.stringify(filteredData)
-          : JSON.stringify(segre.occasions_filter),
-      serving_types_filter:
-        filterKey == 'servingType'
-          ? JSON.stringify(filteredData)
-          : JSON.stringify(segre.serving_types_filter),
-      meal_times_filter:
-        from !== 'Caterers'
-          ? filterKey == 'mealTime'
-            ? JSON.stringify(filteredData)
-            : JSON.stringify(segre.meal_times_filter)
-          : [],
-      kitchen_types_filter:
-        from !== 'Caterers'
-          ? filterKey == 'kitchenTypes'
-            ? JSON.stringify(filteredData)
-            : JSON.stringify(segre.kitchen_types_filter)
-          : [],
-      food_types_filter:
-        filterKey == 'foodType'
-          ? JSON.stringify(filteredData)
-          : JSON.stringify(segre.food_types_filter),
-      subscription_types_filter:
-        filterKey == 'subscription'
-          ? JSON.stringify(filteredData)
-          : JSON.stringify(segre.subscription_types_filter),
-      cuisines_filter:
-        filterKey == 'cuisine'
-          ? JSON.stringify(filteredData)
-          : JSON.stringify(segre.cuisines_filter),
-      price_ranges:
-        filterKey == 'budget'
-          ? JSON.stringify(filteredData)
-          : JSON.stringify(segre.price_ranges),
-      head_count_ranges:
-        filterKey == 'headCount'
-          ? JSON.stringify(filteredData)
-          : JSON.stringify(segre.head_count_ranges),
-      ratings_filter: filterKey == 'rating' ? JSON.stringify(filteredData) : JSON.stringify(segre?.ratings_filter),
-      latitude: location.latitude,
-      longitude: location.longitude,
-      city: location.city,
-      pincode: location.pincode,
-      place_id: location.place_id,
-      limit: limit,
-      current_page: page,
-    };
     try {
-      const res = await getCatererSearchService({params, dispatch, filterKey});
-      if (filterKey == 'servingType') {
-        dispatch(updateServing(updated_response));
-      } else if (filterKey == 'budget') {
-        dispatch(updateBudget(updated_response));
-      } else if (filterKey == 'headCount') {
-        dispatch(updateHeadCount(updated_response));
-      } else if (filterKey == 'cuisine') {
-        dispatch(updateCuisine(updated_response));
-      } else if (filterKey == 'service') {
-        dispatch(updateservice(updated_response));
-      } else if (filterKey == 'occasion') {
-        dispatch(updateOccassion(updated_response));
-      } else if (filterKey == 'sort') {
-        dispatch(updateSort(updated_response));
-      } else if (filterKey == 'mealTime') {
-        dispatch(updateMeal(updated_response));
-      } else if (filterKey == 'kitchenTypes') {
-        dispatch(updateKitchen(updated_response));
-      } else if (filterKey == 'rating') {
-        dispatch(updateRating(updated_response));
-      }
-
+      // console.log("params inside the catersearch",params)
+      const res = await getCatererSearchService({params});
       return res.data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -344,6 +255,26 @@ export const getCaterersSearch = createAsyncThunk(
     }
   },
 );
+
+//====SEARCH FILTERS=======//
+export const getSearchFilters = createAsyncThunk(
+  'getSearchFilters',
+  async (
+    {
+      params,
+    },
+    {dispatch},
+  ) => {
+    try {
+      const res = await getSearchFilterService({params});
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    } finally {
+    }
+  },
+);
+
 // ======GET MAP=======//
 export const getMap = createAsyncThunk(
   'getMap',
@@ -394,6 +325,9 @@ const searchSlice = createSlice({
     locationLoading: false,
     locationData: [],
     locationError: null,
+    filterData:[],
+    filterLoading:false,
+    filterError:null
   },
   reducers: {
     clearSearch: (state, action) => {
@@ -402,6 +336,9 @@ const searchSlice = createSlice({
     },
     clearCaterers: (state, action) => {
       state.caterersData = [];
+    },
+    updateFilterData:(state,action)=>{
+      state.filterData=[];
     },
     setSearchRes: (state, action) => {
       state.searchRes = action.payload;
@@ -459,6 +396,18 @@ const searchSlice = createSlice({
       .addCase(getLocationData.rejected, (state, action) => {
         state.locationLoading = false;
         state.locationError = action.error;
+      })
+      .addCase(getSearchFilters.pending, (state, action) => {
+        state.filterLoading = true;
+        state.filterError = null;
+      })
+      .addCase(getSearchFilters.fulfilled, (state, action) => {
+        state.filterLoading = false;
+        state.filterData = action.payload;
+      })
+      .addCase(getSearchFilters.rejected, (state, action) => {
+        state.filterLoading = false;
+        state.filterError = action.error;
       });
   },
 });
@@ -469,5 +418,6 @@ export const {
   setLocationres,
   setSelectedLocRes,
   segreFoodType,
+  updateFilterData
 } = searchSlice.actions;
 export default searchSlice.reducer;

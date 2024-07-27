@@ -1,8 +1,12 @@
-import { updateBudget, updateServing } from './FilterMainController';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {updateBudget, updateServing} from './FilterMainController';
 import {getCaterersSearch} from './SearchController';
+import {setSearchFilter} from './SearchCommonController';
+import moment from 'moment';
+import { updateCuisine } from './ExploreCuisineController';
 
 // =====SETTING PARENT CUISINES=======//
-export const handleParentCuisines = ({
+export const handleParentCuisines = async ({
   index,
   cuisine,
   setCuisine,
@@ -10,9 +14,11 @@ export const handleParentCuisines = ({
   sse,
   location,
   from,
-  dispatch,
-  segre,
-  setSegre
+  subData,
+  foodTypeData,
+  occassionData,
+  cuisineData,
+  dispatch
 }) => {
   let data = [...cuisine];
   const updatedData = data.map((item, i) => {
@@ -39,26 +45,36 @@ export const handleParentCuisines = ({
       });
     });
   });
-  setSegre({...segre,cuisines_filter:temp})
   if (temp?.length) {
-    dispatch(
-      getCaterersSearch({
-        filterKey: 'cuisine',
-        filteredData: temp,
-        from,
-        ssd,
-        sse,
-        location,
-        page: 1,
-        limit: 5,
-        segre,
-        updated_response:updatedData
-      }),
-    );
+    let asyncData = await AsyncStorage.getItem('searchFilterJson');
+    if (asyncData?.length) {
+      let parsed = JSON.parse(asyncData);
+      let params = {...parsed, cuisines_filter: JSON.stringify(temp)};
+      await setSearchFilter({params,dispatch});
+    } else {
+      let params = {
+        search_term: '',
+        save_filter: 0,
+        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+        app_type: 'app',
+        start_date: moment(ssd).format('YYYY-MM-DD'),
+        end_date: moment(sse).format('YYYY-MM-DD'),
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        city: location?.city,
+        pincode: location?.pincode,
+        place_id: location?.place_id,
+        food_types_filter: foodTypeData,
+        subscription_types_filter: subData,
+        occasions_filter: occassionData?.length ? occassionData : [],
+        cuisines_filter:JSON.stringify(temp),
+      };
+      await setSearchFilter({params,dispatch});
+    }
   }
 };
 // =====SETTING CHILDREN CUISINES=======//
-export const handleChildrenCuisines = ({
+export const handleChildrenCuisines = async ({
   pi,
   i,
   cuisine,
@@ -67,9 +83,11 @@ export const handleChildrenCuisines = ({
   sse,
   location,
   from,
-  dispatch,
-  segre,
-  setSegre
+  subData,
+  foodTypeData,
+  occassionData,
+  cuisineData,
+  dispatch
 }) => {
   let data = [...cuisine];
   let da = data[pi].children.map((e, ind) => {
@@ -123,34 +141,45 @@ export const handleChildrenCuisines = ({
       });
     });
   });
-  setSegre({...segre,cuisines_filter:temp})
   if (temp?.length) {
-    dispatch(
-      getCaterersSearch({
-        filterKey: 'cuisine',
-        filteredData: temp,
-        from,
-        ssd,
-        sse,
-        location,
-        page: 1,
-        limit: 5,
-        segre,
-        updated_response:updated_data
-      }),
-    );
+    let asyncData = await AsyncStorage.getItem('searchFilterJson');
+    if (asyncData?.length) {
+      let parsed = JSON.parse(asyncData);
+      let params = {...parsed, cuisines_filter: JSON.stringify(temp)};
+      await setSearchFilter({params,dispatch});
+    } else {
+      let params = {
+        search_term: '',
+        save_filter: 0,
+        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+        app_type: 'app',
+        start_date: moment(ssd).format('YYYY-MM-DD'),
+        end_date: moment(sse).format('YYYY-MM-DD'),
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        city: location?.city,
+        pincode: location?.pincode,
+        place_id: location?.place_id,
+        food_types_filter: foodTypeData,
+        subscription_types_filter: subData,
+        occasions_filter: occassionData?.length ? occassionData : [],
+        cuisines_filter: JSON.stringify(temp),
+      };
+      await setSearchFilter({params,dispatch});
+    }
   }
 };
 const handleSelection = async (arr, setData, index) => {
   const updatedFoodTypes = await arr.map((item, i) =>
     i === index
-      ? {...item, selected: item.selected ='1'}
+      ? {...item, selected: (item.selected = '1')}
       : {...item, selected: '0'},
   );
 
   setData(updatedFoodTypes);
   return updatedFoodTypes;
 };
+
 // ======HANDLE SERVING==========//
 export const handleServing = async ({
   index,
@@ -160,28 +189,41 @@ export const handleServing = async ({
   sse,
   location,
   from,
-  dispatch,
-  setSegre,
-  segre,
+  subData,
+  foodTypeData,
+  occassionData,
+  cuisineData,
+  dispatch
 }) => {
   const data = [...serving];
   const res = await handleSelection(data, setServing, index);
-  setSegre({...segre, serving_types_filter: res});
   if (res?.length) {
-    dispatch(
-      getCaterersSearch({
-        filterKey: 'servingType',
-        filteredData: res,
-        from,
-        ssd,
-        sse,
-        location,
-        page: 1,
-        limit: 5,
-        segre,
-        updated_response:res
-      }),
-    );
+    let asyncData = await AsyncStorage.getItem('searchFilterJson');
+    if (asyncData?.length) {
+      let parsed = JSON.parse(asyncData);
+      let params = {...parsed, serving_types_filter: JSON.stringify(res)};
+      await setSearchFilter({params,dispatch});
+    } else {
+      let params = {
+        search_term: '',
+        save_filter: 0,
+        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+        app_type: 'app',
+        start_date: moment(ssd).format('YYYY-MM-DD'),
+        end_date: moment(sse).format('YYYY-MM-DD'),
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        city: location?.city,
+        pincode: location?.pincode,
+        place_id: location?.place_id,
+        food_types_filter: foodTypeData,
+        subscription_types_filter: subData,
+        cuisines_filter: cuisineData?.length ? cuisineData : [],
+        occasions_filter: occassionData?.length ? occassionData : [],
+        serving_types_filter: JSON.stringify(res),
+      };
+      await setSearchFilter({params,dispatch});
+    }
   }
 };
 
@@ -190,34 +232,46 @@ export const handleCount = async ({
   index,
   headCount,
   setHeadCount,
-  serving,
   ssd,
   sse,
   location,
   from,
-  dispatch,
-  segre,
-  setSegre,
+  subData,
+  foodTypeData,
+  occassionData,
+  cuisineData,
+  dispatch
 }) => {
   const data = [...headCount];
   let res = await handleSelection(data, setHeadCount, index);
   let updated = await res.filter((e, i) => e.selected == 1);
-  setSegre({...segre, head_count_ranges: updated?.length ? updated : []});
   if (res?.length) {
-    dispatch(
-      getCaterersSearch({
-        filterKey: 'headCount',
-        filteredData: updated,
-        from,
-        ssd,
-        sse,
-        location,
-        page: 1,
-        limit: 5,
-        segre,
-        updated_response:res
-      }),
-    );
+    let asyncData = await AsyncStorage.getItem('searchFilterJson');
+    if (asyncData?.length) {
+      let parsed = JSON.parse(asyncData);
+      let params = {...parsed, head_count_ranges: JSON.stringify(updated)};
+      await setSearchFilter({params,dispatch});
+    } else {
+      let params = {
+        search_term: '',
+        save_filter: 0,
+        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+        app_type: 'app',
+        start_date: moment(ssd).format('YYYY-MM-DD'),
+        end_date: moment(sse).format('YYYY-MM-DD'),
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        city: location?.city,
+        pincode: location?.pincode,
+        place_id: location?.place_id,
+        food_types_filter: foodTypeData,
+        subscription_types_filter: subData,
+        cuisines_filter: cuisineData?.length ? cuisineData : [],
+        occasions_filter: occassionData?.length ? occassionData : [],
+        head_count_ranges: JSON.stringify(updated),
+      };
+      await setSearchFilter({params,dispatch});
+    }
   }
 };
 
@@ -230,35 +284,48 @@ export const handleBudget = async ({
   sse,
   location,
   from,
-  dispatch,
-  segre,
-  setSegre
+  subData,
+  foodTypeData,
+  occassionData,
+  cuisineData,
+  dispatch
 }) => {
   let data = [...budget];
   let res = await handleSelection(data, setBudget, index);
-  let updated= await res
-  ?.filter(e => e.selected == 1)
-  ?.map(e => ({
-    id: parseInt(e.id),
-    start_price: parseInt(e.start_price),
-    end_price: parseInt(e.end_price),
-  }));
-  setSegre({...segre,price_ranges:res})
+  let updated = await res
+    ?.filter(e => e.selected == 1)
+    ?.map(e => ({
+      id: parseInt(e.id),
+      start_price: parseInt(e.start_price),
+      end_price: parseInt(e.end_price),
+    }));
   if (res?.length) {
-    dispatch(
-      getCaterersSearch({
-        filterKey: 'budget',
-        filteredData: updated,
-        from,
-        ssd,
-        sse,
-        location,
-        page: 1,
-        limit: 5,
-        segre,
-        updated_response:res
-      }),
-    );
+    let asyncData = await AsyncStorage.getItem('searchFilterJson');
+    if (asyncData?.length) {
+      let parsed = JSON.parse(asyncData);
+      let params = {...parsed, price_ranges: JSON.stringify(updated)};
+      await setSearchFilter({params,dispatch});
+    } else {
+      let params = {
+        search_term: '',
+        save_filter: 0,
+        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+        app_type: 'app',
+        start_date: moment(ssd).format('YYYY-MM-DD'),
+        end_date: moment(sse).format('YYYY-MM-DD'),
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        city: location?.city,
+        pincode: location?.pincode,
+        place_id: location?.place_id,
+        food_types_filter: foodTypeData,
+        subscription_types_filter: subData,
+        cuisines_filter: cuisineData?.length ? cuisineData : [],
+        occasions_filter: occassionData?.length ? occassionData : [],
+        price_ranges:JSON.stringify(updated),
+      };
+      await setSearchFilter({params,dispatch});
+    }
   }
 };
 
@@ -271,32 +338,45 @@ export const handleService = async ({
   sse,
   location,
   from,
-  dispatch,
-  segre,
-  setSegre
+  subData,
+  foodTypeData,
+  occassionData,
+  cuisineData,
+  dispatch
 }) => {
   let data = [...service];
   let res = await handleSelection(data, setService, index);
-  setSegre({...segre,service_types_filter:res})
   if (res?.length) {
-    dispatch(
-      getCaterersSearch({
-        filterKey: 'service',
-        filteredData: res,
-        from,
-        ssd,
-        sse,
-        location,
-        page: 1,
-        limit: 5,
-        segre,
-        updated_response:res
-      }),
-    );
+    let asyncData = await AsyncStorage.getItem('searchFilterJson');
+    if (asyncData?.length) {
+      let parsed = JSON.parse(asyncData);
+      let params = {...parsed, service_types_filter: JSON.stringify(res)};
+      await setSearchFilter({params,dispatch});
+    } else {
+      let params = {
+        search_term: '',
+        save_filter: 0,
+        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+        app_type: 'app',
+        start_date: moment(ssd).format('YYYY-MM-DD'),
+        end_date: moment(sse).format('YYYY-MM-DD'),
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        city: location?.city,
+        pincode: location?.pincode,
+        place_id: location?.place_id,
+        food_types_filter: foodTypeData,
+        subscription_types_filter: subData,
+        cuisines_filter: cuisineData?.length ? cuisineData : [],
+        occasions_filter: occassionData?.length ? occassionData : [],
+        service_types_filter: JSON.stringify(res),
+      };
+      await setSearchFilter({params,dispatch});
+    }
   }
 };
 //==== HANDLE OCCASSIONS======//
-export const handleOccassion = ({
+export const handleOccassion = async ({
   index,
   setOccasion,
   occasion,
@@ -304,9 +384,11 @@ export const handleOccassion = ({
   sse,
   location,
   from,
-  dispatch,
-  segre,
-  setSegre
+  subData,
+  foodTypeData,
+  occassionData,
+  cuisineData,
+  dispatch
 }) => {
   let data = [...occasion];
   let updated = data?.map((e, i) =>
@@ -317,23 +399,32 @@ export const handleOccassion = ({
     id: parseInt(e.occasion_id),
     selected: e.selected,
   }));
-  setSegre({...segre,occasions_filter:occasions_filter})
   if (updated?.length) {
-    dispatch(
-      getCaterersSearch({
-        filterKey: 'occasion',
-        filteredData: occasions_filter,
-        from,
-        ssd,
-        sse,
-        location,
-        page: 1,
-        limit: 5,
-        segre,
-        setSegre,
-        updated_response:updated
-      }),
-    );
+    let asyncData = await AsyncStorage.getItem('searchFilterJson');
+    if (asyncData?.length) {
+      let parsed = JSON.parse(asyncData);
+      let params = {...parsed, occasions_filter:  JSON.stringify(updated)};
+      await setSearchFilter({params,dispatch});
+    } else {
+      let params = {
+        search_term: '',
+        save_filter: 0,
+        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+        app_type: 'app',
+        start_date: moment(ssd).format('YYYY-MM-DD'),
+        end_date: moment(sse).format('YYYY-MM-DD'),
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        city: location?.city,
+        pincode: location?.pincode,
+        place_id: location?.place_id,
+        food_types_filter: foodTypeData,
+        subscription_types_filter: subData,
+        cuisines_filter: cuisineData?.length ? cuisineData : [],
+        occasions_filter: JSON.stringify(updated),
+      };
+      await setSearchFilter({params,dispatch});
+    }
   }
 };
 
@@ -346,31 +437,45 @@ export const handleSort = async ({
   sse,
   location,
   from,
-  dispatch,
-  segre,
-  setSegre
+  subData,
+  foodTypeData,
+  occassionData,
+  cuisineData,
+  dispatch
 }) => {
   let data = [...sort];
   let res = await handleSelection(data, setSort, index);
-  setSegre({...segre,order_by_filter:res})
-  const order_by_filter = await res?.filter(e => e.selected === 1)
-  .map(e => ({id: e.id, value: e.sort_text}));
+  const order_by_filter = await res
+    ?.filter(e => e.selected === 1)
+    .map(e => ({id: e.id, value: e.sort_text}));
 
   if (res?.length) {
-    dispatch(
-      getCaterersSearch({
-        filterKey: 'sort',
-        filteredData: order_by_filter,
-        from,
-        ssd,
-        sse,
-        location,
-        page: 1,
-        limit: 5,
-        segre,
-        updated_response:res
-      }),
-    );
+    let asyncData = await AsyncStorage.getItem('searchFilterJson');
+    if (asyncData?.length) {
+      let parsed = JSON.parse(asyncData);
+      let params = {...parsed, order_by_filter: JSON.stringify(order_by_filter)};
+      await setSearchFilter({params,dispatch});
+    } else {
+      let params = {
+        search_term: '',
+        save_filter: 0,
+        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+        app_type: 'app',
+        start_date: moment(ssd).format('YYYY-MM-DD'),
+        end_date: moment(sse).format('YYYY-MM-DD'),
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        city: location?.city,
+        pincode: location?.pincode,
+        place_id: location?.place_id,
+        food_types_filter: foodTypeData,
+        subscription_types_filter: subData,
+        cuisines_filter: cuisineData?.length ? cuisineData : [],
+        occasions_filter: occassionData?.length ? occassionData : [],
+        order_by_filter: JSON.stringify(order_by_filter),
+      };
+      await setSearchFilter({params,dispatch});
+    }
   }
 };
 
@@ -383,28 +488,41 @@ export const handleRating = async ({
   sse,
   location,
   from,
-  dispatch,
-  segre,
-  setSegre
+  subData,
+  foodTypeData,
+  occassionData,
+  cuisineData,
+  dispatch
 }) => {
   let data = [...rating];
   let res = await handleSelection(data, setRating, index);
-  setSegre({...segre,ratings_filter:res})
   if (res?.length) {
-    dispatch(
-      getCaterersSearch({
-        filterKey: 'rating',
-        filteredData: res,
-        from,
-        ssd,
-        sse,
-        location,
-        page: 1,
-        limit: 5,
-        segre,
-        updated_response:res
-      }),
-    );
+    let asyncData = await AsyncStorage.getItem('searchFilterJson');
+    if (asyncData?.length) {
+      let parsed = JSON.parse(asyncData);
+      let params = {...parsed, ratings_filter: JSON.stringify(res)};
+      await setSearchFilter({params,dispatch});
+    } else {
+      let params = {
+        search_term: '',
+        save_filter: 0,
+        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+        app_type: 'app',
+        start_date: moment(ssd).format('YYYY-MM-DD'),
+        end_date: moment(sse).format('YYYY-MM-DD'),
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        city: location?.city,
+        pincode: location?.pincode,
+        place_id: location?.place_id,
+        food_types_filter: foodTypeData,
+        subscription_types_filter: subData,
+        cuisines_filter: cuisineData?.length ? cuisineData : [],
+        occasions_filter: occassionData?.length ? occassionData : [],
+        ratings_filter: JSON.stringify(res),
+      };
+      await setSearchFilter({params,dispatch});
+    }
   }
 };
 
@@ -417,30 +535,43 @@ export const handleMeal = async ({
   sse,
   location,
   from,
-  dispatch,
-  segre,
-  setSegre
+  subData,
+  foodTypeData,
+  occassionData,
+  cuisineData,
+  dispatch
 }) => {
   let data = [...mealTime];
   let updated = data?.map((e, i) =>
     index == i ? {...e, selected: e.selected == 1 ? 0 : 1} : e,
   );
-  setSegre({...segre,meal_times_filter:updated})
   if (updated?.length) {
-    dispatch(
-      getCaterersSearch({
-        filterKey: 'mealTime',
-        filteredData: updated,
-        from,
-        ssd,
-        sse,
-        location,
-        page: 1,
-        limit: 5,
-        segre,
-        updated_response:updated
-      }),
-    );
+    let asyncData = await AsyncStorage.getItem('searchFilterJson');
+    if (asyncData?.length) {
+      let parsed = JSON.parse(asyncData);
+      let params = {...parsed, meal_times_filter: JSON.stringify(updated)};
+      await setSearchFilter({params,dispatch});
+    } else {
+      let params = {
+        search_term: '',
+        save_filter: 0,
+        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+        app_type: 'app',
+        start_date: moment(ssd).format('YYYY-MM-DD'),
+        end_date: moment(sse).format('YYYY-MM-DD'),
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        city: location?.city,
+        pincode: location?.pincode,
+        place_id: location?.place_id,
+        food_types_filter: foodTypeData,
+        subscription_types_filter: subData,
+        cuisines_filter: cuisineData?.length ? cuisineData : [],
+        occasions_filter: occassionData?.length ? occassionData : [],
+        meal_times_filter: JSON.stringify(updated),
+      };
+      await setSearchFilter({params,dispatch});
+    }
   }
   setMealTime(updated);
 };
@@ -454,28 +585,42 @@ export const handleKitchen = async ({
   sse,
   location,
   from,
-  dispatch,
-  segre,
-  setSegre
+  subData,
+  foodTypeData,
+  occassionData,
+  cuisineData,
+  dispatch
 }) => {
   let data = [...kitchen];
   let res = await handleSelection(data, setKitchen, index);
-  setSegre({...segre,kitchen_types_filter:res})
+  setSegre({...segre, kitchen_types_filter: res});
   if (res?.length) {
-    dispatch(
-      getCaterersSearch({
-        filterKey: 'kitchenTypes',
-        filteredData: res,
-        from,
-        ssd,
-        sse,
-        location,
-        page: 1,
-        limit: 5,
-        segre,
-        updated_response:res
-      }),
-    );
+    let asyncData = await AsyncStorage.getItem('searchFilterJson');
+    if (asyncData?.length) {
+      let parsed = JSON.parse(asyncData);
+      let params = {...parsed, kitchen_types_filter: JSON.stringify(res)};
+      await setSearchFilter({params,dispatch});
+    } else {
+      let params = {
+        search_term: '',
+        save_filter: 0,
+        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+        app_type: 'app',
+        start_date: moment(ssd).format('YYYY-MM-DD'),
+        end_date: moment(sse).format('YYYY-MM-DD'),
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        city: location?.city,
+        pincode: location?.pincode,
+        place_id: location?.place_id,
+        food_types_filter: foodTypeData,
+        subscription_types_filter: subData,
+        cuisines_filter: cuisineData?.length ? cuisineData : [],
+        occasions_filter: occassionData?.length ? occassionData : [],
+        kitchen_types_filter: JSON.stringify(res),
+      };
+      await setSearchFilter({params,dispatch});
+    }
   }
 };
 
@@ -491,7 +636,7 @@ export const handleFoodType = async ({
   location,
   from,
   segre,
-  setSegre
+  setSegre,
 }) => {
   let data = [...foodType];
   let res = await handleSelection(data, setFoodType, index);

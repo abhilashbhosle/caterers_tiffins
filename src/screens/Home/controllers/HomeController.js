@@ -81,6 +81,7 @@ export const checkLocation = async ({
       city: userLocation[0]?.city,
       place_id: userLocation[0]?.place_id,
       pincode: userLocation[0]?.pincode,
+      area:userLocation[0]?.area
     };
   } else {
     dispatch(getLocation({navigation}));

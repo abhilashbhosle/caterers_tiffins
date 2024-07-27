@@ -52,7 +52,10 @@ import {
   getSubscription,
 } from '../controllers/FilterMainController';
 import {getKitchen, getMeal} from '../controllers/FilterTiffinController';
-import { setSearchJson } from '../controllers/SearchCommonController';
+import {
+  setSearchHomeJson,
+  setSearchJson,
+} from '../controllers/SearchCommonController';
 const minDate = new Date(); // Today
 const maxDate = new Date(2037, 6, 3);
 
@@ -76,7 +79,7 @@ function SearchBar({from, navigation, ssd, sse}) {
     latitude: null,
     pincode: 1,
     place_id: null,
-    area:null
+    area: null,
   });
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
   const searchRes = useSelector(state => state.location?.searchRes);
@@ -137,7 +140,6 @@ function SearchBar({from, navigation, ssd, sse}) {
 
   const handleSelectedSearch = async e => {
     let tempData = e.formatted_address.split(',');
-    console.log(e.formatted_address.split(','))
     setSelectedLocation({
       ...selectedLocation,
       latitude: e.geometry.location.lat,
@@ -179,7 +181,7 @@ function SearchBar({from, navigation, ssd, sse}) {
     dispatch(getFoodTypes());
     dispatch(getSubscription({from}));
     dispatch(getServing());
-    dispatch(getService({type:from=="Caterers"?"Caterer":"Tiffin"}));
+    dispatch(getService({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
     dispatch(getOccassions());
     dispatch(getBudget());
     dispatch(getCuisines());
@@ -187,8 +189,10 @@ function SearchBar({from, navigation, ssd, sse}) {
     dispatch(getSort());
     dispatch(getMeal());
     dispatch(getKitchen());
-    dispatch(getRatings())
+    dispatch(getRatings());
   }, []);
+
+  const {foodTypeData, subData} = useSelector(state => state?.filterCater);
 
   return (
     <>
@@ -258,8 +262,18 @@ function SearchBar({from, navigation, ssd, sse}) {
                 dispatch(clearCaterers());
                 dispatch(setSearchRes(search));
                 dispatch(setLocationres(selectedLocation));
-                // console.log("search",search)
-                await setSearchJson({userDetails,from,selectedStartDate,selectedEndDate})
+                await setSearchHomeJson({
+                  latitude: selectedLocation.latitude,
+                  longitude: selectedLocation.longitude,
+                  city: selectedLocation.city,
+                  pincode: selectedLocation.pincode,
+                  place_id: selectedLocation.place_id,
+                  from,
+                  selectedStartDate,
+                  selectedEndDate,
+                  foodTypeData,
+                  subData
+                });
                 handleSearchResults({
                   navigation,
                   from,
@@ -271,6 +285,8 @@ function SearchBar({from, navigation, ssd, sse}) {
                   setSelectedLocation,
                   setSearch,
                   dispatch,
+                  foodTypeData,
+                  subData
                 });
               }}>
               <MaterialIcon

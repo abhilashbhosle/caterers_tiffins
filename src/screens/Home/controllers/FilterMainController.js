@@ -149,7 +149,8 @@ const filterSlice = createSlice({
     subError: null,
     ratingLoading:false,
     ratingData:[],
-    ratingError:null
+    ratingError:null,
+    updatedSubData:[]
   },
   reducers: {
     updateBudget: (state, action) => {
@@ -168,6 +169,7 @@ const filterSlice = createSlice({
       state.sortData = action.payload;
     },
     updateSubscriptions:(state,action)=>{
+      console.log("update sub called")
       state.subData=action.payload
     },
     updateRating:(state,action)=>{

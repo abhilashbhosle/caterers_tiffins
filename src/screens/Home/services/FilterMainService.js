@@ -10,10 +10,12 @@ import {
   getService,
   getServing,
   getSort,
+  getSubscription,
 } from '../controllers/FilterMainController';
 import {getKitchen, getMeal} from '../controllers/FilterTiffinController';
-import { getOccassions } from '../controllers/OccassionController';
-import { getCuisines } from '../controllers/ExploreCuisineController';
+import {getOccassions} from '../controllers/OccassionController';
+import {getCuisines} from '../controllers/ExploreCuisineController';
+import {clearCaterers} from '../controllers/SearchController';
 
 //   =======GET SERVING======//
 export const getServingService = async () => {
@@ -42,7 +44,7 @@ export const getServingService = async () => {
 export const getServService = async ({type}) => {
   try {
     let token = await AsyncStorage.getItem('token');
-    console.log(token)
+    console.log(token);
     let res = await axios.get(
       `${endpoints.baseUrl}get-all-service-types?current_page=1&limit=100&vendor_type=${type}`,
       {
@@ -52,10 +54,9 @@ export const getServService = async ({type}) => {
         },
       },
     );
-    console.log("service data res",res.data)
     return res.data;
   } catch (error) {
-    console.log("error in get service data",error)
+    console.log('error in get service data', error);
     if (error.response && error.response.data) {
       throw new Error(error.response.data.message);
     } else {
@@ -130,7 +131,7 @@ export const getSortService = async () => {
   }
 };
 //=======CLEAR FILTER  SERVICES=======//
-export const clearFilterService = async ({dispatch,from}) => {
+export const clearFilterService = async ({dispatch, from}) => {
   try {
     dispatch(startLoader(true));
     let token = await AsyncStorage.getItem('token');
@@ -140,16 +141,14 @@ export const clearFilterService = async ({dispatch,from}) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    if(!from){
-    showMessage({
-      message: 'Success!',
-      description: 'Filters cleared successfully!',
-      type: 'success',
-    });
-    setTimeout(() => {
-     
-    }, 1000);
-  }
+    if (!from) {
+      showMessage({
+        message: 'Success!',
+        description: 'Filters cleared successfully!',
+        type: 'success',
+      });
+    }
+    dispatch(clearCaterers());
     return res.data;
   } catch (error) {
     if (error.response && error.response.data) {
@@ -163,20 +162,20 @@ export const clearFilterService = async ({dispatch,from}) => {
       throw new Error(error.message);
     }
   } finally {
-    if(!from){
-    dispatch(getServing());
-    dispatch(getService());
-    dispatch(getBudget());
-    dispatch(getHeadCount());
-    dispatch(getSort());
-    dispatch(getKitchen());
-    dispatch(getMeal());
-    dispatch(getOccassions())
-    dispatch(getCuisines())
-    dispatch(getRatings())
+    if (!from) {
+      dispatch(getServing());
+      dispatch(getService());
+      dispatch(getSubscription({from}))
+      dispatch(getBudget());
+      dispatch(getHeadCount());
+      dispatch(getSort());
+      dispatch(getKitchen());
+      dispatch(getMeal());
+      dispatch(getOccassions());
+      dispatch(getCuisines());
+      dispatch(getRatings());
     }
     dispatch(startLoader(false));
-
   }
 };
 //=======GET FOOD TYPE  SERVICES=======//
@@ -206,7 +205,11 @@ export const getSubscriptionService = async ({from}) => {
   try {
     let token = await AsyncStorage.getItem('token');
     let res = await axios.get(
-      `${endpoints.baseUrl}user-get-subscription-types?current_page=1&limit=100&vendor_type=${from=="Caterers"?"Caterer":"Tiffin"}`,
+      `${
+        endpoints.baseUrl
+      }user-get-subscription-types?current_page=1&limit=100&vendor_type=${
+        from == 'Caterers' ? 'Caterer' : 'Tiffin'
+      }`,
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

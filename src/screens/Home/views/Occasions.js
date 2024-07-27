@@ -20,6 +20,8 @@ import {useNavigation} from '@react-navigation/native';
 import {getCaterersSearch, setLocationres} from '../controllers/SearchController';
 import { checkLocation, updateSearch } from '../controllers/HomeController';
 import { startLoader } from '../../../redux/CommonSlicer';
+import { getOccassionService } from '../services/OccassionService';
+import { setSearchHomeJson } from '../controllers/SearchCommonController';
 
 function Occasions() {
   const {width, height} = useWindowDimensions();
@@ -28,20 +30,10 @@ function Occasions() {
   const {loading, data, error} = useSelector(state => state?.occassion);
   const locationRes = useSelector(state => state.location.locationRes);
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
-  const [segre, setSegre] = useState({
-    serving_types_filter: [],
-    service_types_filter: [],
-    occasions_filter: [],
-    price_ranges: [],
-    head_count_ranges: [],
-    order_by_filter: [],
-    cuisines_filter: [],
-    search_term: '',
-    food_types_filter: [],
-    subscription_types_filter: [],
-    meal_times_filter: [],
-    kitchen_types_filter: [],
-  });
+  const {
+    foodTypeData,
+    subData,
+  } = useSelector(state => state?.filterCater);
 
   useEffect(() => {
     dispatch(getOccassions());
@@ -66,19 +58,20 @@ function Occasions() {
         }));
         dispatch(setLocationres(res?.location));
         if (updated?.length) {
-          await dispatch(
-            getCaterersSearch({
-              filterKey: 'occasion',
-              filteredData: occasions_filter,
-              from:'Caterers',
-              ssd:res?.startData,
-              sse:res?.endDate,
-              location:res.location,
-              segre,
-              setSegre,
-              updated_response:updated
-            }),
-          );
+          await setSearchHomeJson({
+            latitude: res?.location?.latitude,
+            longitude: res?.location?.longitude,
+            city: res?.location?.city,
+            place_id: res?.location?.place_id,
+            pincode: res?.location?.pincode,
+            area: res?.location?.area,
+            from:"Caterers",
+            selectedStartDate:res?.startData,
+            selectedEndDate:res?.endDate,
+            foodTypeData,
+            subData,
+            occasions_filter:JSON.stringify(occasions_filter)
+          });
           await dispatch(updateOccassion(updated));
           navigation.navigate('PageStack', {
             screen: 'SearchMain',

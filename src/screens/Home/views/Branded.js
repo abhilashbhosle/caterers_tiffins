@@ -25,6 +25,7 @@ import {getBranded, updateSearch} from '../controllers/HomeController';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {BrandedSkeleton} from '../../../components/skeletons/BrandedSkeletons';
 import {
+  clearCaterers,
   getCaterersSearch,
   setLocationres,
 } from '../controllers/SearchController';
@@ -33,13 +34,17 @@ import {
   updateSubscriptions,
 } from '../controllers/FilterMainController';
 import {startLoader} from '../../../redux/CommonSlicer';
+import {setSearchHomeJson} from '../controllers/SearchCommonController';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {updateSubscriptionFilter} from '../services/SearchService';
 
 function Branded() {
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
   const {brandedLoading, brandedData, brandedError} = useSelector(
     state => state.home,
   );
-  const {subData} = useSelector(state => state?.filterCater);
+  const {subData, foodTypeData} = useSelector(state => state?.filterCater);
   const route = useRoute();
 
   const dispatch = useDispatch();
@@ -48,20 +53,6 @@ function Branded() {
   useEffect(() => {
     dispatch(getUser());
   }, []);
-  const [segre, setSegre] = useState({
-    serving_types_filter: [],
-    service_types_filter: [],
-    occasions_filter: [],
-    price_ranges: [],
-    head_count_ranges: [],
-    order_by_filter: [],
-    cuisines_filter: [],
-    search_term: '',
-    food_types_filter: [],
-    subscription_types_filter: [],
-    meal_times_filter: [],
-    kitchen_types_filter: [],
-  });
 
   useEffect(() => {
     if (userDetails?.length && userDetails[0]?.formatted_address) {
@@ -91,7 +82,7 @@ function Branded() {
         city: userDetails[0]?.city,
         place_id: userDetails[0]?.place_id,
         pincode: userDetails[0]?.pincode,
-        area:userDetails[0]?.area
+        area: userDetails[0]?.area,
       };
 
       dispatch(setLocationres(location));
@@ -110,19 +101,26 @@ function Branded() {
         selected: e.selected,
       }));
       if (subscription_types_filter?.length) {
-        await dispatch(
-          getCaterersSearch({
-            filterKey: 'subscription',
-            filteredData: subscription_types_filter,
-            from: 'Caterers',
-            ssd: today,
-            sse: dateAfter7Days,
-            location: location,
-            segre,
-          }),
-        );
-        await dispatch(updateSubscriptions(result));
-
+        await updateSubscriptionFilter({
+          subscription_types_filter,
+          from: 'Caterers',
+          dispatch,
+        });
+        dispatch(updateSubscriptions(result))
+        dispatch(clearCaterers());
+        await setSearchHomeJson({
+          latitude: location?.latitude,
+          longitude: location?.longitude,
+          city: location?.city,
+          place_id: location?.place_id,
+          pincode: location?.pincode,
+          area: location?.area,
+          from: 'Caterers',
+          selectedStartDate: today,
+          selectedEndDate: dateAfter7Days,
+          foodTypeData,
+          subData: result,
+        });
         navigation.navigate('PageStack', {
           screen: 'SearchMain',
           params: {
@@ -133,30 +131,14 @@ function Branded() {
           },
         });
       }
-
-      // dispatch(
-      //   updateSearch({
-      //     location: location,
-      //     filterKey: 'subscription',
-      //     filterData: subscription_types_filter,
-      //     vendorType: 'Caterer',
-      //     startDate: today,
-      //     endDate: dateAfter7Days,
-      //     navigation,
-      //     from: 'Caterers',
-      //     updated_response: result,
-      //   }),
-      // );
     } catch (err) {
-      console.log('error in handleBranded');
+      console.log('error in handleBranded', err);
     } finally {
       setTimeout(() => {
         dispatch(startLoader(false));
       }, 1000);
     }
   };
-
-
 
   const renderItem = ({item}) => {
     return (
@@ -182,7 +164,10 @@ function Branded() {
           <Center>
             {item?.gallery_images?.['vendor-banner']?.length > 0 ? (
               <ImageBackground
-                source={{uri:item?.gallery_images?.['vendor-banner'][0].image_name[0]?.medium}}
+                source={{
+                  uri: item?.gallery_images?.['vendor-banner'][0].image_name[0]
+                    ?.medium,
+                }}
                 style={[styles.img]}
                 imageStyle={styles.imageStyle}
                 alt={item.name}

@@ -22,7 +22,7 @@ import AntIcon from 'react-native-vector-icons/Ionicons';
 import ThemeSepBtn from '../../../components/ThemeSepBtn';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {useDispatch, useSelector} from 'react-redux';
-import {clearFilter} from '../../Home/controllers/FilterMainController';
+import {clearFilter, getBudget, getHeadCount, getRatings, getService, getServing, getSort} from '../../Home/controllers/FilterMainController';
 import {
   handleBudget,
   handleChildrenCuisines,
@@ -34,7 +34,17 @@ import {
   handleServing,
   handleSort,
 } from '../../Home/controllers/FilterCommonController';
-import {handleSearchSegregation} from '../../Home/controllers/SearchController';
+import {
+  clearCaterers,
+  getCaterersSearch,
+  handleSearchSegregation,
+  updateFilterData,
+} from '../../Home/controllers/SearchController';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {setSearchHomeJson} from '../../Home/controllers/SearchCommonController';
+import moment from 'moment';
+import { getOccassions } from '../../Home/controllers/OccassionController';
+import { getCuisines } from '../../Home/controllers/ExploreCuisineController';
 
 export default function FiilterMain({navigation, route}) {
   const {address, ssd, sse, location, from} = route.params;
@@ -47,25 +57,9 @@ export default function FiilterMain({navigation, route}) {
   const [service, setService] = useState([]);
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState(-1);
-  const [rating,setRating]=useState([])
+  const [rating, setRating] = useState([]);
   const dispatch = useDispatch();
   const [sort, setSort] = useState([]);
-  const [segre, setSegre] = useState({
-    serving_types_filter: [],
-    service_types_filter: [],
-    occasions_filter: [],
-    price_ranges: [],
-    head_count_ranges: [],
-    order_by_filter: [],
-    cuisines_filter: [],
-    search_term: '',
-    food_types_filter: [],
-    subscription_types_filter: [],
-    meal_times_filter: [],
-    kitchen_types_filter: [],
-    ratings_filter:[]
-  });
-
   const {
     servingLoading,
     servingData,
@@ -82,11 +76,11 @@ export default function FiilterMain({navigation, route}) {
     sortLoading,
     sortData,
     sortError,
-    foodTypeData,
-    subData,
     ratingData,
     ratingError,
-    ratingLoading
+    ratingLoading,
+    foodTypeData,
+    subData,
   } = useSelector(state => state?.filterCater);
 
   const {loading, data, error} = useSelector(state => state?.occassion);
@@ -94,11 +88,30 @@ export default function FiilterMain({navigation, route}) {
   const cuisineData = cuisines_data?.data;
   const cuisineLoading = cuisines_data?.loading;
   const cuisineError = cuisines_data?.error;
-  const {caterersLoading, caterersData, caterersError} = useSelector(
-    state => state.location,
-  );
+  const {
+    caterersLoading,
+    caterersData,
+    caterersError,
+    filterData,
+    filterLoading,
+    filterError,
+  } = useSelector(state => state.location);
+  const [foodSortData, setFoodSortData] = useState([]);
+  const [subSortData, setSubSortData] = useState([]);
+  const [cuisineSortData, setCuisineSortData] = useState([]);
+  const [occasionSortData, setOccassionSortData] = useState([]);
 
-  const {mealData, kitchenData} = useSelector(state => state?.filterTiffin);
+  useEffect(()=>{
+    dispatch(getServing());
+    dispatch(getService({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
+    dispatch(getOccassions());
+    dispatch(getBudget());
+    dispatch(getCuisines());
+    dispatch(getHeadCount());
+    dispatch(getSort());
+    dispatch(getRatings());
+  },[])
+
   useEffect(() => {
     if (servingData?.length) {
       setServing(servingData);
@@ -121,25 +134,17 @@ export default function FiilterMain({navigation, route}) {
     if (sortData?.length) {
       setSort(sortData);
     }
-    if(ratingData?.length){
-      setRating(ratingData)
+    if (ratingData?.length) {
+      setRating(ratingData);
     }
+   
     (async () => {
-      await handleSearchSegregation({
-        setSegre,
-        foodTypeData,
-        serviceData,
-        servingData,
-        occasion,
-        headData,
-        sortData,
-        cuisines_data: cuisineData,
-        budgetData,
-        subData,
-        mealData,
-        kitchenData,
-        ratingData
-      });
+      let asyncData = await AsyncStorage.getItem('searchJson');
+      let parsed = JSON.parse(asyncData);
+      setFoodSortData(parsed?.food_types_filter);
+      setSubSortData(parsed?.subscription_types_filter);
+      setCuisineSortData(parsed?.cuisines_filter);
+      setOccassionSortData(parsed?.occasions_filter);
     })();
   }, [
     servingData,
@@ -149,14 +154,13 @@ export default function FiilterMain({navigation, route}) {
     cuisineData,
     headData,
     sortData,
-    ratingData
+    ratingData,
   ]);
   // =======SEARCH CUISINE========//
   const handleSearch = text => {
     setSearch(text);
   };
   useEffect(() => {
-
     let data = [...cuisineData];
     if (search?.length > 0) {
       let finalData = data.filter((e, i) => {
@@ -185,14 +189,53 @@ export default function FiilterMain({navigation, route}) {
           text: 'OK',
           onPress: async () => {
             await dispatch(clearFilter());
+            await setSearchHomeJson({
+              latitude: location?.latitude,
+              longitude: location?.longitude,
+              city: location?.city,
+              pincode: location?.pincode,
+              place_id: location?.place_id,
+              from,
+              selectedStartDate: ssd,
+              selectedEndDate: sse,
+              foodTypeData,
+              subData,
+              cuisines_filter: cuisineSortData,
+              occasions_filter: occasionSortData,
+            });
+            dispatch(updateFilterData());
+            let params = {
+              latitude: location?.latitude,
+              longitude: location?.longitude,
+              city: location?.city,
+              pincode: location?.pincode,
+              place_id: location?.place_id,
+              vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+              app_type: 'app',
+              start_date: moment(ssd).format('YYYY-MM-DD'),
+              end_date: moment(sse).format('YYYY-MM-DD'),
+              food_types_filter: foodSortData,
+              subscription_types_filter: subSortData,
+              cuisines_filter: cuisineSortData,
+              occasions_filter: occasionSortData,
+              search_term: '',
+              save_filter: 1,
+            };
+            dispatch(
+              getCaterersSearch({
+                params: {
+                  ...params,
+                  current_page: 1,
+                  limit: 5,
+                },
+              }),
+            );
             navigation.navigate('PageStack', {
               screen: 'SearchMain',
               params: {
                 from,
-                address,
                 ssd,
                 sse,
-                location,
               },
             });
           },
@@ -261,9 +304,11 @@ export default function FiilterMain({navigation, route}) {
                         sse,
                         location,
                         from: 'Caterers',
+                        subData: subSortData,
+                        foodTypeData: foodSortData,
+                        occassionData: occasionSortData,
+                        cuisineData: cuisineSortData,
                         dispatch,
-                        segre,
-                        setSegre,
                       });
                     }}>
                     <Flex
@@ -323,9 +368,11 @@ export default function FiilterMain({navigation, route}) {
                       sse,
                       location,
                       from: 'Caterers',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
                       dispatch,
-                      segre,
-                      setSegre,
                     });
                   }}>
                   <Flex direction="row" justify="space-between" align="center">
@@ -381,9 +428,11 @@ export default function FiilterMain({navigation, route}) {
                       sse,
                       location,
                       from: 'Caterers',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
                       dispatch,
-                      segre,
-                      setSegre,
                     });
                   }}
                   activeOpacity={0.7}>
@@ -490,9 +539,11 @@ export default function FiilterMain({navigation, route}) {
                           sse,
                           location,
                           from: 'Caterers',
+                          subData: subSortData,
+                          foodTypeData: foodSortData,
+                          occassionData: occasionSortData,
+                          cuisineData: cuisineSortData,
                           dispatch,
-                          segre,
-                          setSegre,
                         })
                       }>
                       <MaterialIcons
@@ -536,9 +587,11 @@ export default function FiilterMain({navigation, route}) {
                               sse,
                               location,
                               from: 'Caterers',
+                              subData: subSortData,
+                              foodTypeData: foodSortData,
+                              occassionData: occasionSortData,
+                              cuisineData: cuisineSortData,
                               dispatch,
-                              segre,
-                              setSegre,
                             });
                           }}>
                           <MaterialIcons
@@ -612,9 +665,11 @@ export default function FiilterMain({navigation, route}) {
                         sse,
                         location,
                         from: 'Caterers',
+                        subData: subSortData,
+                        foodTypeData: foodSortData,
+                        occassionData: occasionSortData,
+                        cuisineData: cuisineSortData,
                         dispatch,
-                        segre,
-                        setSegre,
                       });
                     }}>
                     <Flex
@@ -675,9 +730,11 @@ export default function FiilterMain({navigation, route}) {
                       sse,
                       location,
                       from: 'Caterers',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
                       dispatch,
-                      segre,
-                      setSegre,
                     });
                   }}>
                   <Flex direction="row" justify="space-between" align="center">
@@ -705,13 +762,7 @@ export default function FiilterMain({navigation, route}) {
           </View>
         </Card>
         {/* ========SORT BY========= */}
-        <Card
-          style={[
-            gs.mh5,
-            gs.pv10,
-            gs.mt15,
-            {backgroundColor: '#fff'},
-          ]}>
+        <Card style={[gs.mh5, gs.pv10, gs.mt15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By</Text>
           <Divider style={[gs.mv15]} />
           {sortLoading && (
@@ -737,9 +788,11 @@ export default function FiilterMain({navigation, route}) {
                       sse,
                       location,
                       from: 'Caterers',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
                       dispatch,
-                      segre,
-                      setSegre,
                     });
                   }}
                   key={i}>
@@ -763,8 +816,8 @@ export default function FiilterMain({navigation, route}) {
             </View>
           )}
         </Card>
-          {/* ========SORT BY RATINGS========= */}
-          <Card
+        {/* ========SORT BY RATINGS========= */}
+        <Card
           style={[
             gs.mh5,
             gs.pv10,
@@ -796,9 +849,11 @@ export default function FiilterMain({navigation, route}) {
                       sse,
                       location,
                       from: 'Caterers',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
                       dispatch,
-                      segre,
-                      setSegre,
                     });
                   }}
                   key={i}>
@@ -835,19 +890,48 @@ export default function FiilterMain({navigation, route}) {
               gs.fs13,
               {color: ts.secondary, fontFamily: ts.secondaryregular},
             ]}>
-            {caterersLoading ? (
+            {filterLoading ? (
               <Spinner color={from == 'Caterers' ? ts.secondary : ts.primary} />
-            ) : (
-              caterersData?.total_count
-            )}{' '}
-            matching Caterers
+            ) : filterData?.total_count >= 0 ? (
+              filterData?.total_count
+            ) : null}{' '}
+            {filterData?.total_count >= 0 ? ' matching Caterers' : null}
           </Text>
-          {caterersLoading ? (
+          {filterLoading ? (
             <ThemeSepBtn btntxt="Show results" themecolor={'#D3D3D3'} />
           ) : (
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => {
+              onPress={async () => {
+                if (filterData?.total_count) {
+                  let data = await AsyncStorage.getItem('searchFilterJson');
+                  await AsyncStorage.setItem('searchJson', data);
+                  dispatch(updateFilterData());
+                  let searchData = await JSON.parse(data);
+                  let params = searchData;
+                  dispatch(
+                    getCaterersSearch({
+                      params: {
+                        ...params,
+                        current_page: 1,
+                        limit: 5,
+                      },
+                    }),
+                  );
+                } else {
+                  let data = await AsyncStorage.getItem('searchJson');
+                  let searchData = await JSON.parse(data);
+                  let params = searchData;
+                  dispatch(
+                    getCaterersSearch({
+                      params: {
+                        ...params,
+                        current_page: 1,
+                        limit: 5,
+                      },
+                    }),
+                  );
+                }
                 navigation.navigate('PageStack', {
                   screen: 'SearchMain',
                   params: {

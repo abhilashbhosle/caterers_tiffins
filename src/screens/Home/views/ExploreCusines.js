@@ -7,7 +7,7 @@ import {Center, FlatList, Flex} from 'native-base';
 import {Card} from 'react-native-paper';
 import {ScaledSheet} from 'react-native-size-matters';
 import {shallowEqual, useDispatch, useSelector} from 'react-redux';
-import {getCuisines} from '../controllers/ExploreCuisineController';
+import {getCuisines, updateCuisine} from '../controllers/ExploreCuisineController';
 import CuisineSkel from '../../../components/skeletons/CuisineSkel';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {checkLocation, updateSearch} from '../controllers/HomeController';
@@ -17,6 +17,8 @@ import {
 } from '../controllers/SearchController';
 import {getCatererSearchService} from '../services/SearchService';
 import { startLoader } from '../../../redux/CommonSlicer';
+import { setSearchHomeJson } from '../controllers/SearchCommonController';
+import { showMessage } from 'react-native-flash-message';
 
 function ExploreCusines() {
   const route = useRoute();
@@ -33,20 +35,10 @@ function ExploreCusines() {
   useEffect(() => {
     dispatch(getCuisines());
   }, []);
-  const [segre, setSegre] = useState({
-    serving_types_filter: [],
-    service_types_filter: [],
-    occasions_filter: [],
-    price_ranges: [],
-    head_count_ranges: [],
-    order_by_filter: [],
-    cuisines_filter: [],
-    search_term: '',
-    food_types_filter: [],
-    subscription_types_filter: [],
-    meal_times_filter: [],
-    kitchen_types_filter: [],
-  });
+  const {
+    foodTypeData,
+    subData,
+  } = useSelector(state => state?.filterCater);
   const locationRes = useSelector(state => state.location.locationRes);
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
 
@@ -83,19 +75,22 @@ function ExploreCusines() {
             });
           });
         });
+
         if (temp?.length) {
-          await dispatch(
-            getCaterersSearch({
-              filterKey: 'cuisine',
-              filteredData: temp,
-              from: 'Caterers',
-              ssd: res.startData,
-              sse: res.endDate,
-              location: res.location,
-              segre,
-              updated_response: updatedData,
-            }),
-          );
+          await setSearchHomeJson({
+            latitude: res?.location?.latitude,
+            longitude: res?.location?.longitude,
+            city: res?.location?.city,
+            place_id: res?.location?.place_id,
+            pincode: res?.location?.pincode,
+            area: res?.location?.area,
+            from:"Caterers",
+            selectedStartDate:res?.startData,
+            selectedEndDate:res?.endDate,
+            foodTypeData,
+            subData,
+            cuisines_filter:JSON.stringify(temp)
+          });
         }
         await dispatch(setLocationres(res?.location));
         navigation.navigate('PageStack', {
@@ -108,19 +103,12 @@ function ExploreCusines() {
 
           },
         });
-        // dispatch(
-        //   updateSearch({
-        //     location: res?.location,
-        //     filterKey: 'cuisine',
-        //     filterData: temp,
-        //     vendorType: 'Caterer',
-        //     startDate: res?.startData,
-        //     endDate: res?.endDate,
-        //     navigation,
-        //     from: 'Caterers',
-        //     updated_response: updatedData,
-        //   }),
-        // );
+      }else{
+        showMessage({
+          message: "Couldn't load the results.",
+          description: 'Make sure you have location selectes.',
+          type: 'warning',
+        });
       }
     } catch (err) {
       console.log('error in handleCuisinePress', err);
