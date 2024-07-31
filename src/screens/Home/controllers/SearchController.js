@@ -135,8 +135,14 @@ export const handleSearchResults = ({
       {cancelable: false},
     );
   }
-  if (search?.length && selectedEndDate && selectedStartDate) {
+  if (search?.length && selectedEndDate && selectedStartDate && selectedLocation?.latitude) {
     flag = true;
+  }else{
+    showMessage({
+      message: "Couldn't Proceed.",
+      description: 'Entered search is invalid',
+      type: 'warning',
+    });
   }
   if (flag) {
     // console.log("selected location inside flag",selectedLocation)
