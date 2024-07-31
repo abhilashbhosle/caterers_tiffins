@@ -9,7 +9,7 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
+import React, {memo, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Center, Divider, Flex, Modal, Spinner, theme} from 'native-base';
 import {ScaledSheet} from 'react-native-size-matters';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -22,11 +22,15 @@ import AntIcons from 'react-native-vector-icons/AntDesign';
 import moment from 'moment';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
-import {getLocation} from '../../Onboarding/controllers/AuthController';
+import {
+  getLocation,
+  getUser,
+} from '../../Onboarding/controllers/AuthController';
 import {
   clearCaterers,
   clearSearch,
   getLocations,
+  getSearchVendors,
   handleSearchResults,
   setEdate,
   setEndFullDate,
@@ -72,6 +76,10 @@ function SearchBar({from, navigation, ssd, sse}) {
   const [selectedSearch, setSelectedSearch] = useState('');
   const [search, setSearch] = useState('');
   const dispatch = useDispatch();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [vendorId, setVendorId] = useState('');
+  const [userDetails,setUserDetails]=useState([])
+
 
   const [selectedLocation, setSelectedLocation] = useState({
     city: null,
@@ -81,9 +89,11 @@ function SearchBar({from, navigation, ssd, sse}) {
     place_id: null,
     area: null,
   });
-  const userDetails = useSelector(state => state.auth?.userInfo?.data);
+  const userDet = useSelector(state => state.auth?.userInfo?.data);
   const searchRes = useSelector(state => state.location?.searchRes);
   const locationRes = useSelector(state => state.location.locationRes);
+
+  useMemo(()=>{setUserDetails(userDet)},[userDet])
 
   useEffect(() => {
     if (searchRes) {
@@ -93,7 +103,7 @@ function SearchBar({from, navigation, ssd, sse}) {
       setSelectedLocation(locationRes);
     }
   }, [searchRes, locationRes]);
-  const {searchLoading, searchData, searchError} = useSelector(
+  const {vendorData, vendorLoading, vendorError} = useSelector(
     state => state.location,
   );
   const onDateChange = (date, type) => {
@@ -129,11 +139,32 @@ function SearchBar({from, navigation, ssd, sse}) {
 
   const handleOnChange = text => {
     setSearch(text);
-    handleSearch(text);
+    if (userDetails?.length > 0 && userDetails[0]?.latitude?.length) {
+      handleSearch(text);
+    } else {
+      dispatch(getUser());
+    }
   };
   const handleSearch = useCallback(
     debounce(text => {
-      dispatch(getLocations({data: text}));
+      let params = {
+        search_term: text,
+        order_by_filter: JSON.stringify([{id: 2, value: 'a_z'}]),
+        limit: 20,
+        current_page: 1,
+        latitude: userDetails?.length > 0 && userDetails[0]?.latitude,
+        longitude: userDetails?.length > 0 && userDetails[0]?.longitude,
+        vendor_type: from == 'Caterers' ? 'Caterer' : 'Vendor',
+        app_type: 'app',
+      };
+      if (text?.length>0 && (text!= userDetails[0]?.formatted_address)) {
+        console.log('entered inside the condition where', text);
+        dispatch(getSearchVendors({params}));
+        setSearchTerm(text);
+      } else {
+        dispatch(clearSearch());
+      }
+      // dispatch(getLocations({data: text}));
     }, 500),
     [],
   );
@@ -142,12 +173,13 @@ function SearchBar({from, navigation, ssd, sse}) {
     let tempData = e.formatted_address.split(',');
     setSelectedLocation({
       ...selectedLocation,
-      latitude: e.geometry.location.lat,
-      longitude: e.geometry.location.lng,
-      place_id: e.place_id,
-      city: tempData[tempData.length - 3].trim(),
-      area: tempData[0].trim(),
+      latitude: e.latitude,
+      longitude: e.latitude,
+      place_id: e?.place_id ? e.place_id : '',
+      city: e?.city,
+      area: e?.area,
     });
+    setVendorId(e?.id);
     setSearch(e.formatted_address);
     setSelectedSearch(e);
     dispatch(clearSearch());
@@ -190,6 +222,7 @@ function SearchBar({from, navigation, ssd, sse}) {
     dispatch(getMeal());
     dispatch(getKitchen());
     dispatch(getRatings());
+    dispatch(getUser());
   }, []);
 
   const {foodTypeData, subData} = useSelector(state => state?.filterCater);
@@ -272,7 +305,9 @@ function SearchBar({from, navigation, ssd, sse}) {
                   selectedStartDate,
                   selectedEndDate,
                   foodTypeData,
-                  subData
+                  subData,
+                  searchTerm:search!= userDetails[0]?.formatted_address? searchTerm:"",
+                  selected_vendor: search!= userDetails[0]?.formatted_address? vendorId:"",
                 });
                 handleSearchResults({
                   navigation,
@@ -286,7 +321,9 @@ function SearchBar({from, navigation, ssd, sse}) {
                   setSearch,
                   dispatch,
                   foodTypeData,
-                  subData
+                  subData,
+                  searchTerm:search!= userDetails[0]?.formatted_address? searchTerm:"",
+                  selected_vendor: search!= userDetails[0]?.formatted_address? vendorId:"",
                 });
               }}>
               <MaterialIcon
@@ -306,21 +343,35 @@ function SearchBar({from, navigation, ssd, sse}) {
         </View>
       </Flex>
       {/* ======SEARCH RESULTS========= */}
-      {searchData?.length > 0 &&
+      {vendorData?.vendors?.length > 0 &&
         search?.length > 0 &&
-        !searchLoading &&
-        !searchError && (
+        !vendorLoading &&
+        !vendorError && (
           <ScrollView style={styles.searchContainer}>
-            {searchData?.map((e, i) => (
+            {vendorData?.vendors?.map((e, i) => (
               <View key={i}>
                 <TouchableOpacity
                   activeOpacity={0.7}
                   onPress={() => {
                     handleSelectedSearch(e);
                   }}>
-                  <Text style={styles.loctxt} numberOfLines={2}>
-                    {e?.formatted_address}
+                  <Text style={styles.loctxt} numberOfLines={1}>
+                    {e?.catering_service_name}
                   </Text>
+                  {e?.area ? (
+                    <Text
+                      style={[
+                        {...styles.loctxt, color: ts.secondarytext},
+                        gs.fs12,
+                      ]}
+                      numberOfLines={1}>
+                      {e?.area}
+                      {e?.city ? (
+                        <Text numberOfLines={1}>, {e?.city}</Text>
+                      ) : null}
+                    </Text>
+                  ) : null}
+
                   <Divider
                     backgroundColor={
                       from == 'Caterers' ? ts.secondary : ts.primary
@@ -331,7 +382,7 @@ function SearchBar({from, navigation, ssd, sse}) {
             ))}
           </ScrollView>
         )}
-      {searchLoading && (
+      {vendorLoading && (
         <Center>
           <View style={{...styles.searchContainer}}>
             <Spinner color={ts.secondarytext} />

@@ -22,6 +22,26 @@ export const getLocationService = async searchText => {
     }
   }
 };
+//=======GET VENDOR SEARCH SERVICES=======//
+export const getSearchVendorsService = async ({params}) => {
+  try {
+    let token = await AsyncStorage.getItem('token');
+    let res = await axios.get(`${endpoints.baseUrl}search-vendors-list`, {
+      params,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error(error.message);
+    }
+  }
+};
 
 //=======GET CATERERS SEARCH SERVICES=======//
 export const getCatererSearchService = async ({params}) => {

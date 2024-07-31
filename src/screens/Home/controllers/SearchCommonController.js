@@ -15,6 +15,8 @@ export const setSearchHomeJson = async ({
   subData,
   cuisines_filter,
   occasions_filter,
+  searchTerm,
+  selected_vendor
 }) => {
   try {
     let food_types_filter = await foodTypeData.map(e => ({
@@ -26,7 +28,7 @@ export const setSearchHomeJson = async ({
       selected: e.selected,
     }));
     let params = {
-      search_term: '',
+      search_term: searchTerm?searchTerm:'',
       save_filter: 1,
       vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
       app_type: 'app',
@@ -41,6 +43,7 @@ export const setSearchHomeJson = async ({
       subscription_types_filter: JSON.stringify(subscription_types_filter),
       cuisines_filter: cuisines_filter?.length ? cuisines_filter : [],
       occasions_filter: occasions_filter?.length ? occasions_filter : [],
+      selected_vendor:selected_vendor
     };
     await AsyncStorage.setItem('searchJson', JSON.stringify(params));
   } catch (error) {

@@ -3,6 +3,7 @@ import {
   getCatererSearchService,
   getLocationService,
   getSearchFilterService,
+  getSearchVendorsService,
 } from '../services/SearchService';
 import {showMessage} from 'react-native-flash-message';
 import {Alert} from 'react-native';
@@ -33,6 +34,19 @@ export const getLocationData = createAsyncThunk(
     }
   },
 );
+
+// ========SEARCH VENDORS========//
+export const getSearchVendors = createAsyncThunk(
+  'getSearchVendors',
+  async ({params}, {dispatch}) => {
+    try {
+      const res = await getSearchVendorsService({params});
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
 //======SEARCH RESULTS=========//
 export const handleSearchResults = ({
   navigation,
@@ -47,7 +61,9 @@ export const handleSearchResults = ({
   dispatch,
   locationData,
   foodTypeData,
-  subData
+  subData,
+  searchTerm,
+  selected_vendor
 }) => {
   let flag = false;
   if (!selectedStartDate || !selectedEndDate) {
@@ -109,7 +125,9 @@ export const handleSearchResults = ({
               selectedStartDate,
               selectedEndDate,
               foodTypeData,
-              subData
+              subData,
+              searchTerm:"",
+              selected_vendor:""
             });
           },
         },
@@ -239,14 +257,10 @@ export const handleSearchSegregation = async ({
 // ========SEARCH=========//
 export const getCaterersSearch = createAsyncThunk(
   'getCaterersSearch',
-  async (
-    {
-      params,
-    },
-    {dispatch},
-  ) => {
+  async ({params}, {dispatch}) => {
+    
     try {
-      // console.log("params inside the catersearch",params)
+      console.log("params inside the catersearch",params)
       const res = await getCatererSearchService({params});
       return res.data;
     } catch (error) {
@@ -259,12 +273,7 @@ export const getCaterersSearch = createAsyncThunk(
 //====SEARCH FILTERS=======//
 export const getSearchFilters = createAsyncThunk(
   'getSearchFilters',
-  async (
-    {
-      params,
-    },
-    {dispatch},
-  ) => {
+  async ({params}, {dispatch}) => {
     try {
       const res = await getSearchFilterService({params});
       return res.data;
@@ -325,20 +334,24 @@ const searchSlice = createSlice({
     locationLoading: false,
     locationData: [],
     locationError: null,
-    filterData:[],
-    filterLoading:false,
-    filterError:null
+    filterData: [],
+    filterLoading: false,
+    filterError: null,
+    vendorData: [],
+    vendorLoading: false,
+    vendorError: null,
   },
   reducers: {
     clearSearch: (state, action) => {
       state.searchData = [];
       state.locationData = [];
+      state.vendorData=[]
     },
     clearCaterers: (state, action) => {
       state.caterersData = [];
     },
-    updateFilterData:(state,action)=>{
-      state.filterData=[];
+    updateFilterData: (state, action) => {
+      state.filterData = [];
     },
     setSearchRes: (state, action) => {
       state.searchRes = action.payload;
@@ -408,6 +421,18 @@ const searchSlice = createSlice({
       .addCase(getSearchFilters.rejected, (state, action) => {
         state.filterLoading = false;
         state.filterError = action.error;
+      })
+      .addCase(getSearchVendors.pending, (state, action) => {
+        state.vendorLoading = true;
+        state.vendorError = null;
+      })
+      .addCase(getSearchVendors.fulfilled, (state, action) => {
+        state.vendorLoading = false;
+        state.vendorData = action.payload;
+      })
+      .addCase(getSearchVendors.rejected, (state, action) => {
+        state.vendorLoading = false;
+        state.vendorError = action.error;
       });
   },
 });
@@ -418,6 +443,6 @@ export const {
   setLocationres,
   setSelectedLocRes,
   segreFoodType,
-  updateFilterData
+  updateFilterData,
 } = searchSlice.actions;
 export default searchSlice.reducer;
