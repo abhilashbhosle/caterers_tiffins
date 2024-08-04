@@ -28,6 +28,7 @@ function Badges({from, subType, setSubType, setPage,setVendorData}) {
     setData(updatedFoodTypes);
     return updatedFoodTypes;
   };
+  // ===HANDLING SUBSCRIPTIONS=====//
   const handleSubTypes = async (index) => {
     let data = [...subType];
     let result = await handleSelection(data, setSubType, index);
