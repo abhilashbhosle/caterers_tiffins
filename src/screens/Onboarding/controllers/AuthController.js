@@ -146,7 +146,6 @@ export const getLocation = createAsyncThunk(
 		}) 
     
 		}
-		console.log('res in get location',res)
 		return res;
 	  } catch (error) {
 		return error;

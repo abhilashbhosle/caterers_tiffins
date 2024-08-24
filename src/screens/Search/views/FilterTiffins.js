@@ -18,7 +18,14 @@ import {ScaledSheet} from 'react-native-size-matters';
 import ThemeSepBtn from '../../../components/ThemeSepBtn';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {useDispatch, useSelector} from 'react-redux';
-import {clearFilter, getBudget, getHeadCount, getRatings, getService, getSort} from '../../Home/controllers/FilterMainController';
+import {
+  clearFilter,
+  getBudget,
+  getHeadCount,
+  getRatings,
+  getService,
+  getSort,
+} from '../../Home/controllers/FilterMainController';
 import AntIcon from 'react-native-vector-icons/Ionicons';
 import FontistoIcon from 'react-native-vector-icons/Fontisto';
 import {
@@ -31,12 +38,19 @@ import {
   handleChildrenCuisines,
   handleRating,
 } from '../../Home/controllers/FilterCommonController';
-import {getCaterersSearch, handleSearchSegregation, updateFilterData} from '../../Home/controllers/SearchController';
+import {
+  getCaterersSearch,
+  handleSearchSegregation,
+  updateFilterData,
+} from '../../Home/controllers/SearchController';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getOccassions } from '../../Home/controllers/OccassionController';
-import { getCuisines } from '../../Home/controllers/ExploreCuisineController';
-import { getKitchen, getMeal } from '../../Home/controllers/FilterTiffinController';
-import { setSearchHomeJson } from '../../Home/controllers/SearchCommonController';
+import {getOccassions} from '../../Home/controllers/OccassionController';
+import {getCuisines} from '../../Home/controllers/ExploreCuisineController';
+import {
+  getKitchen,
+  getMeal,
+} from '../../Home/controllers/FilterTiffinController';
+import {setSearchHomeJson} from '../../Home/controllers/SearchCommonController';
 import moment from 'moment';
 
 export default function FilterTiffins({navigation, route}) {
@@ -63,7 +77,7 @@ export default function FilterTiffins({navigation, route}) {
   const cuisines_data = useSelector(state => state?.cuisine);
   const cuisineData = cuisines_data?.data;
   const cuisineLoading = cuisines_data?.loading;
-  const [rating,setRating]=useState([])
+  const [rating, setRating] = useState([]);
   const cuisineError = cuisines_data?.error;
   const {
     sortLoading,
@@ -80,12 +94,14 @@ export default function FilterTiffins({navigation, route}) {
     ratingError,
     ratingLoading,
   } = useSelector(state => state?.filterCater);
-  const {caterersLoading, caterersData, caterersError, 
+  const {
+    caterersLoading,
+    caterersData,
+    caterersError,
     filterData,
     filterLoading,
-    filterError,} = useSelector(
-    state => state.location,
-  );
+    filterError,
+  } = useSelector(state => state.location);
 
   const {headLoading, headData, headError} = useSelector(
     state => state?.filterCater,
@@ -104,7 +120,6 @@ export default function FilterTiffins({navigation, route}) {
     dispatch(getKitchen());
     dispatch(getRatings());
   }, []);
-  
 
   useEffect(() => {
     if (serviceData?.length) {
@@ -125,10 +140,10 @@ export default function FilterTiffins({navigation, route}) {
     if (sortData?.length) {
       setSort(sortData);
     }
-    if(ratingData?.length){
-      setRating(ratingData)
+    if (ratingData?.length) {
+      setRating(ratingData);
     }
-    
+
     (async () => {
       let asyncData = await AsyncStorage.getItem('searchJson');
       let parsed = JSON.parse(asyncData);
@@ -146,7 +161,7 @@ export default function FilterTiffins({navigation, route}) {
     sortData,
     serviceData,
     budgetData,
-    ratingData
+    ratingData,
   ]);
   // =======SEARCH CUISINE========//
   const handleSearch = text => {
@@ -202,7 +217,7 @@ export default function FilterTiffins({navigation, route}) {
               city: location?.city,
               pincode: location?.pincode,
               place_id: location?.place_id,
-              vendor_type:'Tiffin',
+              vendor_type: 'Tiffin',
               app_type: 'app',
               start_date: moment(ssd).format('YYYY-MM-DD'),
               end_date: moment(sse).format('YYYY-MM-DD'),
@@ -236,7 +251,6 @@ export default function FilterTiffins({navigation, route}) {
     );
   };
 
-
   return (
     <ScreenWrapper>
       <ThemeHeaderWrapper
@@ -250,85 +264,60 @@ export default function FilterTiffins({navigation, route}) {
         enableOnAndroid={true}
         showsVerticalScrollIndicator={false}
         style={[{flex: 1, backgroundColor: '#fff'}, gs.ph10, gs.pv20]}>
-        {/* ====TIFFIN SERVICE TYPE====== */}
+        {/* ========SORT BY RATINGs========= */}
         <Card style={[gs.mh5, gs.pv10, gs.mb15, {backgroundColor: '#fff'}]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>
-            Cater Service Type
-          </Text>
+          <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By Rating</Text>
           <Divider style={[gs.mv15]} />
-          <Flex
-            direction="row"
-            alignItems="center"
-            justifyContent="space-around">
-            {serviceLoading && (
-              <Center>
-                <Spinner color={ts.primary} />
-              </Center>
-            )}
-            {serviceError?.message && (
-              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                No Service type found
-              </Text>
-            )}
-            {!serviceLoading &&
-              !serviceError &&
-              service?.map((e, i) => (
-                <Flex justify="center" alignItems="center" key={i}>
-                  <Image
-                    alt="delivery"
-                    source={
-                      (e?.name == 'Delivery' &&
-                        require('../../../assets/Search/delivery.png')) ||
-                      (e?.name == 'Takeaway' &&
-                        require('../../../assets/Search/takeaway.png')) ||
-                      (e?.name == 'Dine In' &&
-                        require('../../../assets/Search/dinein.png'))
-                    }
-                    style={styles.img}
-                  />
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      handleService({
-                        index: i,
-                        setService,
-                        service,
-                        ssd,
-                        sse,
-                        location,
-                        from: 'Tiffins',
-                        subData: subSortData,
-                        foodTypeData: foodSortData,
-                        occassionData: occasionSortData,
-                        cuisineData: cuisineSortData,
-                        dispatch,
-                      });
-                    }}>
-                    <Flex
-                      direction="row"
-                      alignItems="center"
-                      style={[gs.mt10, gs.mb5]}>
-                      <MaterialIcons
-                        name={
-                          e.selected == 0 ? 'circle-outline' : 'circle-slice-8'
-                        }
-                        style={[
-                          gs.fs20,
-                          gs.mr3,
-                          {
-                            color:
-                              e.selected == 1 ? ts.primary : ts.secondarytext,
-                          },
-                        ]}
-                      />
-                      <Text style={[styles.servicetxt, gs.fs13, gs.ml5]}>
-                        {e.name}
-                      </Text>
-                    </Flex>
-                  </TouchableOpacity>
-                </Flex>
+          {ratingLoading && (
+            <Center>
+              <Spinner color={ts.secondary} />
+            </Center>
+          )}
+          {ratingError?.message && (
+            <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+              No Ratings found
+            </Text>
+          )}
+          {!ratingLoading && !ratingError && rating?.length > 0 && (
+            <View style={[gs.ph10]}>
+              {rating.map((e, i) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    handleRating({
+                      index: i,
+                      setRating,
+                      rating,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Tiffins',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
+                      dispatch,
+                    });
+                  }}
+                  key={i}>
+                  <Flex direction="row" justify="space-between" align="center">
+                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                      {e.rating}
+                    </Text>
+                    <MaterialIcons
+                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
+                      style={[
+                        gs.fs20,
+                        gs.mr3,
+                        {
+                          color: e.selected == 1 ? ts.primary : ts.alternate,
+                        },
+                      ]}
+                    />
+                  </Flex>
+                </TouchableOpacity>
               ))}
-          </Flex>
+            </View>
+          )}
         </Card>
         {/* =======HEAD COUNT========= */}
         <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
@@ -391,6 +380,7 @@ export default function FilterTiffins({navigation, route}) {
               ))}
           </View>
         </Card>
+
         {/* ======CHOOSE CUISINE======= */}
         <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>Choose Cuisine</Text>
@@ -551,6 +541,86 @@ export default function FilterTiffins({navigation, route}) {
               ))}
           </View>
         </Card>
+        {/* ====TIFFIN SERVICE TYPE====== */}
+        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
+          <Text style={[styles.heading, gs.fs15, gs.pl15]}>
+            Cater Service Type
+          </Text>
+          <Divider style={[gs.mv15]} />
+          <Flex
+            direction="row"
+            alignItems="center"
+            justifyContent="space-around">
+            {serviceLoading && (
+              <Center>
+                <Spinner color={ts.primary} />
+              </Center>
+            )}
+            {serviceError?.message && (
+              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                No Service type found
+              </Text>
+            )}
+            {!serviceLoading &&
+              !serviceError &&
+              service?.map((e, i) => (
+                <Flex justify="center" alignItems="center" key={i}>
+                  <Image
+                    alt="delivery"
+                    source={
+                      (e?.name == 'Delivery' &&
+                        require('../../../assets/Search/delivery.png')) ||
+                      (e?.name == 'Takeaway' &&
+                        require('../../../assets/Search/takeaway.png')) ||
+                      (e?.name == 'Dine In' &&
+                        require('../../../assets/Search/dinein.png'))
+                    }
+                    style={styles.img}
+                  />
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      handleService({
+                        index: i,
+                        setService,
+                        service,
+                        ssd,
+                        sse,
+                        location,
+                        from: 'Tiffins',
+                        subData: subSortData,
+                        foodTypeData: foodSortData,
+                        occassionData: occasionSortData,
+                        cuisineData: cuisineSortData,
+                        dispatch,
+                      });
+                    }}>
+                    <Flex
+                      direction="row"
+                      alignItems="center"
+                      style={[gs.mt10, gs.mb5]}>
+                      <MaterialIcons
+                        name={
+                          e.selected == 0 ? 'circle-outline' : 'circle-slice-8'
+                        }
+                        style={[
+                          gs.fs20,
+                          gs.mr3,
+                          {
+                            color:
+                              e.selected == 1 ? ts.primary : ts.secondarytext,
+                          },
+                        ]}
+                      />
+                      <Text style={[styles.servicetxt, gs.fs13, gs.ml5]}>
+                        {e.name}
+                      </Text>
+                    </Flex>
+                  </TouchableOpacity>
+                </Flex>
+              ))}
+          </Flex>
+        </Card>
         {/* ======MEAL TIME======= */}
         <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>
@@ -671,13 +741,7 @@ export default function FilterTiffins({navigation, route}) {
           </View>
         </Card>
         {/* ========SORT BY========= */}
-        <Card
-          style={[
-            gs.mh5,
-            gs.pv10,
-            gs.mt15,
-            {backgroundColor: '#fff'},
-          ]}>
+        <Card style={[gs.mh5, gs.pv10, gs.mt15, {backgroundColor: '#fff',marginBottom:80}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By</Text>
           <Divider style={[gs.mv15]} />
           {sortLoading && (
@@ -731,67 +795,6 @@ export default function FilterTiffins({navigation, route}) {
             </View>
           )}
         </Card>
-        {/* ========SORT BY RATINGs========= */}
-        <Card
-          style={[
-            gs.mh5,
-            gs.pv10,
-            gs.mt15,
-            {backgroundColor: '#fff', marginBottom: 80},
-          ]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By Rating</Text>
-          <Divider style={[gs.mv15]} />
-          {ratingLoading && (
-            <Center>
-              <Spinner color={ts.secondary} />
-            </Center>
-          )}
-          {ratingError?.message && (
-            <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-              No Ratings found
-            </Text>
-          )}
-          {!ratingLoading && !ratingError && rating?.length > 0 && (
-            <View style={[gs.ph10]}>
-              {rating.map((e, i) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    handleRating({
-                      index: i,
-                      setRating,
-                      rating,
-                      ssd,
-                      sse,
-                      location,
-                      from: 'Tiffins',
-                      subData: subSortData,
-                      foodTypeData: foodSortData,
-                      occassionData: occasionSortData,
-                      cuisineData: cuisineSortData,
-                      dispatch,
-                    });
-                  }}
-                  key={i}>
-                  <Flex direction="row" justify="space-between" align="center">
-                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                      {e.rating}
-                    </Text>
-                    <MaterialIcons
-                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
-                      style={[
-                        gs.fs20,
-                        gs.mr3,
-                        {
-                          color: e.selected == 1 ? ts.primary : ts.alternate,
-                        },
-                      ]}
-                    />
-                  </Flex>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-        </Card>
       </KeyboardAwareScrollView>
       <Card
         style={[{borderRadius: 0, backgroundColor: '#fff'}, gs.ph15, gs.pb10]}>
@@ -807,9 +810,9 @@ export default function FilterTiffins({navigation, route}) {
             ]}>
             {filterLoading ? (
               <Spinner color={from == 'Caterers' ? ts.secondary : ts.primary} />
-            ) : (
-              filterData?.total_count>=0?filterData?.total_count:null
-            )}{' '}
+            ) : filterData?.total_count >= 0 ? (
+              filterData?.total_count
+            ) : null}{' '}
             {filterData?.total_count >= 0 ? ' matching Tiffins' : null}
           </Text>
           {filterLoading ? (
@@ -817,14 +820,14 @@ export default function FilterTiffins({navigation, route}) {
           ) : (
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={async() => {
+              onPress={async () => {
                 if (filterData?.total_count) {
                   let data = await AsyncStorage.getItem('searchFilterJson');
                   await AsyncStorage.setItem('searchJson', data);
                   dispatch(updateFilterData());
                   let searchData = await JSON.parse(data);
                   let params = searchData;
-                  console.log("search data",searchData)
+                  console.log('search data', searchData);
                   dispatch(
                     getCaterersSearch({
                       params: {

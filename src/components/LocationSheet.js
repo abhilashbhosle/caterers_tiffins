@@ -46,6 +46,7 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
   useEffect(() => {
     dispatch(getUser());
   }, []);
+
   useEffect(() => {
     if (userDetails?.length > 0 && userDetails[0]?.formatted_address) {
       setLocation(userDetails[0]?.formatted_address);
@@ -60,7 +61,7 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
   const handleSearch = useCallback(
     debounce(text => {
       dispatch(getLocationData({data: text}));
-    }, 1000),
+    }, 200),
     [],
   );
   const handleSelectedSearch = async e => {
@@ -71,6 +72,7 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
       longitude: e.geometry.location.lng,
       dispatch,
       from: 'internal',
+      formatted_address:e.formatted_address
     });
     setTimeout(() => {
       dispatch(getUser());
@@ -81,7 +83,6 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
   const checkLocation = () => {
     dispatch(getLocation({navigation, from: 'internal'}));
   };
-  console.log(location);
   return (
     <Actionsheet isOpen={locSheetOpen} onClose={handleClose}>
       <Actionsheet.Content style={[{height: height / 1.3}]}>

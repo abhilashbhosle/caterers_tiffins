@@ -19,6 +19,7 @@ function SearchList({
   location,
   setVendorData,
   setFirstItemVisible,
+  firstItemVisible
 }) {
   let theme = from === 'Caterers' ? ts.secondary : ts.primary;
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -91,17 +92,18 @@ function SearchList({
   const debouncedSetFirstItemVisible = useCallback(
     debounce(visible => {
       setFirstItemVisible(visible);
-    }, 100), // Adjust the debounce delay as needed
-    [],
+    }, 400), // Increased debounce delay
+    [firstItemVisible],
   );
 
-  const onViewableItemsChanged = ({viewableItems}) => {
+
+  const onViewableItemsChanged = useCallback(({viewableItems}) => {
     if (viewableItems.length > 0 && viewableItems[0].index === 0) {
       debouncedSetFirstItemVisible(true);
     } else {
       debouncedSetFirstItemVisible(false);
     }
-  };
+  }, [debouncedSetFirstItemVisible]);
 
   const viewabilityConfig = {
     itemVisiblePercentThreshold: 50,
@@ -114,13 +116,14 @@ function SearchList({
         renderItem={
           from === 'Caterers' ? renderCateringList : renderTiffinsList
         }
+        removeClippedSubviews={true}
         onScroll={Animated.event(
           [
             {
               nativeEvent: {contentOffset: {y: scrollY}},
             },
           ],
-          {useNativeDriver: true},
+          {useNativeDriver: false},
         )}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[

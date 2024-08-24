@@ -6,6 +6,7 @@ import {
   Platform,
   StatusBar,
   TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
@@ -23,7 +24,10 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {useFocusEffect} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {clearCaterers, getCaterersSearch} from '../../Home/controllers/SearchController';
+import {
+  clearCaterers,
+  getCaterersSearch,
+} from '../../Home/controllers/SearchController';
 import {clearFilterService} from '../../Home/services/FilterMainService';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -48,6 +52,8 @@ export default function SearchMain({route, navigation}) {
   const {caterersLoading, caterersData, caterersError} = useSelector(
     state => state.location,
   );
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
   const location = useSelector(state => state.location.locationRes);
   useFocusEffect(
     useCallback(() => {
@@ -100,6 +106,27 @@ export default function SearchMain({route, navigation}) {
     }
   }, [caterersData]);
 
+  useMemo(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      },
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      },
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, [Keyboard]);
+
   const fetchMoreData = () => {
     if (vendorData?.length < total) {
       if (vendorData?.length == 0) {
@@ -147,10 +174,6 @@ export default function SearchMain({route, navigation}) {
     setVendorData([]);
     setPage(1);
   };
-
-  // console.log('vendordata', vendorData);
-  // console.log('page', page);
-  // console.log('caterersData', caterersData);
   return (
     <ScreenWrapper>
       <View
@@ -180,7 +203,7 @@ export default function SearchMain({route, navigation}) {
         </SafeAreaView>
       </View>
       {/* ========TOP SELECTOR============ */}
-      {firstItemVisible ? (
+      {firstItemVisible && !keyboardVisible ? (
         <Flex
           style={[{width, backgroundColor: '#fff'}, gs.ph10, gs.pt15]}
           direction="row"
@@ -246,9 +269,9 @@ export default function SearchMain({route, navigation}) {
           </TouchableOpacity>
           <TouchableWithoutFeedback
             onPress={() => {
-              setPage(1)
-              setVendorData([])
-              dispatch(clearCaterers())
+              setPage(1);
+              setVendorData([]);
+              dispatch(clearCaterers());
               from == 'Caterers'
                 ? navigation.navigate('PageStack', {
                     screen: 'FilterMain',
@@ -284,7 +307,7 @@ export default function SearchMain({route, navigation}) {
       ) : null}
 
       {/* ========SORTING BY TYPES========= */}
-      {firstItemVisible ? (
+      {firstItemVisible && !keyboardVisible ? (
         <Badges
           from={from}
           subType={subType}
@@ -295,36 +318,41 @@ export default function SearchMain({route, navigation}) {
       ) : null}
 
       {/* ========SEARCH CARDS======== */}
-      <View style={[{paddingHorizontal: 5, backgroundColor: '#fff'}]}>
-        <Text
-          style={[
-            gs.fs15,
-            {fontFamily: ts.secondarymedium, color: '#555'},
-            gs.fs13,
-          ]}
-          numberOfLines={1}>
-          {from == 'Caterers'
-            ? `${
-                location?.area ? location?.area : location?.city
-              }: ${total} Caterers found in ${
-                location?.area ? location?.area : ''
-              }${location?.area ? ',' : ''} ${location?.city}`
-            : `${
-                location?.area ? location?.area : location?.city
-              }: ${total} Tiffins found in ${
-                location?.area ? location?.area : ''
-              }${location?.area ? ',' : ''} ${location?.city}`}
-        </Text>
-      </View>
-      <SearchList
-        from={from}
-        fetchMoreData={fetchMoreData}
-        renderFooter={renderFooter}
-        vendorData={vendorData}
-        setVendorData={setVendorData}
-        location={location}
-        setFirstItemVisible={setFirstItemVisible}
-      />
+      {!keyboardVisible ? (
+        <>
+          <View style={[{paddingHorizontal: 5, backgroundColor: '#fff'}]}>
+            <Text
+              style={[
+                gs.fs15,
+                {fontFamily: ts.secondarymedium, color: '#555'},
+                gs.fs13,
+              ]}
+              numberOfLines={1}>
+              {from == 'Caterers'
+                ? `${
+                    location?.area ? location?.area : location?.city
+                  }: ${total} Caterers found in ${
+                    location?.area ? location?.area : ''
+                  }${location?.area ? ',' : ''} ${location?.city}`
+                : `${
+                    location?.area ? location?.area : location?.city
+                  }: ${total} Tiffins found in ${
+                    location?.area ? location?.area : ''
+                  }${location?.area ? ',' : ''} ${location?.city}`}
+            </Text>
+          </View>
+          <SearchList
+            from={from}
+            fetchMoreData={fetchMoreData}
+            renderFooter={renderFooter}
+            vendorData={vendorData}
+            setVendorData={setVendorData}
+            location={location}
+            setFirstItemVisible={setFirstItemVisible}
+            firstItemVisible={firstItemVisible}
+          />
+        </>
+      ) : null}
     </ScreenWrapper>
   );
 }
@@ -333,5 +361,6 @@ const styles = ScaledSheet.create({
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
     minHeight: Platform.OS == 'ios' ? '150@ms' : '150@ms',
+    paddingBottom: 20,
   },
 });

@@ -35,7 +35,7 @@ function SearchCaterersCard({item, from, location}) {
             params: {
               branch_id: item?.id,
               vendor_id: item?.vendor_id,
-              location:location
+              location: location,
             },
           });
           // console.log(item)
@@ -56,8 +56,7 @@ function SearchCaterersCard({item, from, location}) {
                   colors={['#0004', 'transparent']}
                   start={{x: 0.0, y: 0.0}}
                   end={{x: 0.0, y: 1.0}}
-                  style={[gs.br10]}
-                  >
+                  style={[gs.br10]}>
                   <Flex direction="row" style={[gs.p5]} align="center">
                     <TouchableOpacity
                       style={styles.likecontainer}
@@ -116,8 +115,7 @@ function SearchCaterersCard({item, from, location}) {
                   colors={['#0004', 'transparent']}
                   start={{x: 0.0, y: 0.0}}
                   end={{x: 0.0, y: 1.0}}
-                  style={[gs.br10]}
-                  >
+                  style={[gs.br10]}>
                   <Flex direction="row" style={[gs.p5]} align="center">
                     <TouchableOpacity
                       style={styles.likecontainer}
@@ -189,21 +187,26 @@ function SearchCaterersCard({item, from, location}) {
                       source={require('../../../assets/Common/veg.png')}
                       style={styles.foodTypeimg}
                     />
-                  ) : (
+                  ) : e == 'Non Veg' ? (
                     <Image
                       source={require('../../../assets/Common/nonveg.png')}
                       style={styles.foodTypeimg}
                     />
-                  )}
+                  ) : null}
                   <Text
                     style={[
                       gs.fs11,
                       {
-                        color: e == 'Veg' ? '#266920' : ts.accent4,
+                        color:
+                          e == 'Veg'
+                            ? '#266920'
+                            : e == 'Non Veg'
+                            ? ts.accent4
+                            : ts.primarytext,
                         fontFamily: ts.secondaryregular,
                       },
                     ]}>
-                    {e}{' '}
+                    {e!=="All"?e:null}{' '}
                   </Text>
                 </Flex>
               ))}
@@ -211,24 +214,21 @@ function SearchCaterersCard({item, from, location}) {
             <Flex direction="row" align="center">
               {/* <Text style={[styles.foodtype, gs.fs11]}>Cuisines : </Text> */}
               <Text numberOfLines={1}>
-                {item?.cuisines?.slice(0, 2)?.map((e, i) => (
+                
+                {item?.cuisines?.length>2 && item?.cuisines?.slice(0, 2)?.map((e, i) => (
                   <Text style={[styles.cuisine]} key={i}>
                     {e} {'|'}{' '}
+                  </Text>
+                ))}
+                 {item?.cuisines?.length<=2 && item?.cuisines?.slice(0, 2)?.map((e, i) => (
+                  <Text style={[styles.cuisine]} key={i}>
+                    {e} {item?.cuisines?.length>1 && i<1?'|':" "}{' '}
                   </Text>
                 ))}
                 {item?.cuisines?.length > 2 && '..'}
               </Text>
             </Flex>
-            {/* <Flex direction="row" align="center">
-              <Text style={[styles.foodtype, gs.fs11]}>
-                Min. & Max. order:{' '}
-              </Text>
-
-              <Text style={[styles.cuisine]}>
-                {item?.minimum_quantity ? item.minimum_quantity : 0} -{' '}
-                {item?.maximum_capacity ? item.maximum_capacity : 0}
-              </Text>
-            </Flex> */}
+          
             <Flex direction="row" align="center" style={[gs.mt8]}>
               {item?.serving_types?.map((e, i) => (
                 <View
@@ -237,7 +237,7 @@ function SearchCaterersCard({item, from, location}) {
                     {
                       backgroundColor:
                         from == 'Caterers'
-                          ? 'rgba(195, 51, 50,0.4 )'
+                          ? '#c3323227'
                           : ts.primary,
                       justifyContent: 'center',
                       alignItems: 'center',
@@ -298,7 +298,7 @@ const styles = ScaledSheet.create({
   },
   img: {
     height: '170@ms',
-    borderRadius:'10@ms',
+    borderRadius: '10@ms',
   },
   buffeticon: {
     height: '30@ms',

@@ -180,7 +180,7 @@ function SearchBar({from, navigation, ssd, sse}) {
       area: e?.area,
     });
     setVendorId(e?.id);
-    setSearch(e.formatted_address);
+    setSearch(e.catering_service_name);
     setSelectedSearch(e);
     dispatch(clearSearch());
   };
@@ -276,7 +276,7 @@ function SearchBar({from, navigation, ssd, sse}) {
                 gs.fs11,
                 gs.ph10,
               ]}
-              placeholder="Search"
+              placeholder={from=="Caterers"? "Search Caterers...":"Search Tiffins..."}
               placeholderTextColor="#57636c"
               value={search}
               onChangeText={text => handleOnChange(text)}
@@ -547,6 +547,5 @@ const styles = ScaledSheet.create({
     fontSize: '14@ms',
     color: ts.primarytext,
     fontFamily: ts.secondaryregular,
-    marginVertical: '5@ms',
   },
 });

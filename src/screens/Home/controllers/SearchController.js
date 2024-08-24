@@ -63,7 +63,7 @@ export const handleSearchResults = ({
   foodTypeData,
   subData,
   searchTerm,
-  selected_vendor
+  selected_vendor,
 }) => {
   let flag = false;
   if (!selectedStartDate || !selectedEndDate) {
@@ -83,61 +83,67 @@ export const handleSearchResults = ({
     return;
   }
   if (!search && userDetails[0]?.city?.length > 0) {
-    Alert.alert(
-      'No Search Data Found.',
-      'Do you want to use your current location for searching?',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => {},
-        },
-        {
-          text: 'OK',
-          onPress: async () => {
-            setSearch(userDetails[0]?.formatted_address);
-            setSelectedLocation({
-              ...selectedLocation,
-              latitude: userDetails[0]?.latitude,
-              longitude: userDetails[0]?.longitude,
-              city: userDetails[0]?.city,
-              place_id: userDetails[0]?.place_id,
-              pincode: userDetails[0]?.pincode,
-              area: userDetails[0]?.area,
-            });
-            dispatch(
-              setLocationres({
-                latitude: userDetails[0]?.latitude,
-                longitude: userDetails[0]?.longitude,
-                city: userDetails[0]?.city,
-                place_id: userDetails[0]?.place_id,
-                pincode: userDetails[0]?.pincode,
-                area: userDetails[0]?.area,
-              }),
-            );
-            await setSearchHomeJson({
-              latitude: userDetails[0]?.latitude,
-              longitude: userDetails[0]?.longitude,
-              city: userDetails[0]?.city,
-              place_id: userDetails[0]?.place_id,
-              pincode: userDetails[0]?.pincode,
-              area: userDetails[0]?.area,
-              from,
-              selectedStartDate,
-              selectedEndDate,
-              foodTypeData,
-              subData,
-              searchTerm:"",
-              selected_vendor:""
-            });
-          },
-        },
-      ],
-      {cancelable: false},
+    setSearch(userDetails[0]?.formatted_address);
+    setSelectedLocation({
+      ...selectedLocation,
+      latitude: userDetails[0]?.latitude,
+      longitude: userDetails[0]?.longitude,
+      city: userDetails[0]?.city,
+      place_id: userDetails[0]?.place_id,
+      pincode: userDetails[0]?.pincode,
+      area: userDetails[0]?.area,
+    });
+    dispatch(
+      setLocationres({
+        latitude: userDetails[0]?.latitude,
+        longitude: userDetails[0]?.longitude,
+        city: userDetails[0]?.city,
+        place_id: userDetails[0]?.place_id,
+        pincode: userDetails[0]?.pincode,
+        area: userDetails[0]?.area,
+      }),
     );
+    setSearchHomeJson({
+      latitude: userDetails[0]?.latitude,
+      longitude: userDetails[0]?.longitude,
+      city: userDetails[0]?.city,
+      place_id: userDetails[0]?.place_id,
+      pincode: userDetails[0]?.pincode,
+      area: userDetails[0]?.area,
+      from,
+      selectedStartDate,
+      selectedEndDate,
+      foodTypeData,
+      subData,
+      searchTerm: '',
+      selected_vendor: '',
+    });
+    // Alert.alert(
+    //   'No Search Data Found.',
+    //   `Please select the ${from=="Caterers"?"Caterer":"Tiffin"} name`,
+    //   [
+    //     {
+    //       text: 'Cancel',
+    //       onPress: () => {},
+    //     },
+    //     {
+    //       text: 'OK',
+    //       onPress: async () => {
+
+    //       },
+    //     },
+    //   ],
+    //   {cancelable: false},
+    // );
   }
-  if (search?.length && selectedEndDate && selectedStartDate && selectedLocation?.latitude) {
+  if (
+    search?.length &&
+    selectedEndDate &&
+    selectedStartDate &&
+    selectedLocation?.latitude
+  ) {
     flag = true;
-  }else{
+  } else {
     showMessage({
       message: "Couldn't Proceed.",
       description: 'Entered search is invalid',
@@ -264,9 +270,8 @@ export const handleSearchSegregation = async ({
 export const getCaterersSearch = createAsyncThunk(
   'getCaterersSearch',
   async ({params}, {dispatch}) => {
-    
     try {
-      console.log("params inside the catersearch",params)
+      console.log('params inside the catersearch', params);
       const res = await getCatererSearchService({params});
       return res.data;
     } catch (error) {
@@ -351,7 +356,7 @@ const searchSlice = createSlice({
     clearSearch: (state, action) => {
       state.searchData = [];
       state.locationData = [];
-      state.vendorData=[]
+      state.vendorData = [];
     },
     clearCaterers: (state, action) => {
       state.caterersData = [];

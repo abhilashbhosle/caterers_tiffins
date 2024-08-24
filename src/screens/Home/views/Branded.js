@@ -140,6 +140,8 @@ function Branded() {
     }
   };
 
+
+
   const renderItem = ({item}) => {
     return (
       <Card style={[styles.cardcontainer, gs.mr15, gs.br10, gs.p3]}>

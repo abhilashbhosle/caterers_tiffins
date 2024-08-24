@@ -69,9 +69,13 @@ export default function TiffinProfile({navigation, route}) {
   const [branchStretch, setBranchStretch] = useState(false);
   const [showPopular, setShowPopular] = useState(false);
   const [showReviews, setShowReviews] = useState(false);
+  const scrollViewRef = useRef(null);
 
   const handleFocus = () => {
     setCmtfocus(true);
+    setTimeout(() => {
+      scrollViewRef.current.scrollToEnd({animated: true});
+    }, 300);
   };
   useEffect(() => {
     if (data) {
@@ -153,9 +157,10 @@ export default function TiffinProfile({navigation, route}) {
       <KeyboardAwareScrollView
         style={{flex: 1, backgroundColor: '#fff'}}
         showsVerticalScrollIndicator={false}
-        enableOnAndroid={true}
+        // enableOnAndroid={true}
         nestedScrollEnabled={true}
-        extraScrollHeight={Platform.OS=="ios"?100:180}>
+        extraScrollHeight={Platform.OS == 'ios' ? 100 : 0}
+        ref={scrollViewRef}>
         <View style={[gs.ph5, gs.pv10]}>
           <Flex direction="row" align="center" justify="space-between">
             <Text style={[gs.fs19, styles.heading]}>
@@ -211,21 +216,21 @@ export default function TiffinProfile({navigation, route}) {
                           },
                           gs.fs12,
                         ]}>
-                        {e?.food_type_name}{' '}
+                        {e?.food_type_name !== 'All' ? e?.food_type_name : null}{' '}
                       </Text>
                       {e?.food_type_name == 'Veg' ? (
                         <Image
                           source={require('../../../assets/Common/veg.png')}
                           style={styles.foodTypeimg}
                         />
-                      ) : (
+                      ) : e?.food_type_name == 'Non Veg' ? (
                         <Image
                           source={require('../../../assets/Common/nonveg.png')}
                           style={styles.foodTypeimg}
                         />
-                      )}
-                      <Text style={{...styles.subtxt,color: ts.secondarytext}}>
-                        {profile?.foodTypes?.length - 1 != i ? '|': null}
+                      ) : null}
+                      <Text style={{...styles.subtxt, color: ts.secondarytext}}>
+                        {profile?.foodTypes?.length - 1 != i ? '|' : null}
                       </Text>{' '}
                     </Flex>
                   ))
@@ -386,25 +391,28 @@ export default function TiffinProfile({navigation, route}) {
           </View>
         ) : null}
         {/* =====ABOUT US / BRANCHES========== */}
-        <View style={[gs.ph5]}>
-          <Text
-            style={[
-              gs.fs14,
-              gs.pv5,
-              {fontFamily: ts.secondaryregular, color: ts.primary},
-            ]}>
-            About Us
-          </Text>
-          <ReadMore
-            style={[styles.subtxt, gs.fs12]}
-            seeLessText="read less"
-            seeMoreText="read more"
-            seeLessStyle={{color: ts.teritary}}
-            seeMoreStyle={{color: ts.teritary}}
-            numberOfLines={5}>
-            {profile?.about_description}{' '}
-          </ReadMore>
-        </View>
+        {profile?.about_description?.length ? (
+          <View style={[gs.ph5]}>
+            <Text
+              style={[
+                gs.fs14,
+                gs.pv5,
+                {fontFamily: ts.secondaryregular, color: ts.primary},
+              ]}>
+              About Us
+            </Text>
+            <ReadMore
+              style={[styles.subtxt, gs.fs12]}
+              seeLessText="read less"
+              seeMoreText="read more"
+              seeLessStyle={{color: ts.teritary}}
+              seeMoreStyle={{color: ts.teritary}}
+              numberOfLines={5}>
+              {profile?.about_description}{' '}
+            </ReadMore>
+          </View>
+        ) : null}
+
         {profile?.branches?.length ? (
           <View style={[gs.ph5]}>
             <Text
@@ -554,7 +562,7 @@ export default function TiffinProfile({navigation, route}) {
               vendorName={profile?.vendor_service_name}
             />
           </View>
-          <View style={{marginBottom: cmtfocus ? 500 : 0}}>
+          <View>
             <TextInput
               placeholder="Add Comments"
               style={[

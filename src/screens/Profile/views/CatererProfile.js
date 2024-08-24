@@ -75,7 +75,6 @@ export default function CatererProfile({navigation, route}) {
   const [showReviews, setShowReviews] = useState(false);
   const scrollViewRef = useRef(null);
 
-  console.log(branch_id, vendor_id);
 
   useEffect(() => {
     if (branch_id && vendor_id) {
@@ -90,7 +89,6 @@ export default function CatererProfile({navigation, route}) {
     }
   }, [data]);
 
-  console.log(profile?.start_time);
 
   return (
     <ScreenWrapper>
@@ -100,7 +98,8 @@ export default function CatererProfile({navigation, route}) {
             direction="row"
             justifyContent="space-between"
             alignItems="center"
-            style={[Platform.OS == 'ios' ? gs.mt10 : gs.mt5]}>
+            style={[Platform.OS == 'ios' ? gs.mt10 : gs.mt5,gs.h35]}
+            >
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => {
@@ -162,10 +161,11 @@ export default function CatererProfile({navigation, route}) {
         <KeyboardAwareScrollView
           style={{flex: 1, backgroundColor: '#fff'}}
           showsVerticalScrollIndicator={false}
-          enableOnAndroid={true}
+          // enableOnAndroid={true}
           nestedScrollEnabled={true}
-          extraScrollHeight={Platform.OS == 'ios' ? 100 : 180}
-          ref={scrollViewRef}>
+          extraScrollHeight={Platform.OS == 'ios' ? 100 : 0}
+          ref={scrollViewRef}
+          >
           <View style={[gs.ph5, gs.pv10]}>
             <Flex direction="row" align="center" justify="space-between">
               <Text style={[gs.fs19, styles.heading]}>
@@ -221,7 +221,7 @@ export default function CatererProfile({navigation, route}) {
                             },
                             gs.fs12,
                           ]}>
-                          {e?.food_type_name}{' '}
+                          {e?.food_type_name!=="All"?e?.food_type_name:null}{' '}
                         </Text>
                         {e?.food_type_name == 'Veg' ? (
                           <Image
@@ -229,14 +229,17 @@ export default function CatererProfile({navigation, route}) {
                             style={styles.foodTypeimg}
                           />
                         ) : (
+                          e?.food_type_name=="Non Veg"?
                           <Image
                             source={require('../../../assets/Common/nonveg.png')}
                             style={styles.foodTypeimg}
                           />
+                          :
+                          null
                         )}
-                        <Text style={{color: ts.secondarytext}}>
+                        {/* <Text style={{color: ts.secondarytext}}>
                           {profile?.foodTypes?.length - 1 != i ? '|' : null}{' '}
-                        </Text>
+                        </Text> */}
                       </Flex>
                     ))
                   : null}
@@ -245,7 +248,7 @@ export default function CatererProfile({navigation, route}) {
             {profile?.cuisines?.length && (
               <View style={[gs.ph5]}>
                 <Text style={[styles.subtxt, gs.fs12, gs.pb7]}>
-                  Cuisines We Cater
+                  Cuisines We Cater :
                 </Text>
                 <Flex direction="row" align="center" flexWrap="wrap">
                   {profile?.cuisines?.slice(0, 4)?.map((e, i) => (
@@ -440,7 +443,10 @@ export default function CatererProfile({navigation, route}) {
             </Flex>
           </View>
           {/* =====ABOUT US / BRANCHES========== */}
-          <View style={[gs.ph5]}>
+          {
+            profile?.about_description?.length?
+            <View style={[gs.ph5]}>
+            
             <Text
               style={[
                 gs.fs14,
@@ -459,6 +465,10 @@ export default function CatererProfile({navigation, route}) {
               {profile?.about_description}{' '}
             </ReadMore>
           </View>
+          :
+          null
+          }
+      
           {profile?.branches?.length ? (
             <View style={[gs.ph5]}>
               <Text
@@ -627,9 +637,9 @@ export default function CatererProfile({navigation, route}) {
               multiline
               onFocus={() => {
                 setCmtfocus(true);
-                // setTimeout(() => {
-                //   scrollViewRef.current.scrollToEnd({animated: true});
-                // }, 300);
+                setTimeout(() => {
+                  scrollViewRef.current.scrollToEnd({animated: true});
+                }, 300);
               }}
               onBlur={() => setCmtfocus(false)}
               value={review}

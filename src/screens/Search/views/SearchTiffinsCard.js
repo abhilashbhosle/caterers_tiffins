@@ -36,7 +36,7 @@ function SearchTiffinsCard({item, from, location}) {
             params: {
               branch_id: item?.id,
               vendor_id: item?.vendor_id,
-              location:location
+              location: location,
             },
           });
         }}>
@@ -58,8 +58,7 @@ function SearchTiffinsCard({item, from, location}) {
                   colors={['#0004', 'transparent']}
                   start={{x: 0.0, y: 0.0}}
                   end={{x: 0.0, y: 1.0}}
-                  style={[gs.br10]}
-                  >
+                  style={[gs.br10]}>
                   <Flex direction="row" style={[gs.p5]} align="center">
                     <TouchableOpacity
                       style={styles.likecontainer}
@@ -118,8 +117,7 @@ function SearchTiffinsCard({item, from, location}) {
                   colors={['#0004', 'transparent']}
                   start={{x: 0.0, y: 0.0}}
                   end={{x: 0.0, y: 1.0}}
-                  style={[gs.br10]}
-                  >
+                  style={[gs.br10]}>
                   <Flex direction="row" style={[gs.p5]} align="center">
                     <TouchableOpacity
                       style={styles.likecontainer}
@@ -191,21 +189,26 @@ function SearchTiffinsCard({item, from, location}) {
                       source={require('../../../assets/Common/veg.png')}
                       style={styles.foodTypeimg}
                     />
-                  ) : (
+                  ) : e == 'Non Veg' ? (
                     <Image
                       source={require('../../../assets/Common/nonveg.png')}
                       style={styles.foodTypeimg}
                     />
-                  )}
+                  ) : null}
                   <Text
                     style={[
                       gs.fs11,
                       {
-                        color: e == 'Veg' ? '#266920' : ts.accent4,
+                        color:
+                          e == 'Veg'
+                            ? '#266920'
+                            : e == 'Non Veg'
+                            ? ts.accent4
+                            : ts.primarytext,
                         fontFamily: ts.secondaryregular,
                       },
                     ]}>
-                    {e}{' '}
+                    {e!=="All"?e:null}{' '}
                   </Text>
                 </Flex>
               ))}
@@ -213,11 +216,18 @@ function SearchTiffinsCard({item, from, location}) {
             <Flex direction="row" align="center">
               {/* <Text style={[styles.foodtype, gs.fs11]}>Cuisines : </Text> */}
               <Text numberOfLines={1}>
-                {item?.cuisines?.slice(0, 2)?.map((e, i) => (
-                  <Text style={[styles.cuisine]} key={i}>
-                    {e} {'|'}{' '}
-                  </Text>
-                ))}
+                {item?.cuisines?.length > 2 &&
+                  item?.cuisines?.slice(0, 2)?.map((e, i) => (
+                    <Text style={[styles.cuisine]} key={i}>
+                      {e} {'|'}{' '}
+                    </Text>
+                  ))}
+                {item?.cuisines?.length <= 2 &&
+                  item?.cuisines?.slice(0, 2)?.map((e, i) => (
+                    <Text style={[styles.cuisine]} key={i}>
+                      {e} {item?.cuisines?.length > 1 && i < 1 ? '|' : ' '}{' '}
+                    </Text>
+                  ))}
                 {item?.cuisines?.length > 2 && '..'}
               </Text>
             </Flex>
@@ -296,7 +306,7 @@ const styles = ScaledSheet.create({
   },
   img: {
     height: '170@ms',
-    borderRadius:'10@ms'
+    borderRadius: '10@ms',
   },
   buffeticon: {
     height: '30@ms',

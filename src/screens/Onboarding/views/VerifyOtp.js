@@ -78,7 +78,7 @@ export default function VerifyOtp({navigation, route}) {
               <View>
                 <Text
                   style={[{...gs.btnPlaneWhite, marginVertical: 25}, gs.fs17]}>
-                  Verify with OTP sent to [{phoneNumber}]
+                  Verify with OTP sent to {phoneNumber}
                 </Text>
               </View>
               <Center style={{width: '100%'}}>

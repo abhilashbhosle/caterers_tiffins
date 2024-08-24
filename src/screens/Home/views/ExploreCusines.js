@@ -131,9 +131,9 @@ function ExploreCusines() {
               index,
             });
           }}>
-          {item?.file_name?.medium ? (
+          {item?.file_name?.original ? (
             <Image
-              source={{uri: item?.file_name?.medium}}
+              source={{uri: item?.file_name?.original}}
               style={[styles.img]}
               alt={item.name}
             />

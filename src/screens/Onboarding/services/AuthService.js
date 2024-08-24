@@ -273,6 +273,7 @@ export const getLocationService = async ({
   dispatch,
   navigation,
   from,
+  formatted_address,
 }) => {
   try {
     dispatch(startLoader(true));
@@ -284,6 +285,7 @@ export const getLocationService = async ({
     let maxAddressComponentsLength = -1;
     let selectedAddress = null;
 
+    // Find the address with the most components
     results.forEach(result => {
       const addressComponentsLength = result.address_components.length;
       if (addressComponentsLength > maxAddressComponentsLength) {
@@ -292,28 +294,52 @@ export const getLocationService = async ({
       }
     });
 
-    // Extracting specific components
     if (selectedAddress) {
-      const addressComponents = selectedAddress.address_components;
+      let addressComponents = selectedAddress.address_components;
+      let street_name = getAddressComponent(addressComponents, 'route');
+      let area = getAddressComponent(addressComponents, 'sublocality_level_1');
+
+      // If street_name or area are missing, try to find them in other results
+      if (!street_name || !area) {
+        for (let i = 0; i < results.length; i++) {
+          if (!street_name) {
+            street_name = getAddressComponent(
+              results[i].address_components,
+              'route',
+            );
+          }
+          if (!area) {
+            area = getAddressComponent(
+              results[i].address_components,
+              'sublocality_level_1',
+            );
+          }
+          // Stop searching if both components are found
+          if (street_name && area) break;
+        }
+      }
+
+      // Fallback to default values if still not found
+      street_name = street_name || 'Unknown Street';
+      area = area || 'Unknown Area';
+
       const addressData = {
-        street_name: getAddressComponent(addressComponents, 'route'),
-        area: getAddressComponent(addressComponents, 'sublocality_level_1'),
+        street_name: street_name,
+        area: area,
         pincode: getAddressComponent(addressComponents, 'postal_code'),
         latitude: latitude,
         longitude: longitude,
-        //   address: getAddressComponent(
-        // 	addressComponents,
-        // 	'administrative_area_level_3',
-        //   ),
         city: getAddressComponent(addressComponents, 'locality'),
         state: getAddressComponent(
           addressComponents,
           'administrative_area_level_1',
         ),
         country: getAddressComponent(addressComponents, 'country'),
-        formatted_address: res.data.results[0].formatted_address,
+        formatted_address:
+          res.data.results[0].formatted_address || `${street_name}, ${area}`,
         place_id: res.data.results[0].place_id,
       };
+
       await updateLocationService({
         temp: addressData,
         navigation,
@@ -321,12 +347,13 @@ export const getLocationService = async ({
         from,
       });
     }
-    //   dispatch(setLocation(res.data.results[0]));
   } catch (error) {
+    console.error('Error in getLocationService:', error);
   } finally {
     dispatch(startLoader(false));
   }
 };
+
 const getAddressComponent = (addressComponents, type) => {
   const component = addressComponents.find(component =>
     component.types.includes(type),
@@ -458,13 +485,10 @@ export const updateUserProfile = async (body, dispatch, setEnableOtp) => {
         },
       },
     );
-    await AsyncStorage.setItem(
-      'token',
-      res.data.data.updated_token,
-    );
-	setTimeout(()=>{
-		dispatch(getUser())
-	},1000)
+    await AsyncStorage.setItem('token', res.data.data.updated_token);
+    setTimeout(() => {
+      dispatch(getUser());
+    }, 1000);
     if (res.data.status == 'success') {
       showMessage({
         message: 'Success!',

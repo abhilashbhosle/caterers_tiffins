@@ -955,6 +955,9 @@ export const gs=ScaledSheet.create({
 	h30:{
 		height:'30@ms'
 	},
+	h35:{
+		height:'35@ms'
+	},
 	h40:{
 		height:'40@ms'
 	},

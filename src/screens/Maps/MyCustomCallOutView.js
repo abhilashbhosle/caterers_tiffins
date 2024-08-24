@@ -40,106 +40,111 @@ export const MyCustomCalloutView = ({profile, from, single}) => {
             {profile?.vendor_service_name?.length > 25 ? '..' : ' '}
           </Text>
 
-          <Flex direction="row" align="center" style={[gs.mt7, gs.mb5]}>
-            {
-            profile?.foodTypes?.map((e, i) =>
-              e.hasOwnProperty('food_type_name') ? (
-                <Flex direction="row" alignItems="center" key={i}>
-                  {e.food_type_name == 'Veg' ? (
-                    <View
-                      style={{...styles.dotContainer, borderColor: '#266920'}}>
-                      <OctIcon
-                        name="dot-fill"
-                        style={[[{color: '#266920'}, gs.fs13]]}
-                      />
-                    </View>
-                  ) : (
-                    <View
-                      style={{
-                        ...styles.dotContainer,
-                        borderColor: ts.secondary,
-                      }}>
-                      <OctIcon
-                        name="dot-fill"
-                        style={[{color: ts.secondary}, gs.fs13]}
-                      />
-                    </View>
-                  )}
-                  <Text
-                    style={[
-                      gs.fs11,
-                      {
-                        color:
-                          e.food_type_name == 'Veg' ? '#266920' : ts.accent4,
-                        fontFamily: ts.secondaryregular,
-                      },
-                    ]}>
-                    {e.food_type_name}{' '}
-                  </Text>
-                </Flex>
-              ) : (
-                <Flex direction="row" alignItems="center" key={i}>
-                  {e == 'Veg' ? (
-                    <View
-                      style={{...styles.dotContainer, borderColor: '#266920'}}>
-                      <OctIcon
-                        name="dot-fill"
-                        style={[[{color: '#266920'}, gs.fs13]]}
-                      />
-                    </View>
-                  ) : (
-                    <View
-                      style={{
-                        ...styles.dotContainer,
-                        borderColor: ts.secondary,
-                      }}>
-                      <OctIcon
-                        name="dot-fill"
-                        style={[{color: ts.secondary}, gs.fs13]}
-                      />
-                    </View>
-                  )}
-                  <Text
-                    style={[
-                      gs.fs11,
-                      {
-                        color: e == 'Veg' ? '#266920' : ts.accent4,
-                        fontFamily: ts.secondaryregular,
-                      },
-                    ]}>
-                    {e}{' '}
-                  </Text>
-                </Flex>
-              ),
-            )}
-          </Flex>
-          <Flex direction="row" align="center">
-            <Text numberOfLines={1}>
-              
-              {profile?.cuisines?.slice(0, 2)?.map((e, i) => (
-                <Text style={[styles.cuisine]} key={i}>
-                  {e?.hasOwnProperty("cuisine_name")? e.cuisine_name:e} {'|'}{' '}
-                </Text>
-              ))}
-              {profile?.cuisines?.length > 2 && '..'}
-            </Text>
-          </Flex>
           <Text
             numberOfLines={1}
             style={[gs.fs10, gs.mt2, {color: ts.secondarytext}]}>
             {profile?.formatted_address?.slice(0, 30)}{' '}
             {profile?.formatted_address?.length > 30 ? '..' : ' '}
           </Text>
-          <Flex
-            direction="row"
-            align="center"
-            justifyContent="space-between"
-            style={[gs.mt5]}>
-            <Text style={[gs.fs10, {color: ts.primarytext}]}>
-              {profile?.business_phone_number ||
-                profile?.whatsapp_business_phone_number}
-            </Text>
-          </Flex>
+          {profile?.foodTypes?.length ? (
+            <Flex direction="row" align="center" style={[gs.mt7, gs.mb5]}>
+              {profile?.foodTypes?.map((e, i) =>
+                e.hasOwnProperty('food_type_name') ? (
+                  <Flex direction="row" alignItems="center" key={i}>
+                    {e.food_type_name == 'Veg' ? (
+                      <View
+                        style={{
+                          ...styles.dotContainer,
+                          borderColor: '#266920',
+                        }}>
+                        <OctIcon
+                          name="dot-fill"
+                          style={[[{color: '#266920'}, gs.fs13]]}
+                        />
+                      </View>
+                    ) : e?.food_type_name == 'Non Veg' ? (
+                      <View
+                        style={{
+                          ...styles.dotContainer,
+                          borderColor: ts.secondary,
+                        }}>
+                        <OctIcon
+                          name="dot-fill"
+                          style={[{color: ts.secondary}, gs.fs13]}
+                        />
+                      </View>
+                    ) : null}
+                    <Text
+                      style={[
+                        gs.fs11,
+                        {
+                          color:
+                            e.food_type_name == 'Veg' ? '#266920' : ts.accent4,
+                          fontFamily: ts.secondaryregular,
+                        },
+                      ]}>
+                      {' '}
+                      {e.food_type_name !== 'All'
+                        ? e.food_type_name
+                        : null}{' '}
+                    </Text>
+                  </Flex>
+                ) : (
+                  <Flex direction="row" alignItems="center" key={i}>
+                    {e == 'Veg' ? (
+                      <View
+                        style={{
+                          ...styles.dotContainer,
+                          borderColor: '#266920',
+                        }}>
+                        <OctIcon
+                          name="dot-fill"
+                          style={[[{color: '#266920'}, gs.fs13]]}
+                        />
+                      </View>
+                    ) : (
+                      e=="Non Veg"?
+                      <View
+                        style={{
+                          ...styles.dotContainer,
+                          borderColor: ts.secondary,
+                        }}>
+                        <OctIcon
+                          name="dot-fill"
+                          style={[{color: ts.secondary}, gs.fs13]}
+                        />
+                      </View>
+                      :
+                      null
+                    )}
+                    <Text
+                      style={[
+                        gs.fs11,
+                        {
+                          color: e == 'Veg' ? '#266920' : ts.accent4,
+                          fontFamily: ts.secondaryregular,
+                        },
+                      ]}>
+                      {e!=="All"?e:null}{' '}
+                    </Text>
+                  </Flex>
+                ),
+              )}
+            </Flex>
+          ) : null}
+          {profile?.cuisines?.length ? (
+            <Flex direction="row" align="center">
+              <Text numberOfLines={1}>
+                {profile?.cuisines?.slice(0, 2)?.map((e, i) => (
+                  <Text style={[styles.cuisine]} key={i}>
+                    {e?.hasOwnProperty('cuisine_name') ? e.cuisine_name : e}{' '}
+                    {'|'}{' '}
+                  </Text>
+                ))}
+                {profile?.cuisines?.length > 2 && '..'}
+              </Text>
+            </Flex>
+          ) : null}
           {!single ? (
             <TouchableOpacity style={[gs.mt10]} activeOpacity={0.7}>
               <ThemeSepBtn

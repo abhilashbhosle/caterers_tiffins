@@ -22,7 +22,15 @@ import AntIcon from 'react-native-vector-icons/Ionicons';
 import ThemeSepBtn from '../../../components/ThemeSepBtn';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {useDispatch, useSelector} from 'react-redux';
-import {clearFilter, getBudget, getHeadCount, getRatings, getService, getServing, getSort} from '../../Home/controllers/FilterMainController';
+import {
+  clearFilter,
+  getBudget,
+  getHeadCount,
+  getRatings,
+  getService,
+  getServing,
+  getSort,
+} from '../../Home/controllers/FilterMainController';
 import {
   handleBudget,
   handleChildrenCuisines,
@@ -43,8 +51,8 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {setSearchHomeJson} from '../../Home/controllers/SearchCommonController';
 import moment from 'moment';
-import { getOccassions } from '../../Home/controllers/OccassionController';
-import { getCuisines } from '../../Home/controllers/ExploreCuisineController';
+import {getOccassions} from '../../Home/controllers/OccassionController';
+import {getCuisines} from '../../Home/controllers/ExploreCuisineController';
 
 export default function FiilterMain({navigation, route}) {
   const {address, ssd, sse, location, from} = route.params;
@@ -101,7 +109,7 @@ export default function FiilterMain({navigation, route}) {
   const [cuisineSortData, setCuisineSortData] = useState([]);
   const [occasionSortData, setOccassionSortData] = useState([]);
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(getServing());
     dispatch(getService({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
     dispatch(getOccassions());
@@ -110,7 +118,7 @@ export default function FiilterMain({navigation, route}) {
     dispatch(getHeadCount());
     dispatch(getSort());
     dispatch(getRatings());
-  },[])
+  }, []);
 
   useEffect(() => {
     if (servingData?.length) {
@@ -137,7 +145,7 @@ export default function FiilterMain({navigation, route}) {
     if (ratingData?.length) {
       setRating(ratingData);
     }
-   
+
     (async () => {
       let asyncData = await AsyncStorage.getItem('searchJson');
       let parsed = JSON.parse(asyncData);
@@ -256,8 +264,69 @@ export default function FiilterMain({navigation, route}) {
         enableOnAndroid={true}
         showsVerticalScrollIndicator={false}
         style={[{flex: 1, backgroundColor: '#fff'}, gs.ph10, gs.pv20]}>
+        {/* ========BUDGET SELECTION========= */}
+        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
+          <Text style={[styles.heading, gs.fs15, gs.pl15]}>
+            Your Budget (Per plate cost)
+          </Text>
+          <Divider style={[gs.mv15]} />
+          <View style={[gs.ph10]}>
+            {budgetLoading && (
+              <Center>
+                <Spinner color={ts.secondary} />
+              </Center>
+            )}
+            {budgetError?.message && (
+              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                No Budget found
+              </Text>
+            )}
+            {!budgetError &&
+              !budgetLoading &&
+              budget?.map((e, i) => (
+                <TouchableOpacity
+                  key={i}
+                  onPress={() => {
+                    handleBudget({
+                      index: i,
+                      setBudget,
+                      budget,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Caterers',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
+                      dispatch,
+                    });
+                  }}
+                  activeOpacity={0.7}>
+                  <Flex direction="row" justify="space-between" align="center">
+                    <Text
+                      style={[
+                        styles.servicetxt,
+                        gs.fs13,
+                        gs.mv10,
+                      ]}>{`Rs. ${e.start_price} - Rs. ${e?.end_price}`}</Text>
+                    <MaterialIcons
+                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
+                      style={[
+                        gs.fs20,
+                        gs.mr3,
+                        {
+                          color: e.selected == 1 ? ts.secondary : ts.alternate,
+                        },
+                      ]}
+                    />
+                  </Flex>
+                </TouchableOpacity>
+              ))}
+          </View>
+        </Card>
         {/* ====CATER SERVING TYPE====== */}
-        <Card style={[gs.mh5, gs.pv10, gs.mb15, {backgroundColor: '#fff'}]}>
+        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>
             Cater Serving Type
           </Text>
@@ -337,6 +406,67 @@ export default function FiilterMain({navigation, route}) {
               ))}
           </Flex>
         </Card>
+        {/* ========SORT BY RATINGS========= */}
+        <Card
+          style={[
+            gs.mh5,
+            gs.pv10,
+            gs.mv15,
+            {backgroundColor: '#fff'},
+          ]}>
+          <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By Rating</Text>
+          <Divider style={[gs.mv15]} />
+          {ratingLoading && (
+            <Center>
+              <Spinner color={ts.secondary} />
+            </Center>
+          )}
+          {ratingError?.message && (
+            <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+              No Sorts found
+            </Text>
+          )}
+          {!ratingLoading && !ratingError && rating?.length > 0 && (
+            <View style={[gs.ph10]}>
+              {rating.map((e, i) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    handleRating({
+                      index: i,
+                      setRating,
+                      rating,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Caterers',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
+                      dispatch,
+                    });
+                  }}
+                  key={i}>
+                  <Flex direction="row" justify="space-between" align="center">
+                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                      {e.rating}
+                    </Text>
+                    <MaterialIcons
+                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
+                      style={[
+                        gs.fs20,
+                        gs.mr3,
+                        {
+                          color: e.selected == 1 ? ts.secondary : ts.alternate,
+                        },
+                      ]}
+                    />
+                  </Flex>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </Card>
         {/* =======HEAD COUNT========= */}
         <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>
@@ -397,67 +527,7 @@ export default function FiilterMain({navigation, route}) {
               ))}
           </View>
         </Card>
-        {/* ========BUDGET SELECTION========= */}
-        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>
-            Your Budget (Per plate cost)
-          </Text>
-          <Divider style={[gs.mv15]} />
-          <View style={[gs.ph10]}>
-            {budgetLoading && (
-              <Center>
-                <Spinner color={ts.secondary} />
-              </Center>
-            )}
-            {budgetError?.message && (
-              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                No Budget found
-              </Text>
-            )}
-            {!budgetError &&
-              !budgetLoading &&
-              budget?.map((e, i) => (
-                <TouchableOpacity
-                  key={i}
-                  onPress={() => {
-                    handleBudget({
-                      index: i,
-                      setBudget,
-                      budget,
-                      ssd,
-                      sse,
-                      location,
-                      from: 'Caterers',
-                      subData: subSortData,
-                      foodTypeData: foodSortData,
-                      occassionData: occasionSortData,
-                      cuisineData: cuisineSortData,
-                      dispatch,
-                    });
-                  }}
-                  activeOpacity={0.7}>
-                  <Flex direction="row" justify="space-between" align="center">
-                    <Text
-                      style={[
-                        styles.servicetxt,
-                        gs.fs13,
-                        gs.mv10,
-                      ]}>{`Rs. ${e.start_price} - Rs. ${e?.end_price}`}</Text>
-                    <MaterialIcons
-                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
-                      style={[
-                        gs.fs20,
-                        gs.mr3,
-                        {
-                          color: e.selected == 1 ? ts.secondary : ts.alternate,
-                        },
-                      ]}
-                    />
-                  </Flex>
-                </TouchableOpacity>
-              ))}
-          </View>
-        </Card>
+
         {/* ======CHOOSE CUISINE======= */}
         <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>Choose Cuisine</Text>
@@ -762,7 +832,7 @@ export default function FiilterMain({navigation, route}) {
           </View>
         </Card>
         {/* ========SORT BY========= */}
-        <Card style={[gs.mh5, gs.pv10, gs.mt15, {backgroundColor: '#fff'}]}>
+        <Card style={[gs.mh5, gs.pv10, gs.mt15, {backgroundColor: '#fff',marginBottom:80}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By</Text>
           <Divider style={[gs.mv15]} />
           {sortLoading && (
@@ -799,67 +869,6 @@ export default function FiilterMain({navigation, route}) {
                   <Flex direction="row" justify="space-between" align="center">
                     <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
                       {e.name}
-                    </Text>
-                    <MaterialIcons
-                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
-                      style={[
-                        gs.fs20,
-                        gs.mr3,
-                        {
-                          color: e.selected == 1 ? ts.secondary : ts.alternate,
-                        },
-                      ]}
-                    />
-                  </Flex>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-        </Card>
-        {/* ========SORT BY RATINGS========= */}
-        <Card
-          style={[
-            gs.mh5,
-            gs.pv10,
-            gs.mt15,
-            {backgroundColor: '#fff', marginBottom: 80},
-          ]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By Rating</Text>
-          <Divider style={[gs.mv15]} />
-          {ratingLoading && (
-            <Center>
-              <Spinner color={ts.secondary} />
-            </Center>
-          )}
-          {ratingError?.message && (
-            <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-              No Sorts found
-            </Text>
-          )}
-          {!ratingLoading && !ratingError && rating?.length > 0 && (
-            <View style={[gs.ph10]}>
-              {rating.map((e, i) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    handleRating({
-                      index: i,
-                      setRating,
-                      rating,
-                      ssd,
-                      sse,
-                      location,
-                      from: 'Caterers',
-                      subData: subSortData,
-                      foodTypeData: foodSortData,
-                      occassionData: occasionSortData,
-                      cuisineData: cuisineSortData,
-                      dispatch,
-                    });
-                  }}
-                  key={i}>
-                  <Flex direction="row" justify="space-between" align="center">
-                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                      {e.rating}
                     </Text>
                     <MaterialIcons
                       name={e.selected == 1 ? 'check-circle' : 'circle-outline'}

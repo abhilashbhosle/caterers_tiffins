@@ -8,15 +8,13 @@ import {Flex} from 'native-base';
 import {handleSubType} from '../../Home/controllers/FilterCommonController';
 import {useDispatch, useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getCaterersSearch } from '../../Home/controllers/SearchController';
+import {getCaterersSearch} from '../../Home/controllers/SearchController';
 
-function Badges({from, subType, setSubType, setPage,setVendorData}) {
+function Badges({from, subType, setSubType, setPage, setVendorData}) {
   let types = from == 'Caterers' ? caterertypes : tiffintypes;
   let theme = from === 'Caterers' ? ts.secondary : ts.primary;
-  const dispatch=useDispatch()
-  const {
-    subData,
-  } = useSelector(state => state?.filterCater);
+  const dispatch = useDispatch();
+  const {subData} = useSelector(state => state?.filterCater);
 
   const handleSelection = async (arr, setData, index) => {
     const updatedFoodTypes = await arr.map((item, i) =>
@@ -29,7 +27,7 @@ function Badges({from, subType, setSubType, setPage,setVendorData}) {
     return updatedFoodTypes;
   };
   // ===HANDLING SUBSCRIPTIONS=====//
-  const handleSubTypes = async (index) => {
+  const handleSubTypes = async index => {
     let data = [...subType];
     let result = await handleSelection(data, setSubType, index);
     const subscription_types_filter = await result.map(e => ({
@@ -43,16 +41,16 @@ function Badges({from, subType, setSubType, setPage,setVendorData}) {
       subscription_types_filter: JSON.stringify(subscription_types_filter),
     };
     await AsyncStorage.setItem('searchJson', JSON.stringify(params));
-     dispatch(
-        getCaterersSearch({
-          params: {
-            ...params,
-            current_page: 1,
-            limit:5,
-          },
-        }),
-      );
-    setVendorData([])
+    dispatch(
+      getCaterersSearch({
+        params: {
+          ...params,
+          current_page: 1,
+          limit: 5,
+        },
+      }),
+    );
+    setVendorData([]);
     setPage(1);
   };
 
@@ -86,44 +84,46 @@ function Badges({from, subType, setSubType, setPage,setVendorData}) {
   return (
     subType && (
       <View style={[gs.ph10, gs.pv20, {backgroundColor: '#fff'}]}>
-        <FlatList
+        {/* <FlatList
           data={subType}
           renderItem={renderItem}
           keyExtractor={(item, index) => String(index)}
           horizontal
           showsHorizontalScrollIndicator={false}
           bounces={false}
-        />
-        {/* <Flex direction="row" alignItems="center">
-        {data?.map((item, i) => {
+        /> */}
+
+        <Flex direction="row" alignItems="center">
+        {subType?.map((item, index) => {
           return (
             <TouchableOpacity
+            style={[
+              {
+                ...styles.badge,
+                backgroundColor: item.selected == 1 ? theme : '#e0e3e7',
+              },
+              gs.br20,
+            ]}
+            activeOpacity={0.8}
+            onPress={() => {
+              handleSubTypes(index);
+            }}
+            key={index}
+            >
+            <Text
               style={[
                 {
-                  ...styles.badge,
-                  backgroundColor: selectedItem == item ? theme : '#e0e3e7',
+                  color: item.selected == 1 ? '#fff' : '#57636c',
+                  fontFamily: ts.secondaryregular,
                 },
-                gs.br20,
-              ]}
-              activeOpacity={0.8}
-              onPress={() => {
-                setSelectedItem(item);
-              }}
-              key={i}>
-              <Text
-                style={[
-                  {
-                    color: selectedItem == item ? '#fff' : '#57636c',
-                    fontFamily: ts.secondaryregular,
-                  },
-                  gs.fs14,
-                ]}>
-                {item}
-              </Text>
-            </TouchableOpacity>
+                gs.fs14,
+              ]}>
+              {item?.display_name}
+            </Text>
+          </TouchableOpacity>
           );
         })}
-      </Flex> */}
+      </Flex>
       </View>
     )
   );

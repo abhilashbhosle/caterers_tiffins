@@ -33,7 +33,7 @@ export default function MapMultiple({route, navigation}) {
       dateAfter7Days.setDate(today.getDate() + 7);
       dispatch(
         getMap({
-          from: from=='Caterer' ? 'Caterer' : 'Tiffin',
+          from: from == 'Caterer' ? 'Caterer' : 'Tiffin',
           ssd: today,
           sse: dateAfter7Days,
           location: initialRegion,
@@ -131,8 +131,8 @@ export default function MapMultiple({route, navigation}) {
             title={'You'}
             description={'You are here!'}
             pinColor="#000">
-              <MyCustomMarkerView from="me"/>
-            </Marker>
+            <MyCustomMarkerView from="me" />
+          </Marker>
           {profileData?.map((e, i) => (
             <Marker
               coordinate={{
