@@ -83,7 +83,7 @@ export const handleSearchResults = ({
     return;
   }
   if (!search && userDetails[0]?.city?.length > 0) {
-    setSearch(userDetails[0]?.formatted_address);
+    // setSearch(userDetails[0]?.formatted_address);
     setSelectedLocation({
       ...selectedLocation,
       latitude: userDetails[0]?.latitude,
@@ -118,6 +118,15 @@ export const handleSearchResults = ({
       searchTerm: '',
       selected_vendor: '',
     });
+    navigation.push('PageStack', {
+      screen: 'SearchMain',
+      params: {
+        from,
+        ssd: selectedStartDate,
+        sse: selectedEndDate,
+        move: 'forward',
+      },
+    });
     // Alert.alert(
     //   'No Search Data Found.',
     //   `Please select the ${from=="Caterers"?"Caterer":"Tiffin"} name`,
@@ -143,13 +152,14 @@ export const handleSearchResults = ({
     selectedLocation?.latitude
   ) {
     flag = true;
-  } else {
-    showMessage({
-      message: "Couldn't Proceed.",
-      description: 'Entered search is invalid',
-      type: 'warning',
-    });
-  }
+  } 
+  // else {
+  //   showMessage({
+  //     message: "Couldn't Proceed.",
+  //     description: 'Entered search is invalid',
+  //     type: 'warning',
+  //   });
+  // }
   if (flag) {
     // console.log("selected location inside flag",selectedLocation)
     navigation.push('PageStack', {

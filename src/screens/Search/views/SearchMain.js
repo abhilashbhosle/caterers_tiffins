@@ -308,18 +308,14 @@ export default function SearchMain({route, navigation}) {
 
       {/* ========SORTING BY TYPES========= */}
       {firstItemVisible && !keyboardVisible ? (
-        <Badges
-          from={from}
-          subType={subType}
-          setSubType={setSubType}
-          setPage={setPage}
-          setVendorData={setVendorData}
-        />
-      ) : null}
-
-      {/* ========SEARCH CARDS======== */}
-      {!keyboardVisible ? (
         <>
+          <Badges
+            from={from}
+            subType={subType}
+            setSubType={setSubType}
+            setPage={setPage}
+            setVendorData={setVendorData}
+          />
           <View style={[{paddingHorizontal: 5, backgroundColor: '#fff'}]}>
             <Text
               style={[
@@ -341,6 +337,12 @@ export default function SearchMain({route, navigation}) {
                   }${location?.area ? ',' : ''} ${location?.city}`}
             </Text>
           </View>
+        </>
+      ) : null}
+
+      {/* ========SEARCH CARDS======== */}
+      {!keyboardVisible ? (
+        <>
           <SearchList
             from={from}
             fetchMoreData={fetchMoreData}

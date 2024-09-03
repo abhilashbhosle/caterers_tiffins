@@ -25,6 +25,8 @@ import {MyCustomCalloutView} from './MyCustomCallOutView';
 export default function MapSingle({route, navigation}) {
   const {initialRegion, profile, from} = route.params;
 
+  console.log(initialRegion,profile.latitude)
+
   return (
     <ScreenWrapper>
       <TouchableOpacity

@@ -14,7 +14,7 @@ import {ts} from '../../../../ThemeStyles';
 import {color} from 'native-base/lib/typescript/theme/styled-system';
 import {ScaledSheet} from 'react-native-size-matters';
 
-function TiffinsWish() {
+function TiffinsWish({setTiffinsCount}) {
   const scrollY = useRef(new Animated.Value(0)).current;
   const [limit, setLimit] = useState(5);
   const [page, setPage] = useState(1);
@@ -40,6 +40,7 @@ function TiffinsWish() {
         setWishData([...wishData, ...tiffinData.data]);
       }
       setTotal(tiffinData?.total_count);
+      setTiffinsCount(tiffinData?.total_count)
     }
   }, [tiffinData]);
 
@@ -100,7 +101,7 @@ function TiffinsWish() {
   return (
     <>
       <Center>
-        <Text style={styles.cardtxt}>Tiffins ({total})</Text>
+        {/* <Text style={styles.cardtxt}>Tiffins ({total})</Text> */}
       </Center>
       <Animated.FlatList
         data={wishData}

@@ -75,7 +75,6 @@ export default function CatererProfile({navigation, route}) {
   const [showReviews, setShowReviews] = useState(false);
   const scrollViewRef = useRef(null);
 
-
   useEffect(() => {
     if (branch_id && vendor_id) {
       dispatch(getVendorProfile({branch_id, vendor_id}));
@@ -89,7 +88,7 @@ export default function CatererProfile({navigation, route}) {
     }
   }, [data]);
 
-
+  console.log('profile?.serviceTypes', profile?.serviceTypes);
   return (
     <ScreenWrapper>
       <View style={[gs.ph15, styles.headercontainer]}>
@@ -98,8 +97,7 @@ export default function CatererProfile({navigation, route}) {
             direction="row"
             justifyContent="space-between"
             alignItems="center"
-            style={[Platform.OS == 'ios' ? gs.mt10 : gs.mt5,gs.h35]}
-            >
+            style={[Platform.OS == 'ios' ? gs.mt10 : gs.mt5, gs.h35]}>
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => {
@@ -164,8 +162,7 @@ export default function CatererProfile({navigation, route}) {
           // enableOnAndroid={true}
           nestedScrollEnabled={true}
           extraScrollHeight={Platform.OS == 'ios' ? 100 : 0}
-          ref={scrollViewRef}
-          >
+          ref={scrollViewRef}>
           <View style={[gs.ph5, gs.pv10]}>
             <Flex direction="row" align="center" justify="space-between">
               <Text style={[gs.fs19, styles.heading]}>
@@ -221,22 +218,21 @@ export default function CatererProfile({navigation, route}) {
                             },
                             gs.fs12,
                           ]}>
-                          {e?.food_type_name!=="All"?e?.food_type_name:null}{' '}
+                          {e?.food_type_name !== 'All'
+                            ? e?.food_type_name
+                            : null}{' '}
                         </Text>
                         {e?.food_type_name == 'Veg' ? (
                           <Image
                             source={require('../../../assets/Common/veg.png')}
                             style={styles.foodTypeimg}
                           />
-                        ) : (
-                          e?.food_type_name=="Non Veg"?
+                        ) : e?.food_type_name == 'Non Veg' ? (
                           <Image
                             source={require('../../../assets/Common/nonveg.png')}
                             style={styles.foodTypeimg}
                           />
-                          :
-                          null
-                        )}
+                        ) : null}
                         {/* <Text style={{color: ts.secondarytext}}>
                           {profile?.foodTypes?.length - 1 != i ? '|' : null}{' '}
                         </Text> */}
@@ -323,7 +319,9 @@ export default function CatererProfile({navigation, route}) {
                         numberOfLines={1}
                         key={i}>
                         {e.service_type_name}
-                        {i != 1 && ','}{' '}
+                        {profile?.serviceTypes?.length == 1
+                          ? null
+                          : i != 1 && ','}{' '}
                       </Text>
                     ))}
                   </Flex>
@@ -443,32 +441,28 @@ export default function CatererProfile({navigation, route}) {
             </Flex>
           </View>
           {/* =====ABOUT US / BRANCHES========== */}
-          {
-            profile?.about_description?.length?
+          {profile?.about_description?.length ? (
             <View style={[gs.ph5]}>
-            
-            <Text
-              style={[
-                gs.fs14,
-                gs.pv5,
-                {fontFamily: ts.secondaryregular, color: ts.secondary},
-              ]}>
-              About Us
-            </Text>
-            <ReadMore
-              style={[styles.subtxt, gs.fs12]}
-              seeLessText="read less"
-              seeMoreText="read more"
-              seeLessStyle={{color: ts.teritary}}
-              seeMoreStyle={{color: ts.teritary}}
-              numberOfLines={5}>
-              {profile?.about_description}{' '}
-            </ReadMore>
-          </View>
-          :
-          null
-          }
-      
+              <Text
+                style={[
+                  gs.fs14,
+                  gs.pv5,
+                  {fontFamily: ts.secondaryregular, color: ts.secondary},
+                ]}>
+                About Us
+              </Text>
+              <ReadMore
+                style={[styles.subtxt, gs.fs12]}
+                seeLessText="read less"
+                seeMoreText="read more"
+                seeLessStyle={{color: ts.teritary}}
+                seeMoreStyle={{color: ts.teritary}}
+                numberOfLines={5}>
+                {profile?.about_description}{' '}
+              </ReadMore>
+            </View>
+          ) : null}
+
           {profile?.branches?.length ? (
             <View style={[gs.ph5]}>
               <Text
@@ -520,7 +514,7 @@ export default function CatererProfile({navigation, route}) {
                   </Text>
                 </View>
               </Center>
-              <View style={{paddingHorizontal: 15}}>
+              <View>
                 <GallerySlice />
               </View>
             </>

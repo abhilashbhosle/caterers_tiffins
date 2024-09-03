@@ -14,7 +14,7 @@ import {
 } from '../../Home/controllers/WishListController';
 import {ScaledSheet} from 'react-native-size-matters';
 
-function CaterersWish() {
+function CaterersWish({setCaterersCount}) {
   const scrollY = useRef(new Animated.Value(0)).current;
   const [limit, setLimit] = useState(5);
   const [page, setPage] = useState(1);
@@ -41,6 +41,7 @@ function CaterersWish() {
         setWishData([...wishData, ...catererData.data]);
       }
       setTotal(catererData?.total_count);
+      setCaterersCount(catererData?.total_count)
     }
   }, [catererData]);
   useEffect(() => {
@@ -101,7 +102,7 @@ function CaterersWish() {
   return (
     <>
       <Center>
-        <Text style={styles.cardtxt}>Caterers ({total})</Text>
+        {/* <Text style={styles.cardtxt}>Caterers ({total})</Text> */}
       </Center>
       <Animated.FlatList
         data={wishData}

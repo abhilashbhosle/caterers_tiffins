@@ -19,7 +19,7 @@ import {color} from 'native-base/lib/typescript/theme/styled-system';
 export const MyCustomCalloutView = ({profile, from, single}) => {
   const {height, width} = Dimensions.get('screen');
   return (
-    <View style={[{backgroundColor: '#fff', width: width / 1.5}, gs.pv10]}>
+    <View style={[{backgroundColor: '#fff', width: width / 1.5}, gs.pv10,gs.br10]}>
       <Flex direction="row">
         <View
           style={{

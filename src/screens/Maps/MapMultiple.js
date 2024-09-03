@@ -25,6 +25,7 @@ export default function MapMultiple({route, navigation}) {
   const dispatch = useDispatch();
   const {mapLoading, mapData, mapError} = useSelector(state => state.location);
   const toast = useToast();
+  
 
   useEffect(() => {
     if (initialRegion?.latitude) {
@@ -152,7 +153,9 @@ export default function MapMultiple({route, navigation}) {
                       location: initialRegion,
                     },
                   });
-                }}>
+                }}
+                style={{width:100}}
+                >
                 <MyCustomCalloutView
                   profile={{
                     vendor_service_name: e?.catering_service_name,
@@ -164,6 +167,7 @@ export default function MapMultiple({route, navigation}) {
                   }}
                   from={from}
                   single={false}
+                
                 />
               </Callout>
             </Marker>

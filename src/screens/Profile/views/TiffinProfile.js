@@ -464,7 +464,7 @@ export default function TiffinProfile({navigation, route}) {
               </View>
             </Center>
 
-            <View style={{paddingHorizontal: 15}}>
+            <View>
               <GallerySlice />
             </View>
           </>
