@@ -1,5 +1,5 @@
 import {View, Text, TouchableOpacity} from 'react-native';
-import React, {memo, useState} from 'react';
+import React, {memo, useEffect, useMemo, useState} from 'react';
 import {ScaledSheet} from 'react-native-size-matters';
 import {ts} from '../../ThemeStyles';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
@@ -17,57 +17,22 @@ function Ratings({rating, setRating, from, vendorName}) {
   };
   const handleSubmit = () => {
     setRating(rate);
-    setOpenBs(false);
   };
+  useEffect(()=>{
+    setRating(rate)
+  },[rate])
   return (
     <>
-      <TouchableOpacity
-        activeOpacity={0.7}
-        onPress={() => {
-          setOpenBs(true);
-        }}>
-        <View style={styles.ratingContainer}>
-          {!rating ? (
-            <Text style={[{...styles.ratingTxt}]}>Add Rating</Text>
-          ) : (
-            <Text style={[{...styles.ratingTxt, color: ts.primarytext}]}>
-              {rating}
-            </Text>
-          )}
-          <EntypoIcon name="chevron-small-down" style={styles.downIcon} />
-        </View>
-      </TouchableOpacity>
-      <Actionsheet isOpen={openBs} onClose={handleClose}>
-        <Actionsheet.Content style={{height: 360}}>
+    
+      {/* <Actionsheet isOpen={openBs} onClose={handleClose}> */}
+        {/* <Actionsheet.Content style={{height: 360}}> */}
           <Flex
             style={{
               justifyContent: 'space-between',
-              height: '100%',
               alignItems: 'center',
-              width: '100%',
             }}>
             <View>
-              <Center style={[gs.mt20]}>
-                <Text
-                  style={[
-                    gs.fs12,
-                    {
-                      color: from == 'Caterer' ? ts.secondary : ts.primary,
-                      fontFamily: ts.secondaryregular,
-                    },
-                  ]}>
-                  HOW WAS YOUR EXPERIENCE WITH THE
-                </Text>
-                <Text
-                  style={[
-                    gs.fs12,
-                    {
-                      color: from == 'Caterer' ? ts.secondary : ts.primary,
-                      fontFamily: ts.secondarysemibold,
-                    },
-                  ]}>
-                  "{vendorName?.toUpperCase()}" ?
-                </Text>
+              <Center>
                 <Text style={{...styles.ratingNum, color: ts.primarytext}}>
                   {rate}
                 </Text>
@@ -77,24 +42,16 @@ function Ratings({rating, setRating, from, vendorName}) {
                 <StarRating
                   rating={rate}
                   onChange={setRate}
-                  color={from == 'Caterer' ? ts.secondary : ts.primary}
+                  // color={from == 'Caterer' ? ts.secondary : ts.primary}
                   starSize={40}
                   enableHalfStar={false}
                 />
               </View>
               </Center>
             </View>
-            <TouchableOpacity
-              style={[{width: '100%'}, gs.mb20]}
-              onPress={handleSubmit}>
-              <ThemeSepBtn
-                btntxt="Submit"
-                themecolor={from == 'Caterer' ? ts.secondary : ts.primary}
-              />
-            </TouchableOpacity>
           </Flex>
-        </Actionsheet.Content>
-      </Actionsheet>
+        {/* </Actionsheet.Content> */}
+      {/* </Actionsheet> */}
     </>
   );
 }

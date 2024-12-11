@@ -259,7 +259,6 @@ export const getCaterersSearch = createAsyncThunk(
   'getCaterersSearch',
   async ({params}, {dispatch}) => {
     try {
-      console.log('params inside the catersearch', params);
       const res = await getCatererSearchService({params});
       return res.data;
     } catch (error) {

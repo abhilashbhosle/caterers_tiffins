@@ -9,40 +9,54 @@ import {ts} from '../../../../ThemeStyles';
 import StarRating from 'react-native-star-rating-widget';
 
 function ReviewCard({item, index, from, reviews}) {
+
   return (
     <View>
-      <Flex direction="row" alignItems="center">
-        <View
-          style={{
-            ...styles.img,
-            backgroundColor: from == 'Tiffins' ? ts.primary : ts.secondary,
-          }}>
-          <Text
-            style={[gs.fs16, {color: '#fff', fontFamily: ts.secondarymedium}]}>
-            {item?.username?.slice(0, 1)}
-          </Text>
+      <Flex direction="row" alignItems="center" width={'100%'}>
+        <View style={{width: '10%'}}>
+          <View
+            style={{
+              ...styles.img,
+              backgroundColor: from == 'Tiffins' ? ts.primary : ts.secondary,
+            }}>
+            <Text
+              style={[
+                gs.fs16,
+                {color: '#fff', fontFamily: ts.secondarymedium},
+              ]}>
+              {item?.username?.slice(0, 1)}
+            </Text>
+          </View>
         </View>
-        <View style={[gs.ml10]}>
-          <Text style={[styles.name, gs.mb3]}>{item?.username}</Text>
+        <Flex
+          style={[gs.ml10, {width: '80%'}]}
+          direction="row"
+          // align="center"
+          justifyContent="space-between">
+          <View>
+            <Text style={[styles.name]}>{item?.username}</Text>
+            <Flex style={[gs.mv5]} direction='row' align='center'>
+              <StarRating
+                rating={parseInt(item?.rating)}
+                maxStars={parseInt(item?.rating)}
+                // color={from == 'Tiffins' ? ts.primary : ts.secondary}
+                starSize={25}
+                enableHalfStar={false}
+                starStyle={{marginHorizontal: -1}}
+                enableSwiping={false}
+                onChange={() => {}}
+              />
+              <Text style={[styles.name,gs.ml5]}>{item?.rating}</Text>
+            </Flex>
+          </View>
           <Text style={[styles.subtxt, gs.fs12]}>
             {timeSince(item.review_date)}
           </Text>
-        </View>
+        </Flex>
       </Flex>
-      <Flex style={[gs.mv5]}>
-      <StarRating
-        rating={parseInt(item?.rating)}
-        maxStars={parseInt(item?.rating)}
-        color={from == 'Tiffins' ? ts.primary : ts.secondary}
-        starSize={25}
-        enableHalfStar={false}
-        starStyle={{marginHorizontal:-1}}
-        enableSwiping={false}
-        onChange={()=>{}}
-      />
-      </Flex>
+
       <ReadMore
-        style={[styles.subtxt, gs.fs12, gs.mv5]}
+        style={[styles.name, gs.mv5]}
         numberOfLines={3}
         seeMoreText="read more"
         seeLessText="read less"
@@ -71,9 +85,9 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   name: {
-    fontFamily: ts.secondaryregular,
+    fontFamily: ts.primaryregular,
     color: ts.primarytext,
-    fontSize: '13@ms',
+    fontSize: '16@ms',
   },
   subtxt: {
     fontFamily: ts.secondaryregular,

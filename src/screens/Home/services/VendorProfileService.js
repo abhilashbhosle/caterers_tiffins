@@ -35,7 +35,6 @@ export const getVendorProfileService = async ({
 
 // ========GET POPULAR CATERERS SERVICE=========//
 export const getPopularCaterersService = async ({params}) => {
-  console.log(params)
   try {
     let token = await AsyncStorage.getItem('token');
     let res = await axios.get(`${endpoints.baseUrl}search-vendors`, {

@@ -10,6 +10,7 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
+import {styles} from '../styles/HeaderStyles';
 import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {ScaledSheet} from 'react-native-size-matters';
 import {useFocusEffect, useRoute} from '@react-navigation/native';
@@ -31,28 +32,14 @@ function HeaderView({from, navigation}) {
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
 
   const dispatch = useDispatch();
-  useFocusEffect(
-    useCallback(() => {
-      Animated.spring(opacity, {
-        toValue: 1,
-        easing: Easing.in,
-        useNativeDriver: true,
-        delay: 100,
-      }).start();
-    }, []),
-  );
 
   useEffect(() => {
     dispatch(getUser());
   }, []);
-  // console.log(userDetails)
   return (
-    <Animated.View
+    <View
       style={[
         {
-          backgroundColor:
-            route.name == 'Caterings' ? ts.secondary : ts.primary,
-          opacity,
           borderBottomLeftRadius: 10,
           borderBottomRightRadius: 10,
           paddingTop: Platform.OS == 'android' && StatusBar.currentHeight + 10,
@@ -67,14 +54,23 @@ function HeaderView({from, navigation}) {
               setLocSheetOpen(true);
             }}>
             <Flex direction="row" alignItems="center">
-              <IonIcons
-                name="location-sharp"
-                style={[gs.fs22, {color: '#fff'}]}
+              <Image
+                source={
+                  route.name == 'Caterings' || from == 'Caterers'?
+                  require('../../../assets/Search/location_new.png')
+                  :
+                  require('../../../assets/Search/location_newt.png')
+                }
+                style={styles.topIcons}
               />
               <Text
                 style={[
-                  {fontFamily: ts.secondarymedium, color: '#fff', width: '40%'},
-                  gs.fs13,
+                  {
+                    fontFamily: ts.secondaryregular,
+                    color: '#000',
+                    maxWidth: '60%',
+                  },
+                  gs.fs16,
                   gs.ml5,
                 ]}
                 numberOfLines={1}>
@@ -84,38 +80,46 @@ function HeaderView({from, navigation}) {
               </Text>
               <IonIcons
                 name="chevron-down"
-                style={[gs.fs16, gs.ml5, {color: '#fff'}]}
+                style={[gs.fs16, gs.ml5, {color: '#000'}]}
               />
             </Flex>
           </TouchableWithoutFeedback>
           <Flex direction="row" alignItems="center">
             <TouchableOpacity
-              style={gs.ph10}
+              style={gs.pl10}
               activeOpacity={0.7}
               onPress={() => {
                 navigation.navigate('PageStack', {
                   screen: 'Notifications',
                 });
               }}>
-              <IonIcons
-                name="notifications"
-                style={[gs.fs24, {color: '#fff'}]}
+              <Image
+                source={
+                  route.name == 'Caterings' || from == 'Caterers'
+                    ? require('../../../assets/Search/notify_new.png')
+                    : require('../../../assets/Search/notify_newt.png')
+                }
+                style={styles.topIcons}
               />
             </TouchableOpacity>
             <TouchableOpacity
-              style={gs.ph14}
+              style={gs.pl10}
               activeOpacity={0.7}
               onPress={() => {
                 navigation.navigate('PageStack', {
                   screen: 'WishList',
                 });
               }}>
-              <MaterialIcons
-                name="favorite"
-                style={[gs.fs24, {color: '#fff'}]}
+              <Image
+                source={
+                  route.name == 'Caterings' || from == 'Caterers'?
+                  require('../../../assets/Search/wish_new.png'):
+                  require('../../../assets/Search/wish_newt.png')
+                }
+                style={styles.topIcons}
               />
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={gs.ph10}
               activeOpacity={0.7}
               onPress={() => {
@@ -123,12 +127,7 @@ function HeaderView({from, navigation}) {
                   screen: 'ProfileMain',
                 });
               }}>
-              {/* <FontAwesome name="user" style={[gs.fs20, {color: '#fff'}]} /> */}
-              {/* <Image
-                source={require('../../../assets/India/06.jpg')}
-                alt="user"
-                style={styles.userimg}
-              /> */}
+          
               <View
                 style={{
                   ...styles.userimg,
@@ -148,7 +147,7 @@ function HeaderView({from, navigation}) {
                     userDetails[0]?.username?.slice(0, 1)}
                 </Text>
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </Flex>
         </Flex>
         {/* =====SEARCHBAR/CALENDAR======= */}
@@ -161,19 +160,7 @@ function HeaderView({from, navigation}) {
         setLocSheetOpen={setLocSheetOpen}
         from={from}
       />
-    </Animated.View>
+    </View>
   );
 }
 export default memo(HeaderView);
-
-const styles = ScaledSheet.create({
-  userimg: {
-    height: '28@ms',
-    width: '28@ms',
-    borderRadius: 50,
-  },
-  name: {
-    fontFamily: ts.primarymedium,
-    fontWeight:'700'
-  },
-});

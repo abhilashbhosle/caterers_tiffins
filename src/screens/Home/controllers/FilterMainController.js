@@ -75,7 +75,6 @@ export const getSort = createAsyncThunk('getSort', async (_, {dispatch}) => {
 export const clearFilter = createAsyncThunk(
   'clearFilter',
   async (_, {dispatch}) => {
-    console.log("cleqar filter")
 
     try {
       const res = await clearFilterService({dispatch});
@@ -169,7 +168,6 @@ const filterSlice = createSlice({
       state.sortData = action.payload;
     },
     updateSubscriptions:(state,action)=>{
-      console.log("update sub called")
       state.subData=action.payload
     },
     updateRating:(state,action)=>{

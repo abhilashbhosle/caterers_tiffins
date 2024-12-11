@@ -38,19 +38,20 @@ import {
   updateSubscriptions,
 } from '../controllers/FilterMainController';
 import {startLoader} from '../../../redux/CommonSlicer';
-import { setSearchHomeJson } from '../controllers/SearchCommonController';
+import {setSearchHomeJson} from '../controllers/SearchCommonController';
+import {styles} from '../styles/PopularTiffinStyles';
+import MorePrimarybtn from '../../../components/MorePrimarybtn';
 
 function PopularTiffins() {
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
   const {popularTLoading, popularTData, popularTError} = useSelector(
     state => state.home,
   );
-  const {subData,foodTypeData} = useSelector(state => state?.filterCater);
+  const {subData, foodTypeData} = useSelector(state => state?.filterCater);
   const route = useRoute();
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
-
 
   useEffect(() => {
     dispatch(getUser());
@@ -84,7 +85,7 @@ function PopularTiffins() {
         city: userDetails[0]?.city,
         place_id: userDetails[0]?.place_id,
         pincode: userDetails[0]?.pincode,
-        area:userDetails[0]?.area
+        area: userDetails[0]?.area,
       };
 
       dispatch(setLocationres(location));
@@ -150,10 +151,9 @@ function PopularTiffins() {
     }
   };
 
-
   const renderItem = ({item}) => {
     return (
-      <Card style={[styles.cardcontainer, gs.mr15, gs.br10, gs.p3]}>
+      <Card style={[styles.cardcontainer, gs.mr15, gs.br10]}>
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => {
@@ -173,17 +173,20 @@ function PopularTiffins() {
             });
           }}>
           <Center>
-            {item?.gallery_images?.['vendor-banner']?.length ? (
+            {item?.gallery_images?.['vendor-banner']?.length > 0 ? (
               <ImageBackground
-                source={{uri: item?.gallery_images?.['vendor-banner'][0]?.image_name[0]
-                  ?.medium}}
+                source={{
+                  uri: item?.gallery_images?.['vendor-banner'][0].image_name[0]
+                    ?.medium,
+                }}
                 style={[styles.img]}
                 imageStyle={styles.imageStyle}
                 alt={item.name}
               />
             ) : (
-              <View style={[{...styles.img}, styles.imageStyle]}></View>
+              <View style={[styles.img, styles.imageStyle]}></View>
             )}
+
             <Flex direction="row" style={styles.profileContainer}>
               {item?.gallery_images?.['vendor-brand-logo']?.length ? (
                 <Image
@@ -208,40 +211,53 @@ function PopularTiffins() {
               )}
 
               <View style={styles.txtContainer}>
-                <Text numberOfLines={1} style={[gs.fs10, styles.catererName]}>
-                  {item?.catering_service_name
-                    ? item.catering_service_name.slice(0, 28)
-                    : 'N/A'}
-                </Text>
-                <Text style={[gs.fs8, styles.area]}>
-                  {item?.street_name ? item.street_name : item?.area},{' '}
-                  {item?.city}
-                </Text>
                 <Flex
                   direction="row"
                   alignItems="center"
-                  style={[Platform.OS == 'ios' && gs.mt5]}>
-                  <Flex direction="row" alignItems="center" style={[gs.mr7]}>
-                    <Image
-                      source={require('../../../assets/Common/veg.png')}
-                      style={styles.icon}
-                    />
-                    <Text style={[gs.fs10, styles.type]}>Veg</Text>
-                  </Flex>
-                  <Flex direction="row" alignItems="center">
-                    <Image
-                      source={require('../../../assets/Common/nonveg.png')}
-                      style={styles.icon}
-                    />
-                    <Text
-                      style={[gs.fs10, {...styles.type, color: ts.accent4}]}>
-                      Non-Veg
-                    </Text>
-                  </Flex>
+                  justifyContent="flex-end"
+                  style={[Platform.OS == 'ios' && gs.mt15]}>
+                  <Image
+                    source={require('../../../assets/Common/veg.png')}
+                    style={[styles.icon, gs.mr5]}
+                  />
+                  <Image
+                    source={require('../../../assets/Common/nonveg.png')}
+                    style={styles.icon}
+                  />
                 </Flex>
               </View>
             </Flex>
           </Center>
+          <Text numberOfLines={1} style={[gs.fs13, styles.catererName]}>
+            {item?.catering_service_name
+              ? item.catering_service_name.slice(0, 28)
+              : 'N/A'}
+          </Text>
+          <Text style={[gs.fs10, styles.area]}>
+            {item?.street_name ? item.street_name : item?.area}, {item?.city}
+          </Text>
+          <Flex
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            style={[gs.ph10, gs.mt10]}>
+            <Flex>
+              <Text style={styles.startPrice}>
+                ₹ {item?.start_price ? item.start_price : 'N/A'}
+              </Text>
+              <Text style={[gs.fs9, styles.area, gs.pl2]}>Starts from</Text>
+            </Flex>
+            <Flex direction="row" align="center">
+              <Image
+                source={require('../../../assets/Common/rating.png')}
+                style={styles.icon}
+              />
+              <Text style={[styles.startPrice, gs.fs13, gs.ph3]}>4.5</Text>
+              <Text style={[styles.area, gs.ph2, gs.fs11]}>
+                ({item?.review_count})
+              </Text>
+            </Flex>
+          </Flex>
         </TouchableOpacity>
       </Card>
     );
@@ -251,15 +267,23 @@ function PopularTiffins() {
     return (
       <View style={[gs.ph15, gs.pt10]}>
         <Flex flexDirection="row" justifyContent="space-between">
-          <Text
-            style={[
-              gs.fs15,
-              {fontFamily: ts.secondarysemibold, color: ts.primarytext},
-              gs.fs13,
-            ]}>
-            Popular Tiffin providers in{' '}
-            {userDetails?.length && userDetails[0]?.city}
-          </Text>
+          <View>
+            <Text
+              style={[
+                {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+                gs.fs18,
+                gs.mb5,
+              ]}>
+              Popular Tiffin
+            </Text>
+            <Text
+              style={[
+                {fontFamily: ts.secondaryregular, color: ts.secondarytext},
+                gs.fs13,
+              ]}>
+              {userDetails?.length && userDetails[0]?.city}
+            </Text>
+          </View>
         </Flex>
         <Text
           style={[
@@ -275,30 +299,28 @@ function PopularTiffins() {
   }
   return (
     <>
-      <View style={[gs.ph15, gs.pt10]}>
+      <View style={[gs.ph15, gs.pt10, gs.mt10]}>
         <Flex flexDirection="row" justifyContent="space-between">
-          <Text
-            style={[
-              gs.fs15,
-              {fontFamily: ts.secondarysemibold, color: ts.primarytext},
-              gs.fs13,
-            ]}>
-            Popular Tiffin providers in{' '}
-            {userDetails?.length && userDetails[0]?.city}
-          </Text>
+          <View>
+            <Text
+              style={[
+                {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+                gs.fs18,
+                gs.mb5,
+              ]}>
+             Popular Tiffin
+            </Text>
+            <Text
+              style={[
+                {fontFamily: ts.secondaryregular, color: ts.secondarytext},
+                gs.fs13,
+              ]}>
+              {userDetails?.length && userDetails[0]?.city}
+            </Text>
+          </View>
           {popularTData?.length ? (
-            <TouchableOpacity
-              activeOpacity={0.7}
-              style={{
-                ...styles.forwardicon,
-                backgroundColor:
-                  route.name == 'Caterings' ? ts.secondary : ts.primary,
-              }}
-              onPress={handleBranded}>
-              <FeatherIcons
-                name="arrow-right"
-                style={[gs.fs14, {color: '#fff'}]}
-              />
+            <TouchableOpacity activeOpacity={0.7} onPress={handleBranded}>
+              <MorePrimarybtn />
             </TouchableOpacity>
           ) : null}
         </Flex>
@@ -329,68 +351,3 @@ function PopularTiffins() {
   );
 }
 export default memo(PopularTiffins);
-
-const styles = ScaledSheet.create({
-  forwardicon: {
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '20@ms',
-    width: '20@ms',
-  },
-  img: {
-    height: '80@ms',
-    width: '220@ms',
-    resizeMode: 'cover',
-  },
-  cardcontainer: {
-    height: '140@ms',
-    backgroundColor: '#fff',
-  },
-  profileContainer: {
-    position: 'absolute',
-    bottom: '-35@ms',
-    left: '5@ms',
-  },
-  profile: {
-    height: '55@ms',
-    width: '55@ms',
-    resizeMode: 'cover',
-    borderRadius: '10@ms',
-    borderWidth: 3,
-    borderColor: '#fff',
-  },
-  txtContainer: {
-    paddingHorizontal: '5@ms',
-    top: '22@ms',
-  },
-  contentContainerStyle: {
-    paddingBottom: '20@ms',
-    paddingTop: '15@ms',
-    paddingLeft: '15@ms',
-  },
-  imageStyle: {
-    borderTopRightRadius: '10@ms',
-    borderTopLeftRadius: '10@ms',
-    position: 'relative',
-  },
-  bottomImg: {
-    height: '100@ms',
-    position: 'absolute',
-    backgroundColor: '#fff',
-  },
-  catererName: {
-    color: ts.primarytext,
-    fontFamily: ts.secondarysemibold,
-  },
-  area: {color: ts.secondarytext, fontFamily: ts.secondarymedium},
-  icon: {
-    height: '14@ms',
-    width: '14@ms',
-  },
-  type: {
-    color: ts.accent3,
-    fontFamily: ts.secondaryregular,
-    paddingLeft: '2@ms',
-  },
-});

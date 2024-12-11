@@ -14,7 +14,7 @@ export default function ThemeSepBtn(props) {
             justifyContent: 'center',
             alignItems: 'center',
           },
-          gs.br10,
+         props.rounded?gs.br20: gs.br10,
         ]}>
         <Text
           style={[gs.fs15, {color: '#fff', fontFamily: ts.secondarymedium}]}>

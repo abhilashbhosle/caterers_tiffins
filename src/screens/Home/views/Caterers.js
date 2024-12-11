@@ -1,4 +1,4 @@
-import {View, Text, useWindowDimensions, Platform} from 'react-native';
+import {View, Text, useWindowDimensions, Platform,BackHandler,Alert} from 'react-native';
 import React, {useCallback, useEffect} from 'react';
 import HeaderView from './HeaderView';
 import RecentSearches from './RecentSearches';
@@ -12,6 +12,8 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LinearGradient from 'react-native-linear-gradient';
+import {StatusBar} from 'native-base';
 
 const MemoizedHeaderView = React.memo(HeaderView);
 const MemoizedExploreCusines = React.memo(ExploreCusines);
@@ -24,22 +26,65 @@ export default function Caterers({navigation}) {
   useFocusEffect(
     useCallback(() => {
       (async () => {
-        await AsyncStorage.removeItem("searchFilterJson")
-        await AsyncStorage.removeItem("searchJson")
+        await AsyncStorage.removeItem('searchFilterJson');
+        await AsyncStorage.removeItem('searchJson');
       })();
     }, [navigation]),
   );
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+      handleBack()
+        return true; // Returning true means the event is handled and should not propagate further
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      };
+    }, [])
+  );
+  const handleBack=()=>{
+    Alert.alert(
+      'Exit App',
+      'Are you sure you want to exit this App?',
+      [
+        {
+          text:'Cancel',
+          onPress:()=>{
+              console.log('Cancel Pressed')
+          }
+        },
+        {
+          text:'Ok',
+          onPress:()=>{
+            BackHandler.exitApp()
+          }
+        }
+      ]
+    )
+  }
 
   return (
     <ScreenWrapper>
-      <MemoizedHeaderView from="Caterers" navigation={navigation} />
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* <RecentSearches /> */}
+      <ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+        >
+        <LinearGradient
+          start={{x: 0, y: 0}}
+          end={{x: 0.2, y: 1}}
+          colors={['#f8b4b3', '#fbe3e1', '#fff']}>
+          <MemoizedHeaderView from="Caterers" navigation={navigation} />
+          {/* <RecentSearches /> */}
+          <MemoizedExploreIndia />
+        </LinearGradient>
         <MemoizedExploreCusines />
         <MemoizedBranded />
-        <MemoizedPopularCaterers />
-        <MemoizedExploreIndia />
         <MemoizedOccasions />
+        <MemoizedPopularCaterers />
       </ScrollView>
     </ScreenWrapper>
   );

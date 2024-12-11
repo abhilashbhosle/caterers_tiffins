@@ -29,6 +29,7 @@ import {
   getCaterersSearch,
   setLocationres,
 } from '../controllers/SearchController';
+import {styles} from '../styles/BrandedCatererStyles';
 import {
   getSubscription,
   updateSubscriptions,
@@ -38,6 +39,7 @@ import {setSearchHomeJson} from '../controllers/SearchCommonController';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {updateSubscriptionFilter} from '../services/SearchService';
+import MoreSecondarybtn from '../../../components/MoreSecondarybtn';
 
 function Branded() {
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
@@ -106,7 +108,7 @@ function Branded() {
           from: 'Caterers',
           dispatch,
         });
-        dispatch(updateSubscriptions(result))
+        dispatch(updateSubscriptions(result));
         dispatch(clearCaterers());
         await setSearchHomeJson({
           latitude: location?.latitude,
@@ -140,11 +142,9 @@ function Branded() {
     }
   };
 
-
-
   const renderItem = ({item}) => {
     return (
-      <Card style={[styles.cardcontainer, gs.mr15, gs.br10, gs.p3]}>
+      <Card style={[styles.cardcontainer, gs.mr15, gs.br10]}>
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => {
@@ -202,57 +202,78 @@ function Branded() {
               )}
 
               <View style={styles.txtContainer}>
-                <Text numberOfLines={1} style={[gs.fs10, styles.catererName]}>
-                  {item?.catering_service_name
-                    ? item.catering_service_name.slice(0, 28)
-                    : 'N/A'}
-                </Text>
-                <Text style={[gs.fs8, styles.area]}>
-                  {item?.street_name ? item.street_name : item?.area},{' '}
-                  {item?.city}
-                </Text>
                 <Flex
                   direction="row"
                   alignItems="center"
-                  style={[Platform.OS == 'ios' && gs.mt5]}>
-                  <Flex direction="row" alignItems="center" style={[gs.mr7]}>
-                    <Image
-                      source={require('../../../assets/Common/veg.png')}
-                      style={styles.icon}
-                    />
-                    <Text style={[gs.fs10, styles.type]}>Veg</Text>
-                  </Flex>
-                  <Flex direction="row" alignItems="center">
-                    <Image
-                      source={require('../../../assets/Common/nonveg.png')}
-                      style={styles.icon}
-                    />
-                    <Text
-                      style={[gs.fs10, {...styles.type, color: ts.accent4}]}>
-                      Non-Veg
-                    </Text>
-                  </Flex>
+                  justifyContent="flex-end"
+                  style={[Platform.OS == 'ios' && gs.mt15]}>
+                  <Image
+                    source={require('../../../assets/Common/veg.png')}
+                    style={[styles.icon, gs.mr5]}
+                  />
+                  <Image
+                    source={require('../../../assets/Common/nonveg.png')}
+                    style={styles.icon}
+                  />
                 </Flex>
               </View>
             </Flex>
           </Center>
+          <Text numberOfLines={1} style={[gs.fs13, styles.catererName]}>
+            {item?.catering_service_name
+              ? item.catering_service_name.slice(0, 28)
+              : 'N/A'}
+          </Text>
+          <Text style={[gs.fs10, styles.area]}>
+            {item?.street_name ? item.street_name : item?.area}, {item?.city}
+          </Text>
+          <Flex
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            style={[gs.ph10, gs.mt10]}>
+            <Flex>
+              <Text style={styles.startPrice}>
+                ₹ {item?.start_price ? item.start_price : 'N/A'}
+              </Text>
+              <Text style={[gs.fs9, styles.area, gs.pl2]}>Starts from</Text>
+            </Flex>
+            <Flex direction="row" align="center">
+              <Image
+                source={require('../../../assets/Common/rating.png')}
+                style={styles.icon}
+              />
+              <Text style={[styles.startPrice, gs.fs13, gs.ph3]}>4.5</Text>
+              <Text style={[styles.area, gs.ph2, gs.fs11]}>
+                ({item?.review_count})
+              </Text>
+            </Flex>
+          </Flex>
         </TouchableOpacity>
       </Card>
     );
   };
-
   if (brandedError) {
     return (
       <View style={[gs.ph15, gs.pt10]}>
         <Flex flexDirection="row" justifyContent="space-between">
-          <Text
-            style={[
-              gs.fs15,
-              {fontFamily: ts.secondarysemibold, color: ts.primarytext},
-              gs.fs13,
-            ]}>
-            Branded Caterers in {userDetails?.length && userDetails[0]?.city}
-          </Text>
+          <View>
+            <Text
+              style={[
+                {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+                gs.fs18,
+                gs.mb5,
+              ]}>
+              Branded Caterers
+            </Text>
+            <Text
+              style={[
+                {fontFamily: ts.secondaryregular, color: ts.secondarytext},
+                gs.fs13,
+              ]}>
+              {userDetails?.length && userDetails[0]?.city}
+            </Text>
+          </View>
         </Flex>
         <Text
           style={[
@@ -270,27 +291,28 @@ function Branded() {
     <>
       <View style={[gs.ph15, gs.pt10]}>
         <Flex flexDirection="row" justifyContent="space-between">
-          <Text
-            style={[
-              gs.fs15,
-              {fontFamily: ts.secondarysemibold, color: ts.primarytext},
-              gs.fs13,
-            ]}>
-            Branded Caterers in {userDetails?.length && userDetails[0]?.city}
-          </Text>
+          <View>
+            <Text
+              style={[
+                {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+                gs.fs18,
+                gs.mb5,
+              ]}>
+              Branded Caterers
+            </Text>
+            <Text
+              style={[
+                {fontFamily: ts.secondaryregular, color: ts.secondarytext},
+                gs.fs13,
+              ]}>
+              {userDetails?.length && userDetails[0]?.city}
+            </Text>
+          </View>
           {brandedData?.length ? (
             <TouchableOpacity
               activeOpacity={0.7}
-              style={{
-                ...styles.forwardicon,
-                backgroundColor:
-                  route.name == 'Caterings' ? ts.secondary : ts.primary,
-              }}
               onPress={handleBranded}>
-              <FeatherIcons
-                name="arrow-right"
-                style={[gs.fs14, {color: '#fff'}]}
-              />
+              <MoreSecondarybtn />
             </TouchableOpacity>
           ) : null}
         </Flex>
@@ -321,68 +343,3 @@ function Branded() {
   );
 }
 export default memo(Branded);
-
-const styles = ScaledSheet.create({
-  forwardicon: {
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '20@ms',
-    width: '20@ms',
-  },
-  img: {
-    height: '80@ms',
-    width: '220@ms',
-    resizeMode: 'cover',
-  },
-  cardcontainer: {
-    height: '140@ms',
-    backgroundColor: '#fff',
-  },
-  profileContainer: {
-    position: 'absolute',
-    bottom: '-35@ms',
-    left: '5@ms',
-  },
-  profile: {
-    height: '55@ms',
-    width: '55@ms',
-    resizeMode: 'cover',
-    borderRadius: '10@ms',
-    borderWidth: 3,
-    borderColor: '#fff',
-  },
-  txtContainer: {
-    paddingHorizontal: '5@ms',
-    top: '22@ms',
-  },
-  contentContainerStyle: {
-    paddingBottom: '20@ms',
-    paddingTop: '15@ms',
-    paddingLeft: '15@ms',
-  },
-  imageStyle: {
-    borderTopRightRadius: '10@ms',
-    borderTopLeftRadius: '10@ms',
-    position: 'relative',
-  },
-  bottomImg: {
-    height: '100@ms',
-    position: 'absolute',
-    backgroundColor: '#fff',
-  },
-  catererName: {
-    color: ts.primarytext,
-    fontFamily: ts.secondarysemibold,
-  },
-  area: {color: ts.secondarytext, fontFamily: ts.secondarymedium},
-  icon: {
-    height: '14@ms',
-    width: '14@ms',
-  },
-  type: {
-    color: ts.accent3,
-    fontFamily: ts.secondaryregular,
-    paddingLeft: '2@ms',
-  },
-});

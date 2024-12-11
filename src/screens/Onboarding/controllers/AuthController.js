@@ -128,7 +128,6 @@ export const verifyLoginOtp = createAsyncThunk(
 export const getLocation = createAsyncThunk(
 	'getLocation',
 	async ({navigation,from}, {dispatch}) => {
-    console.log('called')
 	  try {
 		dispatch(startLoader(true))
 		let res = await GetLocation.getCurrentPosition({
@@ -184,7 +183,6 @@ const authSlice = createSlice({
   },
   reducers: {
     clearRegStates: (state, action) => {
-      console.log('clear reg states got called');
       state.isGetOtpLoading = false;
       state.getOtpData = [];
       state.getOtpError = '';

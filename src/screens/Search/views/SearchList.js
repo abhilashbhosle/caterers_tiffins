@@ -45,9 +45,9 @@ function SearchList({
       outputRange: [1, 1, 1, 0],
     });
     return (
-      <Animated.View style={{transform: [{scale}]}}>
+      <View style={{}}>
         <SearchCaterersCard item={item} from={from} location={location} />
-      </Animated.View>
+      </View>
     );
   };
   const renderTiffinsList = ({item, index}) => {
@@ -68,9 +68,9 @@ function SearchList({
       outputRange: [1, 1, 1, 0],
     });
     return (
-      <Animated.View style={{transform: [{scale}], backgroundColor: '#fff'}}>
+      <View style={{backgroundColor: '#fff'}}>
         <SearchTiffinsCard item={item} from={from} location={location} />
-      </Animated.View>
+      </View>
     );
   };
   useEffect(() => {
@@ -116,15 +116,7 @@ function SearchList({
         renderItem={
           from === 'Caterers' ? renderCateringList : renderTiffinsList
         }
-        removeClippedSubviews={true}
-        onScroll={Animated.event(
-          [
-            {
-              nativeEvent: {contentOffset: {y: scrollY}},
-            },
-          ],
-          {useNativeDriver: false},
-        )}
+      
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           {backgroundColor: '#fff', paddingTop: 10},
@@ -133,8 +125,7 @@ function SearchList({
         onEndReachedThreshold={0.6}
         onEndReached={fetchMoreData}
         ListFooterComponent={renderFooter}
-        onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={viewabilityConfig}
+      
       />
     </>
   );

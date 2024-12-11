@@ -19,6 +19,8 @@ import {getUser} from '../../Onboarding/controllers/AuthController';
 import {getSimilarTiffins} from '../controllers/HomeController';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
+import { styles } from '../styles/TiffinProviderStyles';
 
 export default function TiffinProviders() {
   const {width, height} = useWindowDimensions();
@@ -55,18 +57,12 @@ export default function TiffinProviders() {
 
   const renderItem = ({item}) => {
     return (
-      <Card
-        style={[
-          {backgroundColor: '#fff', width: width / 2.4},
-          gs.mh10,
-          gs.mb15,
-          gs.br5,
-        ]}>
+      <Card style={{...styles.cardContainer, width: width - 100}}>
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => {
             navigation.navigate('PageStack', {
-              screen: 'TiffinProfile',
+              screen: 'CatererProfile',
               params: {
                 branch_id: item?.id,
                 vendor_id: item?.vendor_id,
@@ -74,56 +70,129 @@ export default function TiffinProviders() {
                   latitude: userDetails[0]?.latitude,
                   longitude: userDetails[0]?.longitude,
                   city: userDetails[0]?.city,
-                  pinCode: userDetails[0]?.pincode,
-                  placeId: userDetails[0]?.place_id,
+                  place_id: userDetails[0]?.place_id,
+                  pincode: userDetails[0]?.pincode,
                 },
               },
             });
           }}>
-          {item?.brand_logo?.medium ? (
+          {item?.banner_images?.length > 0 ? (
             <ImageBackground
-              source={{uri: item.brand_logo.medium}}
-              style={[
-                {...styles.img, width: '100%', justifyContent: 'flex-end'},
-              ]}
-              alt={item.name}
-              imageStyle={styles.bgimg}
-            />
+              source={{
+                uri: item?.banner_images[0]?.medium,
+              }}
+              style={[{...styles.img, width: '100%'}]}
+              imageStyle={styles.imageStyle}
+              alt={item.name}>
+              <Flex
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-end"
+                style={[Platform.OS == 'ios' && gs.mt15, gs.ph10,styles.iconcontaier]}>
+                <Image
+                  source={require('../../../assets/Common/veg.png')}
+                  style={[styles.icon, gs.mr5]}
+                  alt="vegicon"
+                />
+                <Image
+                  source={require('../../../assets/Common/nonveg.png')}
+                  style={styles.icon}
+                  alt="vegicon"
+                />
+              </Flex>
+              <LinearGradient
+                colors={['#000f', 'transparent']}
+                start={{x: 0.0, y: Platform.OS == 'ios' ? 1.2 : 1.8}}
+                end={{x: 0.0, y: 0.0}}
+                style={[
+                  {
+                    ...styles.overlay,
+                    width: width - 100,
+                  },
+                ]}>
+                <Flex
+                  direction="row"
+                  alignItems="center"
+                  style={[gs.ph10, gs.mt20]}>
+                  <Image
+                    source={{
+                      uri: item?.brand_logo?.medium,
+                    }}
+                    style={styles.profile}
+                    alt="profile"
+                  />
+                  <View style={[gs.mt20,styles.txtcontainer]}>
+                    <Text
+                      style={[
+                        gs.fs14,
+                        gs.ml10,
+                        {color: '#fff', fontFamily: ts.secondarymedium},
+                        gs.mt20,
+                      ]}
+                      numberOfLines={1}>
+                      {item?.catering_service_name?.length > 23
+                        ? `${item?.catering_service_name?.slice(0, 23)}..`
+                        : item?.catering_service_name}
+                    </Text>
+                    <Text
+                      style={[
+                        gs.fs12,
+                        gs.ml10,
+                        {color: '#f5f5f5', fontFamily: ts.secondarylight},
+                        Platform.OS == 'ios' && gs.pv2,
+                        gs.mt5
+                      ]}>
+                      {item?.street_name ? item.street_name : item?.area},{' '}
+                      {item?.city}
+                    </Text>
+                  </View>
+                </Flex>
+              </LinearGradient>
+            </ImageBackground>
           ) : (
             <View
-              style={{
-                ...styles.img,
-                width: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: '#fff',
-              }}>
+              style={[
+                {...styles.img, justifyContent: 'center', alignItems: 'center'},
+                styles.imageStyle,
+              ]}>
               <EntypoIcon
                 name="image-inverted"
                 style={[{color: ts.secondarytext}, gs.fs25]}
               />
             </View>
           )}
-
-          <View style={[gs.ph10]}>
-            <Text
-              style={[{fontFamily: ts.secondaryregular}, gs.pv5, gs.fs13]}
-              numberOfLines={1}>
-              {item?.catering_service_name}
-            </Text>
-            <Flex direction="row" align="center">
-              <Text
-                style={[
-                  {
-                    fontFamily: ts.secondaryregular,
-                    color: ts.primary,
-                  },
-                  gs.fs13,
-                  gs.pb10,
-                ]}>
-                {item.area}
-              </Text>
+          <View>
+            <Flex
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              style={[gs.ph10, gs.mt10]}>
+              <Flex>
+                <Text style={styles.startPrice}>
+                  ₹ {item?.start_price ? item.start_price : 'N/A'}
+                </Text>
+                <Text style={[gs.fs9, styles.area, gs.pl2]}>Starts from</Text>
+              </Flex>
+              <Flex direction="row" align="center">
+                <Image
+                  source={require('../../../assets/Common/rating.png')}
+                  style={styles.icon}
+                  alt="rating"
+                />
+                <Text style={[styles.startPrice, gs.fs13, gs.ph3]}>4.5</Text>
+                <Text style={[styles.area, gs.ph2, gs.fs11]}>
+                  ({item?.review_count})
+                </Text>
+              </Flex>
             </Flex>
+
+            <Text
+              style={[
+                gs.fs12,
+                {color: '#fff', fontFamily: ts.secondaryregular},
+              ]}>
+              Veg | Non-Veg
+            </Text>
           </View>
         </TouchableOpacity>
       </Card>
@@ -137,42 +206,26 @@ export default function TiffinProviders() {
       <View style={[gs.ph15, gs.mt15]}>
         <Text
           style={[
-            gs.fs15,
             {fontFamily: ts.secondarysemibold, color: ts.primarytext},
-            gs.fs13,
+            gs.fs18,
             gs.mb10,
           ]}>
-          Tiffin Service providers near you
+          Tiffins near you
         </Text>
       </View>
       {!tiffinError && tiffinData?.vendors?.length > 0 ? (
         <Center>
           <FlatList
             data={tiffinData?.vendors}
-            renderItem={renderItem}
-            showsVerticalScrollIndicator={false}
             keyExtractor={(item, index) => String(index)}
+            renderItem={renderItem}
+            horizontal
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.contentContainerStyle}
-            numColumns={2}
           />
         </Center>
       ) : null}
     </>
   );
 }
-const styles = ScaledSheet.create({
-  contentContainerStyle: {
-    paddingBottom: 20,
-    paddingTop: 15,
-    marginHorizontal: '15@ms',
-    position: 'relative',
-  },
-  img: {
-    height: '100@ms',
-    resizeMode: 'cover',
-  },
-  bgimg: {
-    borderTopLeftRadius: '5@ms',
-    borderTopRightRadius: '5@ms',
-  },
-});
+

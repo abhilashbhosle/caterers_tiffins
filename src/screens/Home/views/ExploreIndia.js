@@ -19,7 +19,10 @@ import {getCities} from '../controllers/ExploreIndiaController';
 import CitySkel from '../../../components/skeletons/CitySkel';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {setLocationres} from '../controllers/SearchController';
-import { setSearchHomeJson } from '../controllers/SearchCommonController';
+import {setSearchHomeJson} from '../controllers/SearchCommonController';
+import {Flex} from 'native-base';
+import MoreSecondarybtn from '../../../components/MoreSecondarybtn';
+import MorePrimarybtn from '../../../components/MorePrimarybtn';
 
 function ExploreIndia() {
   const route = useRoute();
@@ -51,11 +54,11 @@ function ExploreIndia() {
         city: location?.name,
         place_id: 133333,
         pincode: 1211111,
-        from:route?.name == 'Caterings' ? 'Caterers' : 'Tiffin',
-        selectedStartDate:today,
-        selectedEndDate:dateAfter7Days,
+        from: route?.name == 'Caterings' ? 'Caterers' : 'Tiffin',
+        selectedStartDate: today,
+        selectedEndDate: dateAfter7Days,
         foodTypeData,
-        subData
+        subData,
       });
       navigation.push('PageStack', {
         screen: 'SearchMain',
@@ -71,16 +74,14 @@ function ExploreIndia() {
   };
   const renderItem = ({item}) => {
     return (
-      <Card style={{backgroundColor: '#fff', marginBottom: 15}}>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={() => handleCities(item)}>
+      <TouchableOpacity activeOpacity={0.7} onPress={() => handleCities(item)}>
+        <Flex style={[gs.mr15]} alignItems={'center'} justifyContent="center">
           {item?.file_name?.medium ? (
             <ImageBackground
               source={{uri: item?.file_name?.medium}}
               style={[styles.img]}
               alt={item.city_name}
-              imageStyle={gs.br12}></ImageBackground>
+              imageStyle={[{borderRadius: 50}]}></ImageBackground>
           ) : (
             <View
               style={{
@@ -90,39 +91,20 @@ function ExploreIndia() {
               }}>
               <EntypoIcon
                 name="image-inverted"
-                style={[{color: ts.secondarytext}, gs.fs30]}
+                style={[{color: ts.secondarytext}, gs.fs20]}
               />
             </View>
           )}
-
-          <View style={[styles.overlay, gs.br12]}></View>
-          <LinearGradient
-            colors={['#0004', 'transparent']}
-            start={{x: 0.0, y: 0.0}}
-            end={{x: 0.0, y: 1}}
+          <Text
             style={[
-              {
-                ...styles.overlay,
-                justifyContent: 'flex-end',
-                flexDirection: 'row',
-              },
-              gs.h40,
-              styles.txtoverlay,
+              {fontFamily: ts.secondaryregular, color: ts.primarytext},
+              gs.fs12,
+              gs.mt5,
             ]}>
-            <View>
-              <Text
-                style={[
-                  {fontFamily: ts.primarymedium, color: '#fff'},
-                  gs.fs21,
-                  gs.mr20,
-                  gs.mt5,
-                ]}>
-                {item.name}
-              </Text>
-            </View>
-          </LinearGradient>
-        </TouchableOpacity>
-      </Card>
+            {item.name}
+          </Text>
+        </Flex>
+      </TouchableOpacity>
     );
   };
   if (error?.message) {
@@ -130,14 +112,19 @@ function ExploreIndia() {
       <View style={[gs.ph15, gs.mt15]}>
         <Text
           style={[
-            gs.fs15,
             {fontFamily: ts.secondarysemibold, color: ts.primarytext},
-            gs.fs13,
-            gs.mb10,
+            gs.fs18,
+            gs.mb5,
           ]}>
-          {route.name == 'Caterings'
-            ? 'Explore Caterers around India'
-            : 'Explore Tiffin Service providers around India'}
+          {route.name == 'Caterings' ? 'Explore Caterers' : 'Explore Tiffins'}
+        </Text>
+        <Text
+          style={[
+            {fontFamily: ts.secondaryregular, color: ts.secondarytext},
+            gs.fs13,
+            gs.mb15,
+          ]}>
+          around india
         </Text>
         <Text
           style={[
@@ -151,28 +138,53 @@ function ExploreIndia() {
     );
   }
   return (
-    <View style={[gs.ph15, gs.mt15]}>
-      <Text
-        style={[
-          gs.fs15,
-          {fontFamily: ts.secondarysemibold, color: ts.primarytext},
-          gs.fs13,
-          gs.mb10,
-        ]}>
-        {route.name == 'Caterings'
-          ? 'Explore Caterers around India'
-          : 'Explore Tiffin Service providers around India'}
-      </Text>
+    <View style={[gs.mt5]}>
+      <Flex
+        direction="row"
+        // align="center"
+        justifyContent="space-between"
+        style={[gs.ph15]}>
+        <View>
+          <Text
+            style={[
+              {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+              gs.fs18,
+              gs.mb5,
+            ]}>
+            {route.name == 'Caterings' ? 'Explore Caterers' : 'Explore Tiffins'}
+          </Text>
+          <Text
+            style={[
+              {fontFamily: ts.secondaryregular, color: ts.secondarytext},
+              gs.fs13,
+              gs.mb15,
+            ]}>
+            around india
+          </Text>
+        </View>
+        <View style={[gs.mb10]}>
+          {route?.name == 'Caterings' ? (
+            <MoreSecondarybtn />
+          ) : (
+            <MorePrimarybtn />
+          )}
+        </View>
+      </Flex>
       {loading ? (
-        <CitySkel />
+        <Flex style={[gs.pl15]} direction="row">
+          <CitySkel />
+          <CitySkel />
+          <CitySkel />
+        </Flex>
       ) : (
         data && (
           <FlatList
             data={data}
             keyExtractor={(item, index) => String(index)}
-            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
             renderItem={renderItem}
-            contentContainerStyle={{marginTop: 20}}
+            horizontal
+            contentContainerStyle={[gs.pl15]}
           />
         )
       )}
@@ -183,7 +195,8 @@ export default memo(ExploreIndia);
 
 const styles = ScaledSheet.create({
   img: {
-    height: '200@ms',
+    height: '75@ms',
+    width: '75@ms',
     resizeMode: 'cover',
     position: 'relative',
   },

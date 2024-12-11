@@ -85,7 +85,6 @@ export const updateSearchService = async ({
     }
     return res.data;
   } catch (error) {
-    console.log('error', error);
     if (error.response && error.response.data) {
       throw new Error(error.response.data.message);
     } else {
@@ -112,7 +111,6 @@ export const getHomePageService = async ({params}) => {
     });
     return res.data;
   } catch (error) {
-    console.log('error in ', error);
     if (error.response && error.response.data) {
       throw new Error(error.response.data.message);
     } else {
@@ -136,7 +134,6 @@ export const getSimilarTiffinService = async ({params}) => {
     });
     return res.data;
   } catch (error) {
-    console.log('error in ', error);
     if (error.response && error.response.data) {
       throw new Error(error.response.data.message);
     } else {

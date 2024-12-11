@@ -9,6 +9,7 @@ import {
   Keyboard,
   StatusBar,
   Image,
+  Pressable,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
@@ -54,6 +55,7 @@ import Ratings from '../../../components/Ratings';
 import {getUser} from '../../Onboarding/controllers/AuthController';
 import {getSubscription} from '../../Home/controllers/FilterMainController';
 import CuisinesExpanded from '../../../components/CuisinesExpanded';
+import moment from 'moment';
 
 export default function TiffinProfile({navigation, route}) {
   const {branch_id, vendor_id, location} = route.params;
@@ -92,68 +94,6 @@ export default function TiffinProfile({navigation, route}) {
 
   return (
     <ScreenWrapper>
-      <View style={[gs.ph15, styles.headercontainer]}>
-        <SafeAreaView>
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            style={[Platform.OS == 'ios' ? gs.mt10 : gs.mt5]}>
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => {
-                dispatch(clearProfile());
-                navigation.goBack();
-              }}>
-              <AntIcon name="arrowleft" style={[gs.fs22, {color: '#fff'}]} />
-            </TouchableOpacity>
-            <Flex direction="row" alignItems="center">
-              <TouchableOpacity
-                activeOpacity={0.7}
-                style={[gs.ph10]}
-                onPress={() => {
-                  navigation.navigate('PageStack', {
-                    screen: 'MapSingle',
-                    params: {
-                      initialRegion: location,
-                      profile,
-                      from: 'Tiffins',
-                    },
-                  });
-                }}>
-                <IonIcons
-                  name="location-sharp"
-                  style={[gs.fs22, {color: '#fff'}]}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.7} style={[gs.ph15]}>
-                <EntypoIcons name="share" style={[gs.fs22, {color: '#fff'}]} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                style={[gs.ph10]}
-                onPress={() => {
-                  dispatch(wishDetails(vendor_id));
-                  dispatch(
-                    updateWishList({
-                      branch_id: branch_id,
-                      vendor_type: 'Tiffin',
-                      status: profile?.is_wishlisted == true ? 0 : 1,
-                    }),
-                  );
-                  let temp = {...profile};
-                  let updated = {...temp, is_wishlisted: !temp.is_wishlisted};
-                  setProfile(updated);
-                }}>
-                <AntIcon
-                  name={profile?.is_wishlisted ? 'heart' : 'hearto'}
-                  style={[gs.fs22, {color: '#fff'}]}
-                />
-              </TouchableOpacity>
-            </Flex>
-          </Flex>
-        </SafeAreaView>
-      </View>
       <KeyboardAwareScrollView
         style={{flex: 1, backgroundColor: '#fff'}}
         showsVerticalScrollIndicator={false}
@@ -161,252 +101,410 @@ export default function TiffinProfile({navigation, route}) {
         nestedScrollEnabled={true}
         extraScrollHeight={Platform.OS == 'ios' ? 100 : 0}
         ref={scrollViewRef}>
-        <View style={[gs.ph5, gs.pv10]}>
-          <Flex direction="row" align="center" justify="space-between">
-            <Text style={[gs.fs19, styles.heading]}>
-              {profile?.vendor_service_name}
-            </Text>
-            {profile?.subscription_type_display && (
-              <TouchableOpacity activeOpacity={0.8}>
-                <View
-                  style={{
-                    ...styles.labelcontainer,
-                    backgroundColor: ts.branded,
-                  }}>
-                  <Text
-                    style={[
-                      gs.fs13,
-                      {color: '#fff', fontFamily: ts.secondaryregular},
-                    ]}>
-                    {profile?.subscription_type_display?.slice(0, 8)}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            )}
-          </Flex>
-          {profile?.formatted_address && (
-            <Text style={[gs.fs11, styles.area]} numberOfLines={3}>
-              {profile.formatted_address}
-            </Text>
-          )}
-        </View>
         {/* =======BANNER SLIDERS======= */}
         <View>
-          <ProfileBanners
-            catererBanners={profile?.bennerMenuMixGalleryImages}
-          />
-          <Flex direction="row" align="center" style={[gs.ph5]}>
-            {profile?.foodTypes?.length ? (
-              <Text style={[styles.subtxt, gs.fs12]}>Food Type : </Text>
-            ) : null}
-            <Flex direction="row" align="center" style={[gs.ph5, gs.pv15]}>
-              {profile?.foodTypes?.length
-                ? profile.foodTypes.map((e, i) => (
-                    <Flex direction="row" alignItems="center" key={i}>
+          <View style={{position: 'relative'}}>
+            <ProfileBanners
+              catererBanners={profile?.bennerMenuMixGalleryImages}
+            />
+            <View style={styles.topicons}>
+              <SafeAreaView>
+                {Platform == 'android' ? (
+                  <View style={{paddingTop: StatusBar.currentHeight}}></View>
+                ) : null}
+                <Flex
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  width={'100%'}
+                  style={{
+                    paddingTop:
+                      Platform.OS == 'android' ? StatusBar.currentHeight : null,
+                  }}>
+                  <Pressable
+                    onPress={() => {
+                      dispatch(clearProfile());
+                      navigation.goBack();
+                    }}>
+                    <Image
+                      source={require('../../../assets/Common/backicon.png')}
+                      style={styles.backicon}
+                    />
+                  </Pressable>
+                  <Pressable>
+                    <Image
+                      source={require('../../../assets/Common/share.png')}
+                      style={styles.backicon}
+                    />
+                  </Pressable>
+                </Flex>
+              </SafeAreaView>
+            </View>
+            {/* Top card */}
+            <Card style={styles.details}>
+              <Card.Content>
+                <Flex direction="row" align="center">
+                  {profile?.bennerMenuMixGalleryImages?.length && (
+                    <Image
+                      source={{
+                        uri: profile?.bennerMenuMixGalleryImages[0]
+                          ?.image_names[0]?.medium,
+                      }}
+                      style={styles.profile}
+                    />
+                  )}
+                  <View style={[gs.ml15, {width: '60%'}]}>
+                    <Text style={styles.heading}>
+                      {profile?.vendor_service_name}
+                    </Text>
+                    {profile?.formatted_address && (
+                      <Text style={[gs.fs13, styles.area]} numberOfLines={2}>
+                        {profile.formatted_address}
+                      </Text>
+                    )}
+                  </View>
+                </Flex>
+                <Flex
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-around"
+                  style={[gs.mt10]}>
+                  <View style={styles.ratingiconcontainer}>
+                    <Flex align="center">
+                      <Image
+                        source={require('../../../assets/Common/rating.png')}
+                        style={styles.ratingicon}
+                      />
+                      <Text style={[styles.startPrice, gs.fs14]}>
+                        4.5 ({profile?.review_count})
+                      </Text>
+                    </Flex>
+                  </View>
+                  <View style={styles.divider}></View>
+                  <View style={styles.ratingiconcontainer}>
+                    <Pressable
+                      onPress={() => {
+                        navigation.navigate('PageStack', {
+                          screen: 'MapSingle',
+                          params: {
+                            initialRegion: location,
+                            profile,
+                            from: 'Tiffin',
+                          },
+                        });
+                      }}>
+                      <Flex align="center">
+                        <Image
+                          source={require('../../../assets/Profile/locationtiffin.png')}
+                          style={styles.ratingicon}
+                        />
+                        <Text style={[styles.startPrice, gs.fs14]}>
+                          Location
+                        </Text>
+                      </Flex>
+                    </Pressable>
+                  </View>
+                  <View style={styles.divider}></View>
+                  <View style={styles.ratingiconcontainer}>
+                    <Flex align="center">
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={[gs.ph10]}
+                        onPress={() => {
+                          dispatch(wishDetails(vendor_id));
+                          dispatch(
+                            updateWishList({
+                              branch_id: branch_id,
+                              vendor_type: 'Tiffin',
+                              status: profile?.is_wishlisted == true ? 0 : 1,
+                            }),
+                          );
+                          let temp = {...profile};
+                          let updated = {
+                            ...temp,
+                            is_wishlisted: !temp.is_wishlisted,
+                          };
+                          setProfile(updated);
+                        }}>
+                        <AntIcon
+                          name={profile?.is_wishlisted ? 'heart' : 'hearto'}
+                          style={[gs.fs20, {color: ts.primary}, gs.h25]}
+                        />
+                      </TouchableOpacity>
+                      <Text style={[styles.startPrice, gs.fs14]}>Wishlist</Text>
+                    </Flex>
+                  </View>
+                </Flex>
+                {/* cuisines */}
+                <View
+                  style={[
+                    {backgroundColor: 'rgba(217, 130, 43, 0.2)'},
+                    gs.mt10,
+                    gs.pv10,
+                    gs.ph7,
+                    gs.br4,
+                  ]}>
+                  <Text style={[styles.startPrice, gs.fs16]}>Cuisines</Text>
+                  <Flex
+                    direction="row"
+                    align="center"
+                    flexWrap="wrap"
+                    style={[gs.mt5]}>
+                    {profile?.cuisines?.slice(0, 4)?.map((e, i) => (
                       <Text
                         style={[
+                          gs.fs14,
                           {
-                            ...styles.subtxt,
-                            color:
-                              e.food_type_name == 'All'
-                                ? ts.primarytext
-                                : e.food_type_name == 'Non Veg'
-                                ? ts.accent4
-                                : ts.accent3,
+                            fontFamily: ts.primarylight,
+                            color: ts.primarytext,
                           },
-                          gs.fs12,
-                        ]}>
-                        {e?.food_type_name !== 'All' ? e?.food_type_name : null}{' '}
+                        ]}
+                        key={i}
+                        numberOfLines={2}>
+                        {e.cuisine_name}
+                        {i !== profile?.cuisines?.length - 1 && ','}{' '}
                       </Text>
-                      {e?.food_type_name == 'Veg' ? (
-                        <Image
-                          source={require('../../../assets/Common/veg.png')}
-                          style={styles.foodTypeimg}
-                        />
-                      ) : e?.food_type_name == 'Non Veg' ? (
-                        <Image
-                          source={require('../../../assets/Common/nonveg.png')}
-                          style={styles.foodTypeimg}
-                        />
-                      ) : null}
-                      <Text style={{...styles.subtxt, color: ts.secondarytext}}>
-                        {profile?.foodTypes?.length - 1 != i ? '|' : null}
-                      </Text>{' '}
+                    ))}
+                    {profile?.cuisines?.length > 4 && (
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => {
+                          setStretch(prev => !prev);
+                        }}>
+                        <Text
+                          style={[
+                            gs.fs12,
+                            {
+                              fontFamily: ts.secondaryregular,
+                              color: ts.primary,
+                            },
+                          ]}>
+                          {stretch ? 'less' : 'more'}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                    <CuisinesExpanded
+                      cuisines={profile?.cuisines}
+                      stretch={stretch}
+                      setStretch={setStretch}
+                      from={'Tiffins'}
+                    />
+                  </Flex>
+                </View>
+                <Flex
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between">
+                  <Flex direction="row" align="center" style={[gs.mt7, gs.mb5]}>
+                    {profile?.serviceTypes?.map((e, i) => (
+                      <View
+                        key={i}
+                        style={[
+                          {
+                            backgroundColor:
+                              e?.service_type_name == 'Takeaway'
+                                ? 'rgba(62, 187, 233, 0.3)'
+                                : e?.service_type_name == 'Dine In'
+                                ? 'rgba(232, 116, 8, 0.3)'
+                                : 'rgba(117, 55, 199, 0.3)',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          },
+                          gs.br5,
+                          gs.mr10,
+                          gs.ph5,
+                          gs.pv5,
+                          gs.mt10,
+                        ]}>
+                        <Flex direction="row" align="center">
+                          <Image
+                            source={
+                              e?.service_type_name == 'Delivery'
+                                ? require('../../../assets/Search/deliverynew.png')
+                                : e?.service_type_name == 'Takeaway'
+                                ? require('../../../assets/Search/takeawaynew.png')
+                                : require('../../../assets/Search/dineinnew.png')
+                            }
+                            style={styles.servicesIcon}
+                          />
+                          <Text
+                            style={[
+                              {
+                                color:
+                                  e?.service_type_name == 'Takeaway'
+                                    ? '#00658a'
+                                    : e?.service_type_name == 'Dine In'
+                                    ? '#c76407'
+                                    : '#7537c7',
+                                fontFamily: ts.secondaryregular,
+                              },
+                              gs.fs13,
+                              gs.ml5,
+                            ]}>
+                            {e?.service_type_name}
+                          </Text>
+                        </Flex>
+                      </View>
+                    ))}
+                  </Flex>
+                  <Flex direction="row" align="center">
+                    <Flex direction="row" align="center" style={[gs.pv15]}>
+                      {profile?.foodTypes?.length
+                        ? profile.foodTypes.map((e, i) => (
+                            <Flex direction="row" alignItems="center" key={i}>
+                              {e?.food_type_name == 'Veg' ? (
+                                <Image
+                                  source={require('../../../assets/Common/veg.png')}
+                                  style={styles.foodTypeimg}
+                                />
+                              ) : e?.food_type_name == 'Non Veg' ? (
+                                <Image
+                                  source={require('../../../assets/Common/nonveg.png')}
+                                  style={styles.foodTypeimg}
+                                />
+                              ) : null}
+                            </Flex>
+                          ))
+                        : null}
                     </Flex>
-                  ))
-                : null}
-            </Flex>
-          </Flex>
-          {profile?.cuisines?.length && (
-            <View style={[gs.ph5]}>
-              <Text style={[styles.subtxt, gs.fs12, gs.pb7]}>
-                Cuisines We Cater
-              </Text>
-              <Flex direction="row" align="center" flexWrap="wrap">
-                {profile?.cuisines?.slice(0, 4)?.map((e, i) => (
-                  <Text
-                    style={[
-                      gs.fs14,
-                      {
-                        fontFamily: ts.secondarymedium,
-                        color: ts.primary,
-                      },
-                    ]}
-                    key={i}
-                    numberOfLines={2}>
-                    {e.cuisine_name}
-                    {i !== profile?.cuisines?.length - 1 && ','}{' '}
-                  </Text>
-                ))}
-                {profile?.cuisines.length > 4 && (
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      setStretch(prev => !prev);
-                    }}>
-                    <Text
-                      style={[
-                        gs.fs12,
-                        {
-                          fontFamily: ts.secondaryregular,
-                          color: ts.primary,
-                        },
-                      ]}>
-                      {stretch ? 'read less' : 'read more'}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                <CuisinesExpanded
-                  cuisines={profile?.cuisines}
-                  stretch={stretch}
-                  setStretch={setStretch}
-                  from={'Tiffins'}
-                />
-              </Flex>
-            </View>
-          )}
+                  </Flex>
+                </Flex>
+              </Card.Content>
+            </Card>
+          </View>
         </View>
-        {/* =======SERVICES=========== */}
-        <View style={{paddingHorizontal: 15}}>
-          <Flex
-            direction="row"
-            alignItems="center"
-            justifyContent="center"
-            style={{paddingVertical: 15}}>
-            {profile?.serviceTypes?.length ? (
-              <View
+        {/* ==========GALLERY========= */}
+        {profile?.galleryImages?.length > 0 ? (
+          <>
+            <View style={[gs.pt20, gs.pb10, gs.ph15]}>
+              <Text
                 style={[
-                  {width: width / 2 - 22.5},
-                  styles.servicecontainer,
-                  gs.pv15,
-                  gs.ph3,
+                  {fontFamily: ts.secondarymedium, color: '#000'},
+                  gs.fs20,
                 ]}>
-                <MaterialIcons name="room-service" style={styles.serviceicon} />
-                <Text style={[styles.subtxt, gs.fs12, gs.pv7]}>
-                  Service Type
-                </Text>
+                Gallery
+              </Text>
+            </View>
+            <View>
+              <GallerySlice />
+            </View>
+          </>
+        ) : null}
+        {/* =======SERVICES=========== */}
+        <View style={[gs.pt20, gs.pb10, gs.ph15]}>
+          <Text
+            style={[
+              {fontFamily: ts.secondarymedium, color: '#000'},
+              gs.fs20,
+              gs.pb20,
+            ]}>
+            Highlights
+          </Text>
+          {profile?.serviceTypes?.length ? (
+            <Flex direction="row" align="center">
+              <View>
+                <Image
+                  source={require('../../../assets/Profile/kitchentype.png')}
+                  style={styles.serviceicon}
+                />
+              </View>
+              <View>
+                <Text style={[styles.subtxt, gs.fs14]}>Service Type</Text>
                 <Flex direction="row">
-                  {profile?.serviceTypes?.map((e, i) => (
+                  {profile?.serviceTypes?.slice(0, 2)?.map((e, i) => (
                     <Text
-                      style={[styles.servicedesc, gs.fs11, gs.mt5]}
+                      style={[styles.servicedesc, gs.fs16, gs.mt5]}
                       numberOfLines={1}
                       key={i}>
                       {e.service_type_name}
-                      {i != profile?.serviceTypes?.length - 1 && ','}{' '}
+                      {profile?.serviceTypes?.length == 1
+                        ? null
+                        : i != 1 && ','}{' '}
                     </Text>
                   ))}
                 </Flex>
               </View>
-            ) : null}
-            {profile?.working_since ? (
-              <View
-                style={[
-                  {width: width / 2 - 22.5, marginLeft: 15},
-                  styles.servicecontainer,
-                  gs.p15,
-                ]}>
-                <Material name="timeline" style={styles.serviceicon} />
-                <Text style={[styles.subtxt, gs.fs12, gs.pv7]}>
-                  Working Since
-                </Text>
-                <Text
-                  style={[styles.servicedesc, gs.fs13, gs.mt5]}
-                  numberOfLines={1}>
-                  {profile?.working_since ? profile.working_since : '-'}
-                </Text>
-              </View>
-            ) : null}
-          </Flex>
-        </View>
-        {profile?.mealTimes?.length ? (
-          <View style={{paddingHorizontal: 15}}>
-            <Flex direction="row" alignItems="center" justifyContent="center">
-              <View
-                style={[{width: width - 30}, styles.servicecontainer, gs.p15]}>
-                <MaterialIcons
-                  name="white-balance-sunny"
+            </Flex>
+          ) : null}
+
+          <Divider style={gs.mv15} />
+          {profile?.start_day ||
+          profile?.end_day ||
+          profile?.start_time ||
+          profile?.end_time ? (
+            <View>
+              <Flex direction="row">
+                <View>
+                  <Image
+                    source={require('../../../assets/Profile/workinghourstiffin.png')}
+                    style={styles.serviceicon}
+                  />
+                </View>
+                <View>
+                  <Text style={[styles.subtxt, gs.fs14]} numberOfLines={1}>
+                    Working Hours
+                  </Text>
+                  <Text
+                    style={[styles.servicedesc, gs.fs16, gs.mt5]}
+                    numberOfLines={1}>
+                    {profile?.start_day.slice(0, 3)} -{' '}
+                    {profile?.end_day?.slice(0, 3)}{' '}
+                    {profile?.start_time
+                      ? moment(profile.start_time, 'HH:mm:ss').format('hh:mm A')
+                      : null}{' '}
+                    -{' '}
+                    {profile?.end_time
+                      ? moment(profile.end_time, 'HH:mm:ss').format('hh:mm A')
+                      : null}
+                  </Text>
+                </View>
+              </Flex>
+            </View>
+          ) : null}
+          <Divider style={gs.mv15} />
+          {profile?.working_since ? (
+            <Flex direction="row">
+              <View>
+                <Image
+                  source={require('../../../assets/Profile/workingsincetiffin.png')}
                   style={styles.serviceicon}
                 />
-                <Text
-                  style={[styles.subtxt, gs.fs12, gs.pv7]}
-                  numberOfLines={1}>
-                  Meal Times
-                </Text>
-                <Flex direction="row" align="center">
-                  {profile?.mealTimes?.slice(0, 5)?.map((e, i) => (
-                    <Text
-                      style={[styles.servicedesc, gs.fs13, gs.mt5]}
-                      numberOfLines={1}
-                      key={i}>
-                      {e?.meal_time_name} {i != 4 && '|'}{' '}
-                    </Text>
-                  ))}
-                </Flex>
+              </View>
+              <View>
+                <View>
+                  <Text style={[styles.subtxt, gs.fs14]}>Working Since</Text>
+                  <Text
+                    style={[styles.servicedesc, gs.fs16, gs.mt5]}
+                    numberOfLines={1}>
+                    {profile?.working_since}
+                  </Text>
+                </View>
               </View>
             </Flex>
-          </View>
-        ) : null}
-        {profile?.start_day ||
-        profile?.end_day ||
-        profile?.start_time ||
-        profile?.end_time ? (
-          <View style={{paddingHorizontal: 15, paddingVertical: 15}}>
-            <Flex direction="row" alignItems="center" justifyContent="center">
-              <View
-                style={[{width: width - 30}, styles.servicecontainer, gs.p15]}>
-                <FontistoIcons name="clock" style={styles.serviceicon} />
-                <Text
-                  style={[styles.subtxt, gs.fs12, gs.pv7]}
-                  numberOfLines={1}>
-                  Working Hours
-                </Text>
-                <Text
-                  style={[styles.servicedesc, gs.fs13, gs.mt5]}
-                  numberOfLines={1}>
-                  {profile?.start_day} - {profile?.end_day}{' '}
-                  {profile?.start_time} - {profile?.end_time}
-                </Text>
-              </View>
-            </Flex>
-          </View>
-        ) : null}
+          ) : null}
+        </View>
+
         {/* =====ABOUT US / BRANCHES========== */}
         {profile?.about_description?.length ? (
-          <View style={[gs.ph5]}>
+          <View style={[gs.ph15, gs.mt20]}>
             <Text
               style={[
-                gs.fs14,
-                gs.pv5,
-                {fontFamily: ts.secondaryregular, color: ts.primary},
+                {fontFamily: ts.secondarymedium, color: '#000'},
+                gs.fs20,
+                gs.pb10,
               ]}>
               About Us
             </Text>
             <ReadMore
-              style={[styles.subtxt, gs.fs12]}
+              style={[
+                styles.subtxt,
+                gs.fs16,
+                {fontFamily: ts.primarylight, color: ts.primarytext},
+              ]}
               seeLessText="read less"
               seeMoreText="read more"
-              seeLessStyle={{color: ts.teritary}}
-              seeMoreStyle={{color: ts.teritary}}
+              seeLessStyle={{color: ts.primary}}
+              seeMoreStyle={{color: ts.primary}}
               numberOfLines={5}>
               {profile?.about_description}{' '}
             </ReadMore>
@@ -414,12 +512,12 @@ export default function TiffinProfile({navigation, route}) {
         ) : null}
 
         {profile?.branches?.length ? (
-          <View style={[gs.ph5]}>
+          <View style={[gs.ph15, gs.mt20]}>
             <Text
               style={[
-                gs.fs14,
-                gs.pv5,
-                {fontFamily: ts.secondaryregular, color: ts.primary},
+                {fontFamily: ts.secondarymedium, color: '#000'},
+                gs.fs20,
+                gs.pb10,
               ]}>
               Our Branches
             </Text>
@@ -428,20 +526,32 @@ export default function TiffinProfile({navigation, route}) {
                 profile?.branches
                   ?.slice(0, branchStretch ? profile.branches.length : 5)
                   .map((e, i) => (
-                    <Text style={[styles.subtxt, gs.fs12]}>
+                    <Text
+                      style={[
+                        styles.subtxt,
+                        gs.fs16,
+                        {fontFamily: ts.primarylight, color: ts.primarytext},
+                      ]}>
                       {e?.city}
                       {i !== profile?.branches?.length - 1 ? ',' : '.'}{' '}
                     </Text>
                   ))
               ) : (
-                <Text style={[styles.subtxt, gs.fs12]}>-</Text>
+                <Text
+                  style={[
+                    styles.subtxt,
+                    gs.fs16,
+                    {fontFamily: ts.primarylight, color: ts.primarytext},
+                  ]}>
+                  -
+                </Text>
               )}
               {profile?.branches?.length > 5 && (
                 <TouchableOpacity
                   onPress={() => {
                     setBranchStretch(!branchStretch);
                   }}>
-                  <Text style={[styles.subtxt, gs.fs10, {color: ts.primary}]}>
+                  <Text style={[styles.subtxt, gs.fs10, {color: ts.secondary}]}>
                     {!branchStretch ? 'View all' : 'View less'}
                   </Text>
                 </TouchableOpacity>
@@ -449,51 +559,8 @@ export default function TiffinProfile({navigation, route}) {
             </Flex>
           </View>
         ) : null}
-        {/* ==========GALLERY========= */}
-        {profile?.galleryImages?.length > 0 ? (
-          <>
-            <Center>
-              <View style={[gs.pt20, gs.pb15]}>
-                <Text
-                  style={[
-                    {fontFamily: ts.secondarymedium, color: ts.primarytext},
-                    gs.fs15,
-                  ]}>
-                  Our Gallery
-                </Text>
-              </View>
-            </Center>
 
-            <View>
-              <GallerySlice />
-            </View>
-          </>
-        ) : null}
-        {profile?.galleryImages?.length ? (
-          <>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('PageStack', {
-                  screen: 'GalleryView',
-                  params: {
-                    selectedImageIndex: 0,
-                  },
-                });
-              }}>
-              <Center style={[gs.pv15]}>
-                <Text style={[styles.subtxt, gs.fs12, {color: ts.primary}]}>
-                  View all
-                </Text>
-              </Center>
-            </TouchableOpacity>
-            <View style={[gs.ph5, gs.pb15]}>
-              <Divider />
-            </View>
-          </>
-        ) : (
-          <View style={gs.pb10}></View>
-        )}
-        {/*======SIMILAR/POPULAR CATERERS====== */}
+        {/* ======SIMILAR/POPULAR CATERERS======
         <View style={[gs.ph5]}>
           {showPopular ? (
             <Text
@@ -516,42 +583,38 @@ export default function TiffinProfile({navigation, route}) {
           <View style={[gs.ph5, gs.pb15]}>
             <Divider />
           </View>
-        ) : null}
+        ) : null} */}
 
         {/* =======REVIEWS========== */}
-        <View style={[gs.ph5]}>
+        <View style={[gs.ph15, gs.mt20]}>
           {showReviews ? (
             <Text
               style={[
-                {fontFamily: ts.secondarymedium, color: ts.primarytext},
-                gs.fs15,
-                gs.pb15,
+                {fontFamily: ts.secondarymedium, color: '#000'},
+                gs.fs20,
+                gs.pb10,
               ]}>
-              Reviews : See what customers loved the most
+              Reviews
             </Text>
           ) : null}
+
           <ReviewSlice
             vendor_id={vendor_id}
             from={'Tiffins'}
             setShowReviews={setShowReviews}
           />
         </View>
-        {showReviews ? (
-          <View style={[gs.ph5, gs.pv15]}>
-            <Divider />
-          </View>
-        ) : null}
 
         {/* =====WRITE REVIEW======== */}
         <View style={[gs.ph5]}>
           <Center>
             <Text
               style={[
-                {fontFamily: ts.secondarymedium, color: ts.primarytext},
-                gs.fs15,
-                gs.pb15,
+                {fontFamily: ts.secondarymedium, color: '#000'},
+                gs.fs20,
+                gs.pt20,
               ]}>
-              Write a Review
+              Write your Review
             </Text>
           </Center>
           <View style={[gs.mh12, gs.mv12]}>
@@ -562,29 +625,44 @@ export default function TiffinProfile({navigation, route}) {
               vendorName={profile?.vendor_service_name}
             />
           </View>
-          <View>
-            <TextInput
-              placeholder="Add Comments"
-              style={[
-                {
-                  ...styles.issuecontainer,
-                  borderColor: cmtfocus ? ts.primary : '#ccc',
-                  fontFamily: ts.primaryregular,
-                },
-                gs.mh12,
-                gs.br10,
-              ]}
-              placeholderTextColor="#777"
-              multiline
-              onFocus={handleFocus}
-              onBlur={() => setCmtfocus(false)}
-              value={review}
-              onChangeText={text => setReview(text)}
-            />
-            {!createLoading ? (
+          <Text
+            style={[
+              gs.fs14,
+              gs.ph15,
+              {color: ts.primarytext, fontFamily: ts.primarylight},
+              gs.pb10,
+            ]}>
+            Share your experience
+          </Text>
+          <TextInput
+            placeholder="Add Comments"
+            style={[
+              {
+                ...styles.issuecontainer,
+                borderColor: cmtfocus ? ts.primary : '#ccc',
+                fontFamily: ts.secondaryregular,
+                backgroundColor: '#eee',
+              },
+              gs.mh12,
+              gs.br10,
+            ]}
+            placeholderTextColor="#777"
+            multiline
+            onFocus={() => {
+              setCmtfocus(true);
+              setTimeout(() => {
+                scrollViewRef.current.scrollToEnd({animated: true});
+              }, 300);
+            }}
+            onBlur={() => setCmtfocus(false)}
+            value={review}
+            onChangeText={text => setReview(text)}
+          />
+          {!createLoading ? (
+            <Center style={[gs.mh10]}>
               <TouchableOpacity
-                style={[gs.mh14, gs.mv10]}
                 onPress={() => {
+                  console.log(review, rating);
                   review &&
                     rating &&
                     dispatch(
@@ -597,43 +675,85 @@ export default function TiffinProfile({navigation, route}) {
                   setReview(null);
                   setRating(0);
                 }}
-                activeOpacity={0.7}>
-                <ThemeSepBtn
-                  btntxt="Submit"
-                  themecolor={review ? ts.primary : '#D3D3D3'}
-                />
+                activeOpacity={0.7}
+                style={[
+                  {
+                    ...styles.btn,
+                    backgroundColor: !review
+                      ? '#eee'
+                      : 'rgba(217, 130, 43, 0.2)',
+                  },
+                ]}>
+                <Text
+                  style={[
+                    styles.subtxt,
+                    gs.fs18,
+                    {
+                      color: !review ? '#777' : ts.primary,
+                      fontFamily: ts.secondarymedium,
+                    },
+                  ]}>
+                  Submit Review
+                </Text>
               </TouchableOpacity>
-            ) : (
-              <Center>
-                <Spinner color={ts.primary} />
-              </Center>
-            )}
-          </View>
+            </Center>
+          ) : (
+            <Center>
+              <Spinner color={ts.secondary} />
+            </Center>
+          )}
+          {/*         
+      </View>
+      <View style={{bottom: cmtfocus && 500}}> */}
         </View>
       </KeyboardAwareScrollView>
       <Card
-        style={[{borderRadius: 0, backgroundColor: '#fff'}, gs.ph8, gs.pv10]}>
+        style={[
+          {borderRadius: 0, backgroundColor: '#fff'},
+          gs.ph10,
+          gs.pb10,
+          gs.pt5,
+        ]}>
         <Flex
           direction="row"
           align="center"
           justify="space-between"
-          style={[gs.pv5]}>
-          <Text
-            style={[
-              gs.fs13,
-              {color: ts.secondarytext, fontFamily: ts.secondaryregular},
-            ]}>
-            Monthly plan price -{' '}
-            <Text style={[{color: ts.primary}, gs.fs16]}>₹ 2500</Text>
-          </Text>
-          <ThemeSepBtn btntxt="Contact Now" themecolor={ts.primary} />
+          style={[gs.pb10, gs.pt5]}>
+          <View>
+            <Text
+              style={[
+                gs.fs15,
+                {color: ts.secondarytext, fontFamily: ts.secondarylight},
+              ]}>
+              Starting Price / Plate
+            </Text>
+            <Text
+              style={[
+                {color: '#000', fontFamily: ts.secondarysemibold},
+                gs.fs20,
+              ]}>
+              ₹ {profile?.start_price ? profile.start_price : 'N/A'}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              profile?.business_phone_number
+                ? Linking.openURL(`tel:${profile?.business_phone_number}`)
+                : Alert.alert('No Phone Number Found.');
+            }}>
+            <ThemeSepBtn
+              btntxt="Book Now"
+              themecolor={ts.primary}
+              rounded={true}
+            />
+          </TouchableOpacity>
         </Flex>
       </Card>
     </ScreenWrapper>
   );
 }
 const styles = ScaledSheet.create({
-  heading: {fontFamily: ts.primarymedium, color: ts.teritary, width: '75%'},
+  heading: {fontFamily: ts.secondarysemibold, color: '#000', fontSize: '18@ms'},
   labelcontainer: {
     height: '25@ms',
     width: '80@ms',
@@ -643,14 +763,16 @@ const styles = ScaledSheet.create({
   },
   area: {
     fontFamily: ts.secondaryregular,
-    color: ts.teritary,
-    marginVertical: '10@ms',
+    color: ts.secondarytext,
+    marginVertical: '5@ms',
+    width: '100%',
   },
   subtxt: {
     fontFamily: ts.secondaryregular,
     color: ts.secondarytext,
-    lineHeight: '17@ms',
+    // lineHeight: '17@ms',
   },
+
   servicecontainer: {
     borderWidth: 1,
     borderColor: '#ccc',
@@ -659,8 +781,9 @@ const styles = ScaledSheet.create({
     height: '110@ms',
   },
   serviceicon: {
-    fontSize: '35@ms',
-    color: ts.primary,
+    height: '45@ms',
+    width: '45@ms',
+    marginRight: '15@ms',
   },
   usericon: {
     fontSize: '25@ms',
@@ -689,6 +812,57 @@ const styles = ScaledSheet.create({
   foodTypeimg: {
     height: '15@ms',
     width: '15@ms',
-    marginRight: '2@ms',
+    marginRight: '5@ms',
+  },
+  backicon: {
+    height: '40@ms',
+    width: '40@ms',
+  },
+  topicons: {
+    position: 'absolute',
+    paddingHorizontal: '15@ms',
+  },
+  details: {
+    backgroundColor: '#fff',
+    marginHorizontal: '10@ms',
+    marginTop: '-90@ms',
+  },
+  profile: {
+    height: '50@ms',
+    width: '50@ms',
+    borderRadius: '50@ms',
+    borderWidth: 2,
+    borderColor: '#000',
+  },
+  ratingicon: {
+    height: '23@ms',
+    width: '23@ms',
+    marginBottom: '5@ms',
+  },
+  divider: {
+    borderRightWidth: 0.5,
+    borderRightColor: '#ddd',
+    height: '32@ms',
+  },
+  servicesIcon: {
+    height: '16@ms',
+    width: '16@ms',
+  },
+  btn: {
+    backgroundColor: '#fbe3e1',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: '10@ms',
+    borderRadius: '20@ms',
+    marginVertical: '10@ms',
+  },
+  startPrice: {
+    color: '#000',
+    fontFamily: ts.secondaryregular,
+  },
+  ratingiconcontainer: {
+    // backgroundColor:'#ff0',
+    width: '31%',
   },
 });

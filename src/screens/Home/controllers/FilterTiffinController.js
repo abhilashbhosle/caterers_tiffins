@@ -56,7 +56,6 @@ const filterTiffinSlice = createSlice({
       state.mealData = action.payload;
     },
     updateKitchen: (state, action) => {
-      console.log("update kitchen called",)
       state.kitchenData = action.payload;
     },
   },

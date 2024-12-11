@@ -7,7 +7,10 @@ import {Center, FlatList, Flex} from 'native-base';
 import {Card} from 'react-native-paper';
 import {ScaledSheet} from 'react-native-size-matters';
 import {shallowEqual, useDispatch, useSelector} from 'react-redux';
-import {getCuisines, updateCuisine} from '../controllers/ExploreCuisineController';
+import {
+  getCuisines,
+  updateCuisine,
+} from '../controllers/ExploreCuisineController';
 import CuisineSkel from '../../../components/skeletons/CuisineSkel';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {checkLocation, updateSearch} from '../controllers/HomeController';
@@ -16,9 +19,9 @@ import {
   setLocationres,
 } from '../controllers/SearchController';
 import {getCatererSearchService} from '../services/SearchService';
-import { startLoader } from '../../../redux/CommonSlicer';
-import { setSearchHomeJson } from '../controllers/SearchCommonController';
-import { showMessage } from 'react-native-flash-message';
+import {startLoader} from '../../../redux/CommonSlicer';
+import {setSearchHomeJson} from '../controllers/SearchCommonController';
+import {showMessage} from 'react-native-flash-message';
 
 function ExploreCusines() {
   const route = useRoute();
@@ -35,16 +38,13 @@ function ExploreCusines() {
   useEffect(() => {
     dispatch(getCuisines());
   }, []);
-  const {
-    foodTypeData,
-    subData,
-  } = useSelector(state => state?.filterCater);
+  const {foodTypeData, subData} = useSelector(state => state?.filterCater);
   const locationRes = useSelector(state => state.location.locationRes);
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
 
   const handleCuisinePress = async ({dispatch, navigation, index}) => {
     try {
-      dispatch(startLoader(true))
+      dispatch(startLoader(true));
       let res = await checkLocation({
         formattedLocation: locationRes,
         userLocation: userDetails,
@@ -84,12 +84,12 @@ function ExploreCusines() {
             place_id: res?.location?.place_id,
             pincode: res?.location?.pincode,
             area: res?.location?.area,
-            from:"Caterers",
-            selectedStartDate:res?.startData,
-            selectedEndDate:res?.endDate,
+            from: 'Caterers',
+            selectedStartDate: res?.startData,
+            selectedEndDate: res?.endDate,
             foodTypeData,
             subData,
-            cuisines_filter:JSON.stringify(temp)
+            cuisines_filter: JSON.stringify(temp),
           });
         }
         await dispatch(setLocationres(res?.location));
@@ -99,11 +99,10 @@ function ExploreCusines() {
             from: 'Caterers',
             ssd: res.startData,
             sse: res.endDate,
-            move:"forward"
-
+            move: 'forward',
           },
         });
-      }else{
+      } else {
         showMessage({
           message: "Couldn't load the results.",
           description: 'Make sure you have location selectes.',
@@ -112,16 +111,16 @@ function ExploreCusines() {
       }
     } catch (err) {
       console.log('error in handleCuisinePress', err);
-    }finally{
-      setTimeout(()=>{
-        dispatch(startLoader(false))
-      },1000)
+    } finally {
+      setTimeout(() => {
+        dispatch(startLoader(false));
+      }, 1000);
     }
   };
 
   const renderItem = ({item, index}) => {
     return (
-      <Card style={[{backgroundColor: '#fff'}, gs.mr15, gs.br8]}>
+      <Card style={[{backgroundColor: '#fff'}, gs.mr15, gs.br20, gs.mb20]}>
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => {
@@ -151,7 +150,7 @@ function ExploreCusines() {
             </View>
           )}
           <Center>
-            <Text
+            {/* <Text
               style={[
                 gs.fs8,
                 gs.p3,
@@ -163,7 +162,7 @@ function ExploreCusines() {
               ]}
               numberOfLines={1}>
               {item.name}
-            </Text>
+            </Text> */}
           </Center>
         </TouchableOpacity>
       </Card>
@@ -175,9 +174,9 @@ function ExploreCusines() {
         <View style={[gs.ph15, gs.mt10]}>
           <Text
             style={[
-              gs.fs15,
               {fontFamily: ts.secondarysemibold, color: ts.primarytext},
-              gs.fs13,
+              gs.fs18,
+              gs.mb10,
             ]}>
             Explore Cuisines
           </Text>
@@ -199,9 +198,10 @@ function ExploreCusines() {
       <View style={[gs.ph15, gs.mt10]}>
         <Text
           style={[
-            gs.fs15,
             {fontFamily: ts.secondarysemibold, color: ts.primarytext},
-            gs.fs13,
+            gs.fs18,
+            gs.mb10,
+            gs.mt10,
           ]}>
           Explore Cuisines
         </Text>
@@ -232,14 +232,12 @@ function ExploreCusines() {
 export default memo(ExploreCusines);
 const styles = ScaledSheet.create({
   img: {
-    height: '50@ms',
-    width: '60@ms',
+    height: '170@ms',
+    width: '130@ms',
     resizeMode: 'cover',
-    borderTopRightRadius: '8@ms',
-    borderTopLeftRadius: '8@ms',
+    borderRadius: '20@ms',
   },
   contentContainerStyle: {
-    paddingBottom: 20,
     paddingTop: 15,
     paddingLeft: '15@ms',
   },

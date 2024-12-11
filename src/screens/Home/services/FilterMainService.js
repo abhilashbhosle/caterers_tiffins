@@ -44,7 +44,6 @@ export const getServingService = async () => {
 export const getServService = async ({type}) => {
   try {
     let token = await AsyncStorage.getItem('token');
-    console.log(token);
     let res = await axios.get(
       `${endpoints.baseUrl}get-all-service-types?current_page=1&limit=100&vendor_type=${type}`,
       {
@@ -56,7 +55,6 @@ export const getServService = async ({type}) => {
     );
     return res.data;
   } catch (error) {
-    console.log('error in get service data', error);
     if (error.response && error.response.data) {
       throw new Error(error.response.data.message);
     } else {

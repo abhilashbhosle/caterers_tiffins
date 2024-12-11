@@ -7,7 +7,7 @@ export default function OccassionSkel() {
   const {height, width} = Dimensions.get('screen');
   return (
     <VStack
-      style={[{...styles.img, width: width / 2.2, justifyContent: 'flex-end'}]}
+      style={[{...styles.img, justifyContent: 'flex-end'}]}
       borderWidth="1"
       space={2}
       overflow="hidden"
@@ -24,11 +24,13 @@ export default function OccassionSkel() {
 }
 const styles = ScaledSheet.create({
   img: {
-    height: '200@ms',
+    height: '100@ms',
+    width: '100@ms',
     resizeMode: 'cover',
-	borderRadius:'12@ms'
+    borderRadius: '12@ms',
+    marginLeft:'15@ms'
   },
-  card:{
-	height:'200@ms'
-  }
+  card: {
+    height: '200@ms',
+  },
 });

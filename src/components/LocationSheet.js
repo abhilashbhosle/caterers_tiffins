@@ -52,7 +52,6 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
       setLocation(userDetails[0]?.formatted_address);
     }
   }, [userDetails]);
-  // console.log(userDetails)
   const handleOnChange = text => {
     setLocation(text);
     handleSearch(text);

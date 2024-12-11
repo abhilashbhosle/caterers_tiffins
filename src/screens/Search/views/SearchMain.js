@@ -7,6 +7,8 @@ import {
   StatusBar,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
+  Image,
 } from 'react-native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
@@ -16,7 +18,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import SearchBar from '../../Home/views/SearchBar';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Flex, Spinner} from 'native-base';
+import {Actionsheet, Divider, Flex, Spinner} from 'native-base';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import Badges from './Badges';
 import SearchList from './SearchList';
@@ -35,6 +37,7 @@ import {
   getSubscription,
   updateSubscriptions,
 } from '../../Home/controllers/FilterMainController';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function SearchMain({route, navigation}) {
   const {width, height} = useWindowDimensions();
@@ -45,7 +48,7 @@ export default function SearchMain({route, navigation}) {
   const [total, setTotal] = useState(0);
   const dispatch = useDispatch();
   const {foodTypeData, subData} = useSelector(state => state?.filterCater);
-
+  const [foodText, setFoodText] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
   const [firstItemVisible, setFirstItemVisible] = useState(true);
@@ -53,6 +56,7 @@ export default function SearchMain({route, navigation}) {
     state => state.location,
   );
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [enableFoodTypeDD, setEnableFoodTypeDD] = useState(false);
 
   const location = useSelector(state => state.location.locationRes);
   useFocusEffect(
@@ -69,6 +73,7 @@ export default function SearchMain({route, navigation}) {
   useEffect(() => {
     if (foodTypeData?.length) {
       setFoodType(foodTypeData);
+      setFoodText(foodTypeData[0]?.name);
     }
   }, [foodTypeData]);
 
@@ -174,187 +179,227 @@ export default function SearchMain({route, navigation}) {
     setVendorData([]);
     setPage(1);
   };
+
+  const handleFoodTpeDD = () => {
+    setEnableFoodTypeDD(prev => !prev);
+  };
   return (
     <ScreenWrapper>
-      <View
-        style={[
-          {
-            backgroundColor: from == 'Caterers' ? ts.secondary : ts.primary,
-          },
-          styles.headercontainer,
-          gs.ph20,
-        ]}>
-        <SafeAreaView>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={async () => {
-              await clearFilterService({dispatch, from});
-              navigation.navigate('BottomBarStack');
-              setVendorData(0);
-            }}
-            style={[gs.pb20]}>
-            {/* ========SEARCH============ */}
-            <AntIcon
-              name="arrowleft"
-              style={[gs.fs22, {color: '#fff'}, gs.mt10]}
-            />
-          </TouchableOpacity>
-          <SearchBar from={from} navigation={navigation} ssd={ssd} sse={sse} />
-        </SafeAreaView>
-      </View>
-      {/* ========TOP SELECTOR============ */}
-      {firstItemVisible && !keyboardVisible ? (
-        <Flex
-          style={[{width, backgroundColor: '#fff'}, gs.ph10, gs.pt15]}
-          direction="row"
-          alignItems="center"
-          justifyContent={'space-between'}>
-          <Flex direction="row" alignItems="center">
-            {foodType?.map((e, i) => (
-              <TouchableOpacity
-                onPress={() => {
-                  handleFoodTypes(i);
-                }}
-                key={i}>
-                <Flex direction="row" alignItems="center" style={[gs.pr10]}>
-                  <MaterialIcons
-                    name={e.selected != 1 ? 'circle-outline' : 'circle-slice-8'}
-                    style={[
-                      gs.fs20,
-                      gs.mr3,
-                      {
-                        color:
-                          e.selected != 1
-                            ? '#555'
-                            : from == 'Caterers'
-                            ? ts.secondary
-                            : ts.primary,
-                      },
-                    ]}
+      <ScrollView style={{flex: 1}}>
+        {/* =====SEARCH BAR */}
+        <LinearGradient
+          style={[
+            {
+              backgroundColor: from == 'Caterers' ? ts.secondary : ts.primary,
+            },
+            styles.headercontainer,
+            // gs.ph10,
+            gs.pt20,
+          ]}
+          start={from == 'Caterers' ? {x: 0, y: 0} : {x: 0, y: 0}}
+          end={from == 'Caterers' ? {x: 0, y: 1} : {x: 0, y: 2}}
+          colors={
+            from == 'Caterers'
+              ? ['#f8b4b3', '#fbe3e1', '#fff']
+              : ['#F6D6B2', '#fff', '#FFF']
+          }>
+          <SafeAreaView>
+            <Flex direction="row" alignItems="center" style={[gs.ph10]}>
+              <View style={{width: '13%'}}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={async () => {
+                    await clearFilterService({dispatch, from});
+                    navigation.navigate('BottomBarStack');
+                    setVendorData(0);
+                  }}>
+                  {/* ========SEARCH============ */}
+                  <Image
+                    alt="backbtn"
+                    source={
+                      from == 'Caterers'
+                        ? require('../../../assets/Common/back.png')
+                        : require('../../../assets/Common/backtiffin.png')
+                    }
+                    style={styles.backbtn}
                   />
-                  <Text
-                    style={[
-                      {fontFamily: ts.secondary, color: '#222'},
-                      gs.fs13,
-                    ]}>
-                    {e.name}
-                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={{width: '86%'}}>
+                <SearchBar
+                  from={from}
+                  navigation={navigation}
+                  ssd={ssd}
+                  sse={sse}
+                />
+              </View>
+            </Flex>
+          </SafeAreaView>
+          <View style={styles.selectorcontainer}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.scrollcontainer}>
+              {/* ========TOP SELECTOR============ */}
+              {firstItemVisible && !keyboardVisible ? (
+                <Flex style={[{width}]} direction="row" alignItems="center">
+                  <TouchableWithoutFeedback
+                    onPress={() => {
+                      setPage(1);
+                      setVendorData([]);
+                      dispatch(clearCaterers());
+                      from == 'Caterers'
+                        ? navigation.navigate('PageStack', {
+                            screen: 'FilterMain',
+                            params: {
+                              ssd,
+                              sse,
+                              location,
+                              from,
+                            },
+                          })
+                        : navigation.navigate('PageStack', {
+                            screen: 'FilterTiffins',
+                            params: {
+                              ssd,
+                              sse,
+                              location,
+                              from,
+                            },
+                          });
+                    }}>
+                    <View style={styles.btn}>
+                      <Text style={styles.btntxt}>Filter</Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                  <View style={{position: 'relative'}}>
+                    <TouchableOpacity
+                      style={[{...styles.btn,},gs.ph10]}
+                      onPress={handleFoodTpeDD}>
+                      <Flex
+                        align="center"
+                        direction="row"
+                        justifyContent="space-between">
+                        <Text style={styles.btntxt}>{foodText}</Text>
+                        <Image
+                          alt="downbtn"
+                          source={require('../../../assets/Common/downbtn.png')}
+                          style={styles.downArrow}
+                        />
+                      </Flex>
+                    </TouchableOpacity>
+                    <Actionsheet
+                      isOpen={enableFoodTypeDD}
+                      onClose={() => {
+                        setEnableFoodTypeDD(false);
+                      }}>
+                      <Actionsheet.Content style={{backgroundColor: '#fff'}}>
+                        {foodType?.map((e, i) => (
+                          <View key={i} style={[{width: '100%'}, gs.ph10]}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                handleFoodTypes(i);
+                                handleFoodTpeDD();
+                                setFoodText(e.name);
+                              }}>
+                              <Text
+                                style={[
+                                  {
+                                    ...styles.btntxt,
+                                    fontFamily:
+                                      foodText == e.name
+                                        ? ts.secondarymedium
+                                        : ts.secondarylight,
+                                  },
+                                  gs.fs16,
+                                  gs.mv10,
+                                ]}>
+                                {e?.name}
+                              </Text>
+                            </TouchableOpacity>
+                            <Divider />
+                          </View>
+                        ))}
+                      </Actionsheet.Content>
+                    </Actionsheet>
+                  </View>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      let data = [...vendorData];
+                      navigation.navigate('PageStack', {
+                        screen: 'MapMultiple',
+                        params: {
+                          initialRegion: location,
+                          profile: data,
+                          from: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+                        },
+                      });
+                    }}
+                    style={[styles.btn, {marginRight: 0}]}>
+                    <Flex direction="row" alignItems="center">
+                      {/* <IonIcons
+                        name="location-sharp"
+                        style={[gs.fs22, {color: '#555'}, gs.mr5]}
+                      /> */}
+                      <Text style={styles.btntxt}>Location</Text>
+                    </Flex>
+                  </TouchableOpacity>
+                  <Badges
+                    from={from}
+                    subType={subType}
+                    setSubType={setSubType}
+                    setPage={setPage}
+                    setVendorData={setVendorData}
+                  />
                 </Flex>
-              </TouchableOpacity>
-            ))}
-          </Flex>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => {
-              let data = [...vendorData];
-              navigation.navigate('PageStack', {
-                screen: 'MapMultiple',
-                params: {
-                  initialRegion: location,
-                  profile: data,
-                  from: from == 'Caterers' ? 'Caterer' : 'Tiffin',
-                },
-              });
-            }}>
-            <Flex direction="row" alignItems="center">
-              <IonIcons
-                name="location-sharp"
-                style={[gs.fs22, {color: '#555'}, gs.mr5]}
-              />
-              <Text
-                style={[{fontFamily: ts.secondary, color: '#222'}, gs.fs13]}>
-                Map
-              </Text>
-            </Flex>
-          </TouchableOpacity>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              setPage(1);
-              setVendorData([]);
-              dispatch(clearCaterers());
-              from == 'Caterers'
-                ? navigation.navigate('PageStack', {
-                    screen: 'FilterMain',
-                    params: {
-                      ssd,
-                      sse,
-                      location,
-                      from,
-                    },
-                  })
-                : navigation.navigate('PageStack', {
-                    screen: 'FilterTiffins',
-                    params: {
-                      ssd,
-                      sse,
-                      location,
-                      from,
-                    },
-                  });
-            }}>
-            <Flex direction="row" alignItems="center">
-              <MaterialIcons
-                name="filter"
-                style={[gs.fs22, {color: '#555'}, gs.mr5]}
-              />
-              <Text
-                style={[{fontFamily: ts.secondary, color: '#222'}, gs.fs13]}>
-                Filters
-              </Text>
-            </Flex>
-          </TouchableWithoutFeedback>
-        </Flex>
-      ) : null}
-
-      {/* ========SORTING BY TYPES========= */}
-      {firstItemVisible && !keyboardVisible ? (
-        <>
-          <Badges
-            from={from}
-            subType={subType}
-            setSubType={setSubType}
-            setPage={setPage}
-            setVendorData={setVendorData}
-          />
-          <View style={[{paddingHorizontal: 5, backgroundColor: '#fff'}]}>
-            <Text
-              style={[
-                gs.fs15,
-                {fontFamily: ts.secondarymedium, color: '#555'},
-                gs.fs13,
-              ]}
-              numberOfLines={1}>
-              {from == 'Caterers'
-                ? `${
-                    location?.area ? location?.area : location?.city
-                  }: ${total} Caterers found in ${
-                    location?.area ? location?.area : ''
-                  }${location?.area ? ',' : ''} ${location?.city}`
-                : `${
-                    location?.area ? location?.area : location?.city
-                  }: ${total} Tiffins found in ${
-                    location?.area ? location?.area : ''
-                  }${location?.area ? ',' : ''} ${location?.city}`}
-            </Text>
+              ) : null}
+             
+            </ScrollView>
           </View>
-        </>
-      ) : null}
-
-      {/* ========SEARCH CARDS======== */}
-      {!keyboardVisible ? (
-        <>
-          <SearchList
-            from={from}
-            fetchMoreData={fetchMoreData}
-            renderFooter={renderFooter}
-            vendorData={vendorData}
-            setVendorData={setVendorData}
-            location={location}
-            setFirstItemVisible={setFirstItemVisible}
-            firstItemVisible={firstItemVisible}
-          />
-        </>
-      ) : null}
+          {firstItemVisible && !keyboardVisible ? (
+                <>
+                  <View
+                    style={[{paddingHorizontal: 5}]}>
+                    <Text
+                      style={[
+                        gs.fs15,
+                        {fontFamily: ts.secondarymedium, color: '#555'},
+                        gs.fs13,
+                      ]}
+                      numberOfLines={1}>
+                      {from == 'Caterers'
+                        ? `${
+                            location?.area ? location?.area : location?.city
+                          }: ${total} Caterers found in ${
+                            location?.area ? location?.area : ''
+                          }${location?.area ? ',' : ''} ${location?.city}`
+                        : `${
+                            location?.area ? location?.area : location?.city
+                          }: ${total} Tiffins found in ${
+                            location?.area ? location?.area : ''
+                          }${location?.area ? ',' : ''} ${location?.city}`}
+                    </Text>
+                  </View>
+                </>
+              ) : null}
+        </LinearGradient>
+        {/* ========SEARCH CARDS======== */}
+        {!keyboardVisible ? (
+          <View style={styles.searchlistContainer}>
+            <SearchList
+              from={from}
+              fetchMoreData={fetchMoreData}
+              renderFooter={renderFooter}
+              vendorData={vendorData}
+              setVendorData={setVendorData}
+              location={location}
+              setFirstItemVisible={setFirstItemVisible}
+              firstItemVisible={firstItemVisible}
+            />
+          </View>
+        ) : null}
+      </ScrollView>
     </ScreenWrapper>
   );
 }
@@ -362,7 +407,41 @@ const styles = ScaledSheet.create({
   headercontainer: {
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-    minHeight: Platform.OS == 'ios' ? '150@ms' : '150@ms',
+    // minHeight: Platform.OS == 'ios' ? '150@ms' : '150@ms',
     paddingBottom: 20,
+  },
+  backbtn: {
+    height: '35@ms',
+    width: '35@ms',
+    marginRight: '10@ms',
+  },
+  btn: {
+    height: '30@ms',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: '5@ms',
+    backgroundColor: '#fff',
+    borderRadius: '15@ms',
+    paddingHorizontal: '20@ms',
+  },
+  btntxt: {
+    color: '#444',
+    fontFamily: ts.secondaryregular,
+    fontSize: '14@ms',
+  },
+  downArrow: {
+    height: '20@ms',
+    width: '20@ms',
+    marginLeft: '10@ms',
+  },
+  scrollcontainer: {
+    paddingRight: '350@ms',
+  },
+  searchlistContainer: {
+    marginTop: '-18@ms',
+  },
+  selectorcontainer: {
+    marginTop: Platform.OS=="ios"?'-35@ms':"-5@ms",
+    marginLeft: '10@ms',
   },
 });

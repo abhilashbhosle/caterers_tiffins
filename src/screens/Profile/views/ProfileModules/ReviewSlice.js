@@ -56,32 +56,49 @@ function ReviewSlice({data, vendor_id, from, setShowReviews}) {
           showsVerticalScrollIndicator={false}
         />
       )}
-      {reviewData?.total_count > 3 && (
-        <Center>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('PageStack', {
-                screen: 'Reviews',
-                params: {
-                  from,
-                  vendor_id,
-                },
-              });
-            }}>
-            <Text
-              style={[
-                styles.subtxt,
-                gs.fs12,
-                {color: from == 'Tiffins' ? ts.primary : ts.secondary},
-              ]}>
-              See all {reviewData?.total_count} reviews
-            </Text>
-          </TouchableOpacity>
-        </Center>
-      )}
+      {/* {reviewData?.total_count > 3 && ( */}
+      <Center>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('PageStack', {
+              screen: 'Reviews',
+              params: {
+                from,
+                vendor_id,
+              },
+            });
+          }}
+          style={{
+            ...styles.btn,
+            backgroundColor:
+              from == 'Tiffins' ? 'rgba(217, 130, 43, 0.2)' : '#fbe3e1',
+          }}>
+          <Text
+            style={[
+              styles.subtxt,
+              gs.fs18,
+              {
+                color: from == 'Tiffins' ? ts.primary : ts.secondary,
+                fontFamily: ts.secondarymedium,
+              },
+            ]}>
+            View all reviews
+          </Text>
+        </TouchableOpacity>
+      </Center>
+      {/* )} */}
     </View>
   );
 }
 export default memo(ReviewSlice);
 
-const styles = ScaledSheet.create({});
+const styles = ScaledSheet.create({
+  btn: {
+    marginHorizontal: '10@ms',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: '10@ms',
+    borderRadius: '20@ms',
+  },
+});

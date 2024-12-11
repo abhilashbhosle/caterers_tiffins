@@ -7,7 +7,6 @@ import {ts} from '../../ThemeStyles';
 export const ScreenWrapper = ({children}) => {
   // we obtain the object that contains info about the current route
   const route = useRoute();
-
   useFocusEffect(
     useCallback(() => {
       switch (route.name) {
@@ -54,31 +53,32 @@ export const ScreenWrapper = ({children}) => {
           break;
         case 'Caterings':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
-            backgroundColor: Platform.OS == 'android' && ts.secondary,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
             translucent: Platform.OS == 'android' && true,
           });
           break;
         case 'Tiffins':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
-            backgroundColor: Platform.OS == 'android' && ts.primary,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
             translucent: Platform.OS == 'android' && true,
           });
           break;
         case 'SearchMain':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
             translucent: Platform.OS == 'android' && true,
           });
           break;
-        case 'ProfileMain':
+        case 'Profile':
           StatusBar.pushStackEntry({
             barStyle: 'light-content',
             animated: true,
@@ -164,7 +164,7 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
-            backgroundColor: Platform.OS == 'android' && ts.primary,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
             translucent: Platform.OS == 'android' && true,
           });
           break;
@@ -173,7 +173,7 @@ export const ScreenWrapper = ({children}) => {
             barStyle: 'light-content',
             animated: true,
             hidden: false,
-            backgroundColor: Platform.OS == 'android' && ts.secondary,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
             translucent: Platform.OS == 'android' && true,
           });
           break;

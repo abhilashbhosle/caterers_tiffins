@@ -52,6 +52,7 @@ function ProfileBanners({catererBanners}) {
         <ImageBackground
           source={{uri: item?.image_names[0]?.large}}
           style={[styles.img, {width: '100%'}]}
+          imageStyle={styles.imgbrdr}
         />
       </View>
     );
@@ -154,8 +155,10 @@ export default memo(ProfileBanners);
 
 const styles = ScaledSheet.create({
   img: {
-    height: '180@ms',
+    height: '250@ms',
     resizeMode: 'cover',
+    borderBottomLeftRadius:'5@ms',
+    borderBottomRightRadius:'5@ms'
   },
   dot: {
     height: 10,
@@ -172,4 +175,8 @@ const styles = ScaledSheet.create({
   dotActive: {
     backgroundColor: '#fff',
   },
+  imgbrdr:{
+    borderBottomLeftRadius:'15@ms',
+    borderBottomRightRadius:'15@ms'
+  }
 });

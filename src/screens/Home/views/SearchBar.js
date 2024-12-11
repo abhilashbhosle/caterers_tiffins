@@ -8,8 +8,16 @@ import {
   TouchableWithoutFeedback,
   Image,
   ScrollView,
+  Keyboard,
 } from 'react-native';
-import React, {memo, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {Center, Divider, Flex, Modal, Spinner, theme} from 'native-base';
 import {ScaledSheet} from 'react-native-size-matters';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -26,6 +34,7 @@ import {
   getLocation,
   getUser,
 } from '../../Onboarding/controllers/AuthController';
+import {styles} from '../styles/SearchBarStyles';
 import {
   clearCaterers,
   clearSearch,
@@ -78,8 +87,8 @@ function SearchBar({from, navigation, ssd, sse}) {
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState('');
   const [vendorId, setVendorId] = useState('');
-  const [userDetails,setUserDetails]=useState([])
-
+  const [userDetails, setUserDetails] = useState([]);
+  const inputRef=useRef();
 
   const [selectedLocation, setSelectedLocation] = useState({
     city: null,
@@ -93,7 +102,9 @@ function SearchBar({from, navigation, ssd, sse}) {
   const searchRes = useSelector(state => state.location?.searchRes);
   const locationRes = useSelector(state => state.location.locationRes);
 
-  useMemo(()=>{setUserDetails(userDet)},[userDet])
+  useMemo(() => {
+    setUserDetails(userDet);
+  }, [userDet]);
 
   useEffect(() => {
     if (searchRes) {
@@ -157,8 +168,7 @@ function SearchBar({from, navigation, ssd, sse}) {
         vendor_type: from == 'Caterers' ? 'Caterer' : 'Vendor',
         app_type: 'app',
       };
-      if (text?.length>0 && (text!= userDetails[0]?.formatted_address)) {
-        console.log('entered inside the condition where', text);
+      if (text?.length > 0 && text != userDetails[0]?.formatted_address) {
         dispatch(getSearchVendors({params}));
         setSearchTerm(text);
       } else {
@@ -183,6 +193,7 @@ function SearchBar({from, navigation, ssd, sse}) {
     setSearch(e.catering_service_name);
     setSelectedSearch(e);
     dispatch(clearSearch());
+    inputRef.current.focus()
   };
 
   const handleCalendarPicker = () => {
@@ -234,64 +245,56 @@ function SearchBar({from, navigation, ssd, sse}) {
         <TouchableWithoutFeedback
           onPress={() => {
             setOpenCalendarPicker(true);
-          }}>
+          }}
+          
+          >
           <Flex
-            style={styles.calendarTextInput}
+            style={[styles.calendarTextInput, gs.pl10]}
             direction="row"
             alignItems="center"
-            justifyContent="center">
+            justifyContent="flex-start">
             <View>
-              <MaterialIcon
-                name="edit-calendar"
-                style={[
-                  gs.fs25,
-                  {
-                    color:
-                      route.name == 'Caterings' || from == 'Caterers'
-                        ? ts.secondary
-                        : ts.primary,
-                  },
-                ]}
+              <Image
+                source={
+                  route.name == 'Caterings' || from == 'Caterers'
+                    ? require('../../../assets/Search/calender_new.png')
+                    : require('../../../assets/Search/calender_newt.png')
+                }
+                style={styles.calIcon}
               />
             </View>
-            {fromdate && enddate ? (
-              <Text style={[gs.fs11, {color: ts.primarytext}, gs.ml4]}>
-                {fromdate} - {enddate?.slice(4)}
-              </Text>
-            ) : (
-              <Text style={[gs.fs11, {color: ts.secondarytext}, gs.ml10]}>
-                Date
-              </Text>
-            )}
+            <View>
+              {fromdate && enddate ? (
+                <Text style={styles.searchtxt}>
+                  {fromdate} - {enddate?.slice(4)}
+                </Text>
+              ) : (
+                <Text style={styles.searchtxt}>Date</Text>
+              )}
+            </View>
           </Flex>
         </TouchableWithoutFeedback>
         {/* ======SEARCH======= */}
 
-        <View style={{width: '100%'}}>
+        <View style={[{width: '100%'}]}>
           <Flex direction="row">
             {/* ======SEARCH INPUT======== */}
             <TextInput
               style={[
-                {...styles.searchTextInput, color: ts.primarytext},
-                gs.fs11,
+                {...styles.searchTextInput, color: ts.secondarytext,fontFamily:ts.secondarymedium},
+                gs.fs14,
                 gs.ph10,
               ]}
-              placeholder={from=="Caterers"? "Search Caterers...":"Search Tiffins..."}
-              placeholderTextColor="#57636c"
+              placeholder={
+                from == 'Caterers' ? 'Search' : 'Search'
+              }
+              placeholderTextColor="gray"
               value={search}
               onChangeText={text => handleOnChange(text)}
-            />
-            <TouchableOpacity
-              style={{
-                ...styles.searchIconContainer,
-                borderLeftWidth: 1,
-                borderLeftColor:
-                  route.name == 'Caterings' || from == 'Caterers'
-                    ? ts.secondary
-                    : ts.primary,
-              }}
-              activeOpacity={0.9}
-              onPress={async () => {
+              returnKeyType='search'
+              returnKeyLabel='search'
+              ref={inputRef}
+              onSubmitEditing={async () => {
                 dispatch(clearCaterers());
                 dispatch(setSearchRes(search));
                 dispatch(setLocationres(selectedLocation));
@@ -306,8 +309,12 @@ function SearchBar({from, navigation, ssd, sse}) {
                   selectedEndDate,
                   foodTypeData,
                   subData,
-                  searchTerm:search!= userDetails[0]?.formatted_address? searchTerm:"",
-                  selected_vendor: search!= userDetails[0]?.formatted_address? vendorId:"",
+                  searchTerm:
+                    search != userDetails[0]?.formatted_address
+                      ? searchTerm
+                      : '',
+                  selected_vendor:
+                    search != userDetails[0]?.formatted_address ? vendorId : '',
                 });
                 handleSearchResults({
                   navigation,
@@ -322,23 +329,20 @@ function SearchBar({from, navigation, ssd, sse}) {
                   dispatch,
                   foodTypeData,
                   subData,
-                  searchTerm:search!= userDetails[0]?.formatted_address? searchTerm:"",
-                  selected_vendor: search!= userDetails[0]?.formatted_address? vendorId:"",
+                  searchTerm:
+                    search != userDetails[0]?.formatted_address
+                      ? searchTerm
+                      : '',
+                  selected_vendor:
+                    search != userDetails[0]?.formatted_address ? vendorId : '',
                 });
-              }}>
-              <MaterialIcon
-                name="search"
-                style={[
-                  gs.fs20,
-                  {
-                    color:
-                      route.name == 'Caterings' || from == 'Caterers'
-                        ? ts.secondary
-                        : ts.primary,
-                  },
-                ]}
+              }}
+            />
+            <View style={styles.seperator}></View>
+            <Image
+                source={require('../../../assets/Search/search_new.png')}
+                style={styles.searchIcon}
               />
-            </TouchableOpacity>
           </Flex>
         </View>
       </Flex>
@@ -347,7 +351,7 @@ function SearchBar({from, navigation, ssd, sse}) {
         search?.length > 0 &&
         !vendorLoading &&
         !vendorError && (
-          <ScrollView style={styles.searchContainer}>
+          <ScrollView style={[styles.searchContainer,gs.mt2,gs.br10]}>
             {vendorData?.vendors?.map((e, i) => (
               <View key={i}>
                 <TouchableOpacity
@@ -376,6 +380,7 @@ function SearchBar({from, navigation, ssd, sse}) {
                     backgroundColor={
                       from == 'Caterers' ? ts.secondary : ts.primary
                     }
+                    style={gs.mv10}
                   />
                 </TouchableOpacity>
               </View>
@@ -501,51 +506,3 @@ function SearchBar({from, navigation, ssd, sse}) {
   );
 }
 export default memo(SearchBar);
-const styles = ScaledSheet.create({
-  calendarTextInput: {
-    width: '34%',
-    height: '40@ms',
-    backgroundColor: '#fff',
-    position: 'relative',
-    borderTopLeftRadius: '6@ms',
-    borderBottomLeftRadius: '6@ms',
-  },
-  searchTextInput: {
-    width: '53%',
-    height: Platform.OS == 'ios' ? '39.4@ms' : '40@ms',
-    backgroundColor: '#fff',
-    marginLeft: 2,
-  },
-  searchIconContainer: {
-    width: '12%',
-    height: '40@ms',
-    backgroundColor: '#fff',
-    borderTopRightRadius: '6@ms',
-    borderBottomRightRadius: '6@ms',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  rangecontainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: '10@ms',
-  },
-  chefhat: {
-    height: '40@ms',
-    width: '40@ms',
-  },
-  midicon: {color: '#fff', fontSize: '40@ms'},
-  searchContainer: {
-    backgroundColor: '#fff',
-    maxHeight: '200@ms',
-    width: '100%',
-    padding: '20@ms',
-    borderRadius: '6@ms',
-  },
-  loctxt: {
-    fontSize: '14@ms',
-    color: ts.primarytext,
-    fontFamily: ts.secondaryregular,
-  },
-});

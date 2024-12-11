@@ -1,26 +1,35 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import { Skeleton, VStack } from 'native-base'
-import { ScaledSheet } from 'react-native-size-matters'
+import {View, Text} from 'react-native';
+import React from 'react';
+import {HStack, Skeleton, VStack} from 'native-base';
+import {ScaledSheet} from 'react-native-size-matters';
 
 export default function CitySkel() {
   return (
-	<VStack style={styles.container} borderWidth="1" space={2} overflow="hidden" rounded="md" _dark={{
-		borderColor: "coolGray.500"
-	  }} _light={{
-		borderColor: "coolGray.200"
-	  }}>
-		  <Skeleton style={styles.card} />
-		</VStack>
-  )
+    <HStack
+      style={styles.container}
+      borderWidth="1"
+      space={2}
+      overflow="hidden"
+      rounded="full"
+      _dark={{
+        borderColor: 'coolGray.700',
+      }}
+      _light={{
+        borderColor: 'coolGray.200',
+      }}
+	  >
+      <Skeleton style={styles.card} />
+    </HStack>
+  );
 }
-const styles=ScaledSheet.create({
-	container:{
-		height:'200@ms',
-		width:'100%'
-	},
-	card:{
-		height: '200@ms',
-		width:'100%'
-	}
-})
+const styles = ScaledSheet.create({
+  container: {
+    height: '75@ms',
+    width: '75@ms',
+	marginRight:'15@ms'
+  },
+  card: {
+    height: '75@ms',
+    width: '75@ms',
+  },
+});

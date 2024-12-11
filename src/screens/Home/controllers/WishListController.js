@@ -1,12 +1,16 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import { getCaterersWishService, getTiffinssWishService, updateWishListService } from '../services/WishListService';
+import {
+  getCaterersWishService,
+  getTiffinssWishService,
+  updateWishListService,
+} from '../services/WishListService';
 
 // ======UPDATE WISHLIST=======//
 export const updateWishList = createAsyncThunk(
   'updateWishList',
-  async ({branch_id, status , vendor_type}, {dispatch}) => {
+  async ({branch_id, status, vendor_type}, {dispatch}) => {
     try {
-      const res = await updateWishListService({branch_id, status , vendor_type});
+      const res = await updateWishListService({branch_id, status, vendor_type});
       return res.data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -16,33 +20,31 @@ export const updateWishList = createAsyncThunk(
 
 // =========GET CATERERS WISHLIST======//
 export const getCaterersWish = createAsyncThunk(
-	'getCaterersWish',
-	async ({limit, page }, {dispatch}) => {
-	  try {
-		const res = await getCaterersWishService({limit,page});
-		
-		return res;
-	  } catch (error) {
-		return rejectWithValue(error.message);
-	  }
-	},
-  );
+  'getCaterersWish',
+  async ({limit, page}, {dispatch}) => {
+    try {
+      const res = await getCaterersWishService({limit, page});
 
-  // =========GET TIFFINS WISHLIST======//
+      return res;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+// =========GET TIFFINS WISHLIST======//
 export const getTiffinsWish = createAsyncThunk(
-	'getTiffinsWish',
-	async ({limit, page }, {dispatch}) => {
-	  try {
-		const res = await getTiffinssWishService({limit,page});
-		
-		return res;
-	  } catch (error) {
-		return rejectWithValue(error.message);
-	  }
-	},
-  );
+  'getTiffinsWish',
+  async ({limit, page}, {dispatch}) => {
+    try {
+      const res = await getTiffinssWishService({limit, page});
 
-
+      return res;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
 
 const wishListSlice = createSlice({
   name: 'wishlist',
@@ -50,18 +52,18 @@ const wishListSlice = createSlice({
     updateLoading: false,
     updateData: [],
     updateError: null,
-	wish_id:null,
-	catererLoading:false,
-	catererData:[],
-	catererError:null,
-	tiffinLoading:false,
-	tiffinData:[],
-	tiffinError:null
+    wish_id: null,
+    catererLoading: false,
+    catererData: [],
+    catererError: null,
+    tiffinLoading: false,
+    tiffinData: [],
+    tiffinError: null,
   },
   reducers: {
-	wishDetails: (state, action) => {
-		state.wish_id=action.payload
-	  },
+    wishDetails: (state, action) => {
+      state.wish_id = action.payload;
+    },
   },
   extraReducers: builder => {
     builder
@@ -77,7 +79,7 @@ const wishListSlice = createSlice({
         state.updateLoading = false;
         state.updateError = action.error;
       })
-	  .addCase(getCaterersWish.pending, (state, action) => {
+      .addCase(getCaterersWish.pending, (state, action) => {
         state.catererLoading = true;
         state.catererError = null;
       })
@@ -89,7 +91,7 @@ const wishListSlice = createSlice({
         state.catererLoading = false;
         state.catererError = action.error;
       })
-	  .addCase(getTiffinsWish.pending, (state, action) => {
+      .addCase(getTiffinsWish.pending, (state, action) => {
         state.tiffinLoading = true;
         state.tiffinError = null;
       })
@@ -100,7 +102,7 @@ const wishListSlice = createSlice({
       .addCase(getTiffinsWish.rejected, (state, action) => {
         state.tiffinLoading = false;
         state.tiffinError = action.error;
-      })
+      });
   },
 });
 export const {wishDetails} = wishListSlice.actions;

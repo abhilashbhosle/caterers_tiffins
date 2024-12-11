@@ -21,6 +21,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {getUser} from '../../Onboarding/controllers/AuthController';
 import {getPopular, updateSearch} from '../controllers/HomeController';
+import {styles} from '../styles/PopularCatererStyles';
 import {
   clearCaterers,
   getCaterersSearch,
@@ -32,13 +33,16 @@ import {
 } from '../controllers/FilterMainController';
 import {startLoader} from '../../../redux/CommonSlicer';
 import PopularCatSkel from '../../../components/skeletons/PopularCatSkel';
-import { setSearchHomeJson } from '../controllers/SearchCommonController';
+import {setSearchHomeJson} from '../controllers/SearchCommonController';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
+import MoreSecondarybtn from '../../../components/MoreSecondarybtn';
+
 function PopularCaterers() {
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
   const {popularLoading, popularData, popularError} = useSelector(
     state => state.home,
   );
-  const {subData,foodTypeData} = useSelector(state => state?.filterCater);
+  const {subData, foodTypeData} = useSelector(state => state?.filterCater);
   const {height, width} = Dimensions.get('screen');
   const ref = useRef();
 
@@ -91,7 +95,6 @@ function PopularCaterers() {
         selected: e.selected,
       }));
       if (subscription_types_filter?.length) {
-      
         await dispatch(updateSubscriptions(result));
         dispatch(clearCaterers());
         await setSearchHomeJson({
@@ -118,7 +121,7 @@ function PopularCaterers() {
         });
       }
     } catch (err) {
-      console.log('error in handleBranded',err);
+      console.log('error in handleBranded', err);
     } finally {
       setTimeout(() => {
         dispatch(startLoader(false));
@@ -155,51 +158,118 @@ function PopularCaterers() {
               }}
               style={[{...styles.img, width: '100%'}]}
               imageStyle={styles.imageStyle}
-              alt={item.name}
-            />
+              alt={item.name}>
+              <Flex
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-end"
+                style={[Platform.OS == 'ios' && gs.mt15, gs.ph10,styles.iconcontaier]}>
+                <Image
+                  source={require('../../../assets/Common/veg.png')}
+                  style={[styles.icon, gs.mr5]}
+                  alt="vegicon"
+                />
+                <Image
+                  source={require('../../../assets/Common/nonveg.png')}
+                  style={styles.icon}
+                  alt="vegicon"
+                />
+              </Flex>
+              <LinearGradient
+                colors={['#000f', 'transparent']}
+                start={{x: 0.0, y: Platform.OS == 'ios' ? 1.2 : 1.8}}
+                end={{x: 0.0, y: 0.0}}
+                style={[
+                  {
+                    ...styles.overlay,
+                    width: width - 100,
+                  },
+                ]}>
+                <Flex
+                  direction="row"
+                  alignItems="center"
+                  style={[gs.ph10, gs.mt20]}>
+                  <Image
+                    source={{
+                      uri: item?.gallery_images?.['vendor-brand-logo'][0]
+                        ?.image_name[0]?.medium,
+                    }}
+                    style={styles.profile}
+                    alt="profile"
+                  />
+                  <View style={[gs.mt20,styles.txtcontainer]}>
+                    <Text
+                      style={[
+                        gs.fs14,
+                        gs.ml10,
+                        {color: '#fff', fontFamily: ts.secondarymedium},
+                        gs.mt20,
+                      ]}
+                      numberOfLines={1}>
+                      {item?.catering_service_name?.length > 23
+                        ? `${item?.catering_service_name?.slice(0, 23)}..`
+                        : item?.catering_service_name}
+                    </Text>
+                    <Text
+                      style={[
+                        gs.fs12,
+                        gs.ml10,
+                        {color: '#f5f5f5', fontFamily: ts.secondarylight},
+                        Platform.OS == 'ios' && gs.pv2,
+                        gs.mt5
+                      ]}>
+                      {item?.street_name ? item.street_name : item?.area},{' '}
+                      {item?.city}
+                    </Text>
+                  </View>
+                </Flex>
+              </LinearGradient>
+            </ImageBackground>
           ) : (
             <View
-              style={[{...styles.img, width: width}, styles.imageStyle]}></View>
-          )}
-
-          <LinearGradient
-            colors={['#0005', '#0005']}
-            start={{x: 0.0, y: Platform.OS == 'ios' ? 1.2 : 1.8}}
-            end={{x: 0.0, y: 0.0}}
-            style={[
-              {
-                ...styles.overlay,
-                width: width - 100,
-              },
-            ]}>
-            <View></View>
-            <View>
-              <Text
-                style={[
-                  gs.fs14,
-                  {color: '#fff', fontFamily: ts.secondarysemibold},
-                ]}
-                numberOfLines={1}>
-                {item?.catering_service_name}
-              </Text>
-              <Text
-                style={[
-                  gs.fs12,
-                  {color: '#fff', fontFamily: ts.secondaryregular},
-                  Platform.OS == 'ios' && gs.pv2,
-                ]}>
-                {item?.street_name ? item.street_name : item?.area},{' '}
-                {item?.city}
-              </Text>
-              <Text
-                style={[
-                  gs.fs12,
-                  {color: '#fff', fontFamily: ts.secondaryregular},
-                ]}>
-                Veg | Non-Veg
-              </Text>
+              style={[
+                {...styles.img, justifyContent: 'center', alignItems: 'center'},
+                styles.imageStyle,
+              ]}>
+              <EntypoIcon
+                name="image-inverted"
+                style={[{color: ts.secondarytext}, gs.fs25]}
+              />
             </View>
-          </LinearGradient>
+          )}
+          <View>
+            <Flex
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              style={[gs.ph10, gs.mt10]}>
+              <Flex>
+                <Text style={styles.startPrice}>
+                  ₹ {item?.start_price ? item.start_price : 'N/A'}
+                </Text>
+                <Text style={[gs.fs9, styles.area, gs.pl2]}>Starts from</Text>
+              </Flex>
+              <Flex direction="row" align="center">
+                <Image
+                  source={require('../../../assets/Common/rating.png')}
+                  style={styles.icon}
+                  alt="rating"
+                />
+                <Text style={[styles.startPrice, gs.fs13, gs.ph3]}>4.5</Text>
+                <Text style={[styles.area, gs.ph2, gs.fs11]}>
+                  ({item?.review_count})
+                </Text>
+              </Flex>
+            </Flex>
+
+            <Text
+              style={[
+                gs.fs12,
+                {color: '#fff', fontFamily: ts.secondaryregular},
+              ]}>
+              Veg | Non-Veg
+            </Text>
+          </View>
         </TouchableOpacity>
       </Card>
     );
@@ -208,14 +278,24 @@ function PopularCaterers() {
     return (
       <View style={[gs.mt15, gs.mb10, gs.ph15]}>
         <Flex direction="row" alignItems="center" justify="space-between">
-          <Text
-            style={[
-              gs.fs15,
-              {fontFamily: ts.secondarysemibold, color: ts.primarytext},
-              gs.fs13,
-            ]}>
-            Popular Caterers in {userDetails?.length && userDetails[0]?.city}
-          </Text>
+          <View>
+            <Text
+              style={[
+                {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+                gs.fs18,
+                // gs.mb10,
+              ]}>
+              Popular Caterers
+            </Text>
+            <Text
+              style={[
+                {fontFamily: ts.secondaryregular, color: ts.secondarytext},
+                gs.fs13,
+                gs.mb10,
+              ]}>
+              {userDetails?.length && userDetails[0]?.city}
+            </Text>
+          </View>
         </Flex>
       </View>
     );
@@ -223,26 +303,27 @@ function PopularCaterers() {
   return (
     <>
       <View style={[gs.mt15, gs.mb10, gs.ph15]}>
-        <Flex direction="row" alignItems="center" justify="space-between">
-          <Text
-            style={[
-              gs.fs15,
-              {fontFamily: ts.secondarysemibold, color: ts.primarytext},
-              gs.fs13,
-            ]}>
-            Popular Caterers in {userDetails?.length && userDetails[0]?.city}
-          </Text>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={{
-              ...styles.forwardicon,
-              backgroundColor: ts.secondary,
-            }}
-            onPress={handlePopular}>
-            <FeatherIcons
-              name="arrow-right"
-              style={[gs.fs14, {color: '#fff'}]}
-            />
+        <Flex direction="row" justify="space-between">
+          <View>
+            <Text
+              style={[
+                {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+                gs.fs18,
+                gs.mb5,
+              ]}>
+              Popular Caterers
+            </Text>
+            <Text
+              style={[
+                {fontFamily: ts.secondaryregular, color: ts.secondarytext},
+                gs.fs13,
+                gs.mb15,
+              ]}>
+              {userDetails?.length && userDetails[0]?.city}
+            </Text>
+          </View>
+          <TouchableOpacity activeOpacity={0.7} onPress={handlePopular}>
+            <MoreSecondarybtn />
           </TouchableOpacity>
         </Flex>
       </View>
@@ -255,7 +336,7 @@ function PopularCaterers() {
           ))}
         </Flex>
       ) : null}
-      {popularData?.length && !popularLoading && !popularError? (
+      {popularData?.length && !popularLoading && !popularError ? (
         <FlatList
           data={popularData}
           keyExtractor={(item, index) => String(index)}
@@ -288,43 +369,3 @@ function PopularCaterers() {
   );
 }
 export default memo(PopularCaterers);
-const styles = ScaledSheet.create({
-  forwardicon: {
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '20@ms',
-    width: '20@ms',
-  },
-  img: {
-    height: '130@ms',
-    resizeMode: 'cover',
-  },
-  cardContainer: {
-    height: '130@ms',
-    backgroundColor: '#fff',
-    borderRadius: '10@ms',
-    marginRight: '10@ms',
-  },
-  contentContainerStyle: {
-    paddingBottom: '20@ms',
-    paddingTop: '10@ms',
-    paddingHorizontal: '15@ms',
-  },
-  imageStyle: {
-    borderRadius: '10@ms',
-    position: 'absolute',
-  },
-  overlay: {
-    height: '130@ms',
-    position: 'absolute',
-    borderRadius: '10@ms',
-    justifyContent: 'space-between',
-    paddingBottom: '10@ms',
-    paddingLeft: '10@ms',
-  },
-  typeicon: {
-    height: '16@ms',
-    width: '16@ms',
-  },
-});

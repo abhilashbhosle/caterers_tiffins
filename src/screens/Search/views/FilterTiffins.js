@@ -827,7 +827,7 @@ export default function FilterTiffins({navigation, route}) {
                   dispatch(updateFilterData());
                   let searchData = await JSON.parse(data);
                   let params = searchData;
-                  console.log('search data', searchData);
+                  // console.log('search data', searchData);
                   dispatch(
                     getCaterersSearch({
                       params: {

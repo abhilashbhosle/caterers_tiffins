@@ -8,20 +8,26 @@ import {
 import React, {memo, useEffect, useState} from 'react';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
-import {Center, FlatList} from 'native-base';
+import {Center, FlatList, Flex} from 'native-base';
 import {occasions} from '../../../constants/Constants';
 import {ScaledSheet} from 'react-native-size-matters';
 import {Card} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch, useSelector} from 'react-redux';
-import {getOccassions, updateOccassion} from '../controllers/OccassionController';
+import {
+  getOccassions,
+  updateOccassion,
+} from '../controllers/OccassionController';
 import OccassionSkel from '../../../components/skeletons/OccassionSkel';
 import {useNavigation} from '@react-navigation/native';
-import {getCaterersSearch, setLocationres} from '../controllers/SearchController';
-import { checkLocation, updateSearch } from '../controllers/HomeController';
-import { startLoader } from '../../../redux/CommonSlicer';
-import { getOccassionService } from '../services/OccassionService';
-import { setSearchHomeJson } from '../controllers/SearchCommonController';
+import {
+  getCaterersSearch,
+  setLocationres,
+} from '../controllers/SearchController';
+import {checkLocation, updateSearch} from '../controllers/HomeController';
+import {startLoader} from '../../../redux/CommonSlicer';
+import {getOccassionService} from '../services/OccassionService';
+import {setSearchHomeJson} from '../controllers/SearchCommonController';
 
 function Occasions() {
   const {width, height} = useWindowDimensions();
@@ -30,10 +36,7 @@ function Occasions() {
   const {loading, data, error} = useSelector(state => state?.occassion);
   const locationRes = useSelector(state => state.location.locationRes);
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
-  const {
-    foodTypeData,
-    subData,
-  } = useSelector(state => state?.filterCater);
+  const {foodTypeData, subData} = useSelector(state => state?.filterCater);
 
   useEffect(() => {
     dispatch(getOccassions());
@@ -41,7 +44,7 @@ function Occasions() {
 
   const handleOccassionPress = async ({index}) => {
     try {
-      dispatch(startLoader(true))
+      dispatch(startLoader(true));
       let res = await checkLocation({
         formattedLocation: locationRes,
         userLocation: userDetails,
@@ -65,12 +68,12 @@ function Occasions() {
             place_id: res?.location?.place_id,
             pincode: res?.location?.pincode,
             area: res?.location?.area,
-            from:"Caterers",
-            selectedStartDate:res?.startData,
-            selectedEndDate:res?.endDate,
+            from: 'Caterers',
+            selectedStartDate: res?.startData,
+            selectedEndDate: res?.endDate,
             foodTypeData,
             subData,
-            occasions_filter:JSON.stringify(occasions_filter)
+            occasions_filter: JSON.stringify(occasions_filter),
           });
           await dispatch(updateOccassion(updated));
           navigation.navigate('PageStack', {
@@ -98,56 +101,46 @@ function Occasions() {
       }
     } catch (err) {
       console.log('error in handleOccassion', err);
-    }finally{
-      setTimeout(()=>{
-        dispatch(startLoader(false))
-      },1000)
+    } finally {
+      setTimeout(() => {
+        dispatch(startLoader(false));
+      }, 1000);
     }
   };
 
-  const renderItem = ({item,index}) => {
+  const renderItem = ({item, index}) => {
     return (
-      <Card style={[{backgroundColor: '#fff'}, gs.mb10, gs.mh5]}>
-        <TouchableOpacity activeOpacity={0.7} onPress={()=>{
-          handleOccassionPress({index})
-        }}>
-          <ImageBackground
-            source={{uri: item?.file_name?.medium}}
-            style={[
-              {...styles.img, width: width / 2.2, justifyContent: 'flex-end'},
-            ]}
-            imageStyle={[gs.br12]}
-            alt={item.occassion_name}>
-            <LinearGradient
-              colors={['#000', 'transparent']}
-              start={{x: 0.0, y: 1.2}}
-              end={{x: 0.0, y: 0.0}}
-              style={[
-                {
-                  ...styles.overlay,
-                },
-                gs.br12,
-              ]}>
-              <Text style={[gs.fs14, styles.title, gs.ml15, gs.mb8, gs.h25]}>
-                {item.occasion_name}
-              </Text>
-            </LinearGradient>
-          </ImageBackground>
-        </TouchableOpacity>
-      </Card>
+      <Flex alignItems='center'>
+        <Card style={[{backgroundColor: '#fff'}, gs.mb10, gs.mr10]}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              handleOccassionPress({index});
+            }}>
+            <ImageBackground
+              source={{uri: item?.file_name?.medium}}
+              style={[{...styles.img, justifyContent: 'flex-end'}]}
+              imageStyle={[gs.br12]}
+              alt={item.occassion_name}
+            />
+          </TouchableOpacity>
+        </Card>
+        <Text style={[gs.fs12, styles.title,{textAlign:'center'}]} numberOfLines={1}>
+          {item.occasion_name}
+        </Text>
+      </Flex>
     );
   };
   if (error?.message) {
     return (
-      <View style={[gs.ph15, gs.mt15]}>
+      <View style={[gs.ph15, gs.mt10]}>
         <Text
           style={[
-            gs.fs15,
             {fontFamily: ts.secondarysemibold, color: ts.primarytext},
-            gs.fs13,
-            gs.mb5,
+            gs.fs18,
+            gs.mb10,
           ]}>
-          Explore Caterers by Occasions
+          Explore by Occasions
         </Text>
         <Text
           style={[
@@ -162,15 +155,14 @@ function Occasions() {
   }
   return (
     <>
-      <View style={[gs.ph15, gs.mt15]}>
+      <View style={[gs.ph15, gs.mt10]}>
         <Text
           style={[
-            gs.fs15,
             {fontFamily: ts.secondarysemibold, color: ts.primarytext},
-            gs.fs13,
+            gs.fs18,
             gs.mb10,
           ]}>
-          Explore Caterers by Occasions
+          Explore by Occasions
         </Text>
       </View>
 
@@ -194,10 +186,10 @@ function Occasions() {
             <FlatList
               data={data}
               renderItem={renderItem}
-              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => String(index)}
               contentContainerStyle={styles.contentContainerStyle}
-              numColumns={2}
+              horizontal
             />
           )
         )}
@@ -214,12 +206,15 @@ const styles = ScaledSheet.create({
     position: 'relative',
   },
   img: {
-    height: '200@ms',
+    height: '100@ms',
     resizeMode: 'cover',
+    width: '100@ms',
   },
   title: {
-    fontFamily: ts.secondarymedium,
-    color: '#fff',
+    fontFamily: ts.secondaryregular,
+    color: ts.primarytext,
     paddingTop: '2@ms',
+    width: '100@ms',
+    marginRight:'10@ms'
   },
 });

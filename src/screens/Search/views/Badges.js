@@ -54,76 +54,44 @@ function Badges({from, subType, setSubType, setPage, setVendorData}) {
     setPage(1);
   };
 
-  const renderItem = ({item, index}) => {
-    return (
-      <TouchableOpacity
-        style={[
-          {
-            ...styles.badge,
-            backgroundColor: item.selected == 1 ? theme : '#e0e3e7',
-          },
-          gs.br20,
-        ]}
-        activeOpacity={0.8}
-        onPress={() => {
-          handleSubTypes(index);
-        }}>
-        <Text
-          style={[
-            {
-              color: item.selected == 1 ? '#fff' : '#57636c',
-              fontFamily: ts.secondaryregular,
-            },
-            gs.fs14,
-          ]}>
-          {item?.display_name}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
+  
   return (
+    
     subType && (
-      <View style={[gs.ph10, gs.pv20, {backgroundColor: '#fff'}]}>
-        {/* <FlatList
-          data={subType}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => String(index)}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          bounces={false}
-        /> */}
-
+      <View style={[gs.pl5, gs.pv20]}>
         <Flex direction="row" alignItems="center">
-        {subType?.map((item, index) => {
-          return (
-            <TouchableOpacity
-            style={[
-              {
-                ...styles.badge,
-                backgroundColor: item.selected == 1 ? theme : '#e0e3e7',
-              },
-              gs.br20,
-            ]}
-            activeOpacity={0.8}
-            onPress={() => {
-              handleSubTypes(index);
-            }}
-            key={index}
-            >
-            <Text
-              style={[
-                {
-                  color: item.selected == 1 ? '#fff' : '#57636c',
-                  fontFamily: ts.secondaryregular,
-                },
-                gs.fs14,
-              ]}>
-              {item?.display_name}
-            </Text>
-          </TouchableOpacity>
-          );
-        })}
-      </Flex>
+          {subType?.map((item, index) => {
+            return (
+              <TouchableOpacity
+                style={[
+                  {
+                    ...styles.badge,
+                    backgroundColor: item.selected == 1 ? theme : '#fff',
+                  },
+                  gs.br20,
+                ]}
+                activeOpacity={0.8}
+                onPress={() => {
+                  handleSubTypes(index);
+                }}
+                key={index}>
+                <Text
+                  style={[
+                    {
+                      color: item.selected == 1 ? '#fff' : '#57636c',
+                      fontFamily:
+                        item.selected == 1
+                          ? ts.secondaryregular
+                          : ts.secondarylight,
+                    },
+                    gs.fs14,
+                  ]}>
+                  {item?.display_name}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </Flex>
       </View>
     )
   );
@@ -136,6 +104,6 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: '12@ms',
-    marginRight: '12@ms',
+    marginRight: '5@ms',
   },
 });
