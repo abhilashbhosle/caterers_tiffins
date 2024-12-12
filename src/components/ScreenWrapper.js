@@ -80,7 +80,7 @@ export const ScreenWrapper = ({children}) => {
           break;
         case 'Profile':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && 'transparent',
@@ -89,7 +89,7 @@ export const ScreenWrapper = ({children}) => {
           break;
         case 'WishList':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && 'transparent',
@@ -98,7 +98,7 @@ export const ScreenWrapper = ({children}) => {
           break;
         case 'MyInquiries':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && 'transparent',
@@ -107,7 +107,7 @@ export const ScreenWrapper = ({children}) => {
           break;
         case 'AboutUs':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && 'transparent',
@@ -116,7 +116,7 @@ export const ScreenWrapper = ({children}) => {
           break;
         case 'Faq':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && 'transparent',
@@ -125,7 +125,7 @@ export const ScreenWrapper = ({children}) => {
           break;
         case 'Help':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && 'transparent',
@@ -134,7 +134,7 @@ export const ScreenWrapper = ({children}) => {
           break;
         case 'Notifications':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && 'transparent',
@@ -143,19 +143,19 @@ export const ScreenWrapper = ({children}) => {
           break;
         case 'FilterMain':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
-            backgroundColor: Platform.OS == 'android' && ts.secondary,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
             translucent: Platform.OS == 'android' && true,
           });
           break;
         case 'FilterTiffins':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
-            backgroundColor: Platform.OS == 'android' && ts.primary,
+            backgroundColor: Platform.OS == 'android' && 'transparent',
             translucent: Platform.OS == 'android' && true,
           });
           break;

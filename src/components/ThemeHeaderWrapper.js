@@ -14,18 +14,14 @@ import {Flex} from 'native-base';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import {ScaledSheet} from 'react-native-size-matters';
 import {clearFilter} from '../screens/Home/controllers/FilterMainController';
-import { removeWishListService } from '../screens/Home/services/WishListService';
-import { useDispatch, useSelector } from 'react-redux';
-import { showMessage } from 'react-native-flash-message';
+import {removeWishListService} from '../screens/Home/services/WishListService';
+import {useDispatch, useSelector} from 'react-redux';
+import {showMessage} from 'react-native-flash-message';
 
 function ThemeHeaderWrapper(props) {
-  const dispatch=useDispatch()
-  const {catererData} = useSelector(
-    state => state.wish,
-  );
-  const {tiffinData} = useSelector(
-    state => state.wish,
-  );
+  const dispatch = useDispatch();
+  const {catererData} = useSelector(state => state.wish);
+  const {tiffinData} = useSelector(state => state.wish);
   const renderChildren = () => {
     return (
       <SafeAreaView>
@@ -39,7 +35,10 @@ function ThemeHeaderWrapper(props) {
                 name="chevron-back"
                 style={[gs.fs20, gs.pr15, {color: '#fff'}]}
               /> */}
-              <Image source={require('../assets/Common/back.png')} style={styles.backicon}/>
+              <Image
+                source={require('../assets/Common/back.png')}
+                style={styles.backicon}
+              />
             </TouchableOpacity>
             <Text
               style={[
@@ -53,14 +52,18 @@ function ThemeHeaderWrapper(props) {
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => {
-              props?.righttxt == 'Clear All'? props.dispatch(clearFilter()):null;
-              props?.righttxt=="Remove All" && (catererData?.data?.length || tiffinData?.data?.length)? removeWishListService({dispatch}):
-              props?.righttxt=="Remove All" &&
-              showMessage({
-                message: 'Nothing found!',
-                description: 'You have no items added to wishlist.',
-                type: 'warning',
-              });
+              props?.righttxt == 'Clear All'
+                ? props.dispatch(clearFilter())
+                : null;
+              props?.righttxt == 'Remove All' &&
+              (catererData?.data?.length || tiffinData?.data?.length)
+                ? removeWishListService({dispatch})
+                : props?.righttxt == 'Remove All' &&
+                  showMessage({
+                    message: 'Nothing found!',
+                    description: 'You have no items added to wishlist.',
+                    type: 'warning',
+                  });
             }}>
             <Text
               style={[
@@ -75,10 +78,13 @@ function ThemeHeaderWrapper(props) {
     );
   };
   return props.bgColor ? (
-    <View
+    <LinearGradient
+      colors={['#fbe3e1', '#F6D6B2']}
+      start={{x: 0.0, y: 0.0}}
+      end={{x: 0.8, y: 1.0}}
       style={[gs.ph15, {...styles.container, backgroundColor: props.bgColor}]}>
       {renderChildren()}
-    </View>
+    </LinearGradient>
   ) : (
     <LinearGradient
       colors={['#fbe3e1', '#F6D6B2']}
@@ -95,9 +101,9 @@ const styles = ScaledSheet.create({
     height: Platform.OS == 'ios' ? '100@ms' : '110@ms',
     paddingTop: Platform.OS == 'android' ? '60@ms' : '60@ms',
   },
-  backicon:{
-    height:'35@ms',
-    width:'35@ms',
-    marginRight:'10@ms'
-  }
+  backicon: {
+    height: '35@ms',
+    width: '35@ms',
+    marginRight: '10@ms',
+  },
 });
