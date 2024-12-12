@@ -124,7 +124,7 @@ function ExploreIndia() {
             gs.fs13,
             gs.mb15,
           ]}>
-          around india
+          Around India
         </Text>
         <Text
           style={[
@@ -159,7 +159,7 @@ function ExploreIndia() {
               gs.fs13,
               gs.mb15,
             ]}>
-            around india
+            Around India
           </Text>
         </View>
         <View style={[gs.mb10]}>

@@ -36,7 +36,7 @@ function ExploreByKitchen() {
     {name: 'Restaurant', img: require('../../../assets/Common/kitchen.png')},
     {name: 'Homemade', img: require('../../../assets/Common/homemade.png')},
     {name: 'Corporate', img: require('../../../assets/Common/corporate.png')},
-    // {name: 'Commercial', img: require('../../../assets/Common/commercial.png')},
+    {name: 'Commercial', img: require('../../../assets/Common/commercial.png')},
   ];
 
   const renderItem = ({item, index}) => {
@@ -46,7 +46,7 @@ function ExploreByKitchen() {
           <TouchableOpacity activeOpacity={0.7}>
             <ImageBackground
               source={item.img}
-              style={[{...styles.img, justifyContent: 'flex-end'}]}
+              style={[{...styles.img,marginRight:index==kitchenTypes.length-1 && 10}]}
               imageStyle={[gs.br12]}
               alt={item.name}
             />
@@ -94,8 +94,8 @@ const styles = ScaledSheet.create({
   contentContainerStyle: {
     paddingBottom: '10@ms',
     paddingTop: '15@ms',
-    marginHorizontal: '15@ms',
-    position: 'relative',
+    marginLeft:'15@ms'
+    // position: 'relative',
 
   },
   img: {
