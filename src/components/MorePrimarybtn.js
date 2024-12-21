@@ -13,9 +13,12 @@ export default function MorePrimarybtn() {
 const styles = ScaledSheet.create({
   more_button: {
     backgroundColor: '#F6D6B2',
-    paddingHorizontal: '14@ms',
-    paddingVertical: '6@ms',
     borderRadius: '15@ms',
+    height:'23@ms',
+    width:'57@ms',
+    justifyContent:'center',
+    alignItems:'center',
+    flexDirection:'row'
   },
   moretxt: {
     color: '#D9822B',

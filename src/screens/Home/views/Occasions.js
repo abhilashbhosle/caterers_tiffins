@@ -125,7 +125,7 @@ function Occasions() {
             />
           </TouchableOpacity>
         </Card>
-        <Text style={[gs.fs12, styles.title,{textAlign:'center'}]} numberOfLines={1}>
+        <Text style={[gs.fs14, styles.title,{textAlign:'center'}]} numberOfLines={1}>
           {item.occasion_name}
         </Text>
       </Flex>
@@ -136,7 +136,7 @@ function Occasions() {
       <View style={[gs.ph15, gs.mt10]}>
         <Text
           style={[
-            {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+            {fontFamily: ts.jakartabold, color: ts.primarytext},
             gs.fs18,
             gs.mb10,
           ]}>
@@ -146,7 +146,7 @@ function Occasions() {
           style={[
             gs.fs8,
             gs.p3,
-            {color: ts.primarytext, fontFamily: ts.secondarysemibold},
+            {color: ts.primarytext, fontFamily: ts.jakartasemibold},
           ]}>
           No Occasions found
         </Text>
@@ -158,9 +158,9 @@ function Occasions() {
       <View style={[gs.ph15, gs.mt10]}>
         <Text
           style={[
-            {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+            {fontFamily: ts.jakartabold, color: ts.primarytext},
             gs.fs18,
-            gs.mb10,
+            gs.mb5,
           ]}>
           Explore by Occasions
         </Text>
@@ -211,10 +211,10 @@ const styles = ScaledSheet.create({
     width: '100@ms',
   },
   title: {
-    fontFamily: ts.secondaryregular,
+    fontFamily: ts.jakartasemibold,
     color: ts.primarytext,
     paddingTop: '2@ms',
     width: '100@ms',
-    marginRight:'10@ms'
+    marginRight:'15@ms'
   },
 });

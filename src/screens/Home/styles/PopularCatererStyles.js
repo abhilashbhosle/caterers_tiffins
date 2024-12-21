@@ -20,6 +20,7 @@ export const styles = ScaledSheet.create({
     borderRadius: '10@ms',
     marginRight: '15@ms',
     marginTop: '5@ms',
+    paddingBottom:'10@ms'
   },
   contentContainerStyle: {
     paddingBottom: '5@ms',
@@ -42,13 +43,13 @@ export const styles = ScaledSheet.create({
     width: '16@ms',
   },
   startPrice: {
-    fontSize: '17@ms',
-    fontFamily: ts.primarysemibold,
-    color: ts.primarytext,
+    fontSize: '18@ms',
+    fontFamily: ts.jakartabold,
+    color: '#000',
   },
   area: {
     color: ts.secondarytext,
-    fontFamily: ts.secondarylight,
+    fontFamily: ts.jakartaregular,
     paddingHorizontal: '10@ms',
   },
   iconcontaier:{
@@ -59,8 +60,8 @@ export const styles = ScaledSheet.create({
     width: '14@ms',
   },
   profile: {
-    height: '55@ms',
-    width: '55@ms',
+    height: '50@ms',
+    width: '50@ms',
     borderRadius: 50,
     borderWidth: 2,
     borderColor: '#fff',

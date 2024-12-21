@@ -46,14 +46,23 @@ function ExploreByKitchen() {
           <TouchableOpacity activeOpacity={0.7}>
             <ImageBackground
               source={item.img}
-              style={[{...styles.img,marginRight:index==kitchenTypes.length-1 && 10}]}
+              style={[
+                {
+                  ...styles.img,
+                  marginRight: index == kitchenTypes.length - 1 && 10,
+                },
+              ]}
               imageStyle={[gs.br12]}
               alt={item.name}
             />
           </TouchableOpacity>
         </Card>
         <Text
-          style={[gs.fs12, styles.title, {textAlign: 'center'}]}
+          style={[
+            {fontFamily: ts.jakartasemibold, color: '#000'},
+            gs.fs12,
+            // gs.mt5,
+          ]}
           numberOfLines={1}>
           {item.name}
         </Text>
@@ -64,10 +73,10 @@ function ExploreByKitchen() {
   return (
     <>
       <View style={[gs.ph15, gs.mt10]}>
-        <Flex flexDirection="row" justifyContent="space-between">
+        <Flex flexDirection="row" justifyContent="space-between" align="center">
           <Text
             style={[
-              {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+              {fontFamily: ts.jakartabold, color: ts.primarytext},
               gs.fs18,
               gs.mb15,
             ]}>
@@ -78,14 +87,14 @@ function ExploreByKitchen() {
           </TouchableOpacity>
         </Flex>
       </View>
-        <FlatList
-          data={kitchenTypes}
-          renderItem={renderItem}
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item, index) => String(index)}
-          contentContainerStyle={styles.contentContainerStyle}
-          horizontal
-        />
+      <FlatList
+        data={kitchenTypes}
+        renderItem={renderItem}
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item, index) => String(index)}
+        contentContainerStyle={styles.contentContainerStyle}
+        horizontal
+      />
     </>
   );
 }
@@ -94,9 +103,8 @@ const styles = ScaledSheet.create({
   contentContainerStyle: {
     paddingBottom: '10@ms',
     paddingTop: '15@ms',
-    marginLeft:'15@ms'
+    marginLeft: '15@ms',
     // position: 'relative',
-
   },
   img: {
     height: '100@ms',

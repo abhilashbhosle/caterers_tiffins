@@ -33,12 +33,21 @@ function ReviewSlice({data, vendor_id, from, setShowReviews}) {
 
   const renderItem = ({item, index}) => {
     return (
+      <>
       <ReviewCard
         item={item}
         index={index}
         from={from}
         reviews={reviewData?.data}
       />
+      {
+        index!=reviewData?.data?.length-1?
+        <Divider style={[gs.mv10]}/>
+        :
+        null
+      }
+
+      </>
     );
   };
   return reviewData?.data?.length == 0 ? (
@@ -76,10 +85,10 @@ function ReviewSlice({data, vendor_id, from, setShowReviews}) {
           <Text
             style={[
               styles.subtxt,
-              gs.fs18,
+              gs.fs17,
               {
                 color: from == 'Tiffins' ? ts.primary : ts.secondary,
-                fontFamily: ts.secondarymedium,
+                fontFamily: ts.jakartabold,
               },
             ]}>
             View all reviews
@@ -98,7 +107,8 @@ const styles = ScaledSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: '10@ms',
     borderRadius: '20@ms',
+    height:'47@ms',
+    marginTop:'5@ms'
   },
 });

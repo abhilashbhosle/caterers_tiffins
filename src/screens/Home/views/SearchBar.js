@@ -281,7 +281,7 @@ function SearchBar({from, navigation, ssd, sse}) {
             {/* ======SEARCH INPUT======== */}
             <TextInput
               style={[
-                {...styles.searchTextInput, color: ts.secondarytext,fontFamily:ts.secondarymedium},
+                {...styles.searchTextInput, color: ts.secondarytext,fontFamily:ts.jakartasemibold},
                 gs.fs14,
                 gs.ph10,
               ]}

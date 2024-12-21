@@ -23,5 +23,11 @@ export const ts={
 	secondaryregular:'ReadexPro-Regular',
 	secondarymedium:'ReadexPro-Medium',
 	secondarysemibold:'ReadexPro-SemiBold',
-	secondarybold:'ReadexPro-Bold'
+	secondarybold:'ReadexPro-Bold',
+	jakartabold:'PlusJakartaSans-Bold',
+	jakartaexlight:'PlusJakartaSans-ExtraLight',
+	jakartalight:'PlusJakartaSans-Light',
+	jakartamedium:'PlusJakartaSans-Medium',
+	jakartaregular:'PlusJakartaSans-Regular',
+	jakartasemibold:'PlusJakartaSans-SemiBold',
 }

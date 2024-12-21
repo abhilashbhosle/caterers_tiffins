@@ -185,7 +185,7 @@ export default function SearchMain({route, navigation}) {
   };
   return (
     <ScreenWrapper>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1,backgroundColor:'#fff'}}>
         {/* =====SEARCH BAR */}
         <LinearGradient
           style={[
@@ -193,7 +193,7 @@ export default function SearchMain({route, navigation}) {
               backgroundColor: from == 'Caterers' ? ts.secondary : ts.primary,
             },
             styles.headercontainer,
-            // gs.ph10,
+            // gs.ph10,/
             gs.pt20,
           ]}
           start={from == 'Caterers' ? {x: 0, y: 0} : {x: 0, y: 0}}
@@ -274,7 +274,7 @@ export default function SearchMain({route, navigation}) {
                   </TouchableWithoutFeedback>
                   <View style={{position: 'relative'}}>
                     <TouchableOpacity
-                      style={[{...styles.btn,},gs.ph10]}
+                      style={[{...styles.btn}, gs.ph10]}
                       onPress={handleFoodTpeDD}>
                       <Flex
                         align="center"
@@ -354,35 +354,34 @@ export default function SearchMain({route, navigation}) {
                   />
                 </Flex>
               ) : null}
-             
             </ScrollView>
           </View>
           {firstItemVisible && !keyboardVisible ? (
-                <>
-                  <View
-                    style={[{paddingHorizontal: 5}]}>
-                    <Text
-                      style={[
-                        gs.fs15,
-                        {fontFamily: ts.secondarymedium, color: '#555'},
-                        gs.fs13,
-                      ]}
-                      numberOfLines={1}>
-                      {from == 'Caterers'
-                        ? `${
-                            location?.area ? location?.area : location?.city
-                          }: ${total} Caterers found in ${
-                            location?.area ? location?.area : ''
-                          }${location?.area ? ',' : ''} ${location?.city}`
-                        : `${
-                            location?.area ? location?.area : location?.city
-                          }: ${total} Tiffins found in ${
-                            location?.area ? location?.area : ''
-                          }${location?.area ? ',' : ''} ${location?.city}`}
-                    </Text>
-                  </View>
-                </>
-              ) : null}
+            <>
+              <View style={[{paddingHorizontal: 15}]}>
+                {/* <Text
+                  style={[
+                    gs.fs15,
+                    {fontFamily: ts.secondarymedium, color: '#555'},
+                    gs.fs13,
+                  ]}
+                  numberOfLines={1}>
+                  {from == 'Caterers'
+                    ? `${
+                        location?.area ? location?.area : location?.city
+                      }: ${total} Caterers found in ${
+                        location?.area ? location?.area : ''
+                      }${location?.area ? ',' : ''} ${location?.city}`
+                    : `${
+                        location?.area ? location?.area : location?.city
+                      }: ${total} Tiffins found in ${
+                        location?.area ? location?.area : ''
+                      }${location?.area ? ',' : ''} ${location?.city}`}
+                </Text> */}
+              </View>
+            </>
+          ) : null}
+          <View style={[gs.h100]}></View>
         </LinearGradient>
         {/* ========SEARCH CARDS======== */}
         {!keyboardVisible ? (
@@ -405,8 +404,6 @@ export default function SearchMain({route, navigation}) {
 }
 const styles = ScaledSheet.create({
   headercontainer: {
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
     // minHeight: Platform.OS == 'ios' ? '150@ms' : '150@ms',
     paddingBottom: 20,
   },
@@ -438,10 +435,10 @@ const styles = ScaledSheet.create({
     paddingRight: '350@ms',
   },
   searchlistContainer: {
-    marginTop: '-18@ms',
+    marginTop: '-138@ms',
   },
   selectorcontainer: {
-    marginTop: Platform.OS=="ios"?'-35@ms':"-5@ms",
+    marginTop: Platform.OS == 'ios' ? '-35@ms' : '-5@ms',
     marginLeft: '10@ms',
   },
 });

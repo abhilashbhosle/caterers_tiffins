@@ -130,7 +130,7 @@ function ProfileBanners({catererBanners}) {
         </View>
       ) : (
         <FlatList
-          data={catererBanners}
+          data={catererBanners?.slice(1,2)}
           ref={scrollRef}
           keyExtractor={(item, index) => String(index)}
           renderItem={renderBanners}

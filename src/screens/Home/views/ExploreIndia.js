@@ -97,7 +97,7 @@ function ExploreIndia() {
           )}
           <Text
             style={[
-              {fontFamily: ts.secondaryregular, color: ts.primarytext},
+              {fontFamily: ts.jakartasemibold, color: '#000'},
               gs.fs12,
               gs.mt5,
             ]}>
@@ -112,7 +112,7 @@ function ExploreIndia() {
       <View style={[gs.ph15, gs.mt15]}>
         <Text
           style={[
-            {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+            {fontFamily: ts.jakartabold, color: ts.primarytext},
             gs.fs18,
             gs.mb5,
           ]}>
@@ -120,7 +120,7 @@ function ExploreIndia() {
         </Text>
         <Text
           style={[
-            {fontFamily: ts.secondaryregular, color: ts.secondarytext},
+            {fontFamily: ts.jakartasemibold, color: ts.secondarytext},
             gs.fs13,
             gs.mb15,
           ]}>
@@ -130,7 +130,7 @@ function ExploreIndia() {
           style={[
             gs.fs8,
             gs.p3,
-            {color: ts.primarytext, fontFamily: ts.secondarysemibold},
+            {color: ts.primarytext, fontFamily: ts.jakartasemibold},
           ]}>
           No Cities found.
         </Text>
@@ -147,7 +147,7 @@ function ExploreIndia() {
         <View>
           <Text
             style={[
-              {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+              {fontFamily: ts.jakartabold, color: ts.primarytext},
               gs.fs18,
               gs.mb5,
             ]}>
@@ -155,14 +155,14 @@ function ExploreIndia() {
           </Text>
           <Text
             style={[
-              {fontFamily: ts.secondaryregular, color: ts.secondarytext},
+              {fontFamily: ts.jakartasemibold, color: ts.secondarytext},
               gs.fs13,
               gs.mb15,
             ]}>
             Around India
           </Text>
         </View>
-        <View style={[gs.mb10]}>
+        <View>
           {route?.name == 'Caterings' ? (
             <MoreSecondarybtn />
           ) : (

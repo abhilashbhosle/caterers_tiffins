@@ -55,22 +55,22 @@ export const styles = ScaledSheet.create({
 	  width: '16@ms',
 	},
 	startPrice: {
-	  fontSize: '17@ms',
-	  fontFamily: ts.primarysemibold,
-	  color: ts.primarytext,
-	},
-	area: {
-	  color: ts.secondarytext,
-	  fontFamily: ts.secondarylight,
-	  paddingHorizontal: '10@ms',
-	},
+		fontSize: '18@ms',
+		fontFamily: ts.jakartabold,
+		color: '#000',
+	  },
+	  area: {
+		color: ts.secondarytext,
+		fontFamily: ts.jakartaregular,
+		paddingHorizontal: '10@ms',
+	  },
 	icon: {
 	  height: '14@ms',
 	  width: '14@ms',
 	},
 	profile: {
-	  height: '55@ms',
-	  width: '55@ms',
+	  height: '50@ms',
+	  width: '50@ms',
 	  borderRadius: 50,
 	  borderWidth: 2,
 	  borderColor: '#fff',

@@ -92,6 +92,7 @@ export default function TiffinProfile({navigation, route}) {
     }
   }, [branch_id, vendor_id]);
 
+
   return (
     <ScreenWrapper>
       <KeyboardAwareScrollView
@@ -142,7 +143,20 @@ export default function TiffinProfile({navigation, route}) {
             </View>
             {/* Top card */}
             <Card style={styles.details}>
-              <Card.Content>
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                {profile?.subscription_type_name == 'popular' ? (
+                  <Image
+                    source={require('../../../assets/Common/popularlabel.png')}
+                    style={styles.label}
+                  />
+                ) : profile?.subscription_type_name == 'branded' ? (
+                  <Image
+                    source={require('../../../assets/Common/popularlabel.png')}
+                    style={styles.label}
+                  />
+                ) : null}
+              </View>
+              <View style={[gs.p15]}>
                 <Flex direction="row" align="center">
                   {profile?.bennerMenuMixGalleryImages?.length && (
                     <Image
@@ -241,7 +255,7 @@ export default function TiffinProfile({navigation, route}) {
                     {backgroundColor: 'rgba(217, 130, 43, 0.2)'},
                     gs.mt10,
                     gs.pv10,
-                    gs.ph7,
+                    gs.ph10,
                     gs.br4,
                   ]}>
                   <Text style={[styles.startPrice, gs.fs16]}>Cuisines</Text>
@@ -255,7 +269,7 @@ export default function TiffinProfile({navigation, route}) {
                         style={[
                           gs.fs14,
                           {
-                            fontFamily: ts.primarylight,
+                            fontFamily: ts.jakartaregular,
                             color: ts.primarytext,
                           },
                         ]}
@@ -275,7 +289,7 @@ export default function TiffinProfile({navigation, route}) {
                           style={[
                             gs.fs12,
                             {
-                              fontFamily: ts.secondaryregular,
+                              fontFamily: ts.jakartamedium,
                               color: ts.primary,
                             },
                           ]}>
@@ -294,7 +308,8 @@ export default function TiffinProfile({navigation, route}) {
                 <Flex
                   direction="row"
                   alignItems="center"
-                  justifyContent="space-between">
+                  justifyContent="space-between"
+                  >
                   <Flex direction="row" align="center" style={[gs.mt7, gs.mb5]}>
                     {profile?.serviceTypes?.map((e, i) => (
                       <View
@@ -311,7 +326,7 @@ export default function TiffinProfile({navigation, route}) {
                             alignItems: 'center',
                           },
                           gs.br5,
-                          gs.mr10,
+                          gs.mr8,
                           gs.ph5,
                           gs.pv5,
                           gs.mt10,
@@ -325,7 +340,7 @@ export default function TiffinProfile({navigation, route}) {
                                 ? require('../../../assets/Search/takeawaynew.png')
                                 : require('../../../assets/Search/dineinnew.png')
                             }
-                            style={styles.servicesIcon}
+                            style={e?.service_type_name == 'Delivery'?styles.deliveryIcon:styles.servicesIcon}
                           />
                           <Text
                             style={[
@@ -336,7 +351,7 @@ export default function TiffinProfile({navigation, route}) {
                                     : e?.service_type_name == 'Dine In'
                                     ? '#c76407'
                                     : '#7537c7',
-                                fontFamily: ts.secondaryregular,
+                                fontFamily: ts.jakartamedium,
                               },
                               gs.fs13,
                               gs.ml5,
@@ -347,7 +362,7 @@ export default function TiffinProfile({navigation, route}) {
                       </View>
                     ))}
                   </Flex>
-                  <Flex direction="row" align="center">
+                  <Flex direction="row" align="center" style={[gs.mt8]}>
                     <Flex direction="row" align="center" style={[gs.pv15]}>
                       {profile?.foodTypes?.length
                         ? profile.foodTypes.map((e, i) => (
@@ -369,7 +384,7 @@ export default function TiffinProfile({navigation, route}) {
                     </Flex>
                   </Flex>
                 </Flex>
-              </Card.Content>
+              </View>
             </Card>
           </View>
         </View>
@@ -379,7 +394,7 @@ export default function TiffinProfile({navigation, route}) {
             <View style={[gs.pt20, gs.pb10, gs.ph15]}>
               <Text
                 style={[
-                  {fontFamily: ts.secondarymedium, color: '#000'},
+                  {fontFamily: ts.jakartabold, color: '#000'},
                   gs.fs20,
                 ]}>
                 Gallery
@@ -394,13 +409,14 @@ export default function TiffinProfile({navigation, route}) {
         <View style={[gs.pt20, gs.pb10, gs.ph15]}>
           <Text
             style={[
-              {fontFamily: ts.secondarymedium, color: '#000'},
+              {fontFamily: ts.jakartabold, color: '#000'},
               gs.fs20,
               gs.pb20,
             ]}>
             Highlights
           </Text>
           {profile?.serviceTypes?.length ? (
+            <>
             <Flex direction="row" align="center">
               <View>
                 <Image
@@ -425,9 +441,10 @@ export default function TiffinProfile({navigation, route}) {
                 </Flex>
               </View>
             </Flex>
+             <Divider style={gs.mv15} />
+             </>
           ) : null}
 
-          <Divider style={gs.mv15} />
           {profile?.start_day ||
           profile?.end_day ||
           profile?.start_time ||
@@ -448,7 +465,7 @@ export default function TiffinProfile({navigation, route}) {
                     style={[styles.servicedesc, gs.fs16, gs.mt5]}
                     numberOfLines={1}>
                     {profile?.start_day.slice(0, 3)} -{' '}
-                    {profile?.end_day?.slice(0, 3)}{' '}
+                    {profile?.end_day?.slice(0, 3)}{' '} |{' '}
                     {profile?.start_time
                       ? moment(profile.start_time, 'HH:mm:ss').format('hh:mm A')
                       : null}{' '}
@@ -459,9 +476,9 @@ export default function TiffinProfile({navigation, route}) {
                   </Text>
                 </View>
               </Flex>
+          <Divider style={gs.mv15} />
             </View>
           ) : null}
-          <Divider style={gs.mv15} />
           {profile?.working_since ? (
             <Flex direction="row">
               <View>
@@ -489,7 +506,7 @@ export default function TiffinProfile({navigation, route}) {
           <View style={[gs.ph15, gs.mt20]}>
             <Text
               style={[
-                {fontFamily: ts.secondarymedium, color: '#000'},
+                {fontFamily: ts.jakartabold, color: '#000'},
                 gs.fs20,
                 gs.pb10,
               ]}>
@@ -499,7 +516,7 @@ export default function TiffinProfile({navigation, route}) {
               style={[
                 styles.subtxt,
                 gs.fs16,
-                {fontFamily: ts.primarylight, color: ts.primarytext},
+                {fontFamily: ts.jakartaregular, color: ts.primarytext},
               ]}
               seeLessText="read less"
               seeMoreText="read more"
@@ -515,7 +532,7 @@ export default function TiffinProfile({navigation, route}) {
           <View style={[gs.ph15, gs.mt20]}>
             <Text
               style={[
-                {fontFamily: ts.secondarymedium, color: '#000'},
+                {fontFamily: ts.jakartabold, color: '#000'},
                 gs.fs20,
                 gs.pb10,
               ]}>
@@ -541,7 +558,7 @@ export default function TiffinProfile({navigation, route}) {
                   style={[
                     styles.subtxt,
                     gs.fs16,
-                    {fontFamily: ts.primarylight, color: ts.primarytext},
+                    {fontFamily: ts.jakartaregular, color: ts.primarytext},
                   ]}>
                   -
                 </Text>
@@ -593,6 +610,7 @@ export default function TiffinProfile({navigation, route}) {
                 {fontFamily: ts.secondarymedium, color: '#000'},
                 gs.fs20,
                 gs.pb10,
+                gs.mb10
               ]}>
               Reviews
             </Text>
@@ -610,7 +628,7 @@ export default function TiffinProfile({navigation, route}) {
           <Center>
             <Text
               style={[
-                {fontFamily: ts.secondarymedium, color: '#000'},
+                {fontFamily: ts.jakartabold, color: '#000'},
                 gs.fs20,
                 gs.pt20,
               ]}>
@@ -629,7 +647,7 @@ export default function TiffinProfile({navigation, route}) {
             style={[
               gs.fs14,
               gs.ph15,
-              {color: ts.primarytext, fontFamily: ts.primarylight},
+              {color: ts.primarytext, fontFamily: ts.jakartaregular},
               gs.pb10,
             ]}>
             Share your experience
@@ -687,10 +705,10 @@ export default function TiffinProfile({navigation, route}) {
                 <Text
                   style={[
                     styles.subtxt,
-                    gs.fs18,
+                    gs.fs17,
                     {
                       color: !review ? '#777' : ts.primary,
-                      fontFamily: ts.secondarymedium,
+                      fontFamily: ts.jakartabold,
                     },
                   ]}>
                   Submit Review
@@ -723,13 +741,13 @@ export default function TiffinProfile({navigation, route}) {
             <Text
               style={[
                 gs.fs15,
-                {color: ts.secondarytext, fontFamily: ts.secondarylight},
+                {color: ts.jakartamedium, fontFamily: ts.secondarylight},
               ]}>
               Starting Price / Plate
             </Text>
             <Text
               style={[
-                {color: '#000', fontFamily: ts.secondarysemibold},
+                {color: '#000', fontFamily: ts.jakartabold},
                 gs.fs20,
               ]}>
               ₹ {profile?.start_price ? profile.start_price : 'N/A'}
@@ -753,7 +771,11 @@ export default function TiffinProfile({navigation, route}) {
   );
 }
 const styles = ScaledSheet.create({
-  heading: {fontFamily: ts.secondarysemibold, color: '#000', fontSize: '18@ms'},
+  heading: {
+    fontFamily: ts.jakartabold,
+    color: '#000',
+    fontSize: '18@ms',
+  },
   labelcontainer: {
     height: '25@ms',
     width: '80@ms',
@@ -762,13 +784,13 @@ const styles = ScaledSheet.create({
     borderRadius: '15@ms',
   },
   area: {
-    fontFamily: ts.secondaryregular,
+    fontFamily: ts.jakartamedium,
     color: ts.secondarytext,
     marginVertical: '5@ms',
     width: '100%',
   },
   subtxt: {
-    fontFamily: ts.secondaryregular,
+    fontFamily: ts.jakartamedium,
     color: ts.secondarytext,
     // lineHeight: '17@ms',
   },
@@ -781,8 +803,8 @@ const styles = ScaledSheet.create({
     height: '110@ms',
   },
   serviceicon: {
-    height: '45@ms',
-    width: '45@ms',
+    height: '48@ms',
+    width: '48@ms',
     marginRight: '15@ms',
   },
   usericon: {
@@ -790,12 +812,13 @@ const styles = ScaledSheet.create({
     color: ts.secondary,
   },
   servicedesc: {
-    fontFamily: ts.secondaryregular,
+    fontFamily: ts.jakartasemibold,
     color: ts.primarytext,
   },
   issuecontainer: {
-    height: '200@ms',
+    height: '100@ms',
     paddingHorizontal: '10@ms',
+    paddingVertical: '10@ms',
     borderWidth: 1,
     borderColor: '#ccc',
     fontFamily: ts.secondarymedium,
@@ -847,6 +870,12 @@ const styles = ScaledSheet.create({
   servicesIcon: {
     height: '16@ms',
     width: '16@ms',
+    top: '2@ms',
+  },
+  deliveryIcon: {
+    height: '16@ms',
+    width: '19@ms',
+    top: '2@ms',
   },
   btn: {
     backgroundColor: '#fbe3e1',
@@ -859,10 +888,14 @@ const styles = ScaledSheet.create({
   },
   startPrice: {
     color: '#000',
-    fontFamily: ts.secondaryregular,
+    fontFamily: ts.jakartasemibold,
   },
   ratingiconcontainer: {
     // backgroundColor:'#ff0',
     width: '31%',
+  },
+  label: {
+    height: '30@ms',
+    maxWidth: '150@ms',
   },
 });

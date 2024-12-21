@@ -66,7 +66,7 @@ function HeaderView({from, navigation}) {
               <Text
                 style={[
                   {
-                    fontFamily: ts.secondaryregular,
+                    fontFamily: ts.jakartasemibold,
                     color: '#000',
                     maxWidth: '60%',
                   },
@@ -80,7 +80,7 @@ function HeaderView({from, navigation}) {
               </Text>
               <IonIcons
                 name="chevron-down"
-                style={[gs.fs16, gs.ml5, {color: '#000'}]}
+                style={[gs.fs16, gs.ml5,gs.mt4, {color: '#000'}]}
               />
             </Flex>
           </TouchableWithoutFeedback>

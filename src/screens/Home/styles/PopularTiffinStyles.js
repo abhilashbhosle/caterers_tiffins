@@ -21,16 +21,16 @@ export const styles = ScaledSheet.create({
   profileContainer: {
     position: 'absolute',
     bottom: '-35@ms',
-    left: '5@ms',
+    left: '10@ms',
   },
   profileContainer: {
     position: 'absolute',
     bottom: '-35@ms',
-    left: '5@ms',
+    left: '10@ms',
   },
   profile: {
-    height: '60@ms',
-    width: '60@ms',
+    height: '84@ms',
+    width: '84@ms',
     resizeMode: 'cover',
     borderRadius: '50@ms',
     borderWidth: 3,
@@ -38,8 +38,9 @@ export const styles = ScaledSheet.create({
   },
   txtContainer: {
     paddingHorizontal: '5@ms',
-	width:'150@ms',
-  top:Platform.OS=='ios'?'15@ms':'30@ms',
+    top: Platform.OS == 'ios' ? '15@ms' : '60@ms',
+    right: '30@ms',
+    width: '150@ms',
   },
   contentContainerStyle: {
     paddingBottom: '20@ms',
@@ -57,14 +58,15 @@ export const styles = ScaledSheet.create({
     backgroundColor: '#fff',
   },
   catererName: {
-    color: ts.primarytext,
-    fontFamily: ts.secondaryregular,
+    color: '#000',
+    fontFamily: ts.jakartasemibold,
     marginTop: '40@ms',
-    paddingHorizontal: '10@ms',
+    paddingHorizontal: '8@ms',
+    marginBottom:'2@ms'
   },
   area: {
     color: ts.secondarytext,
-    fontFamily: ts.secondarylight,
+    fontFamily: ts.jakartaregular,
     paddingHorizontal: '10@ms',
   },
   icon: {
@@ -76,9 +78,9 @@ export const styles = ScaledSheet.create({
     fontFamily: ts.secondaryregular,
     paddingLeft: '2@ms',
   },
-  startPrice:{
-	fontSize:'17@ms',
-	fontFamily:ts.primarysemibold,
-	color:ts.primarytext
-  }
+  startPrice: {
+    fontSize: '18@ms',
+    fontFamily: ts.jakartabold,
+    color: ts.primarytext,
+  },
 });

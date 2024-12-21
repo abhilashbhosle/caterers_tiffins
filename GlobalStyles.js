@@ -967,6 +967,12 @@ export const gs=ScaledSheet.create({
 	h50:{
 		height:'50@ms'
 	},
+	h70:{
+		height:'70@ms',
+	},
+	h100:{
+		height:'100@ms'
+	},
 	btnPlaneWhite:{
 		fontSize:'15@ms',
 		color:'#fff',

@@ -17,23 +17,24 @@ export const styles = ScaledSheet.create({
     borderTopRightRadius: '10@ms',
     borderBottomRightRadius: '10@ms',
     marginLeft: '-1@ms',
-	paddingLeft:'25@ms'
+    paddingLeft: '25@ms',
   },
   searchIcon: {
     height: '13@ms',
     width: '13@ms',
-	position: 'absolute',
-	top:'17@ms',
-	left:'8@ms'
+    position: 'absolute',
+    top: '19@ms',
+    left: '8@ms',
   },
   calIcon: {
     height: '15@ms',
     width: '15@ms',
+    top:'1.5@ms'
   },
   searchtxt: {
-    fontSize: '13@ms',
+    fontSize: '12@ms',
     color: '#000',
-    fontFamily: ts.primarymedium,
+    fontFamily: ts.jakartasemibold,
     marginLeft: '5@ms',
   },
   seperator: {

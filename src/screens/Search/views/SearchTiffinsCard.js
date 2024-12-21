@@ -33,7 +33,7 @@ function SearchCaterersCard({item, from, location}) {
       <TouchableWithoutFeedback
         onPress={() => {
           navigation.navigate('PageStack', {
-            screen: 'CatererProfile',
+            screen: 'TiffinProfile',
             params: {
               branch_id: item?.id,
               vendor_id: item?.vendor_id,
@@ -48,11 +48,10 @@ function SearchCaterersCard({item, from, location}) {
               <ImageBackground
                 source={{uri: item.brand_logo.medium}}
                 imageStyle={[
-                  {...styles.img, width: width / 3.2, resizeMode: 'cover'},
+                  {...styles.img, resizeMode: 'cover'},
                 ]}
                 style={{
                   ...styles.img,
-                  width: width / 3.2,
                   justifyContent: 'space-between',
                 }}>
                 <LinearGradient
@@ -74,7 +73,6 @@ function SearchCaterersCard({item, from, location}) {
               <View
                 style={{
                   ...styles.img,
-                  width: width / 3.2,
                   justifyContent: 'space-between',
                   backgroundColor: '#fff',
                 }}>
@@ -97,15 +95,15 @@ function SearchCaterersCard({item, from, location}) {
           </View>
           {/* ======CONTENT========= */}
           <View
-            style={[gs.pl10, gs.pr10, gs.ph10, gs.pv10, {width: width / 1.5}]}>
+            style={[gs.pl10, gs.pr10, gs.ph10, gs.pv10, {width: width / 1.65}]}>
             <Flex
               direction="row"
               alignItems="center"
               justifyContent="space-between">
-              <Text numberOfLines={1} style={[{...styles.name}, gs.fs18]}>
+              <Text numberOfLines={1} style={[{...styles.name}, gs.fs17]}>
                 {item?.catering_service_name
-                  ? item?.catering_service_name?.length > 20
-                    ? `${item?.catering_service_name.slice(0, 18)}..`
+                  ? item?.catering_service_name?.length > 18
+                    ? `${item?.catering_service_name.slice(0, 16)}..`
                     : item?.catering_service_name
                   : 'No Service Name'}
               </Text>
@@ -196,7 +194,7 @@ function SearchCaterersCard({item, from, location}) {
                             {
                               color:
                                 e == 'Buffet Service' ? '#00658a' : '#c76407',
-                              fontFamily: ts.secondaryregular,
+                              fontFamily: ts.jakartamedium,
                             },
                             gs.fs13,
                             gs.ml5,
@@ -261,9 +259,10 @@ function SearchCaterersCard({item, from, location}) {
                   style={[
                     {
                       color: '#000',
-                      fontFamily: ts.secondarymedium,
+                      fontFamily: ts.jakartasemibold,
                     },
                     gs.fs16,
+                    gs.ml2
                   ]}>
                   ₹ {item?.start_price ? parseInt(item?.start_price) : 'N/A'}
                 </Text>

@@ -12,6 +12,7 @@ export const styles = ScaledSheet.create({
 	  height: '170@ms',
 	  borderTopLeftRadius: '10@ms',
 	  borderBottomLeftRadius: '10@ms',
+	  width:'115@ms'
 	},
 	buffeticon: {
 	  height: '30@ms',
@@ -20,23 +21,23 @@ export const styles = ScaledSheet.create({
 	},
 	name: {
 	  color: '#000',
-	  fontFamily: ts.primarymedium,
+	  fontFamily: ts.jakartabold,
 	  lineHeight: '20@ms',
 	},
 	area: {
 	  color: ts.secondarytext,
-	  fontFamily: ts.secondarylight,
+	  fontFamily: ts.jakartaregular,
 	  lineHeight: '20@ms',
 	},
 	foodtype: {
-	  fontFamily: ts.secondarylight,
+	  fontFamily: ts.jakartaregular,
 	  color: ts.primarytext,
 	  lineHeight: '22@ms',
 	},
 	cuisine: {
 	  color: ts.primarytext,
 	  fontSize: '14@ms',
-	  fontFamily: ts.secondaryregular,
+	  fontFamily: ts.jakartamedium,
 	  // lineHeight: '22@ms',
 	  width: '65%',
 	},
@@ -88,14 +89,16 @@ export const styles = ScaledSheet.create({
 	servicesIcon: {
 	  height: '16@ms',
 	  width: '16@ms',
+	  marginTop:'2@ms'
 	},
 	ratingicon: {
-	  width: '20@ms',
-	  height: '20@ms',
+	  width: '18@ms',
+	  height: '18@ms',
+	  marginTop:'1@ms'
 	},
 	startPrice: {
 	  color: '#000',
-	  fontFamily: ts.secondarymedium,
+	  fontFamily: ts.jakartasemibold,
 	  fontSize: '14@ms',
 	},
   });

@@ -228,32 +228,39 @@ function PopularTiffins() {
               </View>
             </Flex>
           </Center>
-          <Text numberOfLines={1} style={[gs.fs13, styles.catererName]}>
-            {item?.catering_service_name
-              ? item.catering_service_name.slice(0, 28)
-              : 'N/A'}
+          <Text numberOfLines={1} style={[gs.fs16, styles.catererName]}>
+            {item?.catering_service_name ? (
+              item?.catering_service_name?.length > 23 ? (
+                <Text> {item.catering_service_name.slice(0, 23)}..</Text>
+              ) : (
+                item.catering_service_name
+              )
+            ) : (
+              'N/A'
+            )}
           </Text>
-          <Text style={[gs.fs10, styles.area]}>
-            {item?.street_name ? item.street_name : item?.area}, {item?.city}
+          <Text style={[gs.fs12, styles.area]}>
+            {item?.street_name ? item.street_name.slice(0, 17) : item?.area},{' '}
+            {item?.city}
           </Text>
           <Flex
             direction="row"
             justifyContent="space-between"
             alignItems="center"
-            style={[gs.ph10, gs.mt10]}>
+            style={[gs.ph10, gs.mt5]}>
             <Flex>
               <Text style={styles.startPrice}>
                 ₹ {item?.start_price ? item.start_price : 'N/A'}
               </Text>
-              <Text style={[gs.fs9, styles.area, gs.pl2]}>Starts from</Text>
+              <Text style={[gs.fs11, styles.area, gs.pl2]}>Starts from</Text>
             </Flex>
             <Flex direction="row" align="center">
               <Image
                 source={require('../../../assets/Common/rating.png')}
                 style={styles.icon}
               />
-              <Text style={[styles.startPrice, gs.fs13, gs.ph3]}>4.5</Text>
-              <Text style={[styles.area, gs.ph2, gs.fs11]}>
+              <Text style={[styles.startPrice, gs.fs14, gs.ph3]}>4.5</Text>
+              <Text style={[styles.area, gs.ph2, gs.fs12]}>
                 ({item?.review_count})
               </Text>
             </Flex>
@@ -270,7 +277,7 @@ function PopularTiffins() {
           <View>
             <Text
               style={[
-                {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+                {fontFamily: ts.jakartabold, color: ts.primarytext},
                 gs.fs18,
                 gs.mb5,
               ]}>
@@ -278,7 +285,7 @@ function PopularTiffins() {
             </Text>
             <Text
               style={[
-                {fontFamily: ts.secondaryregular, color: ts.secondarytext},
+                {fontFamily: ts.jakartasemibold, color: ts.secondarytext},
                 gs.fs13,
               ]}>
               {userDetails?.length && userDetails[0]?.city}
@@ -289,7 +296,7 @@ function PopularTiffins() {
           style={[
             gs.fs8,
             gs.p3,
-            {color: ts.primarytext, fontFamily: ts.secondarysemibold},
+            {color: ts.primarytext, fontFamily: ts.jakartasemibold},
             gs.pl15,
           ]}>
           No Popular Tiffin found.
@@ -304,15 +311,15 @@ function PopularTiffins() {
           <View>
             <Text
               style={[
-                {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+                {fontFamily: ts.jakartabold, color: ts.primarytext},
                 gs.fs18,
-                gs.mb5,
+                gs.mb3,
               ]}>
-             Popular Tiffin
+              Popular Tiffin
             </Text>
             <Text
               style={[
-                {fontFamily: ts.secondaryregular, color: ts.secondarytext},
+                {fontFamily: ts.jakartasemibold, color: ts.secondarytext},
                 gs.fs13,
               ]}>
               {userDetails?.length && userDetails[0]?.city}

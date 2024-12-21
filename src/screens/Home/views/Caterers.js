@@ -1,4 +1,4 @@
-import {View, Text, useWindowDimensions, Platform,BackHandler,Alert} from 'react-native';
+import {View, Text, useWindowDimensions, Platform,BackHandler,Alert,ScrollView} from 'react-native';
 import React, {useCallback, useEffect} from 'react';
 import HeaderView from './HeaderView';
 import RecentSearches from './RecentSearches';
@@ -7,13 +7,13 @@ import Branded from './Branded';
 import ExploreIndia from './ExploreIndia';
 import PopularCaterers from './PopularCaterers';
 import Occasions from './Occasions';
-import {ScrollView} from 'react-native-virtualized-view';
 import {ScaledSheet} from 'react-native-size-matters';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import {StatusBar} from 'native-base';
+import { gs } from '../../../../GlobalStyles';
 
 const MemoizedHeaderView = React.memo(HeaderView);
 const MemoizedExploreCusines = React.memo(ExploreCusines);
@@ -76,7 +76,8 @@ export default function Caterers({navigation}) {
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 0.2, y: 1}}
-          colors={['#f8b4b3', '#fbe3e1', '#fff']}>
+          colors={['#f8b4b3', '#fbe3e1', '#fff']}
+          >
           <MemoizedHeaderView from="Caterers" navigation={navigation} />
           {/* <RecentSearches /> */}
           <MemoizedExploreIndia />
@@ -92,5 +93,6 @@ export default function Caterers({navigation}) {
 const styles = ScaledSheet.create({
   container: {
     backgroundColor: '#fff',
+    flex:1
   },
 });

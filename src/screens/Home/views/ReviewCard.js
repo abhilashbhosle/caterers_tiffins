@@ -46,7 +46,7 @@ function ReviewCard({item, index, from, reviews}) {
                 enableSwiping={false}
                 onChange={() => {}}
               />
-              <Text style={[styles.name,gs.ml5]}>{item?.rating}</Text>
+              <Text style={[styles.name,gs.ml5,{fontFamily:ts.jakartaregular}]}>{item?.rating}</Text>
             </Flex>
           </View>
           <Text style={[styles.subtxt, gs.fs12]}>
@@ -85,7 +85,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   name: {
-    fontFamily: ts.primaryregular,
+    fontFamily: ts.jakartamedium,
     color: ts.primarytext,
     fontSize: '16@ms',
   },

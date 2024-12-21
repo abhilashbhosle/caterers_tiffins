@@ -20,7 +20,7 @@ import {getSimilarTiffins} from '../controllers/HomeController';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
-import { styles } from '../styles/TiffinProviderStyles';
+import {styles} from '../styles/TiffinProviderStyles';
 
 export default function TiffinProviders() {
   const {width, height} = useWindowDimensions();
@@ -62,7 +62,7 @@ export default function TiffinProviders() {
           activeOpacity={0.7}
           onPress={() => {
             navigation.navigate('PageStack', {
-              screen: 'CatererProfile',
+              screen: 'TiffinProfile',
               params: {
                 branch_id: item?.id,
                 vendor_id: item?.vendor_id,
@@ -88,7 +88,11 @@ export default function TiffinProviders() {
                 direction="row"
                 alignItems="center"
                 justifyContent="flex-end"
-                style={[Platform.OS == 'ios' && gs.mt15, gs.ph10,styles.iconcontaier]}>
+                style={[
+                  Platform.OS == 'ios' && gs.mt15,
+                  gs.ph10,
+                  styles.iconcontaier,
+                ]}>
                 <Image
                   source={require('../../../assets/Common/veg.png')}
                   style={[styles.icon, gs.mr5]}
@@ -110,43 +114,44 @@ export default function TiffinProviders() {
                     width: width - 100,
                   },
                 ]}>
-                <Flex
-                  direction="row"
-                  alignItems="center"
-                  style={[gs.ph10, gs.mt20]}>
-                  <Image
-                    source={{
-                      uri: item?.brand_logo?.medium,
-                    }}
-                    style={styles.profile}
-                    alt="profile"
-                  />
-                  <View style={[gs.mt20,styles.txtcontainer]}>
-                    <Text
-                      style={[
-                        gs.fs14,
-                        gs.ml10,
-                        {color: '#fff', fontFamily: ts.secondarymedium},
-                        gs.mt20,
-                      ]}
-                      numberOfLines={1}>
-                      {item?.catering_service_name?.length > 23
-                        ? `${item?.catering_service_name?.slice(0, 23)}..`
-                        : item?.catering_service_name}
-                    </Text>
-                    <Text
-                      style={[
-                        gs.fs12,
-                        gs.ml10,
-                        {color: '#f5f5f5', fontFamily: ts.secondarylight},
-                        Platform.OS == 'ios' && gs.pv2,
-                        gs.mt5
-                      ]}>
-                      {item?.street_name ? item.street_name : item?.area},{' '}
-                      {item?.city}
-                    </Text>
-                  </View>
-                </Flex>
+                <View style={[gs.mt5]}>
+                  <Flex
+                    direction="row"
+                    // alignItems="center"
+                    style={[gs.ph10, gs.mt20]}>
+                    <Image
+                      source={{
+                        uri: item?.brand_logo?.medium,
+                      }}
+                      style={styles.profile}
+                      alt="profile"
+                    />
+                    <View style={[gs.mt20, styles.txtcontainer]}>
+                      <Text
+                        style={[
+                          gs.fs16,
+                          gs.ml10,
+                          {color: '#fff', fontFamily: ts.jakartasemibold},
+                          gs.mt20,
+                        ]}
+                        numberOfLines={1}>
+                        {item?.catering_service_name?.length > 20
+                          ? `${item?.catering_service_name?.slice(0, 20)}..`
+                          : item?.catering_service_name}
+                      </Text>
+                      <Text
+                        style={[
+                          gs.fs14,
+                          gs.ml10,
+                          {color: '#f5f5f5', fontFamily: ts.jakartaregular},
+                          Platform.OS == 'ios' && gs.pv2,
+                        ]}>
+                        {item?.street_name ? item.street_name : item?.area},{' '}
+                        {item?.city}
+                      </Text>
+                    </View>
+                  </Flex>
+                </View>
               </LinearGradient>
             </ImageBackground>
           ) : (
@@ -171,7 +176,9 @@ export default function TiffinProviders() {
                 <Text style={styles.startPrice}>
                   ₹ {item?.start_price ? item.start_price : 'N/A'}
                 </Text>
-                <Text style={[gs.fs9, styles.area, gs.pl2]}>Starts from</Text>
+                <Text style={[gs.fs11, styles.area, gs.pl2, gs.mt2]}>
+                  Starts from
+                </Text>
               </Flex>
               <Flex direction="row" align="center">
                 <Image
@@ -179,8 +186,8 @@ export default function TiffinProviders() {
                   style={styles.icon}
                   alt="rating"
                 />
-                <Text style={[styles.startPrice, gs.fs13, gs.ph3]}>4.5</Text>
-                <Text style={[styles.area, gs.ph2, gs.fs11]}>
+                <Text style={[styles.startPrice, gs.fs14, gs.ph3]}>4.5</Text>
+                <Text style={[styles.area, gs.ph2, gs.fs12]}>
                   ({item?.review_count})
                 </Text>
               </Flex>
@@ -206,7 +213,7 @@ export default function TiffinProviders() {
       <View style={[gs.ph15, gs.mt15]}>
         <Text
           style={[
-            {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+            {fontFamily: ts.jakartabold, color: ts.primarytext},
             gs.fs18,
             gs.mb10,
           ]}>
@@ -228,4 +235,3 @@ export default function TiffinProviders() {
     </>
   );
 }
-

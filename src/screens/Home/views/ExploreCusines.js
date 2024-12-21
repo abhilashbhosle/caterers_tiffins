@@ -174,9 +174,9 @@ function ExploreCusines() {
         <View style={[gs.ph15, gs.mt10]}>
           <Text
             style={[
-              {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+              {fontFamily: ts.jakarta,fontWeight:'bold', color: ts.primarytext},
               gs.fs18,
-              gs.mb10,
+              gs.mb5,
             ]}>
             Explore Cuisines
           </Text>
@@ -185,7 +185,7 @@ function ExploreCusines() {
           style={[
             gs.fs8,
             gs.p3,
-            {color: ts.primarytext, fontFamily: ts.secondarysemibold},
+            {color: ts.primarytext, fontFamily: ts.jakarta,fontWeight:'600'},
             gs.pl15,
           ]}>
           No Cuisines found.
@@ -198,9 +198,9 @@ function ExploreCusines() {
       <View style={[gs.ph15, gs.mt10]}>
         <Text
           style={[
-            {fontFamily: ts.secondarysemibold, color: ts.primarytext},
+            {fontFamily: ts.jakartabold, color: ts.primarytext},
             gs.fs18,
-            gs.mb10,
+            gs.mb5,
             gs.mt10,
           ]}>
           Explore Cuisines

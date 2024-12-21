@@ -68,7 +68,7 @@ function SearchList({
       outputRange: [1, 1, 1, 0],
     });
     return (
-      <View style={{backgroundColor: '#fff'}}>
+      <View>
         <SearchTiffinsCard item={item} from={from} location={location} />
       </View>
     );
@@ -89,25 +89,6 @@ function SearchList({
     }
   }, [wish_id]);
 
-  const debouncedSetFirstItemVisible = useCallback(
-    debounce(visible => {
-      setFirstItemVisible(visible);
-    }, 400), // Increased debounce delay
-    [firstItemVisible],
-  );
-
-
-  const onViewableItemsChanged = useCallback(({viewableItems}) => {
-    if (viewableItems.length > 0 && viewableItems[0].index === 0) {
-      debouncedSetFirstItemVisible(true);
-    } else {
-      debouncedSetFirstItemVisible(false);
-    }
-  }, [debouncedSetFirstItemVisible]);
-
-  const viewabilityConfig = {
-    itemVisiblePercentThreshold: 50,
-  };
   return (
     <>
       <Animated.FlatList
@@ -119,8 +100,11 @@ function SearchList({
       
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
-          {backgroundColor: '#fff', paddingTop: 10},
-          gs.ph5,
+          {
+            // backgroundColor:'#fff',
+            paddingTop: 10
+          },
+          gs.ph15,
         ]}
         onEndReachedThreshold={0.6}
         onEndReached={fetchMoreData}
