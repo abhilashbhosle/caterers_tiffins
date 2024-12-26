@@ -16,13 +16,13 @@ export const timeSince=(date)=> {
       return minutes + "m";
     }
     if (hours < 24) {
-      return hours + "h";
+      return hours + (hours<1 ?" hour ago":" hours ago");
     }
     if (days < 30) {
-      return days + "d";
+      return days + (days<1?" day ago":" days ago");
     }
     if (months < 12) {
-      return months + " month";
+      return months + (months<1?" month ago":" months ago");
     } else {
       return years + "y";
     }
