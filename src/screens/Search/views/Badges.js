@@ -67,6 +67,7 @@ function Badges({from, subType, setSubType, setPage, setVendorData}) {
                   {
                     ...styles.badge,
                     backgroundColor: item.selected == 1 ? theme : '#fff',
+                    borderWidth:1,borderColor:from=="Caterers"?'#ed9f9e':'#efb76e'
                   },
                   gs.br20,
                 ]}
@@ -81,10 +82,11 @@ function Badges({from, subType, setSubType, setPage, setVendorData}) {
                       color: item.selected == 1 ? '#fff' : '#57636c',
                       fontFamily:
                         item.selected == 1
-                          ? ts.secondaryregular
-                          : ts.secondarylight,
+                          ? ts.jakartasemibold
+                          : ts.jakartamedium,
                     },
                     gs.fs14,
+                    styles.textadjust
                   ]}>
                   {item?.display_name}
                 </Text>
@@ -106,4 +108,7 @@ const styles = ScaledSheet.create({
     paddingHorizontal: '12@ms',
     marginRight: '5@ms',
   },
+  textadjust:{
+    bottom:'2@ms'
+  }
 });

@@ -154,7 +154,7 @@ export default function MapMultiple({route, navigation}) {
                     },
                   });
                 }}
-                style={{width:100}}
+                // style={{width:100}}
                 >
                 <MyCustomCalloutView
                   profile={{

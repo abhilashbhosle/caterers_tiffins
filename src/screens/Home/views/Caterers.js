@@ -1,4 +1,12 @@
-import {View, Text, useWindowDimensions, Platform,BackHandler,Alert,ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  useWindowDimensions,
+  Platform,
+  BackHandler,
+  Alert,
+  ScrollView,
+} from 'react-native';
 import React, {useCallback, useEffect} from 'react';
 import HeaderView from './HeaderView';
 import RecentSearches from './RecentSearches';
@@ -13,7 +21,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import {StatusBar} from 'native-base';
-import { gs } from '../../../../GlobalStyles';
+import {gs} from '../../../../GlobalStyles';
 
 const MemoizedHeaderView = React.memo(HeaderView);
 const MemoizedExploreCusines = React.memo(ExploreCusines);
@@ -34,7 +42,7 @@ export default function Caterers({navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-      handleBack()
+        handleBack();
         return true; // Returning true means the event is handled and should not propagate further
       };
 
@@ -43,42 +51,38 @@ export default function Caterers({navigation}) {
       return () => {
         BackHandler.removeEventListener('hardwareBackPress', onBackPress);
       };
-    }, [])
+    }, []),
   );
-  const handleBack=()=>{
-    Alert.alert(
-      'Exit App',
-      'Are you sure you want to exit this App?',
-      [
-        {
-          text:'Cancel',
-          onPress:()=>{
-              console.log('Cancel Pressed')
-          }
+  const handleBack = () => {
+    Alert.alert('Exit App', 'Are you sure you want to exit this App?', [
+      {
+        text: 'Cancel',
+        onPress: () => {
+          console.log('Cancel Pressed');
         },
-        {
-          text:'Ok',
-          onPress:()=>{
-            BackHandler.exitApp()
-          }
-        }
-      ]
-    )
-  }
+      },
+      {
+        text: 'Ok',
+        onPress: () => {
+          BackHandler.exitApp();
+        },
+      },
+    ]);
+  };
 
   return (
     <ScreenWrapper>
       <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}
-        bounces={false}
-        >
+        bounces={false}>
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 0.2, y: 1}}
-          colors={['#f8b4b3', '#fbe3e1', '#fff']}
-          >
-          <MemoizedHeaderView from="Caterers" navigation={navigation} />
+          colors={['#f8b4b3', '#fbe3e1', '#fff']}>
+          <View style={[gs.mt10]}>
+            <MemoizedHeaderView from="Caterers" navigation={navigation} />
+          </View>
           {/* <RecentSearches /> */}
           <MemoizedExploreIndia />
         </LinearGradient>
@@ -86,13 +90,19 @@ export default function Caterers({navigation}) {
         <MemoizedBranded />
         <MemoizedOccasions />
         <MemoizedPopularCaterers />
+
       </ScrollView>
+      <View style={styles.leveler}></View>
     </ScreenWrapper>
   );
 }
 const styles = ScaledSheet.create({
   container: {
     backgroundColor: '#fff',
-    flex:1
+    flex: 1,
+    top: '-10@ms',
   },
+  leveler:{
+    marginTop:'-10@ms'
+  }
 });

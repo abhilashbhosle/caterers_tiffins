@@ -155,7 +155,7 @@ export default memo(ProfileBanners);
 
 const styles = ScaledSheet.create({
   img: {
-    height: '250@ms',
+    height: '260@ms',
     resizeMode: 'cover',
     borderBottomLeftRadius:'5@ms',
     borderBottomRightRadius:'5@ms'

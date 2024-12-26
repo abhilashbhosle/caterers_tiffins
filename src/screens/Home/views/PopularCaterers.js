@@ -339,7 +339,6 @@ function PopularCaterers() {
           contentContainerStyle={styles.contentContainerStyle}
         />
       ) : null}
-
       {/* {popularData?.length ? (
         <Center>
           <Carousel

@@ -34,8 +34,8 @@ function ReviewCard({item, index, from, reviews}) {
           // align="center"
           justifyContent="space-between">
           <View>
-            <Text style={[styles.name]}>{item?.username}</Text>
-            <Flex style={[gs.mv5]} direction='row' align='center'>
+            <Text style={[styles.name,gs.ml10]}>{item?.username}</Text>
+            <Flex style={[gs.mt5,gs.ml8]} direction='row' align='center'>
               <StarRating
                 rating={parseInt(item?.rating)}
                 maxStars={parseInt(item?.rating)}
@@ -78,9 +78,9 @@ function ReviewCard({item, index, from, reviews}) {
 export default memo(ReviewCard);
 const styles = ScaledSheet.create({
   img: {
-    height: '32@ms',
-    width: '32@ms',
-    borderRadius: '15@ms',
+    height: '42@ms',
+    width: '42@ms',
+    borderRadius: '50@ms',
     justifyContent: 'center',
     alignItems: 'center',
   },

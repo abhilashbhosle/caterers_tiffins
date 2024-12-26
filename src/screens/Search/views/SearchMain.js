@@ -185,7 +185,7 @@ export default function SearchMain({route, navigation}) {
   };
   return (
     <ScreenWrapper>
-      <ScrollView style={{flex: 1,backgroundColor:'#fff'}}>
+      <ScrollView style={{...styles.container,flex: 1, backgroundColor: '#fff'}}>
         {/* =====SEARCH BAR */}
         <LinearGradient
           style={[
@@ -204,7 +204,7 @@ export default function SearchMain({route, navigation}) {
               : ['#F6D6B2', '#fff', '#FFF']
           }>
           <SafeAreaView>
-            <Flex direction="row" alignItems="center" style={[gs.ph10]}>
+            <Flex direction="row" alignItems="center" style={[gs.ph10,gs.mt10]}>
               <View style={{width: '13%'}}>
                 <TouchableOpacity
                   activeOpacity={0.7}
@@ -268,18 +268,74 @@ export default function SearchMain({route, navigation}) {
                             },
                           });
                     }}>
-                    <View style={styles.btn}>
-                      <Text style={styles.btntxt}>Filter</Text>
+                    <View
+                      style={[
+                        {
+                          ...styles.btn,
+                          borderWidth: 1,
+                          borderColor:
+                            from == 'Caterers' ? '#ed9f9e' : '#efb76e',
+                        },
+                        gs.pl20,
+                        gs.pr10,
+                      ]}>
+                      <Flex
+                        align="center"
+                        direction="row"
+                        justifyContent="space-between">
+                        <Text style={styles.btntxt}>Filter</Text>
+                        <Image
+                          alt="downbtn"
+                          source={require('../../../assets/Common/downbtn.png')}
+                          style={[styles.downArrow, gs.ml5]}
+                        />
+                      </Flex>
                     </View>
                   </TouchableWithoutFeedback>
                   <View style={{position: 'relative'}}>
                     <TouchableOpacity
-                      style={[{...styles.btn}, gs.ph10]}
+                      style={[
+                        {
+                          ...styles.btn,
+                          borderWidth: 1,
+                          borderColor:
+                            from == 'Caterers' ? '#ed9f9e' : '#efb76e',
+                        },
+                        gs.ph10,
+                      ]}
                       onPress={handleFoodTpeDD}>
                       <Flex
                         align="center"
                         direction="row"
                         justifyContent="space-between">
+                        {foodText == 'Veg' && (
+                          <Image
+                            source={require('../../../assets/Common/veg.png')}
+                            style={[styles.icon, gs.mr5]}
+                            alt="vegicon"
+                          />
+                        )}
+                        {foodText == 'Non Veg' && (
+                          <Image
+                            source={require('../../../assets/Common/nonveg.png')}
+                            style={[styles.icon, gs.mr5]}
+                            alt="vegicon"
+                          />
+                        )}
+                        {foodText == 'All' ? (
+                          <Flex direction="row" alignItems="center">
+                            <Image
+                              source={require('../../../assets/Common/veg.png')}
+                              style={[styles.icon, gs.mr5]}
+                              alt="vegicon"
+                            />
+                            <Image
+                              source={require('../../../assets/Common/nonveg.png')}
+                              style={[styles.icon, gs.mr5]}
+                              alt="vegicon"
+                            />
+                          </Flex>
+                        ) : null}
                         <Text style={styles.btntxt}>{foodText}</Text>
                         <Image
                           alt="downbtn"
@@ -336,13 +392,20 @@ export default function SearchMain({route, navigation}) {
                         },
                       });
                     }}
-                    style={[styles.btn, {marginRight: 0}]}>
+                    style={[
+                      styles.btn,
+                      {
+                        marginRight: 0,
+                        borderWidth: 1,
+                        borderColor: from == 'Caterers' ? '#ed9f9e' : '#efb76e',
+                      },
+                    ]}>
                     <Flex direction="row" alignItems="center">
-                      {/* <IonIcons
+                      <IonIcons
                         name="location-sharp"
-                        style={[gs.fs22, {color: '#555'}, gs.mr5]}
-                      /> */}
-                      <Text style={styles.btntxt}>Location</Text>
+                        style={[gs.fs18, {color: from == 'Caterers' ? ts.secondary :ts.primary}, gs.mr2]}
+                      />
+                      <Text style={styles.btntxt}>Map</Text>
                     </Flex>
                   </TouchableOpacity>
                   <Badges
@@ -399,10 +462,14 @@ export default function SearchMain({route, navigation}) {
           </View>
         ) : null}
       </ScrollView>
+      <View style={styles.leveler}></View>
     </ScreenWrapper>
   );
 }
 const styles = ScaledSheet.create({
+  container:{
+    top:'-10@ms'
+  },
   headercontainer: {
     // minHeight: Platform.OS == 'ios' ? '150@ms' : '150@ms',
     paddingBottom: 20,
@@ -429,7 +496,11 @@ const styles = ScaledSheet.create({
   downArrow: {
     height: '20@ms',
     width: '20@ms',
-    marginLeft: '10@ms',
+    marginLeft: '5@ms',
+  },
+  filterDownArrow: {
+    height: '20@ms',
+    width: '20@ms',
   },
   scrollcontainer: {
     paddingRight: '350@ms',
@@ -441,4 +512,11 @@ const styles = ScaledSheet.create({
     marginTop: Platform.OS == 'ios' ? '-35@ms' : '-5@ms',
     marginLeft: '10@ms',
   },
+  icon: {
+    height: '14@ms',
+    width: '14@ms',
+  },
+  leveler:{
+    marginTop:'-10@ms'
+  }
 });

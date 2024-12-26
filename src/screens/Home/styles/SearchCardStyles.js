@@ -70,7 +70,7 @@ export const styles = ScaledSheet.create({
 	  fontSize: '11@ms',
 	},
 	wishicon: {
-	  fontSize: '20@ms',
+	  fontSize: '23@ms',
 	},
 	foodTypeimg: {
 	  height: '15@ms',

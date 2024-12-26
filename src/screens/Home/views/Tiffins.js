@@ -13,6 +13,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import ExploreByKitchen from './ExploreByKitchen';
+import {gs} from '../../../../GlobalStyles';
 
 export default function Tiffins({navigation}) {
   useFocusEffect(
@@ -25,24 +26,33 @@ export default function Tiffins({navigation}) {
   );
   return (
     <ScreenWrapper>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} bounces={false}>
+      <ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        bounces={false}>
         <LinearGradient
           start={{x: 0, y: 0.2}}
           end={{x: 0.4, y: 2}}
           colors={['#F6D6B2', '#fff', '#FFF']} // Lighter and softer shades
         >
-          <HeaderView from="Tiffins" navigation={navigation} />
+          <View style={[gs.mt10]}>
+            <HeaderView from="Tiffins" navigation={navigation} />
+          </View>
           <ExploreIndia />
         </LinearGradient>
         <PopularTiffins />
-        <ExploreByKitchen/>
+        <ExploreByKitchen />
         {/* <RecentSearches/> */}
         {/* <Branded/> */}
         <TiffinProviders />
       </ScrollView>
+         <View style={styles.leveler}></View>
     </ScreenWrapper>
   );
 }
 const styles = ScaledSheet.create({
-  container: {backgroundColor: '#fff'},
+  container: {backgroundColor: '#fff', top: '-10@ms'},
+  leveler:{
+    marginTop:'-10@ms'
+  }
 });

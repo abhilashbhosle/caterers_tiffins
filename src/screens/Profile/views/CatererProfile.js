@@ -94,7 +94,7 @@ export default function CatererProfile({navigation, route}) {
         <ProfileSkeleton />
       ) : (
         <KeyboardAwareScrollView
-          style={{flex: 1, backgroundColor: '#fff'}}
+          style={styles.container}
           showsVerticalScrollIndicator={false}
           // enableOnAndroid={true}
           nestedScrollEnabled={true}
@@ -103,9 +103,11 @@ export default function CatererProfile({navigation, route}) {
           {/* =======BANNER SLIDERS======= */}
           <View>
             <View style={{position: 'relative'}}>
+              <View>
               <ProfileBanners
                 catererBanners={profile?.bennerMenuMixGalleryImages}
               />
+              </View>
               <View style={styles.topicons}>
                 <SafeAreaView>
                   {Platform == 'android' ? (
@@ -168,11 +170,11 @@ export default function CatererProfile({navigation, route}) {
                     />
                   )}
                   <View style={[gs.ml15]}>
-                    <Text style={styles.heading}>
+                    <Text style={{...styles.heading,width:width/1.5}}>
                       {profile?.vendor_service_name}
                     </Text>
                     {profile?.formatted_address && (
-                      <Text style={[gs.fs13, styles.area]} numberOfLines={2}>
+                      <Text style={[gs.fs13, {...styles.area,width:width/1.5}]} numberOfLines={2}>
                         {profile.formatted_address}
                       </Text>
                     )}
@@ -252,7 +254,7 @@ export default function CatererProfile({navigation, route}) {
                 {/* cuisines */}
                 <View
                   style={[
-                    {backgroundColor: '#fbe3e1'},
+                    {backgroundColor: '#fdf3f2'},
                     gs.mt10,
                     gs.pv10,
                     gs.ph10,
@@ -357,7 +359,7 @@ export default function CatererProfile({navigation, route}) {
                       </View>
                     ))}
                   </Flex>
-                  <Flex direction="row" align="center">
+                  <Flex direction="row" align="center" style={[gs.mt5]}>
                     <Flex direction="row" align="center" style={[gs.pv15]}>
                       {profile?.foodTypes?.length
                         ? profile.foodTypes.map((e, i) => (
@@ -365,7 +367,7 @@ export default function CatererProfile({navigation, route}) {
                               {e?.food_type_name == 'Veg' ? (
                                 <Image
                                   source={require('../../../assets/Common/veg.png')}
-                                  style={styles.foodTypeimg}
+                                  style={[styles.foodTypeimg,gs.mr5]}
                                 />
                               ) : e?.food_type_name == 'Non Veg' ? (
                                 <Image
@@ -776,6 +778,7 @@ export default function CatererProfile({navigation, route}) {
           </View>
         </KeyboardAwareScrollView>
       )}
+      <View style={styles.leveler}></View>
       {!loading ? (
         <Card
           style={[
@@ -793,7 +796,7 @@ export default function CatererProfile({navigation, route}) {
               <Text
                 style={[
                   gs.fs14,
-                  {color: ts.jakartamedium, fontFamily: ts.jakartaregular},
+                  {color: ts.secondarytext, fontFamily: ts.jakartaregular},
                 ]}>
                 Starting Price / Plate
               </Text>
@@ -824,6 +827,7 @@ export default function CatererProfile({navigation, route}) {
   );
 }
 const styles = ScaledSheet.create({
+  container:{flex: 1, backgroundColor: '#fff',top:'-10@ms'},
   heading: {
     fontFamily: ts.jakartabold,
     color: '#000',
@@ -840,7 +844,6 @@ const styles = ScaledSheet.create({
     fontFamily: ts.jakartamedium,
     color: ts.secondarytext,
     marginVertical: '5@ms',
-    width: '30%',
   },
   subtxt: {
     fontFamily: ts.jakartamedium,
@@ -891,6 +894,7 @@ const styles = ScaledSheet.create({
   topicons: {
     position: 'absolute',
     paddingHorizontal: '15@ms',
+    marginTop:'10@ms'
   },
   backicon: {
     height: '40@ms',
@@ -943,5 +947,8 @@ const styles = ScaledSheet.create({
   label:{
     height:'30@ms',
     maxWidth:'150@ms',
+  },
+  leveler:{
+    marginTop:'-10@ms'
   }
 });

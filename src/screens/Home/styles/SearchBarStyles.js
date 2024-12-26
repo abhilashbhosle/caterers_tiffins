@@ -11,25 +11,32 @@ export const styles = ScaledSheet.create({
     borderBottomLeftRadius: '10@ms',
   },
   searchTextInput: {
-    width: '65%',
+    width: '63%',
     height: Platform.OS == 'ios' ? '47.4@ms' : '48@ms',
+    backgroundColor: '#fff',
+    marginLeft: '-1@ms',
+    paddingLeft: '10@ms',
+    // paddingRight:'40@ms',
+  },
+  searchIcon: {
+    height: '20@ms',
+    width: '20@ms',
+    right:'5@ms'
+  },
+  searchIconContainers: {
+    // position: 'absolute',
+    width: '11%',
     backgroundColor: '#fff',
     borderTopRightRadius: '10@ms',
     borderBottomRightRadius: '10@ms',
-    marginLeft: '-1@ms',
-    paddingLeft: '25@ms',
-  },
-  searchIcon: {
-    height: '13@ms',
-    width: '13@ms',
-    position: 'absolute',
-    top: '19@ms',
-    left: '8@ms',
+    justifyContent:'center',
+    alignItems:'center',
+    left:'-1@ms'
   },
   calIcon: {
     height: '15@ms',
     width: '15@ms',
-    top:'1.5@ms'
+    top: '1.5@ms',
   },
   searchtxt: {
     fontSize: '12@ms',

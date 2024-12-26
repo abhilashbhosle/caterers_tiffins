@@ -9,6 +9,7 @@ import {
   Image,
   ScrollView,
   Keyboard,
+  Pressable,
 } from 'react-native';
 import React, {
   memo,
@@ -88,7 +89,7 @@ function SearchBar({from, navigation, ssd, sse}) {
   const [searchTerm, setSearchTerm] = useState('');
   const [vendorId, setVendorId] = useState('');
   const [userDetails, setUserDetails] = useState([]);
-  const inputRef=useRef();
+  const inputRef = useRef();
 
   const [selectedLocation, setSelectedLocation] = useState({
     city: null,
@@ -193,7 +194,7 @@ function SearchBar({from, navigation, ssd, sse}) {
     setSearch(e.catering_service_name);
     setSelectedSearch(e);
     dispatch(clearSearch());
-    inputRef.current.focus()
+    // inputRef.current.focus();
   };
 
   const handleCalendarPicker = () => {
@@ -240,160 +241,177 @@ function SearchBar({from, navigation, ssd, sse}) {
 
   return (
     <>
-      <Flex direction="row" alignItems="center">
-        {/* =====CALENDAR====== */}
-        <TouchableWithoutFeedback
-          onPress={() => {
-            setOpenCalendarPicker(true);
-          }}
-          
-          >
-          <Flex
-            style={[styles.calendarTextInput, gs.pl10]}
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-start">
-            <View>
-              <Image
-                source={
-                  route.name == 'Caterings' || from == 'Caterers'
-                    ? require('../../../assets/Search/calender_new.png')
-                    : require('../../../assets/Search/calender_newt.png')
-                }
-                style={styles.calIcon}
-              />
-            </View>
-            <View>
-              {fromdate && enddate ? (
-                <Text style={styles.searchtxt}>
-                  {fromdate} - {enddate?.slice(4)}
-                </Text>
-              ) : (
-                <Text style={styles.searchtxt}>Date</Text>
-              )}
-            </View>
-          </Flex>
-        </TouchableWithoutFeedback>
-        {/* ======SEARCH======= */}
-
-        <View style={[{width: '100%'}]}>
-          <Flex direction="row">
-            {/* ======SEARCH INPUT======== */}
-            <TextInput
-              style={[
-                {...styles.searchTextInput, color: ts.secondarytext,fontFamily:ts.jakartasemibold},
-                gs.fs14,
-                gs.ph10,
-              ]}
-              placeholder={
-                from == 'Caterers' ? 'Search' : 'Search'
-              }
-              placeholderTextColor="gray"
-              value={search}
-              onChangeText={text => handleOnChange(text)}
-              returnKeyType='search'
-              returnKeyLabel='search'
-              ref={inputRef}
-              onSubmitEditing={async () => {
-                dispatch(clearCaterers());
-                dispatch(setSearchRes(search));
-                dispatch(setLocationres(selectedLocation));
-                await setSearchHomeJson({
-                  latitude: selectedLocation.latitude,
-                  longitude: selectedLocation.longitude,
-                  city: selectedLocation.city,
-                  pincode: selectedLocation.pincode,
-                  place_id: selectedLocation.place_id,
-                  from,
-                  selectedStartDate,
-                  selectedEndDate,
-                  foodTypeData,
-                  subData,
-                  searchTerm:
-                    search != userDetails[0]?.formatted_address
-                      ? searchTerm
-                      : '',
-                  selected_vendor:
-                    search != userDetails[0]?.formatted_address ? vendorId : '',
-                });
-                handleSearchResults({
-                  navigation,
-                  from,
-                  search,
-                  selectedStartDate,
-                  selectedEndDate,
-                  userDetails,
-                  selectedLocation,
-                  setSelectedLocation,
-                  setSearch,
-                  dispatch,
-                  foodTypeData,
-                  subData,
-                  searchTerm:
-                    search != userDetails[0]?.formatted_address
-                      ? searchTerm
-                      : '',
-                  selected_vendor:
-                    search != userDetails[0]?.formatted_address ? vendorId : '',
-                });
-              }}
-            />
-            <View style={styles.seperator}></View>
-            <Image
-                source={require('../../../assets/Search/search_new.png')}
-                style={styles.searchIcon}
-              />
-          </Flex>
-        </View>
-      </Flex>
-      {/* ======SEARCH RESULTS========= */}
-      {vendorData?.vendors?.length > 0 &&
-        search?.length > 0 &&
-        !vendorLoading &&
-        !vendorError && (
-          <ScrollView style={[styles.searchContainer,gs.mt2,gs.br10]}>
-            {vendorData?.vendors?.map((e, i) => (
-              <View key={i}>
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    handleSelectedSearch(e);
-                  }}>
-                  <Text style={styles.loctxt} numberOfLines={1}>
-                    {e?.catering_service_name}
-                  </Text>
-                  {e?.area ? (
-                    <Text
-                      style={[
-                        {...styles.loctxt, color: ts.secondarytext},
-                        gs.fs12,
-                      ]}
-                      numberOfLines={1}>
-                      {e?.area}
-                      {e?.city ? (
-                        <Text numberOfLines={1}>, {e?.city}</Text>
-                      ) : null}
-                    </Text>
-                  ) : null}
-
-                  <Divider
-                    backgroundColor={
-                      from == 'Caterers' ? ts.secondary : ts.primary
-                    }
-                    style={gs.mv10}
-                  />
-                </TouchableOpacity>
+      <View
+        style={[{
+          borderWidth: 1,
+          borderColor: from == 'Caterers' ? '#ed9f9e' : '#efb76e',
+        },gs.br10]}>
+        <Flex direction="row" alignItems="center">
+          {/* =====CALENDAR====== */}
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setOpenCalendarPicker(true);
+            }}>
+            <Flex
+              style={[styles.calendarTextInput, gs.pl10]}
+              direction="row"
+              alignItems="center"
+              justifyContent="flex-start">
+              <View>
+                <Image
+                  source={
+                    route.name == 'Caterings' || from == 'Caterers'
+                      ? require('../../../assets/Search/calender_new.png')
+                      : require('../../../assets/Search/calender_newt.png')
+                  }
+                  style={styles.calIcon}
+                />
               </View>
-            ))}
-          </ScrollView>
-        )}
-      {vendorLoading && (
-        <Center>
-          <View style={{...styles.searchContainer}}>
-            <Spinner color={ts.secondarytext} />
+              <View>
+                {fromdate && enddate ? (
+                  <Text style={styles.searchtxt}>
+                    {fromdate} - {enddate?.slice(4)}
+                  </Text>
+                ) : (
+                  <Text style={styles.searchtxt}>Date</Text>
+                )}
+              </View>
+            </Flex>
+          </TouchableWithoutFeedback>
+          {/* ======SEARCH======= */}
+
+          <View style={[{width: '90%'}]}>
+            <Flex direction="row">
+              {/* ======SEARCH INPUT======== */}
+              <TextInput
+                style={[
+                  {
+                    ...styles.searchTextInput,
+                    color: ts.secondarytext,
+                    fontFamily: ts.jakartasemibold,
+                  },
+                  gs.fs14,
+                  gs.ph10,
+                ]}
+                placeholder={from == 'Caterers' ? 'Search' : 'Search'}
+                placeholderTextColor="gray"
+                value={search}
+                onChangeText={text => handleOnChange(text)}
+                returnKeyType="search"
+                returnKeyLabel="search"
+                ref={inputRef}
+              />
+              <View style={styles.seperator}></View>
+              <Pressable
+                style={styles.searchIconContainers}
+                onPress={async () => {
+                  dispatch(clearCaterers());
+                  dispatch(setSearchRes(search));
+                  dispatch(setLocationres(selectedLocation));
+                  await setSearchHomeJson({
+                    latitude: selectedLocation.latitude,
+                    longitude: selectedLocation.longitude,
+                    city: selectedLocation.city,
+                    pincode: selectedLocation.pincode,
+                    place_id: selectedLocation.place_id,
+                    from,
+                    selectedStartDate,
+                    selectedEndDate,
+                    foodTypeData,
+                    subData,
+                    searchTerm:
+                      search != userDetails[0]?.formatted_address
+                        ? searchTerm
+                        : '',
+                    selected_vendor:
+                      search != userDetails[0]?.formatted_address
+                        ? vendorId
+                        : '',
+                  });
+                  handleSearchResults({
+                    navigation,
+                    from,
+                    search,
+                    selectedStartDate,
+                    selectedEndDate,
+                    userDetails,
+                    selectedLocation,
+                    setSelectedLocation,
+                    setSearch,
+                    dispatch,
+                    foodTypeData,
+                    subData,
+                    searchTerm:
+                      search != userDetails[0]?.formatted_address
+                        ? searchTerm
+                        : '',
+                    selected_vendor:
+                      search != userDetails[0]?.formatted_address
+                        ? vendorId
+                        : '',
+                  });
+                }}>
+                <Image
+                  source={
+                    from == 'Caterers'
+                      ? require('../../../assets/Search/searchright.png')
+                      : require('../../../assets/Search/searchright_t.png')
+                  }
+                  style={styles.searchIcon}
+                />
+              </Pressable>
+            </Flex>
           </View>
-        </Center>
-      )}
+        </Flex>
+        {/* ======SEARCH RESULTS========= */}
+        {vendorData?.vendors?.length > 0 &&
+          search?.length > 0 &&
+          !vendorLoading &&
+          !vendorError && (
+            <ScrollView style={[styles.searchContainer, gs.mt2, gs.br10]}>
+              {vendorData?.vendors?.map((e, i) => (
+                <View key={i}>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      handleSelectedSearch(e);
+                    }}>
+                    <Text style={styles.loctxt} numberOfLines={1}>
+                      {e?.catering_service_name}
+                    </Text>
+                    {e?.area ? (
+                      <Text
+                        style={[
+                          {...styles.loctxt, color: ts.secondarytext},
+                          gs.fs12,
+                        ]}
+                        numberOfLines={1}>
+                        {e?.area}
+                        {e?.city ? (
+                          <Text numberOfLines={1}>, {e?.city}</Text>
+                        ) : null}
+                      </Text>
+                    ) : null}
+
+                    <Divider
+                      backgroundColor={
+                        from == 'Caterers' ? ts.secondary : ts.primary
+                      }
+                      style={gs.mv10}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </ScrollView>
+          )}
+        {vendorLoading && (
+          <Center>
+            <View style={{...styles.searchContainer}}>
+              <Spinner color={ts.secondarytext} />
+            </View>
+          </Center>
+        )}
+      </View>
       {/* {searchData?.length == 0 && search?.length>0 && (
         <ScrollView style={styles.searchContainer}>
               <Text style={styles.loctxt} numberOfLines={2}>No search results found</Text>

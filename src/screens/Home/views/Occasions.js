@@ -111,7 +111,7 @@ function Occasions() {
   const renderItem = ({item, index}) => {
     return (
       <Flex alignItems='center'>
-        <Card style={[{backgroundColor: '#fff'}, gs.mb10, gs.mr10]}>
+        <Card style={[{backgroundColor: '#fff'}, gs.mb10, gs.mr10,gs.br16]}>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => {
@@ -120,7 +120,7 @@ function Occasions() {
             <ImageBackground
               source={{uri: item?.file_name?.medium}}
               style={[{...styles.img, justifyContent: 'flex-end'}]}
-              imageStyle={[gs.br12]}
+              imageStyle={[gs.br16]}
               alt={item.occassion_name}
             />
           </TouchableOpacity>

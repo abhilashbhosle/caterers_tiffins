@@ -26,6 +26,7 @@ export const styles = ScaledSheet.create({
     paddingBottom: '5@ms',
     //   paddingTop: '10@ms',
     paddingHorizontal: '15@ms',
+    marginBottom:'40@ms'
   },
   imageStyle: {
     borderRadius: '10@ms',

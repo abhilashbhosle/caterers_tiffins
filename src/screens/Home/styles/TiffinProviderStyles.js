@@ -33,6 +33,7 @@ export const styles = ScaledSheet.create({
 	  borderRadius: '10@ms',
 	  marginRight: '15@ms',
 	  marginTop: '5@ms',
+	  marginBottom:'40@ms'
 	},
 	contentContainerStyle: {
 	  paddingBottom: '5@ms',

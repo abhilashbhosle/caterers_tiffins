@@ -10,6 +10,7 @@ import {
   StatusBar,
   Image,
   Pressable,
+  Linking
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
@@ -92,11 +93,10 @@ export default function TiffinProfile({navigation, route}) {
     }
   }, [branch_id, vendor_id]);
 
-
   return (
     <ScreenWrapper>
       <KeyboardAwareScrollView
-        style={{flex: 1, backgroundColor: '#fff'}}
+        style={styles.container}
         showsVerticalScrollIndicator={false}
         // enableOnAndroid={true}
         nestedScrollEnabled={true}
@@ -168,11 +168,13 @@ export default function TiffinProfile({navigation, route}) {
                     />
                   )}
                   <View style={[gs.ml15, {width: '60%'}]}>
-                    <Text style={styles.heading}>
+                    <Text style={{...styles.heading, width: width / 1.5}}>
                       {profile?.vendor_service_name}
                     </Text>
                     {profile?.formatted_address && (
-                      <Text style={[gs.fs13, styles.area]} numberOfLines={2}>
+                      <Text
+                        style={[gs.fs13, {...styles.area, width: width / 1.5}]}
+                        numberOfLines={2}>
                         {profile.formatted_address}
                       </Text>
                     )}
@@ -308,8 +310,7 @@ export default function TiffinProfile({navigation, route}) {
                 <Flex
                   direction="row"
                   alignItems="center"
-                  justifyContent="space-between"
-                  >
+                  justifyContent="space-between">
                   <Flex direction="row" align="center" style={[gs.mt7, gs.mb5]}>
                     {profile?.serviceTypes?.map((e, i) => (
                       <View
@@ -340,7 +341,11 @@ export default function TiffinProfile({navigation, route}) {
                                 ? require('../../../assets/Search/takeawaynew.png')
                                 : require('../../../assets/Search/dineinnew.png')
                             }
-                            style={e?.service_type_name == 'Delivery'?styles.deliveryIcon:styles.servicesIcon}
+                            style={
+                              e?.service_type_name == 'Delivery'
+                                ? styles.deliveryIcon
+                                : styles.servicesIcon
+                            }
                           />
                           <Text
                             style={[
@@ -362,7 +367,7 @@ export default function TiffinProfile({navigation, route}) {
                       </View>
                     ))}
                   </Flex>
-                  <Flex direction="row" align="center" style={[gs.mt8]}>
+                  <Flex direction="row" align="center" style={[gs.mt10]}>
                     <Flex direction="row" align="center" style={[gs.pv15]}>
                       {profile?.foodTypes?.length
                         ? profile.foodTypes.map((e, i) => (
@@ -393,10 +398,7 @@ export default function TiffinProfile({navigation, route}) {
           <>
             <View style={[gs.pt20, gs.pb10, gs.ph15]}>
               <Text
-                style={[
-                  {fontFamily: ts.jakartabold, color: '#000'},
-                  gs.fs20,
-                ]}>
+                style={[{fontFamily: ts.jakartabold, color: '#000'}, gs.fs20]}>
                 Gallery
               </Text>
             </View>
@@ -417,32 +419,32 @@ export default function TiffinProfile({navigation, route}) {
           </Text>
           {profile?.serviceTypes?.length ? (
             <>
-            <Flex direction="row" align="center">
-              <View>
-                <Image
-                  source={require('../../../assets/Profile/kitchentype.png')}
-                  style={styles.serviceicon}
-                />
-              </View>
-              <View>
-                <Text style={[styles.subtxt, gs.fs14]}>Service Type</Text>
-                <Flex direction="row">
-                  {profile?.serviceTypes?.slice(0, 2)?.map((e, i) => (
-                    <Text
-                      style={[styles.servicedesc, gs.fs16, gs.mt5]}
-                      numberOfLines={1}
-                      key={i}>
-                      {e.service_type_name}
-                      {profile?.serviceTypes?.length == 1
-                        ? null
-                        : i != 1 && ','}{' '}
-                    </Text>
-                  ))}
-                </Flex>
-              </View>
-            </Flex>
-             <Divider style={gs.mv15} />
-             </>
+              <Flex direction="row" align="center">
+                <View>
+                  <Image
+                    source={require('../../../assets/Profile/kitchentype.png')}
+                    style={styles.serviceicon}
+                  />
+                </View>
+                <View>
+                  <Text style={[styles.subtxt, gs.fs14]}>Service Type</Text>
+                  <Flex direction="row">
+                    {profile?.serviceTypes?.slice(0, 2)?.map((e, i) => (
+                      <Text
+                        style={[styles.servicedesc, gs.fs16, gs.mt5]}
+                        numberOfLines={1}
+                        key={i}>
+                        {e.service_type_name}
+                        {profile?.serviceTypes?.length == 1
+                          ? null
+                          : i != 1 && ','}{' '}
+                      </Text>
+                    ))}
+                  </Flex>
+                </View>
+              </Flex>
+              <Divider style={gs.mv15} />
+            </>
           ) : null}
 
           {profile?.start_day ||
@@ -465,7 +467,7 @@ export default function TiffinProfile({navigation, route}) {
                     style={[styles.servicedesc, gs.fs16, gs.mt5]}
                     numberOfLines={1}>
                     {profile?.start_day.slice(0, 3)} -{' '}
-                    {profile?.end_day?.slice(0, 3)}{' '} |{' '}
+                    {profile?.end_day?.slice(0, 3)} |{' '}
                     {profile?.start_time
                       ? moment(profile.start_time, 'HH:mm:ss').format('hh:mm A')
                       : null}{' '}
@@ -476,7 +478,7 @@ export default function TiffinProfile({navigation, route}) {
                   </Text>
                 </View>
               </Flex>
-          <Divider style={gs.mv15} />
+              <Divider style={gs.mv15} />
             </View>
           ) : null}
           {profile?.working_since ? (
@@ -610,7 +612,7 @@ export default function TiffinProfile({navigation, route}) {
                 {fontFamily: ts.secondarymedium, color: '#000'},
                 gs.fs20,
                 gs.pb10,
-                gs.mb10
+                gs.mb10,
               ]}>
               Reviews
             </Text>
@@ -725,6 +727,7 @@ export default function TiffinProfile({navigation, route}) {
       <View style={{bottom: cmtfocus && 500}}> */}
         </View>
       </KeyboardAwareScrollView>
+      <View style={styles.leveler}></View>
       <Card
         style={[
           {borderRadius: 0, backgroundColor: '#fff'},
@@ -741,15 +744,12 @@ export default function TiffinProfile({navigation, route}) {
             <Text
               style={[
                 gs.fs15,
-                {color: ts.jakartamedium, fontFamily: ts.secondarylight},
+                {color: ts.secondarytext, fontFamily: ts.secondarylight},
               ]}>
               Starting Price / Plate
             </Text>
             <Text
-              style={[
-                {color: '#000', fontFamily: ts.jakartabold},
-                gs.fs20,
-              ]}>
+              style={[{color: '#000', fontFamily: ts.jakartabold}, gs.fs20]}>
               ₹ {profile?.start_price ? profile.start_price : 'N/A'}
             </Text>
           </View>
@@ -771,6 +771,11 @@ export default function TiffinProfile({navigation, route}) {
   );
 }
 const styles = ScaledSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    top: '-10@ms',
+  },
   heading: {
     fontFamily: ts.jakartabold,
     color: '#000',
@@ -844,6 +849,7 @@ const styles = ScaledSheet.create({
   topicons: {
     position: 'absolute',
     paddingHorizontal: '15@ms',
+    marginTop: '10@ms',
   },
   details: {
     backgroundColor: '#fff',
@@ -897,5 +903,8 @@ const styles = ScaledSheet.create({
   label: {
     height: '30@ms',
     maxWidth: '150@ms',
+  },
+  leveler: {
+    marginTop: '-10@ms',
   },
 });

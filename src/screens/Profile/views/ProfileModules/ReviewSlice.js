@@ -40,13 +40,6 @@ function ReviewSlice({data, vendor_id, from, setShowReviews}) {
         from={from}
         reviews={reviewData?.data}
       />
-      {
-        index!=reviewData?.data?.length-1?
-        <Divider style={[gs.mv10]}/>
-        :
-        null
-      }
-
       </>
     );
   };
@@ -109,6 +102,6 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     borderRadius: '20@ms',
     height:'47@ms',
-    marginTop:'5@ms'
+    marginTop:'25@ms'
   },
 });
