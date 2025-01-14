@@ -27,7 +27,7 @@ export const setSearchHomeJson = async ({
       subscription_type_id: parseInt(e.id),
       selected: e.selected,
     }));
-    let params = {
+    let params = { 
       search_term: searchTerm?searchTerm:'',
       save_filter: 1,
       vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',

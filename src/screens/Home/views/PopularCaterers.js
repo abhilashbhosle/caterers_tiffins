@@ -192,8 +192,7 @@ function PopularCaterers() {
                   style={[gs.ph10, gs.mt20]}>
                   <Image
                     source={{
-                      uri: item?.gallery_images?.['vendor-brand-logo'][0]
-                        ?.image_name[0]?.medium,
+                      uri: item?.gallery_images?.["vendor-brand-logo"]?.[0]?.image_name?.[0]?.original 
                     }}
                     style={styles.profile}
                     alt="profile"
