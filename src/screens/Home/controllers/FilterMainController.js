@@ -41,9 +41,9 @@ export const getService = createAsyncThunk(
 //===GET BUDGET===//
 export const getBudget = createAsyncThunk(
   'getBudget',
-  async (_, {dispatch}) => {
+  async ({type}, {dispatch}) => {
     try {
-      const res = await getBudgetService();
+      const res = await getBudgetService({type});
       return res.data;
     } catch (error) {
       return rejectWithValue(error.message);

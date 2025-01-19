@@ -183,8 +183,9 @@ function ExploreIndia() {
             keyExtractor={(item, index) => String(index)}
             showsHorizontalScrollIndicator={false}
             renderItem={renderItem}
-            horizontal
+            horizontal={true}
             contentContainerStyle={[gs.pl15]}
+            overScrollMode='never'
           />
         )
       )}

@@ -227,7 +227,7 @@ function SearchBar({from, navigation, ssd, sse}) {
     dispatch(getServing());
     dispatch(getService({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
     dispatch(getOccassions());
-    dispatch(getBudget());
+    dispatch(getBudget({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
     dispatch(getCuisines());
     dispatch(getHeadCount());
     dispatch(getSort());
@@ -245,7 +245,8 @@ function SearchBar({from, navigation, ssd, sse}) {
         style={[{
           borderWidth: 1,
           borderColor: from == 'Caterers' ? '#ed9f9e' : '#efb76e',
-        },gs.br10]}>
+        },gs.br10]}
+        >
         <Flex direction="row" alignItems="center">
           {/* =====CALENDAR====== */}
           <TouchableWithoutFeedback
@@ -293,7 +294,7 @@ function SearchBar({from, navigation, ssd, sse}) {
                   gs.fs14,
                   gs.ph10,
                 ]}
-                placeholder={from == 'Caterers' ? 'Search' : 'Search'}
+                placeholder={from == 'Caterers' ? 'Search Caterers' : 'Search Tiffins'}
                 placeholderTextColor="gray"
                 value={search}
                 onChangeText={text => handleOnChange(text)}

@@ -63,11 +63,12 @@ export const getServService = async ({type}) => {
   }
 };
 //=======GET BUDGET SERVICES=======//
-export const getBudgetService = async () => {
+export const getBudgetService = async ({type}) => {
   try {
+    console.log("inside services",type)
     let token = await AsyncStorage.getItem('token');
     let res = await axios.get(
-      `${endpoints.baseUrl}get-all-price-ranges?current_page=1&limit=100`,
+      `${endpoints.baseUrl}get-all-price-ranges?current_page=1&limit=100&vendor_type=${type}`,
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -78,6 +79,7 @@ export const getBudgetService = async () => {
     return res.data;
   } catch (error) {
     if (error.response && error.response.data) {
+      console.log(error)
       throw new Error(error.response.data.message);
     } else {
       throw new Error(error.message);
@@ -164,7 +166,7 @@ export const clearFilterService = async ({dispatch, from}) => {
       dispatch(getServing());
       dispatch(getService());
       dispatch(getSubscription({from}))
-      dispatch(getBudget());
+      dispatch(getBudget({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
       dispatch(getHeadCount());
       dispatch(getSort());
       dispatch(getKitchen());

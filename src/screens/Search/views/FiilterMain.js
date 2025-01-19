@@ -113,7 +113,7 @@ export default function FiilterMain({navigation, route}) {
     dispatch(getServing());
     dispatch(getService({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
     dispatch(getOccassions());
-    dispatch(getBudget());
+    dispatch(getBudget({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
     dispatch(getCuisines());
     dispatch(getHeadCount());
     dispatch(getSort());
@@ -325,6 +325,168 @@ export default function FiilterMain({navigation, route}) {
               ))}
           </View>
         </Card>
+
+        {/* ======CHOOSE CUISINE======= */}
+        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
+          <Text style={[styles.heading, gs.fs15, gs.pl15]}>Choose Cuisine</Text>
+          <Divider style={[gs.mv15]} />
+          <View style={[gs.ph15]}>
+            <View style={{position: 'relative'}}>
+              <TextInput
+                placeholder="Search here.."
+                style={[
+                  {
+                    ...styles.txtinput,
+                    borderColor: searchenabled ? ts.secondary : '#bbb',
+                  },
+                ]}
+                placeholderTextColor={
+                  searchenabled ? ts.secondary : ts.secondarytext
+                }
+                onFocus={() => {
+                  setSearchEnabled(true);
+                }}
+                onBlur={() => {
+                  setSearchEnabled(false);
+                }}
+                value={search}
+                onChangeText={text => {
+                  handleSearch(text);
+                }}
+              />
+              <View style={styles.searchcontainer}>
+                <FontistoIcon
+                  name="search"
+                  style={[
+                    gs.fs16,
+                    {color: searchenabled ? ts.secondary : ts.secondarytext},
+                  ]}
+                />
+              </View>
+            </View>
+            {cuisineLoading && (
+              <Center>
+                <Spinner color={ts.secondary} />
+              </Center>
+            )}
+            {cuisineError?.message && (
+              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                No Cuisine found
+              </Text>
+            )}
+            {!cuisineError &&
+              !cuisineLoading &&
+              cuisine?.map((e, i) => (
+                <View key={i}>
+                  <Flex direction="row" justify="space-between" align="center">
+                    <Flex direction="row" alignItems="center">
+                      <TouchableOpacity
+                        onPress={() => {
+                          setExpanded(prev => (prev == i ? -1 : i));
+                        }}>
+                        <AntIcon
+                          name={
+                            expanded == i
+                              ? 'chevron-up-outline'
+                              : 'chevron-down-outline'
+                          }
+                          style={[gs.pr10, gs.pv10, gs.fs16, {color: '#777'}]}
+                        />
+                      </TouchableOpacity>
+                      <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                        {e.name}
+                      </Text>
+                    </Flex>
+                    <TouchableOpacity
+                      onPress={() =>
+                        handleParentCuisines({
+                          index: i,
+                          cuisine,
+                          setCuisine,
+                          ssd,
+                          sse,
+                          location,
+                          from: 'Caterers',
+                          subData: subSortData,
+                          foodTypeData: foodSortData,
+                          occassionData: occasionSortData,
+                          cuisineData: cuisineSortData,
+                          dispatch,
+                        })
+                      }>
+                      <MaterialIcons
+                        name={
+                          e.selected == 1
+                            ? 'checkbox-marked'
+                            : 'checkbox-blank-outline'
+                        }
+                        style={[
+                          gs.fs20,
+                          gs.mr3,
+                          {
+                            color:
+                              e.selected == 1 ? ts.secondary : ts.alternate,
+                          },
+                        ]}
+                      />
+                    </TouchableOpacity>
+                  </Flex>
+                  {expanded == i &&
+                    e?.children?.map((child, index) => (
+                      <Flex
+                        direction="row"
+                        justify="space-between"
+                        align="center"
+                        key={index}
+                        style={[gs.ph20]}>
+                        <Flex direction="row" alignItems="center">
+                          <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                            {child.name}
+                          </Text>
+                        </Flex>
+                        <TouchableOpacity
+                          onPress={() => {
+                            handleChildrenCuisines({
+                              pi: i,
+                              i: index,
+                              cuisine,
+                              setCuisine,
+                              ssd,
+                              sse,
+                              location,
+                              from: 'Caterers',
+                              subData: subSortData,
+                              foodTypeData: foodSortData,
+                              occassionData: occasionSortData,
+                              cuisineData: cuisineSortData,
+                              dispatch,
+                            });
+                          }}>
+                          <MaterialIcons
+                            name={
+                              child.selected == 1
+                                ? 'checkbox-marked'
+                                : 'checkbox-blank-outline'
+                            }
+                            style={[
+                              gs.fs20,
+                              gs.mr3,
+                              {
+                                color:
+                                  child.selected == 1
+                                    ? ts.secondary
+                                    : ts.alternate,
+                              },
+                            ]}
+                          />
+                        </TouchableOpacity>
+                      </Flex>
+                    ))}
+                  <Divider />
+                </View>
+              ))}
+          </View>
+        </Card>
         {/* ====CATER SERVING TYPE====== */}
         <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>
@@ -528,167 +690,6 @@ export default function FiilterMain({navigation, route}) {
           </View>
         </Card>
 
-        {/* ======CHOOSE CUISINE======= */}
-        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>Choose Cuisine</Text>
-          <Divider style={[gs.mv15]} />
-          <View style={[gs.ph15]}>
-            <View style={{position: 'relative'}}>
-              <TextInput
-                placeholder="Search here.."
-                style={[
-                  {
-                    ...styles.txtinput,
-                    borderColor: searchenabled ? ts.secondary : '#bbb',
-                  },
-                ]}
-                placeholderTextColor={
-                  searchenabled ? ts.secondary : ts.secondarytext
-                }
-                onFocus={() => {
-                  setSearchEnabled(true);
-                }}
-                onBlur={() => {
-                  setSearchEnabled(false);
-                }}
-                value={search}
-                onChangeText={text => {
-                  handleSearch(text);
-                }}
-              />
-              <View style={styles.searchcontainer}>
-                <FontistoIcon
-                  name="search"
-                  style={[
-                    gs.fs16,
-                    {color: searchenabled ? ts.secondary : ts.secondarytext},
-                  ]}
-                />
-              </View>
-            </View>
-            {cuisineLoading && (
-              <Center>
-                <Spinner color={ts.secondary} />
-              </Center>
-            )}
-            {cuisineError?.message && (
-              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                No Cuisine found
-              </Text>
-            )}
-            {!cuisineError &&
-              !cuisineLoading &&
-              cuisine?.map((e, i) => (
-                <View key={i}>
-                  <Flex direction="row" justify="space-between" align="center">
-                    <Flex direction="row" alignItems="center">
-                      <TouchableOpacity
-                        onPress={() => {
-                          setExpanded(prev => (prev == i ? -1 : i));
-                        }}>
-                        <AntIcon
-                          name={
-                            expanded == i
-                              ? 'chevron-up-outline'
-                              : 'chevron-down-outline'
-                          }
-                          style={[gs.pr10, gs.pv10, gs.fs16, {color: '#777'}]}
-                        />
-                      </TouchableOpacity>
-                      <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                        {e.name}
-                      </Text>
-                    </Flex>
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleParentCuisines({
-                          index: i,
-                          cuisine,
-                          setCuisine,
-                          ssd,
-                          sse,
-                          location,
-                          from: 'Caterers',
-                          subData: subSortData,
-                          foodTypeData: foodSortData,
-                          occassionData: occasionSortData,
-                          cuisineData: cuisineSortData,
-                          dispatch,
-                        })
-                      }>
-                      <MaterialIcons
-                        name={
-                          e.selected == 1
-                            ? 'checkbox-marked'
-                            : 'checkbox-blank-outline'
-                        }
-                        style={[
-                          gs.fs20,
-                          gs.mr3,
-                          {
-                            color:
-                              e.selected == 1 ? ts.secondary : ts.alternate,
-                          },
-                        ]}
-                      />
-                    </TouchableOpacity>
-                  </Flex>
-                  {expanded == i &&
-                    e?.children?.map((child, index) => (
-                      <Flex
-                        direction="row"
-                        justify="space-between"
-                        align="center"
-                        key={index}
-                        style={[gs.ph20]}>
-                        <Flex direction="row" alignItems="center">
-                          <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                            {child.name}
-                          </Text>
-                        </Flex>
-                        <TouchableOpacity
-                          onPress={() => {
-                            handleChildrenCuisines({
-                              pi: i,
-                              i: index,
-                              cuisine,
-                              setCuisine,
-                              ssd,
-                              sse,
-                              location,
-                              from: 'Caterers',
-                              subData: subSortData,
-                              foodTypeData: foodSortData,
-                              occassionData: occasionSortData,
-                              cuisineData: cuisineSortData,
-                              dispatch,
-                            });
-                          }}>
-                          <MaterialIcons
-                            name={
-                              child.selected == 1
-                                ? 'checkbox-marked'
-                                : 'checkbox-blank-outline'
-                            }
-                            style={[
-                              gs.fs20,
-                              gs.mr3,
-                              {
-                                color:
-                                  child.selected == 1
-                                    ? ts.secondary
-                                    : ts.alternate,
-                              },
-                            ]}
-                          />
-                        </TouchableOpacity>
-                      </Flex>
-                    ))}
-                  <Divider />
-                </View>
-              ))}
-          </View>
-        </Card>
         {/* ===SERVICE TYPE======= */}
         <Card style={[gs.mh5, gs.pv10, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>

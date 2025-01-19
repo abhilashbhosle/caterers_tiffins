@@ -351,6 +351,7 @@ function PopularTiffins() {
             contentContainerStyle={{
               ...styles.contentContainerStyle,
             }}
+            overScrollMode='never'
           />
         )
       )}

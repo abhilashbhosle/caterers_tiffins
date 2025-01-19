@@ -112,7 +112,7 @@ export default function FilterTiffins({navigation, route}) {
   const [occasionSortData, setOccassionSortData] = useState([]);
   useEffect(() => {
     dispatch(getService({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
-    dispatch(getBudget());
+    dispatch(getBudget({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
     dispatch(getCuisines());
     dispatch(getHeadCount());
     dispatch(getSort());
@@ -264,123 +264,6 @@ export default function FilterTiffins({navigation, route}) {
         enableOnAndroid={true}
         showsVerticalScrollIndicator={false}
         style={[{flex: 1, backgroundColor: '#fff'}, gs.ph10, gs.pv20]}>
-        {/* ========SORT BY RATINGs========= */}
-        <Card style={[gs.mh5, gs.pv10, gs.mb15, {backgroundColor: '#fff'}]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By Rating</Text>
-          <Divider style={[gs.mv15]} />
-          {ratingLoading && (
-            <Center>
-              <Spinner color={ts.secondary} />
-            </Center>
-          )}
-          {ratingError?.message && (
-            <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-              No Ratings found
-            </Text>
-          )}
-          {!ratingLoading && !ratingError && rating?.length > 0 && (
-            <View style={[gs.ph10]}>
-              {rating.map((e, i) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    handleRating({
-                      index: i,
-                      setRating,
-                      rating,
-                      ssd,
-                      sse,
-                      location,
-                      from: 'Tiffins',
-                      subData: subSortData,
-                      foodTypeData: foodSortData,
-                      occassionData: occasionSortData,
-                      cuisineData: cuisineSortData,
-                      dispatch,
-                    });
-                  }}
-                  key={i}>
-                  <Flex direction="row" justify="space-between" align="center">
-                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                      {e.rating}
-                    </Text>
-                    <MaterialIcons
-                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
-                      style={[
-                        gs.fs20,
-                        gs.mr3,
-                        {
-                          color: e.selected == 1 ? ts.primary : ts.alternate,
-                        },
-                      ]}
-                    />
-                  </Flex>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-        </Card>
-        {/* =======HEAD COUNT========= */}
-        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>
-            Choose Head count
-          </Text>
-          <Divider style={[gs.mv15]} />
-          <View style={[gs.ph10]}>
-            {headLoading && (
-              <Center>
-                <Spinner color={ts.primary} />
-              </Center>
-            )}
-            {headError?.message && (
-              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                No Head count found
-              </Text>
-            )}
-            {!headError &&
-              !headLoading &&
-              headCount?.map((e, i) => (
-                <TouchableOpacity
-                  key={i}
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    handleCount({
-                      index: i,
-                      setHeadCount,
-                      headCount,
-                      ssd,
-                      sse,
-                      location,
-                      from: 'Tiffins',
-                      subData: subSortData,
-                      foodTypeData: foodSortData,
-                      occassionData: occasionSortData,
-                      cuisineData: cuisineSortData,
-                      dispatch,
-                    });
-                  }}>
-                  <Flex direction="row" justify="space-between" align="center">
-                    <Text
-                      style={[
-                        styles.servicetxt,
-                        gs.fs13,
-                        gs.mv10,
-                      ]}>{`${e.start} - ${e.end}`}</Text>
-                    <MaterialIcons
-                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
-                      style={[
-                        gs.fs20,
-                        gs.mr3,
-                        {
-                          color: e.selected == 1 ? ts.primary : ts.alternate,
-                        },
-                      ]}
-                    />
-                  </Flex>
-                </TouchableOpacity>
-              ))}
-          </View>
-        </Card>
-
         {/* ======CHOOSE CUISINE======= */}
         <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>Choose Cuisine</Text>
@@ -541,6 +424,123 @@ export default function FilterTiffins({navigation, route}) {
               ))}
           </View>
         </Card>
+        {/* ========SORT BY RATINGs========= */}
+        <Card style={[gs.mh5, gs.pv10, gs.mb15, {backgroundColor: '#fff'}]}>
+          <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By Rating</Text>
+          <Divider style={[gs.mv15]} />
+          {ratingLoading && (
+            <Center>
+              <Spinner color={ts.secondary} />
+            </Center>
+          )}
+          {ratingError?.message && (
+            <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+              No Ratings found
+            </Text>
+          )}
+          {!ratingLoading && !ratingError && rating?.length > 0 && (
+            <View style={[gs.ph10]}>
+              {rating.map((e, i) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    handleRating({
+                      index: i,
+                      setRating,
+                      rating,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Tiffins',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
+                      dispatch,
+                    });
+                  }}
+                  key={i}>
+                  <Flex direction="row" justify="space-between" align="center">
+                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                      {e.rating}
+                    </Text>
+                    <MaterialIcons
+                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
+                      style={[
+                        gs.fs20,
+                        gs.mr3,
+                        {
+                          color: e.selected == 1 ? ts.primary : ts.alternate,
+                        },
+                      ]}
+                    />
+                  </Flex>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </Card>
+        {/* =======HEAD COUNT========= */}
+        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
+          <Text style={[styles.heading, gs.fs15, gs.pl15]}>
+            Choose Head count
+          </Text>
+          <Divider style={[gs.mv15]} />
+          <View style={[gs.ph10]}>
+            {headLoading && (
+              <Center>
+                <Spinner color={ts.primary} />
+              </Center>
+            )}
+            {headError?.message && (
+              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                No Head count found
+              </Text>
+            )}
+            {!headError &&
+              !headLoading &&
+              headCount?.map((e, i) => (
+                <TouchableOpacity
+                  key={i}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    handleCount({
+                      index: i,
+                      setHeadCount,
+                      headCount,
+                      ssd,
+                      sse,
+                      location,
+                      from: 'Tiffins',
+                      subData: subSortData,
+                      foodTypeData: foodSortData,
+                      occassionData: occasionSortData,
+                      cuisineData: cuisineSortData,
+                      dispatch,
+                    });
+                  }}>
+                  <Flex direction="row" justify="space-between" align="center">
+                    <Text
+                      style={[
+                        styles.servicetxt,
+                        gs.fs13,
+                        gs.mv10,
+                      ]}>{`${e.start} - ${e.end}`}</Text>
+                    <MaterialIcons
+                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
+                      style={[
+                        gs.fs20,
+                        gs.mr3,
+                        {
+                          color: e.selected == 1 ? ts.primary : ts.alternate,
+                        },
+                      ]}
+                    />
+                  </Flex>
+                </TouchableOpacity>
+              ))}
+          </View>
+        </Card>
+
         {/* ====TIFFIN SERVICE TYPE====== */}
         <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>
@@ -741,7 +741,13 @@ export default function FilterTiffins({navigation, route}) {
           </View>
         </Card>
         {/* ========SORT BY========= */}
-        <Card style={[gs.mh5, gs.pv10, gs.mt15, {backgroundColor: '#fff',marginBottom:80}]}>
+        <Card
+          style={[
+            gs.mh5,
+            gs.pv10,
+            gs.mt15,
+            {backgroundColor: '#fff', marginBottom: 80},
+          ]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By</Text>
           <Divider style={[gs.mv15]} />
           {sortLoading && (

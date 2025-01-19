@@ -221,7 +221,6 @@ export default function TiffinProviders() {
         </Text>
       </View>
       {!tiffinError && tiffinData?.vendors?.length > 0 ? (
-        <Center>
           <FlatList
             data={tiffinData?.vendors}
             keyExtractor={(item, index) => String(index)}
@@ -229,8 +228,8 @@ export default function TiffinProviders() {
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.contentContainerStyle}
+            overScrollMode='never'
           />
-        </Center>
       ) : null}
     </>
   );

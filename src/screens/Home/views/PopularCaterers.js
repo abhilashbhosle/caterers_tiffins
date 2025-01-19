@@ -336,6 +336,7 @@ function PopularCaterers() {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.contentContainerStyle}
+          overScrollMode='never'
         />
       ) : null}
       {/* {popularData?.length ? (

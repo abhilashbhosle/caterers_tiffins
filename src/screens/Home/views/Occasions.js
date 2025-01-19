@@ -166,7 +166,6 @@ function Occasions() {
         </Text>
       </View>
 
-      <Center width={width}>
         {loading ? (
           <View
             style={{
@@ -190,10 +189,10 @@ function Occasions() {
               keyExtractor={(item, index) => String(index)}
               contentContainerStyle={styles.contentContainerStyle}
               horizontal
+              overScrollMode='never'
             />
           )
         )}
-      </Center>
     </>
   );
 }
@@ -203,7 +202,7 @@ const styles = ScaledSheet.create({
     paddingBottom: 20,
     paddingTop: '15@ms',
     marginHorizontal: '15@ms',
-    position: 'relative',
+    paddingRight:'10@ms'
   },
   img: {
     height: '100@ms',

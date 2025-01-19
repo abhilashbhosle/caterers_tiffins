@@ -223,6 +223,7 @@ function ExploreCusines() {
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.contentContainerStyle}
+            overScrollMode='never'
           />
         )
       )}

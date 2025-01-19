@@ -42,14 +42,13 @@ function ExploreByKitchen() {
   const renderItem = ({item, index}) => {
     return (
       <Flex alignItems="center">
-        <Card style={[{backgroundColor: '#fff'}, gs.mb10, gs.mr10]}>
+        <Card style={[{backgroundColor: '#fff'}, gs.mb10, gs.mr10,gs.br12]}>
           <TouchableOpacity activeOpacity={0.7}>
             <ImageBackground
               source={item.img}
               style={[
                 {
                   ...styles.img,
-                  marginRight: index == kitchenTypes.length - 1 && 10,
                 },
               ]}
               imageStyle={[gs.br12]}
@@ -94,6 +93,7 @@ function ExploreByKitchen() {
         keyExtractor={(item, index) => String(index)}
         contentContainerStyle={styles.contentContainerStyle}
         horizontal
+        overScrollMode='never'
       />
     </>
   );
@@ -103,7 +103,7 @@ const styles = ScaledSheet.create({
   contentContainerStyle: {
     paddingBottom: '10@ms',
     paddingTop: '15@ms',
-    marginLeft: '15@ms',
+    paddingHorizontal:'15@ms'
     // position: 'relative',
   },
   img: {

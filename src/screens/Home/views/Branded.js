@@ -343,6 +343,7 @@ function Branded() {
             contentContainerStyle={{
               ...styles.contentContainerStyle,
             }}
+            overScrollMode='never'
           />
         )
       )}

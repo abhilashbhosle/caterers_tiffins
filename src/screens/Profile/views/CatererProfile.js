@@ -903,7 +903,7 @@ const styles = ScaledSheet.create({
   details: {
     backgroundColor: '#fff',
     marginHorizontal: '10@ms',
-    marginTop: '-90@ms',
+    marginTop: '-130@ms',
   },
   profile: {
     height: '50@ms',

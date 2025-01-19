@@ -10,13 +10,15 @@ export const styles = ScaledSheet.create({
     width: '20@ms',
   },
   img: {
-    height: '120@ms',
-    width: '220@ms',
+    height: '128@ms',
+    width: '245@ms',
     resizeMode: 'cover',
   },
   cardcontainer: {
     backgroundColor: '#fff',
     paddingBottom: '15@ms',
+    height: '275@ms',
+    width: '245@ms',
   },
   profileContainer: {
     position: 'absolute',
@@ -39,7 +41,7 @@ export const styles = ScaledSheet.create({
   txtContainer: {
     paddingHorizontal: '5@ms',
     top: Platform.OS == 'ios' ? '15@ms' : '60@ms',
-    right: '30@ms',
+    right: '12@ms',
     width: '150@ms',
   },
   contentContainerStyle: {
@@ -62,7 +64,7 @@ export const styles = ScaledSheet.create({
     fontFamily: ts.jakartasemibold,
     marginTop: '40@ms',
     paddingHorizontal: '8@ms',
-    marginBottom:'2@ms'
+    marginBottom: '2@ms',
   },
   area: {
     color: ts.secondarytext,
@@ -70,8 +72,8 @@ export const styles = ScaledSheet.create({
     paddingHorizontal: '10@ms',
   },
   icon: {
-    height: '14@ms',
-    width: '14@ms',
+    height: '18@ms',
+    width: '18@ms',
   },
   type: {
     color: ts.accent3,
