@@ -233,8 +233,8 @@ function ExploreCusines() {
 export default memo(ExploreCusines);
 const styles = ScaledSheet.create({
   img: {
-    height: '170@ms',
-    width: '130@ms',
+    height: '197@ms',
+    width: '140@ms',
     resizeMode: 'cover',
     borderRadius: '20@ms',
   },

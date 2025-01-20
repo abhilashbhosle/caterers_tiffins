@@ -90,9 +90,7 @@ export default function CatererProfile({navigation, route}) {
   }, [data]);
   return (
     <ScreenWrapper>
-      {loading ? (
-        <ProfileSkeleton />
-      ) : (
+      {loading ? null : profile?.vendor_service_name ? ( // <ProfileSkeleton />
         <KeyboardAwareScrollView
           style={styles.container}
           showsVerticalScrollIndicator={false}
@@ -104,9 +102,13 @@ export default function CatererProfile({navigation, route}) {
           <View>
             <View style={{position: 'relative'}}>
               <View>
-              <ProfileBanners
-                catererBanners={profile?.bennerMenuMixGalleryImages}
-              />
+                {profile?.bennerMenuMixGalleryImages ? (
+                  <ProfileBanners
+                    catererBanners={profile?.bennerMenuMixGalleryImages}
+                  />
+                ) : (
+                  <View style={styles.dummyImage}></View>
+                )}
               </View>
               <View style={styles.topicons}>
                 <SafeAreaView>
@@ -147,16 +149,18 @@ export default function CatererProfile({navigation, route}) {
             {/* Top card */}
 
             <Card style={styles.details}>
-              <View style={{justifyContent:'center',alignItems:'center'}}>
-              {
-                profile?.subscription_type_name=="popular"?
-                <Image source={require('../../../assets/Common/popularlabel.png')} style={styles.label}/>
-                :
-                profile?.subscription_type_name=="branded"?
-                <Image source={require('../../../assets/Common/popularlabel.png')} style={styles.label}/>
-                :
-                null
-              }
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                {profile?.subscription_type_name == 'popular' ? (
+                  <Image
+                    source={require('../../../assets/Common/popularlabel.png')}
+                    style={styles.label}
+                  />
+                ) : profile?.subscription_type_name == 'branded' ? (
+                  <Image
+                    source={require('../../../assets/Common/popularlabel.png')}
+                    style={styles.label}
+                  />
+                ) : null}
               </View>
               <View style={[gs.p15]}>
                 <Flex direction="row" align="center">
@@ -170,11 +174,12 @@ export default function CatererProfile({navigation, route}) {
                     />
                   )}
                   <View style={[gs.ml15]}>
-                    <Text style={{...styles.heading,width:width/1.5}}>
+                    <Text style={{...styles.heading, width: width / 1.5}}>
                       {profile?.vendor_service_name}
                     </Text>
                     {profile?.formatted_address && (
-                      <Text style={[gs.fs13, {...styles.area,width:width/1.5}]} numberOfLines={2}>
+                      <Text
+                        style={[gs.fs13, {...styles.area, width: width / 1.5}]}>
                         {profile.formatted_address}
                       </Text>
                     )}
@@ -186,15 +191,13 @@ export default function CatererProfile({navigation, route}) {
                   justifyContent="space-around"
                   style={[gs.mt10]}>
                   <View style={styles.ratingiconcontainer}>
-                    <Flex align="center">
-                      <Image
-                        source={require('../../../assets/Common/rating.png')}
-                        style={styles.ratingicon}
-                      />
-                      <Text style={[styles.startPrice, gs.fs14]}>
-                        4.5 ({profile?.review_count})
-                      </Text>
-                    </Flex>
+                    <Image
+                      source={require('../../../assets/Common/rating1.png')}
+                      style={styles.starIcon}
+                    />
+                    <Text style={[styles.startPrice, gs.fs14]}>
+                      4.5 ({profile?.review_count})
+                    </Text>
                   </View>
                   <View style={styles.divider}></View>
                   <View style={styles.ratingiconcontainer}>
@@ -266,7 +269,7 @@ export default function CatererProfile({navigation, route}) {
                     align="center"
                     flexWrap="wrap"
                     style={[gs.mt5]}>
-                    {profile?.cuisines?.slice(0, 4)?.map((e, i) => (
+                    {profile?.cuisines?.slice(0, 6)?.map((e, i) => (
                       <Text
                         style={[
                           gs.fs13,
@@ -281,7 +284,7 @@ export default function CatererProfile({navigation, route}) {
                         {i !== profile?.cuisines?.length - 1 && ','}{' '}
                       </Text>
                     ))}
-                    {profile?.cuisines?.length > 4 && (
+                    {profile?.cuisines?.length > 6 && (
                       <TouchableOpacity
                         activeOpacity={0.7}
                         onPress={() => {
@@ -367,7 +370,7 @@ export default function CatererProfile({navigation, route}) {
                               {e?.food_type_name == 'Veg' ? (
                                 <Image
                                   source={require('../../../assets/Common/veg.png')}
-                                  style={[styles.foodTypeimg,gs.mr5]}
+                                  style={[styles.foodTypeimg, gs.mr5]}
                                 />
                               ) : e?.food_type_name == 'Non Veg' ? (
                                 <Image
@@ -396,7 +399,7 @@ export default function CatererProfile({navigation, route}) {
                   Gallery
                 </Text>
               </View>
-              <View>
+              <View style={[gs.ph12]}>
                 <GallerySlice />
               </View>
             </>
@@ -411,19 +414,20 @@ export default function CatererProfile({navigation, route}) {
               ]}>
               Highlights
             </Text>
-            {profile?.serviceTypes?.length ? (
-              <>
-                <Flex direction="row" align="center">
-                  <View>
-                    <Image
-                      source={require('../../../assets/Profile/servicetype.png')}
-                      style={styles.serviceicon}
-                    />
-                  </View>
-                  <View>
-                    <Text style={[styles.subtxt, gs.fs14]}>Service Type</Text>
-                    <Flex direction="row">
-                      {profile?.serviceTypes?.slice(0, 2)?.map((e, i) => (
+
+            <>
+              <Flex direction="row" align="center">
+                <View>
+                  <Image
+                    source={require('../../../assets/Profile/servicetype.png')}
+                    style={styles.serviceicon}
+                  />
+                </View>
+                <View>
+                  <Text style={[styles.subtxt, gs.fs14]}>Service Type</Text>
+                  <Flex direction="row">
+                    {profile?.serviceTypes?.length ? (
+                      profile?.serviceTypes?.slice(0, 2)?.map((e, i) => (
                         <Text
                           style={[styles.servicedesc, gs.fs15, gs.mt5]}
                           numberOfLines={1}
@@ -433,27 +437,30 @@ export default function CatererProfile({navigation, route}) {
                             ? null
                             : i != 1 && ','}{' '}
                         </Text>
-                      ))}
-                    </Flex>
-                  </View>
-                </Flex>
-                <Divider style={gs.mv15} />
-              </>
-            ) : null}
-            {profile?.minimum_capacity || profile?.maximum_capacity ? (
-              <>
-                <Flex direction="row">
-                  <View>
-                    <Image
-                      source={require('../../../assets/Profile/ordercapacity.png')}
-                      style={styles.serviceicon}
-                    />
-                  </View>
-                  <View>
-                    <View>
-                      <Text style={[styles.subtxt, gs.fs14]}>
-                        Order Capacity
+                      ))
+                    ) : (
+                      <Text style={[styles.servicedesc, gs.fs15, gs.mt5]}>
+                        N/A
                       </Text>
+                    )}
+                  </Flex>
+                </View>
+              </Flex>
+              <Divider style={gs.mv15} />
+            </>
+
+            <>
+              <Flex direction="row">
+                <View>
+                  <Image
+                    source={require('../../../assets/Profile/ordercapacity.png')}
+                    style={styles.serviceicon}
+                  />
+                </View>
+                <View>
+                  <View>
+                    <Text style={[styles.subtxt, gs.fs14]}>Order Capacity</Text>
+                    {profile?.minimum_capacity || profile?.maximum_capacity ? (
                       <Text
                         style={[styles.servicedesc, gs.fs15, gs.mt5]}
                         numberOfLines={1}>
@@ -466,28 +473,34 @@ export default function CatererProfile({navigation, route}) {
                           : 'N/A'}{' '}
                         Plates
                       </Text>
-                    </View>
+                    ) : (
+                      <Text style={[styles.servicedesc, gs.fs15, gs.mt5]}>
+                        N/A
+                      </Text>
+                    )}
                   </View>
-                </Flex>
-                <Divider style={gs.mv15} />
-              </>
-            ) : null}
-            {profile?.start_day ||
-            profile?.end_day ||
-            profile?.start_time ||
-            profile?.end_time ? (
-              <View>
-                <Flex direction="row">
-                  <View>
-                    <Image
-                      source={require('../../../assets/Profile/workinghours.png')}
-                      style={styles.serviceicon}
-                    />
-                  </View>
-                  <View>
-                    <Text style={[styles.subtxt, gs.fs14]} numberOfLines={1}>
-                      Working Hours
-                    </Text>
+                </View>
+              </Flex>
+              <Divider style={gs.mv15} />
+            </>
+
+            <View>
+              <Flex direction="row">
+                <View>
+                  <Image
+                    source={require('../../../assets/Profile/workinghours.png')}
+                    style={styles.serviceicon}
+                  />
+                </View>
+                <View>
+                  <Text style={[styles.subtxt, gs.fs14]} numberOfLines={1}>
+                    Working Hours
+                  </Text>
+
+                  {profile?.start_day ||
+                  profile?.end_day ||
+                  profile?.start_time ||
+                  profile?.end_time ? (
                     <Text
                       style={[styles.servicedesc, gs.fs15, gs.mt5]}
                       numberOfLines={1}>
@@ -503,24 +516,29 @@ export default function CatererProfile({navigation, route}) {
                         ? moment(profile.end_time, 'HH:mm:ss').format('hh:mm A')
                         : null}
                     </Text>
-                  </View>
-                </Flex>
-                <Divider style={gs.mv15} />
-              </View>
-            ) : null}
-            {profile?.total_staffs_approx ? (
-              <View>
-                <Flex direction="row">
-                  {/* <FontAweSomeIcon name="user-group" style={styles.usericon} /> */}
-                  <Image
-                    source={require('../../../assets/Profile/totalstaffs.png')}
-                    alt="staff"
-                    style={styles.serviceicon}
-                  />
-                  <View>
-                    <Text style={[styles.subtxt, gs.fs14]}>
-                      Total No of Staffs
+                  ) : (
+                    <Text style={[styles.servicedesc, gs.fs15, gs.mt5]}>
+                      N/A
                     </Text>
+                  )}
+                </View>
+              </Flex>
+              <Divider style={gs.mv15} />
+            </View>
+
+            <View>
+              <Flex direction="row">
+                {/* <FontAweSomeIcon name="user-group" style={styles.usericon} /> */}
+                <Image
+                  source={require('../../../assets/Profile/totalstaffs.png')}
+                  alt="staff"
+                  style={styles.serviceicon}
+                />
+                <View>
+                  <Text style={[styles.subtxt, gs.fs14]}>
+                    Total No of Staffs
+                  </Text>
+                  {profile?.total_staffs_approx ? (
                     <Text
                       style={[styles.servicedesc, gs.fs15, gs.mt5]}
                       numberOfLines={1}>
@@ -528,11 +546,16 @@ export default function CatererProfile({navigation, route}) {
                         ? profile.total_staffs_approx
                         : '-'}
                     </Text>
-                  </View>
-                </Flex>
-                <Divider style={gs.mv15} />
-              </View>
-            ) : null}
+                  ) : (
+                    <Text style={[styles.servicedesc, gs.fs15, gs.mt5]}>
+                      N/A
+                    </Text>
+                  )}
+                </View>
+              </Flex>
+              <Divider style={gs.mv15} />
+            </View>
+
             {profile?.working_since ? (
               <Flex direction="row">
                 <Image
@@ -552,31 +575,53 @@ export default function CatererProfile({navigation, route}) {
             ) : null}
           </View>
           {/* =====ABOUT US / BRANCHES========== */}
-          {profile?.about_description?.length ? (
-            <View style={[gs.ph15, gs.mt20]}>
-              <Text
-                style={[
-                  {fontFamily: ts.jakartabold, color: '#000'},
-                  gs.fs20,
-                  gs.pb10,
-                ]}>
-                About Us
-              </Text>
+
+          <View style={[gs.ph15, gs.mt20]}>
+            <Text
+              style={[
+                {fontFamily: ts.jakartabold, color: '#000'},
+                gs.fs20,
+                gs.pb10,
+              ]}>
+              About Us
+            </Text>
+            {profile?.about_description?.length ? (
               <ReadMore
                 style={[
-                  styles.subtxt,
+                  {
+                    ...styles.subtxt,
+                    fontFamily: ts.jakartaregular,
+                    color: ts.primarytext,
+                  },
                   gs.fs16,
-                  {fontFamily: ts.jakartaregular, color: ts.primarytext},
                 ]}
                 seeLessText="read less"
                 seeMoreText="read more"
-                seeLessStyle={{color: ts.secondary}}
-                seeMoreStyle={{color: ts.secondary}}
+                seeLessStyle={{
+                  color: ts.secondary,
+                  fontFamily: ts.jakartaregular,
+                }}
+                seeMoreStyle={{
+                  color: ts.secondary,
+                  fontFamily: ts.jakartaregular,
+                }}
                 numberOfLines={5}>
                 {profile?.about_description}{' '}
               </ReadMore>
-            </View>
-          ) : null}
+            ) : (
+              <Text
+                style={[
+                  {
+                    ...styles.subtxt,
+                    fontFamily: ts.jakartaregular,
+                    color: ts.primarytext,
+                  },
+                  gs.fs16,
+                ]}>
+                N/A
+              </Text>
+            )}
+          </View>
 
           {profile?.branches?.length ? (
             <View style={[gs.ph15, gs.mt20]}>
@@ -597,7 +642,10 @@ export default function CatererProfile({navigation, route}) {
                         style={[
                           styles.subtxt,
                           gs.fs16,
-                          {fontFamily: ts.jakartaregular, color: ts.primarytext},
+                          {
+                            fontFamily: ts.jakartaregular,
+                            color: ts.primarytext,
+                          },
                         ]}>
                         {e?.city}
                         {i !== profile?.branches?.length - 1 ? ',' : '.'}{' '}
@@ -666,7 +714,7 @@ export default function CatererProfile({navigation, route}) {
                   {fontFamily: ts.jakartabold, color: '#000'},
                   gs.fs20,
                   gs.pb10,
-                  gs.mb10
+                  gs.mb10,
                 ]}>
                 Reviews
               </Text>
@@ -777,9 +825,9 @@ export default function CatererProfile({navigation, route}) {
       <View style={{bottom: cmtfocus && 500}}> */}
           </View>
         </KeyboardAwareScrollView>
-      )}
+      ) : null}
       <View style={styles.leveler}></View>
-      {!loading ? (
+      {!loading && profile?.vendor_service_name ? (
         <Card
           style={[
             {borderRadius: 0, backgroundColor: '#fff'},
@@ -801,10 +849,7 @@ export default function CatererProfile({navigation, route}) {
                 Starting Price / Plate
               </Text>
               <Text
-                style={[
-                  {color: '#000', fontFamily: ts.jakartabold},
-                  gs.fs20,
-                ]}>
+                style={[{color: '#000', fontFamily: ts.jakartabold}, gs.fs20]}>
                 ₹ {profile?.start_price ? profile.start_price : 'N/A'}
               </Text>
             </View>
@@ -827,7 +872,7 @@ export default function CatererProfile({navigation, route}) {
   );
 }
 const styles = ScaledSheet.create({
-  container:{flex: 1, backgroundColor: '#fff',top:'-10@ms'},
+  container: {flex: 1, backgroundColor: '#fff', top: '-10@ms'},
   heading: {
     fontFamily: ts.jakartabold,
     color: '#000',
@@ -894,7 +939,7 @@ const styles = ScaledSheet.create({
   topicons: {
     position: 'absolute',
     paddingHorizontal: '15@ms',
-    marginTop:'10@ms'
+    marginTop: '10@ms',
   },
   backicon: {
     height: '40@ms',
@@ -917,6 +962,12 @@ const styles = ScaledSheet.create({
     width: '23@ms',
     marginBottom: '5@ms',
   },
+  starIcon: {
+    height: '23@ms',
+    width: '23@ms',
+    marginBottom: '5@ms',
+    marginRight:'1@ms'
+  },
   startPrice: {
     color: '#000',
     fontFamily: ts.jakartasemibold,
@@ -924,6 +975,8 @@ const styles = ScaledSheet.create({
   ratingiconcontainer: {
     // backgroundColor:'#ff0',
     width: '31%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   divider: {
     borderRightWidth: 0.5,
@@ -944,11 +997,14 @@ const styles = ScaledSheet.create({
     borderRadius: '20@ms',
     marginVertical: '10@ms',
   },
-  label:{
-    height:'30@ms',
-    maxWidth:'150@ms',
+  label: {
+    height: '30@ms',
+    maxWidth: '150@ms',
   },
-  leveler:{
-    marginTop:'-10@ms'
-  }
+  leveler: {
+    marginTop: '-10@ms',
+  },
+  dummyImage: {
+    height: '320@ms',
+  },
 });

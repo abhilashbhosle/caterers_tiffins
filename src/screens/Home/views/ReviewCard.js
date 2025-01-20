@@ -66,7 +66,7 @@ function ReviewCard({item, index, from, reviews}) {
         }}
         seeMoreStyle={{
           color: from == 'Tiffins' ? ts.primary : ts.secondary,
-          fontFamily: ts.secondaryregular,
+          fontFamily: ts.jakartamedium,
         }}>
         {item.review_text}
       </ReadMore>

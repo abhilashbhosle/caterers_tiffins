@@ -161,7 +161,7 @@ export const ScreenWrapper = ({children}) => {
           break;
         case 'TiffinProfile':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && 'transparent',
@@ -170,7 +170,7 @@ export const ScreenWrapper = ({children}) => {
           break;
         case 'CatererProfile':
           StatusBar.pushStackEntry({
-            barStyle: 'light-content',
+            barStyle: 'dark-content',
             animated: true,
             hidden: false,
             backgroundColor: Platform.OS == 'android' && 'transparent',

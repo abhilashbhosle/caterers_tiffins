@@ -26,14 +26,14 @@ export default function GallerySlice() {
              navigation.navigate('PageStack', {
                 screen: 'GalleryView',
                 params: {
-                  selectedImageIndex: index!=7?index:0,
+                  selectedImageIndex: index<=7?index:0,
                 },
               })
         }}>
         <View style={{position: 'relative'}}>
           <ImageBackground
             source={{uri: item?.image_names[0]?.medium}}
-            style={[styles.img, {width: width / 4.6}, gs.mh4, gs.mv5]}
+            style={[styles.img, {width: width / 4.72}, gs.mh4, gs.mv5]}
             imageStyle={[gs.br10, {resizeMode: 'cover'}]}>
             {data?.galleryImages?.length>8 && index == 7 ? (
               <View
@@ -44,7 +44,7 @@ export default function GallerySlice() {
                     justifyContent: 'center',
                     alignItems: 'center',
                     backgroundColor: '#000a',
-                    width: width / 4.6,
+                    width: width / 4.72,
                   },
                   gs.br10,
                 ]}>
@@ -67,8 +67,8 @@ export default function GallerySlice() {
     <View
       style={{
         // backgroundColor: '#00f',
-        justifyContent: 'center',
-        alignItems: 'center',
+        // justifyContent: 'center',
+        // alignItems: 'center',
       }}>
       <FlatList
         data={data?.galleryImages?.slice(0, 8)}

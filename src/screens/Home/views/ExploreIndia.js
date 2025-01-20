@@ -59,6 +59,7 @@ function ExploreIndia() {
         selectedEndDate: dateAfter7Days,
         foodTypeData,
         subData,
+        selected_vendor:[]
       });
       navigation.push('PageStack', {
         screen: 'SearchMain',

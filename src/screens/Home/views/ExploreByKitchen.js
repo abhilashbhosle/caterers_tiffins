@@ -42,7 +42,7 @@ function ExploreByKitchen() {
   const renderItem = ({item, index}) => {
     return (
       <Flex alignItems="center">
-        <Card style={[{backgroundColor: '#fff'}, gs.mb10, gs.mr10,gs.br12]}>
+        <Card style={[{backgroundColor: '#00f'}, gs.mb10, gs.mr10,gs.br12]}>
           <TouchableOpacity activeOpacity={0.7}>
             <ImageBackground
               source={item.img}
@@ -110,6 +110,7 @@ const styles = ScaledSheet.create({
     height: '100@ms',
     resizeMode: 'cover',
     width: '100@ms',
+    borderRadius:'12@ms'
   },
   title: {
     fontFamily: ts.secondaryregular,

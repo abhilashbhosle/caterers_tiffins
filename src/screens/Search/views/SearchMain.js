@@ -142,7 +142,13 @@ export default function SearchMain({route, navigation}) {
     }
   };
   const renderFooter = useMemo(() => {
-    if (caterersLoading) return <Spinner color={ts.secondarytext} />;
+    if (caterersLoading) {
+      return (
+        // <View style={{height: 200}}>
+          <Spinner color={ts.secondarytext} />
+        // </View>
+      );
+    }
     return null;
   }, [caterersLoading]);
 
@@ -185,7 +191,8 @@ export default function SearchMain({route, navigation}) {
   };
   return (
     <ScreenWrapper>
-      <ScrollView style={{...styles.container,flex: 1, backgroundColor: '#fff'}}>
+      <ScrollView
+        style={{...styles.container, flex: 1, backgroundColor: '#fff'}}>
         {/* =====SEARCH BAR */}
         <LinearGradient
           style={[
@@ -204,7 +211,10 @@ export default function SearchMain({route, navigation}) {
               : ['#F6D6B2', '#fff', '#FFF']
           }>
           <SafeAreaView>
-            <Flex direction="row" alignItems="center" style={[gs.ph10,gs.mt10]}>
+            <Flex
+              direction="row"
+              alignItems="center"
+              style={[gs.ph10, gs.mt10]}>
               <View style={{width: '13%'}}>
                 <TouchableOpacity
                   activeOpacity={0.7}
@@ -403,7 +413,14 @@ export default function SearchMain({route, navigation}) {
                     <Flex direction="row" alignItems="center">
                       <IonIcons
                         name="location-sharp"
-                        style={[gs.fs18, {color: from == 'Caterers' ? ts.secondary :ts.primary}, gs.mr2]}
+                        style={[
+                          gs.fs18,
+                          {
+                            color:
+                              from == 'Caterers' ? ts.secondary : ts.primary,
+                          },
+                          gs.mr2,
+                        ]}
                       />
                       <Text style={styles.btntxt}>Map</Text>
                     </Flex>
@@ -467,8 +484,8 @@ export default function SearchMain({route, navigation}) {
   );
 }
 const styles = ScaledSheet.create({
-  container:{
-    top:'-10@ms'
+  container: {
+    top: '-10@ms',
   },
   headercontainer: {
     // minHeight: Platform.OS == 'ios' ? '150@ms' : '150@ms',
@@ -516,7 +533,7 @@ const styles = ScaledSheet.create({
     height: '14@ms',
     width: '14@ms',
   },
-  leveler:{
-    marginTop:'-10@ms'
-  }
+  leveler: {
+    marginTop: '-10@ms',
+  },
 });

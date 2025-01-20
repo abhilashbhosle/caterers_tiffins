@@ -109,6 +109,7 @@ function SearchList({
         onEndReachedThreshold={0.6}
         onEndReached={fetchMoreData}
         ListFooterComponent={renderFooter}
+        ListEmptyComponent={<View style={{height:200}}></View>}
       
       />
     </>
