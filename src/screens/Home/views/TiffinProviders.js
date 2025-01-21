@@ -229,8 +229,20 @@ export default function TiffinProviders() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.contentContainerStyle}
             overScrollMode='never'
+            
           />
-      ) : null}
+      ) : 
+      <Text
+      style={[
+        gs.fs12,
+        {color: '#000', fontFamily: ts.secondaryregular},
+        gs.ph15,
+        gs.mb15,
+        gs.ml5
+      ]}>
+      No near by tiffins
+    </Text>
+      }
     </>
   );
 }

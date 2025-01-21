@@ -272,51 +272,64 @@ export default function TiffinProfile({navigation, route}) {
                         gs.br4,
                       ]}>
                       <Text style={[styles.startPrice, gs.fs16]}>Cuisines</Text>
-                      <Flex
-                        direction="row"
-                        align="center"
-                        flexWrap="wrap"
-                        style={[gs.mt5]}>
-                        {profile?.cuisines?.slice(0, 6)?.map((e, i) => (
-                          <Text
-                            style={[
-                              gs.fs14,
-                              {
-                                fontFamily: ts.jakartaregular,
-                                color: ts.primarytext,
-                              },
-                            ]}
-                            key={i}
-                            numberOfLines={2}>
-                            {e.cuisine_name}
-                            {i !== profile?.cuisines?.length - 1 && ','}{' '}
-                          </Text>
-                        ))}
-                        {profile?.cuisines?.length > 6 && (
-                          <TouchableOpacity
-                            activeOpacity={0.7}
-                            onPress={() => {
-                              setStretch(prev => !prev);
-                            }}>
+                      {profile?.cuisines?.length ? (
+                        <Flex
+                          direction="row"
+                          align="center"
+                          flexWrap="wrap"
+                          style={[gs.mt5]}>
+                          {profile?.cuisines?.slice(0, 6)?.map((e, i) => (
                             <Text
                               style={[
-                                gs.fs12,
+                                gs.fs14,
                                 {
-                                  fontFamily: ts.jakartamedium,
-                                  color: ts.primary,
+                                  fontFamily: ts.jakartaregular,
+                                  color: ts.primarytext,
                                 },
-                              ]}>
-                              {stretch ? 'less' : 'more'}
+                              ]}
+                              key={i}
+                              numberOfLines={2}>
+                              {e.cuisine_name}
+                              {i !== profile?.cuisines?.length - 1 && ','}{' '}
                             </Text>
-                          </TouchableOpacity>
-                        )}
-                        <CuisinesExpanded
-                          cuisines={profile?.cuisines}
-                          stretch={stretch}
-                          setStretch={setStretch}
-                          from={'Tiffins'}
-                        />
-                      </Flex>
+                          ))}
+                          {profile?.cuisines?.length > 6 && (
+                            <TouchableOpacity
+                              activeOpacity={0.7}
+                              onPress={() => {
+                                setStretch(prev => !prev);
+                              }}>
+                              <Text
+                                style={[
+                                  gs.fs12,
+                                  {
+                                    fontFamily: ts.jakartamedium,
+                                    color: ts.primary,
+                                  },
+                                ]}>
+                                {stretch ? 'less' : 'more'}
+                              </Text>
+                            </TouchableOpacity>
+                          )}
+                          <CuisinesExpanded
+                            cuisines={profile?.cuisines}
+                            stretch={stretch}
+                            setStretch={setStretch}
+                            from={'Tiffins'}
+                          />
+                        </Flex>
+                      ) : (
+                        <Text
+                          style={[
+                            gs.fs14,
+                            {
+                              fontFamily: ts.jakartaregular,
+                              color: ts.primarytext,
+                            },
+                          ]}>
+                          N/A
+                        </Text>
+                      )}
                     </View>
                     <Flex
                       direction="row"
@@ -940,7 +953,7 @@ const styles = ScaledSheet.create({
     height: '23@ms',
     width: '23@ms',
     marginBottom: '5@ms',
-    marginRight:'1@ms'
+    marginRight: '1@ms',
   },
   divider: {
     borderRightWidth: 0.5,

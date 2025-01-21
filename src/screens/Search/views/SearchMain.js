@@ -251,7 +251,7 @@ export default function SearchMain({route, navigation}) {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.scrollcontainer}>
               {/* ========TOP SELECTOR============ */}
-              {firstItemVisible && !keyboardVisible ? (
+              {firstItemVisible && !keyboardVisible && foodType?.length && subType?.length ? (
                 <Flex style={[{width}]} direction="row" alignItems="center">
                   <TouchableWithoutFeedback
                     onPress={() => {
@@ -425,6 +425,7 @@ export default function SearchMain({route, navigation}) {
                       <Text style={styles.btntxt}>Map</Text>
                     </Flex>
                   </TouchableOpacity>
+
                   <Badges
                     from={from}
                     subType={subType}

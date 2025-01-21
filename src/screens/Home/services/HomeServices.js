@@ -134,6 +134,7 @@ export const getSimilarTiffinService = async ({params}) => {
     });
     return res.data;
   } catch (error) {
+    console.log("error in tiffins near you",error)
     if (error.response && error.response.data) {
       throw new Error(error.response.data.message);
     } else {

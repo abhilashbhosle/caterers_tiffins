@@ -33,16 +33,17 @@ import MorePrimarybtn from '../../../components/MorePrimarybtn';
 function ExploreByKitchen() {
   const {width, height} = useWindowDimensions();
   const kitchenTypes = [
-    {name: 'Restaurant', img: require('../../../assets/Common/kitchen.png')},
     {name: 'Homemade', img: require('../../../assets/Common/homemade.png')},
+    {name: 'Restaurant', img: require('../../../assets/Common/kitchen.png')},
     {name: 'Corporate', img: require('../../../assets/Common/corporate.png')},
     {name: 'Commercial', img: require('../../../assets/Common/commercial.png')},
+    {name: 'Cloud', img: require('../../../assets/Common/cloud.png')},
   ];
 
   const renderItem = ({item, index}) => {
     return (
       <Flex alignItems="center">
-        <Card style={[{backgroundColor: '#00f'}, gs.mb10, gs.mr10,gs.br12]}>
+        <Card style={[ gs.mb10, gs.mr10,{backgroundColor:'transparent'}]}>
           <TouchableOpacity activeOpacity={0.7}>
             <ImageBackground
               source={item.img}
@@ -110,7 +111,6 @@ const styles = ScaledSheet.create({
     height: '100@ms',
     resizeMode: 'cover',
     width: '100@ms',
-    borderRadius:'12@ms'
   },
   title: {
     fontFamily: ts.secondaryregular,

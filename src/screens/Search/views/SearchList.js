@@ -1,4 +1,4 @@
-import {View, Animated} from 'react-native';
+import {View, Animated, Text} from 'react-native';
 import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
 import {FlatList} from 'native-base';
@@ -19,7 +19,7 @@ function SearchList({
   location,
   setVendorData,
   setFirstItemVisible,
-  firstItemVisible
+  firstItemVisible,
 }) {
   let theme = from === 'Caterers' ? ts.secondary : ts.primary;
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -97,20 +97,29 @@ function SearchList({
         renderItem={
           from === 'Caterers' ? renderCateringList : renderTiffinsList
         }
-      
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           {
             // backgroundColor:'#fff',
-            paddingTop: 10
+            paddingTop: 10,
           },
           gs.ph15,
         ]}
         onEndReachedThreshold={0.6}
         onEndReached={fetchMoreData}
         ListFooterComponent={renderFooter}
-        ListEmptyComponent={<View style={{height:200}}></View>}
-      
+        ListEmptyComponent={
+          <View style={[{height: 200}]}>
+            <Text
+              style={{
+                color: ts.secondarytext,
+                fontSize: 14,
+                fontFamily: ts.secondaryregular,
+              }}>
+              No vendors found
+            </Text>
+          </View>
+        }
       />
     </>
   );

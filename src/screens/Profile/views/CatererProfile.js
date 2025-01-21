@@ -264,51 +264,63 @@ export default function CatererProfile({navigation, route}) {
                     gs.br4,
                   ]}>
                   <Text style={[styles.startPrice, gs.fs16]}>Cuisines</Text>
+                 {
+                  profile?.cuisines?.length?
                   <Flex
-                    direction="row"
-                    align="center"
-                    flexWrap="wrap"
-                    style={[gs.mt5]}>
-                    {profile?.cuisines?.slice(0, 6)?.map((e, i) => (
+                  direction="row"
+                  align="center"
+                  flexWrap="wrap"
+                  style={[gs.mt5]}>
+                  {profile?.cuisines?.slice(0, 6)?.map((e, i) => (
+                    <Text
+                      style={[
+                        gs.fs13,
+                        {
+                          fontFamily: ts.jakartaregular,
+                          color: ts.primarytext,
+                        },
+                      ]}
+                      key={i}
+                      numberOfLines={2}>
+                      {e.cuisine_name}
+                      {i !== profile?.cuisines?.length - 1 && ','}{' '}
+                    </Text>
+                  ))}
+                  {profile?.cuisines?.length > 6 && (
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        setStretch(prev => !prev);
+                      }}>
                       <Text
                         style={[
-                          gs.fs13,
+                          gs.fs12,
                           {
-                            fontFamily: ts.jakartaregular,
-                            color: ts.primarytext,
+                            fontFamily: ts.jakartamedium,
+                            color: ts.secondary,
                           },
-                        ]}
-                        key={i}
-                        numberOfLines={2}>
-                        {e.cuisine_name}
-                        {i !== profile?.cuisines?.length - 1 && ','}{' '}
+                        ]}>
+                        {stretch ? 'less' : 'more'}
                       </Text>
-                    ))}
-                    {profile?.cuisines?.length > 6 && (
-                      <TouchableOpacity
-                        activeOpacity={0.7}
-                        onPress={() => {
-                          setStretch(prev => !prev);
-                        }}>
-                        <Text
-                          style={[
-                            gs.fs12,
-                            {
-                              fontFamily: ts.jakartamedium,
-                              color: ts.secondary,
-                            },
-                          ]}>
-                          {stretch ? 'less' : 'more'}
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-                    <CuisinesExpanded
-                      cuisines={profile?.cuisines}
-                      stretch={stretch}
-                      setStretch={setStretch}
-                      from={'Caterers'}
-                    />
-                  </Flex>
+                    </TouchableOpacity>
+                  )}
+                  <CuisinesExpanded
+                    cuisines={profile?.cuisines}
+                    stretch={stretch}
+                    setStretch={setStretch}
+                    from={'Caterers'}
+                  />
+                </Flex>
+                :
+                <Text  style={[
+                  gs.fs13,
+                  {
+                    fontFamily: ts.jakartaregular,
+                    color: ts.primarytext,
+                  },
+                ]}> N/A</Text>
+                 }
+                
                 </View>
                 <Flex
                   direction="row"
@@ -556,23 +568,29 @@ export default function CatererProfile({navigation, route}) {
               <Divider style={gs.mv15} />
             </View>
 
-            {profile?.working_since ? (
-              <Flex direction="row">
-                <Image
-                  source={require('../../../assets/Profile/workingsince.png')}
-                  alt="staff"
-                  style={styles.serviceicon}
-                />
-                <View>
-                  <Text style={[styles.subtxt, gs.fs14]}>Working Since</Text>
+            <Flex direction="row">
+              <Image
+                source={require('../../../assets/Profile/workingsince.png')}
+                alt="staff"
+                style={styles.serviceicon}
+              />
+              <View>
+                <Text style={[styles.subtxt, gs.fs14]}>Working Since</Text>
+                {profile?.working_since ? (
                   <Text
                     style={[styles.servicedesc, gs.fs15, gs.mt5]}
                     numberOfLines={1}>
                     {profile?.working_since ? profile.working_since : '-'}
                   </Text>
-                </View>
-              </Flex>
-            ) : null}
+                ) : (
+                  <Text
+                    style={[styles.servicedesc, gs.fs15, gs.mt5]}
+                    numberOfLines={1}>
+                    N/A
+                  </Text>
+                )}
+              </View>
+            </Flex>
           </View>
           {/* =====ABOUT US / BRANCHES========== */}
 
@@ -966,7 +984,7 @@ const styles = ScaledSheet.create({
     height: '23@ms',
     width: '23@ms',
     marginBottom: '5@ms',
-    marginRight:'1@ms'
+    marginRight: '1@ms',
   },
   startPrice: {
     color: '#000',
