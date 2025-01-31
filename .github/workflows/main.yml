@@ -10,7 +10,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4  
 
       - name: Installing Java
         uses: actions/setup-java@v3
@@ -30,21 +30,21 @@ jobs:
 
       - name: Run Npm Install
         run: |
-             npm i -g corepack
-             npm install
+          npm i -g corepack
+          npm install
 
       - name: Build application
         run: |
-             cd android
-             ./gradlew clean
-             ./gradlew assembleRelease
-             ./gradlew bundleRelease
+          cd android
+          ./gradlew clean
+          ./gradlew assembleRelease
+          ./gradlew bundleRelease
 
       - name: Upload APK and AAB
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: android-artifacts
           path: |
             android/app/build/outputs/apk/release/app-release.apk
             android/app/build/outputs/bundle/release/app-release.aab
-          retention-days: 3
+          retention-days: 7
