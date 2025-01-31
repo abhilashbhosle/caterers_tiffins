@@ -189,7 +189,11 @@ export default function SearchMain({route, navigation}) {
   const handleFoodTpeDD = () => {
     setEnableFoodTypeDD(prev => !prev);
   };
+
+  
   return (
+    caterersLoading?
+    <></> :
     <ScreenWrapper>
       <ScrollView
         style={{...styles.container, flex: 1, backgroundColor: '#fff'}}>

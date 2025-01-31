@@ -589,7 +589,7 @@ export default function FiilterMain({navigation, route}) {
             </Text>
           )}
           {!ratingLoading && !ratingError && rating?.length > 0 && (
-            <View style={[gs.ph10]}>
+            <View style={[gs.ph20]}>
               {rating.map((e, i) => (
                 <TouchableOpacity
                   onPress={() => {
@@ -609,7 +609,7 @@ export default function FiilterMain({navigation, route}) {
                     });
                   }}
                   key={i}>
-                  <Flex direction="row" justify="space-between" align="center">
+                  <Flex direction="row" justify="space-between" align="center" >
                     <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
                       {e.rating}
                     </Text>
@@ -635,7 +635,7 @@ export default function FiilterMain({navigation, route}) {
             Choose Head count
           </Text>
           <Divider style={[gs.mv15]} />
-          <View style={[gs.ph10]}>
+          <View style={[gs.ph20]}>
             {headLoading && (
               <Center>
                 <Spinner color={ts.secondary} />

@@ -44,9 +44,17 @@ function HeaderView({from, navigation}) {
           borderBottomRightRadius: 10,
           paddingTop: Platform.OS == 'android' && StatusBar.currentHeight + 10,
         },
-        gs.p20,
+        gs.ph20,
       ]}>
+        
       <SafeAreaView>
+      {
+          Platform.OS=='ios'?
+          <View style={{height:20}}>
+            </View>
+            :
+            null
+        }
         {/* =======TOP BAR LOCATION/NOTIFY/WISHLIST/PROFILE========= */}
         <Flex direction="row" alignItems="center" justify="space-between">
           <TouchableWithoutFeedback

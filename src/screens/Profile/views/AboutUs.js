@@ -1,4 +1,13 @@
-import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StatusBar,
+  Platform,
+  SafeAreaView,
+  Image,
+} from 'react-native';
 import React from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
 import {Flex} from 'native-base';
@@ -6,70 +15,157 @@ import EntypoIcons from 'react-native-vector-icons/Entypo';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
 import {ScaledSheet} from 'react-native-size-matters';
-import { ScreenWrapper } from '../../../components/ScreenWrapper';
+import {ScreenWrapper} from '../../../components/ScreenWrapper';
+import LinearGradient from 'react-native-linear-gradient';
 
-const data=['About','Privacy Policy','Security Policy','Terms & Conditions','Disclaimer']
+const data = [
+  {name: 'About', img: require('../../../assets/Profile/heart.png')},
+  {
+    name: 'Privacy Policy',
+    img: require('../../../assets/Profile/myinquiries.png'),
+  },
+  {
+    name: 'Security Policy',
+    img: require('../../../assets/Profile/security.png'),
+  },
+  {
+    name: 'Terms & Conditions',
+    img: require('../../../assets/Profile/terms.png'),
+  },
+  {name: 'Disclaimer', img: require('../../../assets/Profile/disclaimer.png')},
+];
 export default function AboutUs({navigation}) {
   return (
     <ScreenWrapper>
-    <View style={{flex: 1, backgroundColor: '#fff'}}>
-      <ThemeHeaderWrapper
-        lefttxt="About Us"
-        goBack={() => navigation.goBack()}
-      />
-      <ScrollView style={[gs.ph20, {flex: 1}]}>
-
-        <View style={[gs.mv10]}>
-          <Text
+      <View style={{flex: 1, backgroundColor: '#fff'}}>
+        <LinearGradient
+          colors={['#fff0f0', '#FFFDF5', '#fff']}
+          start={{x: 0.5, y: 0.5}}
+          end={{x: 0.5, y: 1.2}}
+          // locations={[0.8,0.5,0.5]}
+          style={[{...styles.container}]}>
+          <SafeAreaView>
+            <View
+              style={[
+                {
+                  paddingTop:
+                    Platform.OS == 'android'
+                      ? StatusBar.currentHeight + 10
+                      : 20,
+                },
+                gs.pb10,
+              ]}>
+              <Flex
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                style={[gs.ph15]}>
+                <Flex direction="row" alignItems="center"
+                >
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => navigation.goBack()}>
+                    {/* <IonIcons
+                              name="chevron-back"
+                              style={[gs.fs20, gs.pr15, {color: '#fff'}]}
+                            /> */}
+                    <Image
+                      source={require('../../../assets/Common/back.png')}
+                      style={styles.backicon}
+                    />
+                  </TouchableOpacity>
+                  <Text
+                    style={[
+                      gs.fs18,
+                      {color: '#000', fontFamily: ts.jakartabold},
+                      gs.mb5,
+                    ]}>
+                    About Us
+                  </Text>
+                </Flex>
+              </Flex>
+            </View>
+          </SafeAreaView>
+        </LinearGradient>
+        <View style={[styles.topcontainer, gs.ph15]}>
+          <View
             style={[
-              gs.fs15,
-              {fontFamily: ts.secondaryregular, color: '#555'},
-              gs.fs13,
+              {backgroundColor: '#fff'},
+              styles.cardcontainer,
+              gs.p15,
+              gs.br12,
             ]}>
-            Click to view
-          </Text>
+            {data.map((e, i) => {
+              return (
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={styles.cardlayout}
+                  key={i}>
+                  <Flex
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between">
+                    <Flex direction="row" alignItems="center">
+                      <Image
+                        source={e.img}
+                        style={e.name=='Terms & Conditions'?styles.iconterms:styles.icon1}
+                      />
+                      <Text style={[styles.cardtxt,e.name=='Terms & Conditions'&&gs.ml14]}>{e.name}</Text>
+                    </Flex>
+                    <EntypoIcons
+                      name="chevron-small-right"
+                      style={[gs.fs26, {color: ts.secondarytext}]}
+                    />
+                  </Flex>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
-		{
-			data.map((e,i)=>{
-				return(
-					<TouchableOpacity activeOpacity={0.7} style={styles.cardlayout} key={i}>
-					<Flex
-					  direction="row"
-					  alignItems="center"
-					  justifyContent="space-between">
-					  <Flex direction="row" alignItems="center">
-						<Text style={styles.cardtxt}>{e}</Text>
-					  </Flex>
-					  <EntypoIcons
-						name="chevron-small-right"
-						style={[gs.fs26, {color: ts.secondarytext}]}
-					  />
-					</Flex>
-				  </TouchableOpacity>
-				)
-			})
-		}
-     
-      </ScrollView>
-    </View>
+      </View>
     </ScreenWrapper>
   );
 }
 const styles = ScaledSheet.create({
   cardlayout: {
-    height: '55@ms',
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 12,
-    backgroundColor: '#fafafa',
     justifyContent: 'center',
-    paddingHorizontal: '15@ms',
-    marginTop: '10@ms',
+    marginVertical: '10@ms',
   },
   cardtxt: {
-    fontSize: '15@ms',
+    fontSize: '14@ms',
     marginLeft: '10@ms',
-    fontFamily: ts.secondaryregular,
+    fontFamily: ts.jakartamedium,
     color: ts.primarytext,
+    marginBottom: '3@ms',
   },
+  container: {
+    height: '300@ms',
+  },
+  backicon: {
+    height: '35@ms',
+    width: '35@ms',
+    marginRight: '10@ms',
+  },
+  topcontainer: {
+    top: Platform.OS=='ios'?'-180@ms':'-195@ms',
+  },
+  cardcontainer: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius:Platform?.OS=='ios'? 10.86:10.86,
+    elevation: 1,// For Android shadow
+  },
+  icon1: {
+    width: '24@ms',
+    height: '24@ms',
+  },
+  iconterms:{
+    height:'20@ms',
+    width:'18@ms',
+    marginLeft:'2@ms'
+  }
 });

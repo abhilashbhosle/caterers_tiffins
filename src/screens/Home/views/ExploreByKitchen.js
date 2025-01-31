@@ -82,9 +82,9 @@ function ExploreByKitchen() {
             ]}>
             Explore by Kitchentype
           </Text>
-          <TouchableOpacity activeOpacity={0.7}>
+          {/* <TouchableOpacity activeOpacity={0.7}>
             <MorePrimarybtn />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </Flex>
       </View>
       <FlatList

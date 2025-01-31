@@ -117,8 +117,7 @@ function TiffinsWish({setTiffinsCount}) {
         )}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
-          {backgroundColor: '#fff', paddingTop: 10},
-          gs.ph5,
+          { paddingTop: 10},
         ]}
         onEndReachedThreshold={0.6}
         onEndReached={fetchMoreData}

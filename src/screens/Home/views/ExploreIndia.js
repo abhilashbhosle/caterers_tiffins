@@ -139,7 +139,7 @@ function ExploreIndia() {
     );
   }
   return (
-    <View style={[gs.mt5]}>
+    <View style={[gs.mt15]}>
       <Flex
         direction="row"
         // align="center"
@@ -164,11 +164,11 @@ function ExploreIndia() {
           </Text>
         </View>
         <View>
-          {route?.name == 'Caterings' ? (
+          {/* {route?.name == 'Caterings' ? (
             <MoreSecondarybtn />
           ) : (
             <MorePrimarybtn />
-          )}
+          )} */}
         </View>
       </Flex>
       {loading ? (

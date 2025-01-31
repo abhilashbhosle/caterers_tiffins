@@ -258,6 +258,7 @@ export const handleSearchSegregation = async ({
 export const getCaterersSearch = createAsyncThunk(
   'getCaterersSearch',
   async ({params}, {dispatch}) => {
+    console.log(params)
     try {
       const res = await getCatererSearchService({params});
       return res.data;

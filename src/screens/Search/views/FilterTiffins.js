@@ -439,7 +439,7 @@ export default function FilterTiffins({navigation, route}) {
             </Text>
           )}
           {!ratingLoading && !ratingError && rating?.length > 0 && (
-            <View style={[gs.ph10]}>
+            <View style={[gs.ph20]}>
               {rating.map((e, i) => (
                 <TouchableOpacity
                   onPress={() => {
@@ -485,7 +485,7 @@ export default function FilterTiffins({navigation, route}) {
             Choose Head count
           </Text>
           <Divider style={[gs.mv15]} />
-          <View style={[gs.ph10]}>
+          <View style={[gs.ph20]}>
             {headLoading && (
               <Center>
                 <Spinner color={ts.primary} />

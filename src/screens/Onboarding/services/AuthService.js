@@ -38,6 +38,7 @@ export const getOtpService = async ({name, phoneNumber, navigation}) => {
     }
     return res;
   } catch (error) {
+    console.log(error)
     if (error.response && error.response.data) {
       showMessage({
         message: 'Request Failed!',
