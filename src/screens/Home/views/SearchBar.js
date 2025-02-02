@@ -242,10 +242,10 @@ function SearchBar({from, navigation, ssd, sse}) {
   return (
     <>
       <View
-        style={[{
-          borderWidth: 1,
+        style={[ styles.container,{
           borderColor: from == 'Caterers' ? '#ed9f9e' : '#efb76e',
-        },gs.br10]}
+        },gs.br10]
+      }
         >
         <Flex direction="row" alignItems="center">
           {/* =====CALENDAR====== */}
@@ -281,7 +281,7 @@ function SearchBar({from, navigation, ssd, sse}) {
           </TouchableWithoutFeedback>
           {/* ======SEARCH======= */}
 
-          <View style={[{width: '90%'}]}>
+          <View style={[{width: '89%'}]}>
             <Flex direction="row">
               {/* ======SEARCH INPUT======== */}
               <TextInput

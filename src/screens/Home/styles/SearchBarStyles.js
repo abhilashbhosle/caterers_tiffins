@@ -2,11 +2,14 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {ts} from '../../../../ThemeStyles';
 
 export const styles = ScaledSheet.create({
+  container:{
+    borderWidth:'1@ms',
+    backgroundColor:'#fff'
+  },
   calendarTextInput: {
     width: '34%',
     height: '48@ms',
     backgroundColor: '#fff',
-    position: 'relative',
     borderTopLeftRadius: '10@ms',
     borderBottomLeftRadius: '10@ms',
   },
