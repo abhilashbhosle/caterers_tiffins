@@ -77,7 +77,7 @@ export default function RootStack() {
 const styles = ScaledSheet.create({
   lottifieContainer: {
     position: 'absolute',
-    backgroundColor: '#fffe',
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
   },

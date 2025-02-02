@@ -57,6 +57,8 @@ export default function SearchMain({route, navigation}) {
   );
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [enableFoodTypeDD, setEnableFoodTypeDD] = useState(false);
+  const loading = useSelector(state => state.common.loading);
+
 
   const location = useSelector(state => state.location.locationRes);
   useFocusEffect(
@@ -190,13 +192,12 @@ export default function SearchMain({route, navigation}) {
     setEnableFoodTypeDD(prev => !prev);
   };
 
-  
+
   return (
-    caterersLoading?
-    <></> :
     <ScreenWrapper>
       <ScrollView
         style={{...styles.container, flex: 1, backgroundColor: '#fff'}}>
+         
         {/* =====SEARCH BAR */}
         <LinearGradient
           style={[

@@ -7,6 +7,8 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
@@ -53,6 +55,8 @@ import {setSearchHomeJson} from '../../Home/controllers/SearchCommonController';
 import moment from 'moment';
 import {getOccassions} from '../../Home/controllers/OccassionController';
 import {getCuisines} from '../../Home/controllers/ExploreCuisineController';
+import LinearGradient from 'react-native-linear-gradient';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 export default function FiilterMain({navigation, route}) {
   const {address, ssd, sse, location, from} = route.params;
@@ -253,17 +257,68 @@ export default function FiilterMain({navigation, route}) {
   };
   return (
     <ScreenWrapper>
-      <ThemeHeaderWrapper
+      {/* <ThemeHeaderWrapper
         lefttxt="Filters"
         righttxt="Clear All"
         goBack={() => handleGoBack()}
         bgColor={ts.secondary}
         dispatch={dispatch}
-      />
+      /> */}
+
       <KeyboardAwareScrollView
         enableOnAndroid={true}
         showsVerticalScrollIndicator={false}
-        style={[{flex: 1, backgroundColor: '#fff'}, gs.ph10, gs.pv20]}>
+        style={[{flex: 1, backgroundColor: '#fff',top:-10}, 
+        // gs.ph10, gs.pv20
+        ]}>
+        <LinearGradient
+          colors={['#f8b4b3', '#fbe3e1', '#fff']}
+          start={{x: 0, y: 0}}
+          end={{x: 0.2, y: 0.8}}
+          // locations={[0.9,0.0,0.0]}
+          style={[{...styles.container}]}>
+          <SafeAreaView>
+            <View
+              style={[
+                {
+                  paddingTop:
+                    Platform.OS == 'android'
+                      ? StatusBar.currentHeight-40
+                      : 20,
+                },
+                gs.pb10,
+              ]}>
+              <Flex
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                style={[gs.ph15]}>
+                <Flex direction="row" alignItems="center">
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => handleGoBack()}>
+                    <Image
+                      source={require('../../../assets/Common/back.png')}
+                      style={styles.backicon}
+                    />
+                  </TouchableOpacity>
+                  <Text
+                    style={[
+                      gs.fs18,
+                      {color: '#000', fontFamily: ts.jakartabold},
+                      gs.mb5,
+                    ]}>
+                    Filters
+                  </Text>
+                </Flex>
+                <TouchableOpacity activeOpacity={0.7} onPress={()=>{dispatch(clearFilter())}}>
+                <Text style={[{color:'#000',fontFamily:ts.jakartamedium},gs.fs12]}>Clear All</Text>
+                </TouchableOpacity>
+              </Flex>
+            </View>
+          </SafeAreaView>
+        </LinearGradient>
+        <View style={styles.topcontainer}>
         {/* ========BUDGET SELECTION========= */}
         <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>
@@ -303,7 +358,7 @@ export default function FiilterMain({navigation, route}) {
                     });
                   }}
                   activeOpacity={0.7}>
-                  <Flex direction="row" justify="space-between" align="center">
+                  <Flex direction="row" justify="space-between" align="center" style={[gs.ph10]}>
                     <Text
                       style={[
                         styles.servicetxt,
@@ -569,13 +624,7 @@ export default function FiilterMain({navigation, route}) {
           </Flex>
         </Card>
         {/* ========SORT BY RATINGS========= */}
-        <Card
-          style={[
-            gs.mh5,
-            gs.pv10,
-            gs.mv15,
-            {backgroundColor: '#fff'},
-          ]}>
+        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By Rating</Text>
           <Divider style={[gs.mv15]} />
           {ratingLoading && (
@@ -609,7 +658,7 @@ export default function FiilterMain({navigation, route}) {
                     });
                   }}
                   key={i}>
-                  <Flex direction="row" justify="space-between" align="center" >
+                  <Flex direction="row" justify="space-between" align="center">
                     <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
                       {e.rating}
                     </Text>
@@ -770,7 +819,7 @@ export default function FiilterMain({navigation, route}) {
           </Flex>
         </Card>
         {/* ======CHOOSE OCCASION======= */}
-        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
+        <Card style={[ gs.pv10, gs.mv15, {backgroundColor: '#fff'},gs.mh5]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>
             Choose Occasions
           </Text>
@@ -809,7 +858,7 @@ export default function FiilterMain({navigation, route}) {
                     });
                   }}>
                   <Flex direction="row" justify="space-between" align="center">
-                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10,gs.ph5]}>
                       {e.occasion_name}
                     </Text>
 
@@ -833,7 +882,13 @@ export default function FiilterMain({navigation, route}) {
           </View>
         </Card>
         {/* ========SORT BY========= */}
-        <Card style={[gs.mh5, gs.pv10, gs.mt15, {backgroundColor: '#fff',marginBottom:80}]}>
+        <Card
+          style={[
+            gs.pv10,
+            gs.mt15,
+            {backgroundColor: '#fff', marginBottom: 80},
+            gs.mh5
+          ]}>
           <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By</Text>
           <Divider style={[gs.mv15]} />
           {sortLoading && (
@@ -868,7 +923,7 @@ export default function FiilterMain({navigation, route}) {
                   }}
                   key={i}>
                   <Flex direction="row" justify="space-between" align="center">
-                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10,gs.ph5]}>
                       {e.name}
                     </Text>
                     <MaterialIcons
@@ -887,14 +942,16 @@ export default function FiilterMain({navigation, route}) {
             </View>
           )}
         </Card>
+        </View>
       </KeyboardAwareScrollView>
+       <View style={{marginTop:-10}}></View>
       <Card
         style={[{borderRadius: 0, backgroundColor: '#fff'}, gs.ph15, gs.pb10]}>
         <Flex
           direction="row"
           align="center"
           justify="space-between"
-          style={[gs.pt15, gs.pb10]}>
+          style={[gs.pt15, gs.pb5]}>
           <Text
             style={[
               gs.fs13,
@@ -958,6 +1015,7 @@ export default function FiilterMain({navigation, route}) {
           )}
         </Flex>
       </Card>
+      
     </ScreenWrapper>
   );
 }
@@ -997,5 +1055,24 @@ const styles = ScaledSheet.create({
     marginTop: '10@ms',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  backicon: {
+    height: '35@ms',
+    width: '35@ms',
+    marginRight: '10@ms',
+  },
+  container: {
+    height: '400@ms',
+  },
+  topcontainer: {
+    marginTop: Platform.OS == 'ios' ? '-290@ms' : '-310@ms',
+    paddingHorizontal:'10@ms'
+  },
+  tabbarcontainer: {
+    backgroundColor: 'rgba(39, 45, 55, 0.1)',
+    elevation: 0,
+    height: '26@ms',
+    // paddingVertical: '2@ms',
+    borderRadius: '6@ms',
   },
 });

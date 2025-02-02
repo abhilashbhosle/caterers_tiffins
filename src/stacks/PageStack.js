@@ -17,6 +17,7 @@ import GalleryView from '../screens/Profile/views/ProfileModules/GalleryView';
 import Reviews from '../screens/Home/views/Reviews';
 import MapSingle from '../screens/Maps/MapSingle';
 import  MapMultiple  from '../screens/Maps/MapMultiple';
+import { Webview } from '../components/WebView';
 // import Notifications from '../screens/Home/views/Notifications';
 
 const Stack = createNativeStackNavigator();
@@ -28,6 +29,7 @@ export default function PageStack() {
       <Stack.Screen name="WishList" component={WishList} />
       <Stack.Screen name="MyInquiries" component={MyInquiries} />
       <Stack.Screen name="AboutUs" component={AboutUs}/>
+      <Stack.Screen name="WebView" component={Webview}/>
       <Stack.Screen name="Faq" component={Faq}/>
       <Stack.Screen name="Help" component={Help}/>
       <Stack.Screen name="Notifications" component={Notification}/>
