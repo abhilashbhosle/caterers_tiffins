@@ -98,15 +98,15 @@ export default function Faq({navigation}) {
                     gs.mv10,
                   ]}
                   key={i}>
-                  <Flex
-                    justifyContent="space-between"
-                    direction="row"
-                    alignItems="center">
-                    <TouchableOpacity
-                      onPress={() => {
-                        setIndex(i == index ? -1 : i);
-                      }}
-                      activeOpacity={0.7}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setIndex(i == index ? -1 : i);
+                    }}
+                    activeOpacity={0.7}>
+                    <Flex
+                      justifyContent="space-between"
+                      direction="row"
+                      alignItems="center">
                       <Text
                         style={[
                           gs.fs15,
@@ -114,16 +114,17 @@ export default function Faq({navigation}) {
                         ]}>
                         {e?.que}
                       </Text>
-                    </TouchableOpacity>
-                    <Image
-                      source={
-                        i == index
-                          ? require('../../../assets/Profile/remove.png')
-                          : require('../../../assets/Profile/add.png')
-                      }
-                      style={styles.removeicon}
-                    />
-                  </Flex>
+                      <Image
+                        source={
+                          i == index
+                            ? require('../../../assets/Profile/remove.png')
+                            : require('../../../assets/Profile/add.png')
+                        }
+                        style={styles.removeicon}
+                      />
+                    </Flex>
+                  </TouchableOpacity>
+
                   {index == i ? (
                     <Text
                       style={[

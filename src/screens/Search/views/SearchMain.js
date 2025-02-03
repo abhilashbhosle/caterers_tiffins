@@ -481,6 +481,7 @@ export default function SearchMain({route, navigation}) {
               location={location}
               setFirstItemVisible={setFirstItemVisible}
               firstItemVisible={firstItemVisible}
+              caterersLoading={caterersLoading}
             />
           </View>
         ) : null}

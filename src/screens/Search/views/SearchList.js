@@ -20,6 +20,7 @@ function SearchList({
   setVendorData,
   setFirstItemVisible,
   firstItemVisible,
+  caterersLoading
 }) {
   let theme = from === 'Caterers' ? ts.secondary : ts.primary;
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -109,6 +110,7 @@ function SearchList({
         onEndReached={fetchMoreData}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={
+          !caterersLoading && 
           <View style={[{height: 200}]}>
             <Text
               style={{
