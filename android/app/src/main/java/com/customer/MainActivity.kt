@@ -16,7 +16,6 @@ class MainActivity : ReactActivity() {
   override fun getMainComponentName(): String = "customer"
 
   override fun onCreate(savedInstanceState: Bundle?) {
-     SplashScreen.show(this);
     super.onCreate(null)
   }
   /**

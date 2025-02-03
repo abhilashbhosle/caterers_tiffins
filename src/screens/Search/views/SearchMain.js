@@ -45,7 +45,7 @@ export default function SearchMain({route, navigation}) {
   const [vendorData, setVendorData] = useState([]);
   const [subType, setSubType] = useState([]);
   const [foodType, setFoodType] = useState([]);
-  const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState(-1);
   const dispatch = useDispatch();
   const {foodTypeData, subData} = useSelector(state => state?.filterCater);
   const [foodText, setFoodText] = useState('');
@@ -197,7 +197,6 @@ export default function SearchMain({route, navigation}) {
     <ScreenWrapper>
       <ScrollView
         style={{...styles.container, flex: 1, backgroundColor: '#fff'}}>
-         
         {/* =====SEARCH BAR */}
         <LinearGradient
           style={[
@@ -481,7 +480,7 @@ export default function SearchMain({route, navigation}) {
               location={location}
               setFirstItemVisible={setFirstItemVisible}
               firstItemVisible={firstItemVisible}
-              caterersLoading={caterersLoading}
+              total={total}
             />
           </View>
         ) : null}

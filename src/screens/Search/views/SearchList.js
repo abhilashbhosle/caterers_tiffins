@@ -20,7 +20,7 @@ function SearchList({
   setVendorData,
   setFirstItemVisible,
   firstItemVisible,
-  caterersLoading
+  total
 }) {
   let theme = from === 'Caterers' ? ts.secondary : ts.primary;
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -90,6 +90,7 @@ function SearchList({
     }
   }, [wish_id]);
 
+
   return (
     <>
       <Animated.FlatList
@@ -110,7 +111,6 @@ function SearchList({
         onEndReached={fetchMoreData}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={
-          !caterersLoading && 
           <View style={[{height: 200}]}>
             <Text
               style={{
@@ -118,7 +118,10 @@ function SearchList({
                 fontSize: 14,
                 fontFamily: ts.secondaryregular,
               }}>
-              No vendors found
+                {
+                  total==0 && 
+                  "No vendors found"
+                }
             </Text>
           </View>
         }
