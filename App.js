@@ -13,12 +13,12 @@ export default function App() {
   useEffect(() => {
     setTimeout(() => {
       setShowSplash(false);
-    }, 2800);
+    }, 1800);
   }, []);
   const {height,width}=Dimensions.get('screen');
   return showSplash ? (
       <Image
-        source={require('./src/assets/splash/3.gif')}
+        source={require('./src/assets/splash/2.gif')}
         style={{height,width}}
       />
   ) : (
