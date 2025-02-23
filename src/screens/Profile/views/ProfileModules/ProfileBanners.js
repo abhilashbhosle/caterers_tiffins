@@ -104,7 +104,7 @@ function ProfileBanners({catererBanners}) {
 
   return (
     <View style={{position: 'relative'}}>
-      {catererBanners?.length == 1 ? (
+      {catererBanners?.length == 1 || catererBanners?.length==0 ? (
         <View
           style={[
             styles.img,

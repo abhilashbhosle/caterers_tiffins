@@ -71,7 +71,8 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
       longitude: e.geometry.location.lng,
       dispatch,
       from: 'internal',
-      formatted_address:e.formatted_address
+      formatted_address:e.formatted_address,
+      place_id:e.place_id
     });
     setTimeout(() => {
       dispatch(getUser());
@@ -129,7 +130,7 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
               />
             </View>
           </View>
-          {!focused && (
+          {!focused && !searchData?.length &&(
             <>
               <Flex
                 direction="row"

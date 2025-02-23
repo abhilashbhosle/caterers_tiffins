@@ -21,7 +21,7 @@ import {
   updateWishList,
   wishDetails,
 } from '../../Home/controllers/WishListController';
-import { styles } from '../../Home/styles/SearchCardStyles';
+import {styles} from '../../Home/styles/SearchCardStyles';
 
 function SearchCaterersCard({item, from, location}) {
   const {height, width} = useWindowDimensions();
@@ -46,9 +46,7 @@ function SearchCaterersCard({item, from, location}) {
             {item?.brand_logo?.medium ? (
               <ImageBackground
                 source={{uri: item.brand_logo.medium}}
-                imageStyle={[
-                  {...styles.img, resizeMode: 'cover'},
-                ]}
+                imageStyle={[{...styles.img, resizeMode: 'cover'}]}
                 style={{
                   ...styles.img,
                   justifyContent: 'space-between',
@@ -58,14 +56,17 @@ function SearchCaterersCard({item, from, location}) {
                   start={{x: 0.0, y: 0.0}}
                   end={{x: 0.0, y: 1.0}}
                   style={[styles.gradient]}>
-                  <Image
-                    source={
-                      item?.subscription_type_display == 'Popular'
-                        ? require('../../../assets/Common/popular.png')
-                        : require('../../../assets/Common/branded.png')
-                    }
-                    style={styles.sticker}
-                  />
+                  {item?.subscription_type_display == 'Popular' ||
+                  item?.subscription_type_display == 'Branded' ? (
+                    <Image
+                      source={
+                        item?.subscription_type_display == 'Popular'
+                          ? require('../../../assets/Common/popular.png')
+                          : require('../../../assets/Common/branded.png')
+                      }
+                      style={styles.sticker}
+                    />
+                  ) : null}
                 </LinearGradient>
               </ImageBackground>
             ) : (
@@ -133,8 +134,8 @@ function SearchCaterersCard({item, from, location}) {
             </Flex>
 
             <Text numberOfLines={1} style={[{...styles.area}, gs.fs13]}>
-              {item?.area?.length ? `${item?.area} ,`:null}
-              {location?.city?location?.city:null}
+              {item?.area?.length ? `${item?.area} ,` : null}
+              {location?.city ? location?.city : null}
             </Text>
 
             <Flex direction="row" align="center" style={[gs.mt5]}>
@@ -153,7 +154,7 @@ function SearchCaterersCard({item, from, location}) {
                     </Text>
                   ))}
                 {item?.cuisines?.length > 2 && ''}
-              </Text> 
+              </Text>
             </Flex>
 
             <Flex
@@ -245,10 +246,9 @@ function SearchCaterersCard({item, from, location}) {
                     {
                       color: '#000',
                       fontFamily: ts.jakartasemibold,
-
                     },
                     gs.fs16,
-                    gs.ml2
+                    gs.ml2,
                   ]}>
                   ₹ {item?.start_price ? parseInt(item?.start_price) : 'N/A'}
                 </Text>
@@ -261,5 +261,3 @@ function SearchCaterersCard({item, from, location}) {
   );
 }
 export default memo(SearchCaterersCard);
-
-

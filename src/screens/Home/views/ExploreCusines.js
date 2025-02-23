@@ -224,6 +224,7 @@ function ExploreCusines() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.contentContainerStyle}
             overScrollMode='never'
+            initialNumToRender={10}
           />
         )
       )}

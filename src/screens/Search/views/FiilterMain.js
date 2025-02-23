@@ -200,7 +200,7 @@ export default function FiilterMain({navigation, route}) {
         {
           text: 'OK',
           onPress: async () => {
-            await dispatch(clearFilter());
+            await dispatch(clearFilter({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
             await setSearchHomeJson({
               latitude: location?.latitude,
               longitude: location?.longitude,
@@ -264,7 +264,7 @@ export default function FiilterMain({navigation, route}) {
         bgColor={ts.secondary}
         dispatch={dispatch}
       /> */}
-
+      
       <KeyboardAwareScrollView
         enableOnAndroid={true}
         showsVerticalScrollIndicator={false}
@@ -283,7 +283,7 @@ export default function FiilterMain({navigation, route}) {
                 {
                   paddingTop:
                     Platform.OS == 'android'
-                      ? StatusBar.currentHeight-40
+                      ? StatusBar.currentHeight-20
                       : 20,
                 },
                 gs.pb10,
@@ -311,13 +311,14 @@ export default function FiilterMain({navigation, route}) {
                     Filters
                   </Text>
                 </Flex>
-                <TouchableOpacity activeOpacity={0.7} onPress={()=>{dispatch(clearFilter())}}>
+                <TouchableOpacity activeOpacity={0.7} onPress={()=>{dispatch(clearFilter({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}))}}>
                 <Text style={[{color:'#000',fontFamily:ts.jakartamedium},gs.fs12]}>Clear All</Text>
                 </TouchableOpacity>
               </Flex>
             </View>
           </SafeAreaView>
         </LinearGradient>
+        
         <View style={styles.topcontainer}>
         {/* ========BUDGET SELECTION========= */}
         <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
@@ -1065,7 +1066,7 @@ const styles = ScaledSheet.create({
     height: '400@ms',
   },
   topcontainer: {
-    marginTop: Platform.OS == 'ios' ? '-290@ms' : '-310@ms',
+    marginTop: Platform.OS == 'ios' ? '-290@ms' : '-290@ms',
     paddingHorizontal:'10@ms'
   },
   tabbarcontainer: {

@@ -175,7 +175,12 @@ function Branded() {
                 alt={item.name}
               />
             ) : (
-              <View style={[styles.img, styles.imageStyle]}></View>
+              <View style={[styles.img, {...styles.imageStyle,justifyContent:'center',alignItems:'center'}]}>
+                <EntypoIcon
+                  name="image-inverted"
+                  style={[{color: ts.secondarytext}, gs.fs30]}
+                />
+              </View>
             )}
 
             <Flex direction="row" style={styles.profileContainer}>
@@ -185,7 +190,7 @@ function Branded() {
                     uri: item?.gallery_images?.['vendor-brand-logo'][0]
                       ?.image_name[0]?.medium,
                   }}
-                  resizeMode='cover'
+                  resizeMode="cover"
                   style={styles.profile}
                 />
               ) : (
@@ -232,7 +237,8 @@ function Branded() {
             )}
           </Text>
           <Text style={[gs.fs12, styles.area]}>
-            {item?.street_name ? item.street_name.slice(0,17) : item?.area}, {item?.city}
+            {item?.street_name ? item.street_name.slice(0, 17) : item?.area},{' '}
+            {item?.city}
           </Text>
           <Flex
             direction="row"
@@ -316,9 +322,7 @@ function Branded() {
             </Text>
           </View>
           {brandedData?.length ? (
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={handleBranded}>
+            <TouchableOpacity activeOpacity={0.7} onPress={handleBranded}>
               <MoreSecondarybtn />
             </TouchableOpacity>
           ) : null}
@@ -343,7 +347,7 @@ function Branded() {
             contentContainerStyle={{
               ...styles.contentContainerStyle,
             }}
-            overScrollMode='never'
+            overScrollMode="never"
           />
         )
       )}

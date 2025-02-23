@@ -17,10 +17,10 @@ export default function CuisinesExpanded({
       onClose={() => {
         setStretch(false);
       }}>
-      <Actionsheet.Content style={{backgroundColor: '#fff', width: '100%'}}>
+      <Actionsheet.Content style={{backgroundColor: '#fff', width: '100%',minHeight:200}}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <Flex direction="row" flexWrap="wrap">
-            {cuisines?.map((e, i) => (
+            {cuisines?.filter((e)=>e.selected==1)?.map((e, i) => (
               <View
                 key={i}
                 style={{

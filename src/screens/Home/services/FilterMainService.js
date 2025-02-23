@@ -131,7 +131,7 @@ export const getSortService = async () => {
   }
 };
 //=======CLEAR FILTER  SERVICES=======//
-export const clearFilterService = async ({dispatch, from}) => {
+export const clearFilterService = async ({dispatch, from,type}) => {
   try {
     dispatch(startLoader(true));
     let token = await AsyncStorage.getItem('token');
@@ -164,9 +164,9 @@ export const clearFilterService = async ({dispatch, from}) => {
   } finally {
     if (!from) {
       dispatch(getServing());
-      dispatch(getService());
+      dispatch(getService({type}));
       dispatch(getSubscription({from}))
-      dispatch(getBudget({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
+      dispatch(getBudget({type}));
       dispatch(getHeadCount());
       dispatch(getSort());
       dispatch(getKitchen());

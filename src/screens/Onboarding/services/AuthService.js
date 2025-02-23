@@ -275,71 +275,41 @@ export const getLocationService = async ({
   navigation,
   from,
   formatted_address,
+  place_id
 }) => {
+  console.log("placeid", place_id)
   try {
     dispatch(startLoader(true));
-    let res = await axios.get(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_KEY}`,
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/place/details/json`,
+      {
+        params: {
+          place_id,
+          key: GOOGLE_KEY,
+        },
+      }
     );
 
-    const results = res.data.results;
-    let maxAddressComponentsLength = -1;
-    let selectedAddress = null;
+    const { address_components, formatted_address, geometry } = response.data.result;
 
-    // Find the address with the most components
-    results.forEach(result => {
-      const addressComponentsLength = result.address_components.length;
-      if (addressComponentsLength > maxAddressComponentsLength) {
-        maxAddressComponentsLength = addressComponentsLength;
-        selectedAddress = result;
-      }
-    });
-
-    if (selectedAddress) {
-      let addressComponents = selectedAddress.address_components;
-      let street_name = getAddressComponent(addressComponents, 'route');
-      let area = getAddressComponent(addressComponents, 'sublocality_level_1');
-
-      // If street_name or area are missing, try to find them in other results
-      if (!street_name || !area) {
-        for (let i = 0; i < results.length; i++) {
-          if (!street_name) {
-            street_name = getAddressComponent(
-              results[i].address_components,
-              'route',
-            );
-          }
-          if (!area) {
-            area = getAddressComponent(
-              results[i].address_components,
-              'sublocality_level_1',
-            );
-          }
-          // Stop searching if both components are found
-          if (street_name && area) break;
-        }
-      }
-
-      // Fallback to default values if still not found
-      street_name = street_name || 'Unknown Street';
-      area = area || 'Unknown Area';
+    const getAddressComponent = (components, type) =>
+      components.find((component) => component.types.includes(type))?.long_name || '';
 
       const addressData = {
-        street_name: street_name,
-        area: area,
-        pincode: getAddressComponent(addressComponents, 'postal_code'),
-        latitude: latitude,
-        longitude: longitude,
-        city: getAddressComponent(addressComponents, 'locality'),
-        state: getAddressComponent(
-          addressComponents,
-          'administrative_area_level_1',
-        ),
-        country: getAddressComponent(addressComponents, 'country'),
-        formatted_address:
-          res.data.results[0].formatted_address || `${street_name}, ${area}`,
-        place_id: res.data.results[0].place_id,
+        street_name: getAddressComponent(address_components, 'route') || 'Unknown Street',
+        area: getAddressComponent(address_components, 'sublocality_level_1') || '',
+        pincode: getAddressComponent(address_components, 'postal_code') || '',
+        city: getAddressComponent(address_components, 'locality') ||
+              getAddressComponent(address_components, 'administrative_area_level_2'),
+        state: getAddressComponent(address_components, 'administrative_area_level_1') || '',
+        country: getAddressComponent(address_components, 'country') || '',
+        latitude: geometry.location.lat,
+        longitude: geometry.location.lng,
+        formatted_address,
+        place_id,
       };
+      
+      // console.log(addressData);
 
       await updateLocationService({
         temp: addressData,
@@ -347,19 +317,11 @@ export const getLocationService = async ({
         dispatch,
         from,
       });
-    }
   } catch (error) {
     console.error('Error in getLocationService:', error);
   } finally {
     dispatch(startLoader(false));
   }
-};
-
-const getAddressComponent = (addressComponents, type) => {
-  const component = addressComponents.find(component =>
-    component.types.includes(type),
-  );
-  return component ? component.long_name : '';
 };
 // ======UPDATE LOCATION=========//
 export const updateLocationService = async ({

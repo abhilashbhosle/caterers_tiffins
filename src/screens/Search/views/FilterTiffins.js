@@ -199,7 +199,7 @@ export default function FilterTiffins({navigation, route}) {
         {
           text: 'OK',
           onPress: async () => {
-            await dispatch(clearFilter());
+            await dispatch(clearFilter({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
             await setSearchHomeJson({
               latitude: location?.latitude,
               longitude: location?.longitude,
@@ -280,7 +280,7 @@ export default function FilterTiffins({navigation, route}) {
                 {
                   paddingTop:
                     Platform.OS == 'android'
-                      ? StatusBar.currentHeight+10
+                      ? StatusBar.currentHeight+30
                       : 20,
                 },
                 gs.pb10,
@@ -311,7 +311,7 @@ export default function FilterTiffins({navigation, route}) {
                 <TouchableOpacity
                   activeOpacity={0.7}
                   onPress={() => {
-                    dispatch(clearFilter());
+                    dispatch(clearFilter({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
                   }}>
                   <Text
                     style={[
@@ -1016,7 +1016,7 @@ const styles = ScaledSheet.create({
     height: '400@ms',
   },
   topcontainer: {
-    marginTop: Platform.OS == 'ios' ? '-290@ms' : '-310@ms',
+    marginTop: Platform.OS == 'ios' ? '-290@ms' : '-280@ms',
     paddingHorizontal: '10@ms',
   },
   tabbarcontainer: {

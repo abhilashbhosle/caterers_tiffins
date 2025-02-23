@@ -25,10 +25,8 @@ export const createReview = createAsyncThunk(
 	}
     try {
       const res = await createReviewService({body,dispatch});
-      console.log('res.data',res.data)
       return res.data;
     } catch (error) {
-      console.log("eerros")
       return rejectWithValue(error.message);
     }
   },

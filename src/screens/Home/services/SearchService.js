@@ -45,6 +45,7 @@ export const getSearchVendorsService = async ({params}) => {
 
 //=======GET CATERERS SEARCH SERVICES=======//
 export const getCatererSearchService = async ({params}) => {
+  // console.log("params",params)
   try {
     let token = await AsyncStorage.getItem('token');
     let res = await axios.get(`${endpoints.baseUrl}search-vendors`, {

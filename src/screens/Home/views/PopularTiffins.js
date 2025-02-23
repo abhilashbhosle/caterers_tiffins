@@ -184,7 +184,12 @@ function PopularTiffins() {
                 alt={item.name}
               />
             ) : (
-              <View style={[styles.img, styles.imageStyle]}></View>
+                <View style={[styles.img, {...styles.imageStyle,justifyContent:'center',alignItems:'center'}]}>
+                              <EntypoIcon
+                                name="image-inverted"
+                                style={[{color: ts.secondarytext}, gs.fs30]}
+                              />
+                            </View>
             )}
 
             <Flex direction="row" style={styles.profileContainer}>
@@ -281,7 +286,7 @@ function PopularTiffins() {
                 gs.fs18,
                 gs.mb5,
               ]}>
-              Popular Tiffin
+              Popular Tiffins
             </Text>
             <Text
               style={[
@@ -315,7 +320,7 @@ function PopularTiffins() {
                 gs.fs18,
                 gs.mb3,
               ]}>
-              Popular Tiffin
+              Popular Tiffins
             </Text>
             <Text
               style={[

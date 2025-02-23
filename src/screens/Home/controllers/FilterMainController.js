@@ -74,10 +74,10 @@ export const getSort = createAsyncThunk('getSort', async (_, {dispatch}) => {
 // =======CLEAR FILTERS======//
 export const clearFilter = createAsyncThunk(
   'clearFilter',
-  async (_, {dispatch}) => {
+  async ({type}, {dispatch}) => {
 
     try {
-      const res = await clearFilterService({dispatch});
+      const res = await clearFilterService({dispatch,type});
       return res
     } catch (error) {
       return rejectWithValue(error.message);

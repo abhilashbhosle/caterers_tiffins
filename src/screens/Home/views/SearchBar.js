@@ -76,6 +76,9 @@ const maxDate = new Date(2037, 6, 3);
 function SearchBar({from, navigation, ssd, sse}) {
   const route = useRoute();
   const calendarRef = useRef();
+  let today = new Date();
+  let dateAfter7Days = new Date();
+  dateAfter7Days.setDate(today.getDate() + 7);
   const [openCalendarPicker, setOpenCalendarPicker] = useState(false);
   const theme = from == 'Caterers' ? ts.secondary : ts.primary;
   const [selectedStartDate, setSelectedStartDate] = useState(null);
@@ -164,9 +167,9 @@ function SearchBar({from, navigation, ssd, sse}) {
         order_by_filter: JSON.stringify([{id: 2, value: 'a_z'}]),
         limit: 20,
         current_page: 1,
-        latitude: userDetails?.length > 0 && userDetails[0]?.latitude,
-        longitude: userDetails?.length > 0 && userDetails[0]?.longitude,
-        vendor_type: from == 'Caterers' ? 'Caterer' : 'Vendor',
+        // latitude: userDetails?.length > 0 && userDetails[0]?.latitude,
+        // longitude: userDetails?.length > 0 && userDetails[0]?.longitude,
+        vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
         app_type: 'app',
       };
       if (text?.length > 0 && text != userDetails[0]?.formatted_address) {
@@ -181,6 +184,7 @@ function SearchBar({from, navigation, ssd, sse}) {
   );
 
   const handleSelectedSearch = async e => {
+    
     let tempData = e.formatted_address.split(',');
     setSelectedLocation({
       ...selectedLocation,
@@ -316,14 +320,11 @@ function SearchBar({from, navigation, ssd, sse}) {
                     pincode: selectedLocation.pincode,
                     place_id: selectedLocation.place_id,
                     from,
-                    selectedStartDate,
-                    selectedEndDate,
+                    selectedStartDate:selectedStartDate?selectedStartDate:today,
+                    selectedEndDate:selectedEndDate?selectedEndDate:dateAfter7Days,
                     foodTypeData,
                     subData,
-                    searchTerm:
-                      search != userDetails[0]?.formatted_address
-                        ? searchTerm
-                        : '',
+                    searchTerm:search,
                     selected_vendor:
                       search != userDetails[0]?.formatted_address
                         ? vendorId
@@ -333,8 +334,8 @@ function SearchBar({from, navigation, ssd, sse}) {
                     navigation,
                     from,
                     search,
-                    selectedStartDate,
-                    selectedEndDate,
+                    selectedStartDate:selectedStartDate?selectedStartDate:today,
+                    selectedEndDate:selectedEndDate?selectedEndDate:dateAfter7Days,
                     userDetails,
                     selectedLocation,
                     setSelectedLocation,
@@ -342,10 +343,7 @@ function SearchBar({from, navigation, ssd, sse}) {
                     dispatch,
                     foodTypeData,
                     subData,
-                    searchTerm:
-                      search != userDetails[0]?.formatted_address
-                        ? searchTerm
-                        : '',
+                    searchTerm:search,
                     selected_vendor:
                       search != userDetails[0]?.formatted_address
                         ? vendorId

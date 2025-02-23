@@ -59,6 +59,7 @@ import {getSubscription} from '../../Home/controllers/FilterMainController';
 import {ProfileSkeleton} from '../../../components/skeletons/ProfileSkeleton';
 import CuisinesExpanded from '../../../components/CuisinesExpanded';
 import moment from 'moment';
+import { showMessage } from 'react-native-flash-message';
 
 export default function CatererProfile({navigation, route}) {
   const {branch_id, vendor_id, location} = route.params;
@@ -102,13 +103,13 @@ export default function CatererProfile({navigation, route}) {
           <View>
             <View style={{position: 'relative'}}>
               <View>
-                {profile?.bennerMenuMixGalleryImages ? (
-                  <ProfileBanners
-                    catererBanners={profile?.bennerMenuMixGalleryImages}
-                  />
-                ) : (
+                {/* {profile?.bennerMenuMixGalleryImages ? ( */}
+                <ProfileBanners
+                  catererBanners={profile?.bennerMenuMixGalleryImages}
+                />
+                {/* ) : (
                   <View style={styles.dummyImage}></View>
-                )}
+                )} */}
               </View>
               <View style={styles.topicons}>
                 <SafeAreaView>
@@ -150,21 +151,21 @@ export default function CatererProfile({navigation, route}) {
 
             <Card style={styles.details}>
               <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                {profile?.subscription_type_name == 'popular' ? (
+                {profile?.subscription_type_name == 'popular'|| profile?.subscription_type_name == 'Popular' ? (
                   <Image
                     source={require('../../../assets/Common/popularlabel.png')}
                     style={styles.label}
                   />
-                ) : profile?.subscription_type_name == 'branded' ? (
+                ) : profile?.subscription_type_name == 'branded'|| profile?.subscription_type_name == 'Branded' ? (
                   <Image
-                    source={require('../../../assets/Common/popularlabel.png')}
+                    source={require('../../../assets/Common/brandedlabel.png')}
                     style={styles.label}
                   />
                 ) : null}
               </View>
               <View style={[gs.p15]}>
                 <Flex direction="row" align="center">
-                  {profile?.bennerMenuMixGalleryImages?.length && (
+                  {profile?.bennerMenuMixGalleryImages?.length ? (
                     <Image
                       source={{
                         uri: profile?.bennerMenuMixGalleryImages[0]
@@ -172,7 +173,7 @@ export default function CatererProfile({navigation, route}) {
                       }}
                       style={styles.profile}
                     />
-                  )}
+                  ) : null}
                   <View style={[gs.ml15]}>
                     <Text style={{...styles.heading, width: width / 1.5}}>
                       {profile?.vendor_service_name}
@@ -255,6 +256,7 @@ export default function CatererProfile({navigation, route}) {
                   </View>
                 </Flex>
                 {/* cuisines */}
+
                 <View
                   style={[
                     {backgroundColor: '#fdf3f2'},
@@ -264,14 +266,60 @@ export default function CatererProfile({navigation, route}) {
                     gs.br4,
                   ]}>
                   <Text style={[styles.startPrice, gs.fs16]}>Cuisines</Text>
-                 {
-                  profile?.cuisines?.length?
-                  <Flex
-                  direction="row"
-                  align="center"
-                  flexWrap="wrap"
-                  style={[gs.mt5]}>
-                  {profile?.cuisines?.slice(0, 6)?.map((e, i) => (
+                  {profile?.cuisines?.filter(e => e.selected == 1)?.length ? (
+                    <Flex
+                      direction="row"
+                      align="center"
+                      flexWrap="wrap"
+                      style={[gs.mt5]}>
+                      {profile?.cuisines
+                        ?.filter(e => e.selected == 1)
+                        ?.slice(0, 6)
+                        ?.map((e, i) => (
+                          <Text
+                            style={[
+                              gs.fs13,
+                              {
+                                fontFamily: ts.jakartaregular,
+                                color: ts.primarytext,
+                              },
+                            ]}
+                            key={i}
+                            numberOfLines={2}>
+                            {e.cuisine_name}
+                            {i !==
+                              profile?.cuisines?.filter(e => e.selected == 1)
+                                ?.length -
+                                1 && ','}{' '}
+                          </Text>
+                        ))}
+                      {profile?.cuisines?.filter(e => e.selected == 1)?.length >
+                        6 && (
+                        <TouchableOpacity
+                          activeOpacity={0.7}
+                          onPress={() => {
+                            setStretch(prev => !prev);
+                          }}>
+                          <Text
+                            style={[
+                              gs.fs12,
+                              {
+                                fontFamily: ts.jakartamedium,
+                                color: ts.secondary,
+                              },
+                            ]}>
+                            {stretch ? 'less' : 'more'}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                      <CuisinesExpanded
+                        cuisines={profile?.cuisines}
+                        stretch={stretch}
+                        setStretch={setStretch}
+                        from={'Caterers'}
+                      />
+                    </Flex>
+                  ) : (
                     <Text
                       style={[
                         gs.fs13,
@@ -279,123 +327,91 @@ export default function CatererProfile({navigation, route}) {
                           fontFamily: ts.jakartaregular,
                           color: ts.primarytext,
                         },
-                      ]}
-                      key={i}
-                      numberOfLines={2}>
-                      {e.cuisine_name}
-                      {i !== profile?.cuisines?.length - 1 && ','}{' '}
+                      ]}>
+                      {' '}
+                      N/A
                     </Text>
-                  ))}
-                  {profile?.cuisines?.length > 6 && (
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() => {
-                        setStretch(prev => !prev);
-                      }}>
-                      <Text
-                        style={[
-                          gs.fs12,
-                          {
-                            fontFamily: ts.jakartamedium,
-                            color: ts.secondary,
-                          },
-                        ]}>
-                        {stretch ? 'less' : 'more'}
-                      </Text>
-                    </TouchableOpacity>
                   )}
-                  <CuisinesExpanded
-                    cuisines={profile?.cuisines}
-                    stretch={stretch}
-                    setStretch={setStretch}
-                    from={'Caterers'}
-                  />
-                </Flex>
-                :
-                <Text  style={[
-                  gs.fs13,
-                  {
-                    fontFamily: ts.jakartaregular,
-                    color: ts.primarytext,
-                  },
-                ]}> N/A</Text>
-                 }
-                
                 </View>
-                <Flex
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between">
-                  <Flex direction="row" align="center" style={[gs.mt7, gs.mb5]}>
-                    {profile?.servingTypes?.map((e, i) => (
-                      <View
-                        key={i}
-                        style={[
-                          {
-                            backgroundColor:
-                              e?.serving_type_name == 'Buffet Service'
-                                ? 'rgba(62, 187, 233, 0.3)'
-                                : 'rgba(232, 116, 8, 0.3)',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                          },
-                          gs.br5,
-                          gs.mr10,
-                          gs.ph5,
-                          gs.pv5,
-                          gs.mt10,
-                        ]}>
-                        <Flex direction="row" align="center">
-                          <Image
-                            source={
-                              e?.serving_type_name == 'Buffet Service'
-                                ? require('../../../assets/Search/buffet.png')
-                                : require('../../../assets/Search/table.png')
-                            }
-                            style={styles.servicesIcon}
-                          />
-                          <Text
-                            style={[
-                              {
-                                color:
-                                  e?.serving_type_name == 'Buffet Service'
-                                    ? '#00658a'
-                                    : '#c76407',
-                                fontFamily: ts.jakartamedium,
-                              },
-                              gs.fs13,
-                              gs.ml5,
-                            ]}>
-                            {e?.serving_type_name == 'Buffet Service'
-                              ? 'Buffet'
-                              : 'Table'}
-                          </Text>
-                        </Flex>
-                      </View>
-                    ))}
-                  </Flex>
-                  <Flex direction="row" align="center" style={[gs.mt5]}>
-                    <Flex direction="row" align="center" style={[gs.pv15]}>
-                      {profile?.foodTypes?.length
-                        ? profile.foodTypes.map((e, i) => (
-                            <Flex direction="row" alignItems="center" key={i}>
-                              {e?.food_type_name == 'Veg' ? (
-                                <Image
-                                  source={require('../../../assets/Common/veg.png')}
-                                  style={[styles.foodTypeimg, gs.mr5]}
-                                />
-                              ) : e?.food_type_name == 'Non Veg' ? (
-                                <Image
-                                  source={require('../../../assets/Common/nonveg.png')}
-                                  style={styles.foodTypeimg}
-                                />
-                              ) : null}
-                            </Flex>
-                          ))
-                        : null}
+                {profile?.servingTypes?.length ? (
+                  <Flex
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between">
+                    <Flex
+                      direction="row"
+                      align="center"
+                      style={[gs.mt7, gs.mb5]}>
+                      {profile?.servingTypes?.map((e, i) => (
+                        <View
+                          key={i}
+                          style={[
+                            {
+                              backgroundColor:
+                                e?.serving_type_name == 'Buffet Service'
+                                  ? 'rgba(62, 187, 233, 0.3)'
+                                  : 'rgba(232, 116, 8, 0.3)',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            },
+                            gs.br5,
+                            gs.mr10,
+                            gs.ph5,
+                            gs.pv5,
+                            gs.mt10,
+                          ]}>
+                          <Flex direction="row" align="center">
+                            <Image
+                              source={
+                                e?.serving_type_name == 'Buffet Service'
+                                  ? require('../../../assets/Search/buffet.png')
+                                  : require('../../../assets/Search/table.png')
+                              }
+                              style={styles.servicesIcon}
+                            />
+                            <Text
+                              style={[
+                                {
+                                  color:
+                                    e?.serving_type_name == 'Buffet Service'
+                                      ? '#00658a'
+                                      : '#c76407',
+                                  fontFamily: ts.jakartamedium,
+                                },
+                                gs.fs13,
+                                gs.ml5,
+                              ]}>
+                              {e?.serving_type_name == 'Buffet Service'
+                                ? 'Buffet'
+                                : 'Table'}
+                            </Text>
+                          </Flex>
+                        </View>
+                      ))}
+                    </Flex>
+                    <Flex direction="row" align="center" style={[gs.mt5]}>
+                      <Flex direction="row" align="center" style={[gs.pv15]}>
+                        {profile?.foodTypes?.length
+                          ? profile.foodTypes.map((e, i) => (
+                              <Flex direction="row" alignItems="center" key={i}>
+                                {e?.food_type_name == 'Veg' ? (
+                                  <Image
+                                    source={require('../../../assets/Common/veg.png')}
+                                    style={[styles.foodTypeimg, gs.mr5]}
+                                  />
+                                ) : e?.food_type_name == 'Non Veg' ? (
+                                  <Image
+                                    source={require('../../../assets/Common/nonveg.png')}
+                                    style={styles.foodTypeimg}
+                                  />
+                                ) : null}
+                              </Flex>
+                            ))
+                          : null}
+                      </Flex>
                     </Flex>
                   </Flex>
-                </Flex>
+                ) : null}
               </View>
             </Card>
           </View>
@@ -802,8 +818,7 @@ export default function CatererProfile({navigation, route}) {
               <Center style={[gs.mh10]}>
                 <TouchableOpacity
                   onPress={() => {
-                    review &&
-                      rating &&
+                    if ((review && rating>0) || rating > 0) {
                       dispatch(
                         createReview({
                           vendor_id,
@@ -811,13 +826,22 @@ export default function CatererProfile({navigation, route}) {
                           rating: rating,
                         }),
                       );
-                    setReview(null);
+                      setReview(null);
+                      setRating(0)
+                    }else{
+                        showMessage({
+                            message: 'Request Failed!',
+                            description: "Please select Rating",
+                            type: 'danger',
+                          });
+                    }
                   }}
                   activeOpacity={0.7}
                   style={[
                     {
                       ...styles.btn,
-                      backgroundColor: !review ? '#eee' : '#fbe3e1',
+                      backgroundColor:
+                        !review && rating == 0 ? '#eee' : '#fbe3e1',
                     },
                   ]}>
                   <Text
@@ -825,7 +849,7 @@ export default function CatererProfile({navigation, route}) {
                       styles.subtxt,
                       gs.fs17,
                       {
-                        color: !review ? '#777' : ts.secondary,
+                        color: !review && rating == 0 ? '#777' : ts.secondary,
                         fontFamily: ts.jakartabold,
                       },
                     ]}>
@@ -878,7 +902,7 @@ export default function CatererProfile({navigation, route}) {
                   : Alert.alert('No Phone Number Found.');
               }}>
               <ThemeSepBtn
-                btntxt="Book Now"
+                btntxt="Call Now"
                 themecolor={ts.secondary}
                 rounded={true}
               />
@@ -1016,8 +1040,9 @@ const styles = ScaledSheet.create({
     marginVertical: '10@ms',
   },
   label: {
-    height: '30@ms',
-    maxWidth: '150@ms',
+    height: '25@ms',
+    maxWidth: '83@ms',
+    top: -1,
   },
   leveler: {
     marginTop: '-10@ms',

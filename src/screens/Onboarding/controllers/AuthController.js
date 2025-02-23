@@ -13,6 +13,8 @@ import {startLoader} from '../../../redux/CommonSlicer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GetLocation from 'react-native-get-location';
 import { act } from 'react-test-renderer';
+import axios from 'axios';
+import {GOOGLE_KEY} from '@env';
 
 
 // ======GET OTP=======//
@@ -26,7 +28,9 @@ export const getOtp = createAsyncThunk(
     } catch (error) {
       return error;
     } finally {
-      dispatch(startLoader(false));
+      setTimeout(()=>{
+        dispatch(startLoader(false));
+        },1000)
     }
   },
 );
@@ -41,7 +45,9 @@ export const getLoginOtp = createAsyncThunk(
     } catch (error) {
       return error;
     } finally {
+      setTimeout(()=>{
       dispatch(startLoader(false));
+      },1000)
     }
   },
 );
@@ -124,6 +130,29 @@ export const verifyLoginOtp = createAsyncThunk(
     }
   },
 );
+const getPlaceIdFromCoordinates = async (latitude, longitude) => {
+  try {
+    const { data } = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+      params: {
+        latlng: `${latitude},${longitude}`,
+        key: GOOGLE_KEY,
+      },
+    });
+
+    console.log('Geocoding API response:', data);
+
+    if (data.status !== 'OK') throw new Error(`Google Geocoding API Error: ${data.status}`);
+
+    const place_id = data.results[0]?.place_id;
+
+    if (!place_id) throw new Error('Place ID not found for given coordinates.');
+
+    return place_id;
+  } catch (error) {
+    console.error('Error in getPlaceIdFromCoordinates:', error.message);
+    return null;
+  }
+};
 // ======GET LOCATION======//
 export const getLocation = createAsyncThunk(
 	'getLocation',
@@ -135,13 +164,15 @@ export const getLocation = createAsyncThunk(
 		  timeout: 60000,
 		});
 		if(res){
+   const place_id=await getPlaceIdFromCoordinates(res.latitude,res.longitude)
 		  getLocationService({
 			latitude:res.latitude,
 			longitude:res.longitude,
 			// latitude:13.1319,
 			// longitude:80.2644,
 			dispatch,navigation,
-      from
+      from,
+      place_id
 		}) 
     
 		}

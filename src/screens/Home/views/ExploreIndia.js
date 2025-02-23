@@ -18,7 +18,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getCities} from '../controllers/ExploreIndiaController';
 import CitySkel from '../../../components/skeletons/CitySkel';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
-import {setLocationres} from '../controllers/SearchController';
+import {clearSearch, setLocationres} from '../controllers/SearchController';
 import {setSearchHomeJson} from '../controllers/SearchCommonController';
 import {Flex} from 'native-base';
 import MoreSecondarybtn from '../../../components/MoreSecondarybtn';
@@ -59,7 +59,8 @@ function ExploreIndia() {
         selectedEndDate: dateAfter7Days,
         foodTypeData,
         subData,
-        selected_vendor:[]
+        selected_vendor:[],
+        searchTerm:""
       });
       navigation.push('PageStack', {
         screen: 'SearchMain',

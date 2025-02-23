@@ -57,6 +57,7 @@ import {getUser} from '../../Onboarding/controllers/AuthController';
 import {getSubscription} from '../../Home/controllers/FilterMainController';
 import CuisinesExpanded from '../../../components/CuisinesExpanded';
 import moment from 'moment';
+import { showMessage } from 'react-native-flash-message';
 
 export default function TiffinProfile({navigation, route}) {
   const {branch_id, vendor_id, location} = route.params;
@@ -92,6 +93,8 @@ export default function TiffinProfile({navigation, route}) {
       dispatch(getSubscription({from: 'Tiffins'}));
     }
   }, [branch_id, vendor_id]);
+
+  console.log(profile)
 
   return (
     <ScreenWrapper>
@@ -150,21 +153,21 @@ export default function TiffinProfile({navigation, route}) {
                 <Card style={styles.details}>
                   <View
                     style={{justifyContent: 'center', alignItems: 'center'}}>
-                    {profile?.subscription_type_name == 'popular' ? (
+                    {profile?.subscription_type_name == 'popular' || profile?.subscription_type_name == 'Popular' ? (
                       <Image
                         source={require('../../../assets/Common/popularlabel.png')}
                         style={styles.label}
                       />
-                    ) : profile?.subscription_type_name == 'branded' ? (
+                    ) : profile?.subscription_type_name == 'branded' || profile?.subscription_type_name == 'Branded'  ? (
                       <Image
-                        source={require('../../../assets/Common/popularlabel.png')}
+                        source={require('../../../assets/Common/brandedlabel.png')}
                         style={styles.label}
                       />
                     ) : null}
                   </View>
                   <View style={[gs.p15]}>
                     <Flex direction="row" align="center">
-                      {profile?.bennerMenuMixGalleryImages?.length && (
+                      {profile?.bennerMenuMixGalleryImages?.length ? (
                         <Image
                           source={{
                             uri: profile?.bennerMenuMixGalleryImages[0]
@@ -172,7 +175,7 @@ export default function TiffinProfile({navigation, route}) {
                           }}
                           style={styles.profile}
                         />
-                      )}
+                      ) : null}
                       <View style={[gs.ml15, {width: '60%'}]}>
                         <Text style={{...styles.heading, width: width / 1.5}}>
                           {profile?.vendor_service_name}
@@ -460,16 +463,16 @@ export default function TiffinProfile({navigation, route}) {
                     />
                   </View>
                   <View>
-                    <Text style={[styles.subtxt, gs.fs14]}>Service Type</Text>
+                    <Text style={[styles.subtxt, gs.fs14]}>Kitchen Type</Text>
                     <Flex direction="row">
-                      {profile?.serviceTypes?.length ? (
-                        profile?.serviceTypes?.slice(0, 2)?.map((e, i) => (
+                      {profile?.kitchenTypes?.length ? (
+                        profile?.kitchenTypes?.slice(0, 2)?.map((e, i) => (
                           <Text
                             style={[styles.servicedesc, gs.fs16, gs.mt5]}
                             numberOfLines={1}
                             key={i}>
-                            {e.service_type_name}
-                            {profile?.serviceTypes?.length == 1
+                            {e.kitchen_type_name}
+                            {profile?.kitchenTypes?.length == 1
                               ? null
                               : i != 1 && ','}{' '}
                           </Text>
@@ -758,9 +761,8 @@ export default function TiffinProfile({navigation, route}) {
                 <Center style={[gs.mh10]}>
                   <TouchableOpacity
                     onPress={() => {
-                      console.log(review, rating);
-                      review &&
-                        rating &&
+                      // console.log(review, rating);
+                      if ((review && rating > 0) || rating > 0) {
                         dispatch(
                           createReview({
                             vendor_id,
@@ -768,14 +770,21 @@ export default function TiffinProfile({navigation, route}) {
                             rating: rating,
                           }),
                         );
-                      setReview(null);
-                      setRating(0);
+                        setReview(null);
+                        setRating(0);
+                      } else {
+                        showMessage({
+                          message: 'Request Failed!',
+                          description: 'Please select Rating',
+                          type: 'danger',
+                        });
+                      }
                     }}
                     activeOpacity={0.7}
                     style={[
                       {
                         ...styles.btn,
-                        backgroundColor: !review
+                        backgroundColor:!review && rating == 0
                           ? '#eee'
                           : 'rgba(217, 130, 43, 0.2)',
                       },
@@ -785,7 +794,7 @@ export default function TiffinProfile({navigation, route}) {
                         styles.subtxt,
                         gs.fs17,
                         {
-                          color: !review ? '#777' : ts.primary,
+                          color: !review && rating == 0 ? '#777' : ts.primary,
                           fontFamily: ts.jakartabold,
                         },
                       ]}>
@@ -839,7 +848,7 @@ export default function TiffinProfile({navigation, route}) {
                     : Alert.alert('No Phone Number Found.');
                 }}>
                 <ThemeSepBtn
-                  btntxt="Book Now"
+                  btntxt="Call Now"
                   themecolor={ts.primary}
                   rounded={true}
                 />
@@ -988,8 +997,9 @@ const styles = ScaledSheet.create({
     width: '31%',
   },
   label: {
-    height: '30@ms',
-    maxWidth: '150@ms',
+    height: '25@ms',
+    maxWidth: '83@ms',
+    top: -1,
   },
   leveler: {
     marginTop: '-10@ms',
