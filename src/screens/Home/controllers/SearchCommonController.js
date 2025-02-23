@@ -17,6 +17,7 @@ export const setSearchHomeJson = async ({
   occasions_filter,
   searchTerm,
   selected_vendor,
+  order_by
 }) => {
   try {
     let food_types_filter = await foodTypeData.map(e => ({
@@ -44,6 +45,7 @@ export const setSearchHomeJson = async ({
       cuisines_filter: cuisines_filter?.length ? cuisines_filter : [],
       occasions_filter: occasions_filter?.length ? occasions_filter : [],
       selected_vendor:selected_vendor,
+      order_by:order_by?order_by:""
     };
     await AsyncStorage.setItem('searchJson', JSON.stringify(params));
   } catch (error) {

@@ -90,6 +90,7 @@ export default function SearchMain({route, navigation}) {
       let searchJson = await AsyncStorage.getItem('searchJson');
       let searchData = await JSON.parse(searchJson);
       let params = searchData;
+      console.log("params passing",params)
       dispatch(
         getCaterersSearch({
           params: {

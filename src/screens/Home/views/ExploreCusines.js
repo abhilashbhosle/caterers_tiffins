@@ -35,12 +35,15 @@ function ExploreCusines() {
     shallowEqual,
   );
   const dispatch = useDispatch();
+  // console.log(data)
   useEffect(() => {
     dispatch(getCuisines());
   }, []);
   const {foodTypeData, subData} = useSelector(state => state?.filterCater);
   const locationRes = useSelector(state => state.location.locationRes);
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
+
+  // console.log(userDetails)
 
   const handleCuisinePress = async ({dispatch, navigation, index}) => {
     try {
@@ -78,18 +81,19 @@ function ExploreCusines() {
 
         if (temp?.length) {
           await setSearchHomeJson({
-            latitude: res?.location?.latitude,
-            longitude: res?.location?.longitude,
-            city: res?.location?.city,
-            place_id: res?.location?.place_id,
-            pincode: res?.location?.pincode,
-            area: res?.location?.area,
+            latitude: "",
+            longitude: "",
+            city: "",
+            place_id: "",
+            pincode: "",
+            area: "",
             from: 'Caterers',
             selectedStartDate: res?.startData,
             selectedEndDate: res?.endDate,
             foodTypeData,
             subData,
             cuisines_filter: JSON.stringify(temp),
+            order_by:"distance"
           });
         }
         await dispatch(setLocationres(res?.location));
@@ -102,7 +106,8 @@ function ExploreCusines() {
             move: 'forward',
           },
         });
-      } else {
+      } 
+      else {
         showMessage({
           message: "Couldn't load the results.",
           description: 'Make sure you have location selectes.',
