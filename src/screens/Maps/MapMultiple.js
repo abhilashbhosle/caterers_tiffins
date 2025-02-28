@@ -36,7 +36,7 @@ export default function MapMultiple({route, navigation}) {
         getMap({
           from: from == 'Caterer' ? 'Caterer' : 'Tiffin',
           ssd: today,
-          sse: dateAfter7Days,
+          sse: today,
           location: initialRegion,
           page: 1,
           limit: 200,

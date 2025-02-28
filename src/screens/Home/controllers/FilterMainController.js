@@ -12,6 +12,7 @@ import {
   getSubscriptionService,
 } from '../services/FilterMainService';
 import {getCatererSearchService} from '../services/SearchService';
+import { getCaterersSearch } from './SearchController';
 
 // ======GET SERVING TYPE=======//
 export const getServing = createAsyncThunk(
@@ -74,12 +75,35 @@ export const getSort = createAsyncThunk('getSort', async (_, {dispatch}) => {
 // =======CLEAR FILTERS======//
 export const clearFilter = createAsyncThunk(
   'clearFilter',
-  async ({type}, {dispatch}) => {
-
+  async ({type,navigation}, {dispatch}) => {
+    console.log("entered inside")
     try {
-      const res = await clearFilterService({dispatch,type});
-      return res
+      const res = await clearFilterService({dispatch, type});
+      if (res?.status=="success") {
+        let data = await AsyncStorage.getItem('searchJson');
+        let searchData = await JSON.parse(data);
+        let params = searchData;
+        dispatch(
+          getCaterersSearch({
+            params: {
+              ...params,
+              current_page: 1,
+              limit: 5,
+            },
+          }),
+        );
+        navigation.navigate('PageStack', {
+          screen: 'SearchMain',
+          params: {
+            from:type=="Caterer"?"Caterers":"Tiffins",
+            ssd:params.ssd,
+            sse:params.sse,
+          },
+        });
+      }
+      return res;
     } catch (error) {
+      console.log("error",error)
       return rejectWithValue(error.message);
     }
   },
@@ -146,10 +170,10 @@ const filterSlice = createSlice({
     subLoading: false,
     subData: [],
     subError: null,
-    ratingLoading:false,
-    ratingData:[],
-    ratingError:null,
-    updatedSubData:[]
+    ratingLoading: false,
+    ratingData: [],
+    ratingError: null,
+    updatedSubData: [],
   },
   reducers: {
     updateBudget: (state, action) => {
@@ -167,12 +191,12 @@ const filterSlice = createSlice({
     updateSort: (state, action) => {
       state.sortData = action.payload;
     },
-    updateSubscriptions:(state,action)=>{
-      state.subData=action.payload
+    updateSubscriptions: (state, action) => {
+      state.subData = action.payload;
     },
-    updateRating:(state,action)=>{
-      state.ratingData=action.payload
-    }
+    updateRating: (state, action) => {
+      state.ratingData = action.payload;
+    },
   },
   extraReducers: builder => {
     builder
@@ -281,6 +305,6 @@ export const {
   updateservice,
   updateSort,
   updateSubscriptions,
-  updateRating
+  updateRating,
 } = filterSlice.actions;
 export default filterSlice.reducer;

@@ -90,7 +90,7 @@ export const checkLocation = async ({
     return (data = {
       location: location,
       startData: today,
-      endDate: dateAfter7Days,
+      endDate: today,
     });
   }
 };

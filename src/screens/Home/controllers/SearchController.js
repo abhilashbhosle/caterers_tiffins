@@ -258,7 +258,6 @@ export const handleSearchSegregation = async ({
 export const getCaterersSearch = createAsyncThunk(
   'getCaterersSearch',
   async ({params}, {dispatch}) => {
-    
     try {
       const res = await getCatererSearchService({params});
       return res.data;
@@ -345,6 +344,7 @@ const searchSlice = createSlice({
       state.searchData = [];
       state.locationData = [];
       state.vendorData = [];
+      state.searchRes=null
     },
     clearCaterers: (state, action) => {
       state.caterersData = [];

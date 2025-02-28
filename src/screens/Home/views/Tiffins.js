@@ -1,5 +1,5 @@
 import {View, Text, Platform} from 'react-native';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import HeaderView from './HeaderView';
 import RecentSearches from './RecentSearches';
 import Branded from './Branded';
@@ -14,6 +14,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import ExploreByKitchen from './ExploreByKitchen';
 import {gs} from '../../../../GlobalStyles';
+import { useDispatch } from 'react-redux';
+import { clearSearch } from '../controllers/SearchController';
 
 export default function Tiffins({navigation}) {
   useFocusEffect(

@@ -74,7 +74,7 @@ function PopularTiffinsSlice({data, location, vendorType,setShowPopular}) {
           filterData: subscription_types_filter,
           from: 'Tiffin',
           ssd: today,
-          sse: dateAfter7Days,
+          sse: today,
           location,
         }),
       );
@@ -104,7 +104,7 @@ function PopularTiffinsSlice({data, location, vendorType,setShowPopular}) {
             filteredData: subscription_types_filter,
             from: 'Tiffins',
             ssd: today,
-            sse: dateAfter7Days,
+            sse: today,
             location: location,
             segre,
           }),
@@ -115,7 +115,7 @@ function PopularTiffinsSlice({data, location, vendorType,setShowPopular}) {
           params: {
             from: 'Tiffins',
             ssd: today,
-            sse: dateAfter7Days,
+            sse: today,
             move:"forward"
           },
         });

@@ -77,7 +77,7 @@ function PopularCatSlice({data, location, vendorType,setShowPopular}) {
           filterData: subscription_types_filter,
           from: 'Caterer',
           ssd: today,
-          sse: dateAfter7Days,
+          sse: today,
           location,
         }),
       );
@@ -116,7 +116,7 @@ function PopularCatSlice({data, location, vendorType,setShowPopular}) {
             filteredData: subscription_types_filter,
             from: 'Caterers',
             ssd: today,
-            sse: dateAfter7Days,
+            sse: today,
             location: location,
             segre,
           }),
@@ -127,7 +127,7 @@ function PopularCatSlice({data, location, vendorType,setShowPopular}) {
           params: {
             from: 'Caterers',
             ssd: today,
-            sse: dateAfter7Days,
+            sse: today,
             move:"forward"
           },
         });

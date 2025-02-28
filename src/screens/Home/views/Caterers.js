@@ -22,6 +22,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import {StatusBar} from 'native-base';
 import {gs} from '../../../../GlobalStyles';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearSearch } from '../controllers/SearchController';
 
 const MemoizedHeaderView = React.memo(HeaderView);
 const MemoizedExploreCusines = React.memo(ExploreCusines);

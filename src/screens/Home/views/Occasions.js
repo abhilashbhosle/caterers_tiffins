@@ -21,6 +21,7 @@ import {
 import OccassionSkel from '../../../components/skeletons/OccassionSkel';
 import {useNavigation} from '@react-navigation/native';
 import {
+  clearSearch,
   getCaterersSearch,
   setLocationres,
 } from '../controllers/SearchController';
@@ -43,15 +44,16 @@ function Occasions() {
   }, []);
 
   const handleOccassionPress = async ({index}) => {
+    dispatch(clearSearch())
     try {
       dispatch(startLoader(true));
-      let res = await checkLocation({
-        formattedLocation: locationRes,
-        userLocation: userDetails,
-        dispatch,
-        navigation,
-      });
-      if (res?.location?.city) {
+      // let res = await checkLocation({
+      //   formattedLocation: locationRes,
+      //   userLocation: userDetails,
+      //   dispatch,
+      //   navigation,
+      // });
+  
         let updated = data?.map((e, i) =>
           index == i ? {...e, selected: e.selected == 1 ? 0 : 1} : e,
         );
@@ -59,18 +61,18 @@ function Occasions() {
           id: parseInt(e.occasion_id),
           selected: e.selected,
         }));
-        dispatch(setLocationres(res?.location));
+        // dispatch(setLocationres(res?.location));
         if (updated?.length) {
           await setSearchHomeJson({
-            latitude: res?.location?.latitude,
-            longitude: res?.location?.longitude,
-            city: res?.location?.city,
-            place_id: res?.location?.place_id,
-            pincode: res?.location?.pincode,
-            area: res?.location?.area,
+            latitude: userDetails[0]?.latitude,
+            longitude: userDetails[0]?.longitude,
+            city: userDetails[0]?.city,
+            place_id: userDetails[0]?.place_id,
+            pincode: userDetails[0]?.pincode,
+            area: userDetails[0]?.area,
             from: 'Caterers',
-            selectedStartDate: res?.startData,
-            selectedEndDate: res?.endDate,
+            selectedStartDate: new Date(),
+            selectedEndDate: new Date(),
             foodTypeData,
             subData,
             occasions_filter: JSON.stringify(occasions_filter),
@@ -80,8 +82,8 @@ function Occasions() {
             screen: 'SearchMain',
             params: {
               from: 'Caterers',
-              ssd: res.startData,
-              sse: res.endDate,
+              ssd: new Date(),
+              sse: new Date(),
             },
           });
         }
@@ -98,9 +100,9 @@ function Occasions() {
         //     updated_response:updated,
         //   }),
         // );
-      }
     } catch (err) {
       console.log('error in handleOccassion', err);
+     
     } finally {
       setTimeout(() => {
         dispatch(startLoader(false));

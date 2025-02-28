@@ -59,7 +59,8 @@ import {getSubscription} from '../../Home/controllers/FilterMainController';
 import {ProfileSkeleton} from '../../../components/skeletons/ProfileSkeleton';
 import CuisinesExpanded from '../../../components/CuisinesExpanded';
 import moment from 'moment';
-import { showMessage } from 'react-native-flash-message';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
+import {showMessage} from 'react-native-flash-message';
 
 export default function CatererProfile({navigation, route}) {
   const {branch_id, vendor_id, location} = route.params;
@@ -151,12 +152,14 @@ export default function CatererProfile({navigation, route}) {
 
             <Card style={styles.details}>
               <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                {profile?.subscription_type_name == 'popular'|| profile?.subscription_type_name == 'Popular' ? (
+                {profile?.subscription_type_name == 'popular' ||
+                profile?.subscription_type_name == 'Popular' ? (
                   <Image
                     source={require('../../../assets/Common/popularlabel.png')}
                     style={styles.label}
                   />
-                ) : profile?.subscription_type_name == 'branded'|| profile?.subscription_type_name == 'Branded' ? (
+                ) : profile?.subscription_type_name == 'branded' ||
+                  profile?.subscription_type_name == 'Branded' ? (
                   <Image
                     source={require('../../../assets/Common/brandedlabel.png')}
                     style={styles.label}
@@ -173,7 +176,14 @@ export default function CatererProfile({navigation, route}) {
                       }}
                       style={styles.profile}
                     />
-                  ) : null}
+                  ) : (
+                    <View style={{...styles.profile,justifyContent:'center',alignItems:'center'}}>
+                      <EntypoIcon
+                        name="image-inverted"
+                        style={[{color: ts.secondarytext}, gs.fs20]}
+                      />
+                    </View>
+                  )}
                   <View style={[gs.ml15]}>
                     <Text style={{...styles.heading, width: width / 1.5}}>
                       {profile?.vendor_service_name}
@@ -818,7 +828,7 @@ export default function CatererProfile({navigation, route}) {
               <Center style={[gs.mh10]}>
                 <TouchableOpacity
                   onPress={() => {
-                    if ((review && rating>0) || rating > 0) {
+                    if ((review && rating > 0) || rating > 0) {
                       dispatch(
                         createReview({
                           vendor_id,
@@ -827,13 +837,13 @@ export default function CatererProfile({navigation, route}) {
                         }),
                       );
                       setReview(null);
-                      setRating(0)
-                    }else{
-                        showMessage({
-                            message: 'Request Failed!',
-                            description: "Please select Rating",
-                            type: 'danger',
-                          });
+                      setRating(0);
+                    } else {
+                      showMessage({
+                        message: 'Request Failed!',
+                        description: 'Please select Rating',
+                        type: 'danger',
+                      });
                     }
                   }}
                   activeOpacity={0.7}

@@ -17,14 +17,17 @@ export const setSearchHomeJson = async ({
   occasions_filter,
   searchTerm,
   selected_vendor,
-  order_by
+  order_by,
+  price_ranges,
+  kitchen_types_filter,
+  meal_times_filter
 }) => {
   try {
-    let food_types_filter = await foodTypeData.map(e => ({
+    let food_types_filter = await foodTypeData?.map(e => ({
       id: parseInt(e.id),
       selected: e.selected,
     }));
-    const subscription_types_filter = await subData.map(e => ({
+    const subscription_types_filter = await subData?.map(e => ({
       subscription_type_id: parseInt(e.id),
       selected: e.selected,
     }));
@@ -45,7 +48,10 @@ export const setSearchHomeJson = async ({
       cuisines_filter: cuisines_filter?.length ? cuisines_filter : [],
       occasions_filter: occasions_filter?.length ? occasions_filter : [],
       selected_vendor:selected_vendor,
-      order_by:order_by?order_by:""
+      order_by:order_by?order_by:"",
+      price_ranges:price_ranges?.length?price_ranges:[],
+      kitchen_types_filter:kitchen_types_filter?.length?kitchen_types_filter:[],
+      meal_times_filter:meal_times_filter?.length?meal_times_filter:[],
     };
     await AsyncStorage.setItem('searchJson', JSON.stringify(params));
   } catch (error) {

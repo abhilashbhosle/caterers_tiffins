@@ -15,6 +15,7 @@ import CuisineSkel from '../../../components/skeletons/CuisineSkel';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {checkLocation, updateSearch} from '../controllers/HomeController';
 import {
+  clearSearch,
   getCaterersSearch,
   setLocationres,
 } from '../controllers/SearchController';
@@ -129,6 +130,7 @@ function ExploreCusines() {
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => {
+            dispatch(clearSearch())
             handleCuisinePress({
               dispatch,
               navigation,

@@ -30,6 +30,7 @@ import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {BrandedSkeleton} from '../../../components/skeletons/BrandedSkeletons';
 import {
   clearCaterers,
+  clearSearch,
   getCaterersSearch,
   setLocationres,
 } from '../controllers/SearchController';
@@ -115,7 +116,7 @@ function PopularTiffins() {
           area: location?.area,
           from: 'Tiffins',
           selectedStartDate: today,
-          selectedEndDate: dateAfter7Days,
+          selectedEndDate: today,
           foodTypeData,
           subData: result,
         });
@@ -124,7 +125,7 @@ function PopularTiffins() {
           params: {
             from: 'Tiffins',
             ssd: today,
-            sse: dateAfter7Days,
+            sse: today,
             move: 'forward',
           },
         });
@@ -331,7 +332,10 @@ function PopularTiffins() {
             </Text>
           </View>
           {popularTData?.length ? (
-            <TouchableOpacity activeOpacity={0.7} onPress={handleBranded}>
+            <TouchableOpacity activeOpacity={0.7} onPress={()=>{
+              handleBranded()
+              dispatch(clearSearch());
+              }}>
               <MorePrimarybtn />
             </TouchableOpacity>
           ) : null}

@@ -26,6 +26,7 @@ import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {BrandedSkeleton} from '../../../components/skeletons/BrandedSkeletons';
 import {
   clearCaterers,
+  clearSearch,
   getCaterersSearch,
   setLocationres,
 } from '../controllers/SearchController';
@@ -43,6 +44,7 @@ import MoreSecondarybtn from '../../../components/MoreSecondarybtn';
 
 function Branded() {
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
+   const searchRes = useSelector(state => state.location?.searchRes);
   const {brandedLoading, brandedData, brandedError} = useSelector(
     state => state.home,
   );
@@ -76,6 +78,7 @@ function Branded() {
   );
 
   const handleBranded = async () => {
+    dispatch(clearSearch());
     try {
       dispatch(startLoader(true));
       let location = {
@@ -119,7 +122,7 @@ function Branded() {
           area: location?.area,
           from: 'Caterers',
           selectedStartDate: today,
-          selectedEndDate: dateAfter7Days,
+          selectedEndDate: today,
           foodTypeData,
           subData: result,
         });
@@ -128,7 +131,7 @@ function Branded() {
           params: {
             from: 'Caterers',
             ssd: today,
-            sse: dateAfter7Days,
+            sse: today,
             move: 'forward',
           },
         });

@@ -79,10 +79,10 @@ export default function SearchMain({route, navigation}) {
     }
   }, [foodTypeData]);
 
-  useEffect(() => {
-    if (subType?.length == 0) {
+  useMemo(() => {
+    // if (subType?.length == 0) {
       setSubType(subData);
-    }
+    // }
   }, [subData]);
 
   useEffect(() => {

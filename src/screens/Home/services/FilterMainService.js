@@ -65,7 +65,7 @@ export const getServService = async ({type}) => {
 //=======GET BUDGET SERVICES=======//
 export const getBudgetService = async ({type}) => {
   try {
-    console.log("inside services",type)
+    console.log('inside services', type);
     let token = await AsyncStorage.getItem('token');
     let res = await axios.get(
       `${endpoints.baseUrl}get-all-price-ranges?current_page=1&limit=100&vendor_type=${type}`,
@@ -79,7 +79,7 @@ export const getBudgetService = async ({type}) => {
     return res.data;
   } catch (error) {
     if (error.response && error.response.data) {
-      console.log(error)
+      console.log(error);
       throw new Error(error.response.data.message);
     } else {
       throw new Error(error.message);
@@ -131,7 +131,7 @@ export const getSortService = async () => {
   }
 };
 //=======CLEAR FILTER  SERVICES=======//
-export const clearFilterService = async ({dispatch, from,type}) => {
+export const clearFilterService = async ({dispatch, from, type}) => {
   try {
     dispatch(startLoader(true));
     let token = await AsyncStorage.getItem('token');
@@ -162,20 +162,22 @@ export const clearFilterService = async ({dispatch, from,type}) => {
       throw new Error(error.message);
     }
   } finally {
-    if (!from) {
-      dispatch(getServing());
-      dispatch(getService({type}));
-      dispatch(getSubscription({from}))
-      dispatch(getBudget({type}));
-      dispatch(getHeadCount());
-      dispatch(getSort());
-      dispatch(getKitchen());
-      dispatch(getMeal());
-      dispatch(getOccassions());
-      dispatch(getCuisines());
-      dispatch(getRatings());
-    }
-    dispatch(startLoader(false));
+    // if (!from) {
+    //   dispatch(getServing());
+    //   dispatch(getService({type}));
+    //   dispatch(getSubscription({from:type=="Caterer"?"Caterers":"Tiffins"}));
+    //   dispatch(getBudget({type}));
+    //   dispatch(getHeadCount());
+    //   dispatch(getSort());
+    //   dispatch(getKitchen());
+    //   dispatch(getMeal());
+    //   dispatch(getOccassions());
+    //   dispatch(getCuisines());
+    //   dispatch(getRatings());
+    // }
+    setTimeout(()=>{
+      dispatch(startLoader(false));
+    },1000)
   }
 };
 //=======GET FOOD TYPE  SERVICES=======//

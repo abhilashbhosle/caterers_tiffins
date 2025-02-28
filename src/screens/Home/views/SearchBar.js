@@ -113,6 +113,8 @@ function SearchBar({from, navigation, ssd, sse}) {
   useEffect(() => {
     if (searchRes) {
       setSearch(searchRes);
+    }else{
+      setSearch("");
     }
     if (locationRes) {
       setSelectedLocation(locationRes);
@@ -321,7 +323,7 @@ function SearchBar({from, navigation, ssd, sse}) {
                     place_id: selectedLocation.place_id,
                     from,
                     selectedStartDate:selectedStartDate?selectedStartDate:today,
-                    selectedEndDate:selectedEndDate?selectedEndDate:dateAfter7Days,
+                    selectedEndDate:selectedEndDate?selectedEndDate:today,
                     foodTypeData,
                     subData,
                     searchTerm:search,
@@ -335,7 +337,7 @@ function SearchBar({from, navigation, ssd, sse}) {
                     from,
                     search,
                     selectedStartDate:selectedStartDate?selectedStartDate:today,
-                    selectedEndDate:selectedEndDate?selectedEndDate:dateAfter7Days,
+                    selectedEndDate:selectedEndDate?selectedEndDate:today,
                     userDetails,
                     selectedLocation,
                     setSelectedLocation,

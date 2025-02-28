@@ -24,6 +24,7 @@ import {getPopular, updateSearch} from '../controllers/HomeController';
 import {styles} from '../styles/PopularCatererStyles';
 import {
   clearCaterers,
+  clearSearch,
   getCaterersSearch,
   setLocationres,
 } from '../controllers/SearchController';
@@ -106,7 +107,7 @@ function PopularCaterers() {
           area: location?.area,
           from: 'Caterers',
           selectedStartDate: today,
-          selectedEndDate: dateAfter7Days,
+          selectedEndDate: today,
           foodTypeData,
           subData: result,
         });
@@ -115,7 +116,7 @@ function PopularCaterers() {
           params: {
             from: 'Caterers',
             ssd: today,
-            sse: dateAfter7Days,
+            sse: today,
             move: 'forward',
           },
         });
@@ -163,7 +164,11 @@ function PopularCaterers() {
                 direction="row"
                 alignItems="center"
                 justifyContent="flex-end"
-                style={[Platform.OS == 'ios' && gs.mt15, gs.ph10,styles.iconcontaier]}>
+                style={[
+                  Platform.OS == 'ios' && gs.mt15,
+                  gs.ph10,
+                  styles.iconcontaier,
+                ]}>
                 <Image
                   source={require('../../../assets/Common/veg.png')}
                   style={[styles.icon, gs.mr5]}
@@ -185,43 +190,44 @@ function PopularCaterers() {
                     width: width - 100,
                   },
                 ]}>
-                  <View style={[gs.mt5]}>
-                <Flex
-                  direction="row"
-                  // alignItems="center"
-                  style={[gs.ph10, gs.mt20]}>
-                  <Image
-                    source={{
-                      uri: item?.gallery_images?.["vendor-brand-logo"]?.[0]?.image_name?.[0]?.original 
-                    }}
-                    style={styles.profile}
-                    alt="profile"
-                  />
-                  <View style={[gs.mt20,styles.txtcontainer]}>
-                    <Text
-                      style={[
-                        gs.fs16,
-                        gs.ml10,
-                        {color: '#fff', fontFamily: ts.jakartasemibold},
-                        gs.mt20,
-                      ]}
-                      numberOfLines={1}>
-                      {item?.catering_service_name?.length > 20
-                        ? `${item?.catering_service_name?.slice(0, 20)}..`
-                        : item?.catering_service_name}
-                    </Text>
-                    <Text
-                      style={[
-                        gs.fs14,
-                        gs.ml10,
-                        {color: '#f5f5f5', fontFamily: ts.jakartaregular},
-                        Platform.OS == 'ios' && gs.pv2,
-                      ]}>
-                      {item?.street_name ? item.street_name : item?.area},{' '}
-                      {item?.city}
-                    </Text>
-                  </View>
-                </Flex>
+                <View style={[gs.mt5]}>
+                  <Flex
+                    direction="row"
+                    // alignItems="center"
+                    style={[gs.ph10, gs.mt20]}>
+                    <Image
+                      source={{
+                        uri: item?.gallery_images?.['vendor-brand-logo']?.[0]
+                          ?.image_name?.[0]?.original,
+                      }}
+                      style={styles.profile}
+                      alt="profile"
+                    />
+                    <View style={[gs.mt20, styles.txtcontainer]}>
+                      <Text
+                        style={[
+                          gs.fs16,
+                          gs.ml10,
+                          {color: '#fff', fontFamily: ts.jakartasemibold},
+                          gs.mt20,
+                        ]}
+                        numberOfLines={1}>
+                        {item?.catering_service_name?.length > 20
+                          ? `${item?.catering_service_name?.slice(0, 20)}..`
+                          : item?.catering_service_name}
+                      </Text>
+                      <Text
+                        style={[
+                          gs.fs14,
+                          gs.ml10,
+                          {color: '#f5f5f5', fontFamily: ts.jakartaregular},
+                          Platform.OS == 'ios' && gs.pv2,
+                        ]}>
+                        {item?.street_name ? item.street_name : item?.area},{' '}
+                        {item?.city}
+                      </Text>
+                    </View>
+                  </Flex>
                 </View>
               </LinearGradient>
             </ImageBackground>
@@ -247,7 +253,9 @@ function PopularCaterers() {
                 <Text style={styles.startPrice}>
                   ₹ {item?.start_price ? item.start_price : 'N/A'}
                 </Text>
-                <Text style={[gs.fs11, styles.area, gs.pl2,gs.mt2]}>Starts from</Text>
+                <Text style={[gs.fs11, styles.area, gs.pl2, gs.mt2]}>
+                  Starts from
+                </Text>
               </Flex>
               <Flex direction="row" align="center">
                 <Image
@@ -314,7 +322,13 @@ function PopularCaterers() {
               {userDetails?.length && userDetails[0]?.city}
             </Text>
           </View>
-          <TouchableOpacity activeOpacity={0.7} onPress={handlePopular}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              dispatch(clearSearch());
+
+              handlePopular();
+            }}>
             <MoreSecondarybtn />
           </TouchableOpacity>
         </Flex>
@@ -336,7 +350,7 @@ function PopularCaterers() {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.contentContainerStyle}
-          overScrollMode='never'
+          overScrollMode="never"
         />
       ) : null}
       {/* {popularData?.length ? (

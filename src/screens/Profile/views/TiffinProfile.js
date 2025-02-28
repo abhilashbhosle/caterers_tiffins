@@ -17,28 +17,14 @@ import {ts} from '../../../../ThemeStyles';
 import {Center, Divider, Flex, Spinner} from 'native-base';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import {gs} from '../../../../GlobalStyles';
-import IonIcons from 'react-native-vector-icons/Ionicons';
-import EntypoIcons from 'react-native-vector-icons/Entypo';
+
 import {ScaledSheet} from 'react-native-size-matters';
 import ProfileBanners from './ProfileModules/ProfileBanners';
-import {ScrollView} from 'react-native-virtualized-view';
-import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Material from 'react-native-vector-icons/MaterialIcons';
-import FontistoIcons from 'react-native-vector-icons/Fontisto';
-import FontAweSomeIcon from 'react-native-vector-icons/FontAwesome6';
-import {
-  catererBanners,
-  caterersgallery,
-  reviews,
-  searchitems,
-} from '../../../constants/Constants';
+
 import GallerySlice from './ProfileModules/GallerySlice';
 import ReviewSlice from './ProfileModules/ReviewSlice';
 import {Card} from 'react-native-paper';
 import ThemeSepBtn from '../../../components/ThemeSepBtn';
-import {color} from 'native-base/lib/typescript/theme/styled-system';
-import PopularCatSlice from './ProfileModules/PopularCatSlice';
-import PopularTiffinsSlice from './ProfileModules/PopularTiffinsSlice';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useDispatch, useSelector} from 'react-redux';
@@ -57,7 +43,8 @@ import {getUser} from '../../Onboarding/controllers/AuthController';
 import {getSubscription} from '../../Home/controllers/FilterMainController';
 import CuisinesExpanded from '../../../components/CuisinesExpanded';
 import moment from 'moment';
-import { showMessage } from 'react-native-flash-message';
+import {showMessage} from 'react-native-flash-message';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
 
 export default function TiffinProfile({navigation, route}) {
   const {branch_id, vendor_id, location} = route.params;
@@ -94,8 +81,7 @@ export default function TiffinProfile({navigation, route}) {
     }
   }, [branch_id, vendor_id]);
 
-  console.log(profile)
-
+  console.log(profile);
   return (
     <ScreenWrapper>
       {profile?.vendor_service_name ? (
@@ -153,12 +139,14 @@ export default function TiffinProfile({navigation, route}) {
                 <Card style={styles.details}>
                   <View
                     style={{justifyContent: 'center', alignItems: 'center'}}>
-                    {profile?.subscription_type_name == 'popular' || profile?.subscription_type_name == 'Popular' ? (
+                    {profile?.subscription_type_name == 'popular' ||
+                    profile?.subscription_type_name == 'Popular' ? (
                       <Image
                         source={require('../../../assets/Common/popularlabel.png')}
                         style={styles.label}
                       />
-                    ) : profile?.subscription_type_name == 'branded' || profile?.subscription_type_name == 'Branded'  ? (
+                    ) : profile?.subscription_type_name == 'branded' ||
+                      profile?.subscription_type_name == 'Branded' ? (
                       <Image
                         source={require('../../../assets/Common/brandedlabel.png')}
                         style={styles.label}
@@ -175,7 +163,19 @@ export default function TiffinProfile({navigation, route}) {
                           }}
                           style={styles.profile}
                         />
-                      ) : null}
+                      ) : (
+                        <View
+                          style={{
+                            ...styles.profile,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          <EntypoIcon
+                            name="image-inverted"
+                            style={[{color: ts.secondarytext}, gs.fs20]}
+                          />
+                        </View>
+                      )}
                       <View style={[gs.ml15, {width: '60%'}]}>
                         <Text style={{...styles.heading, width: width / 1.5}}>
                           {profile?.vendor_service_name}
@@ -274,52 +274,36 @@ export default function TiffinProfile({navigation, route}) {
                         gs.ph10,
                         gs.br4,
                       ]}>
-                      <Text style={[styles.startPrice, gs.fs16]}>Cuisines</Text>
-                      {profile?.cuisines?.length ? (
+                      <Text style={[styles.startPrice, gs.fs16]}>
+                        Meal Times
+                      </Text>
+                      {profile?.mealTimes?.length ? (
                         <Flex
                           direction="row"
                           align="center"
                           flexWrap="wrap"
                           style={[gs.mt5]}>
-                          {profile?.cuisines?.slice(0, 6)?.map((e, i) => (
-                            <Text
-                              style={[
-                                gs.fs14,
-                                {
-                                  fontFamily: ts.jakartaregular,
-                                  color: ts.primarytext,
-                                },
-                              ]}
-                              key={i}
-                              numberOfLines={2}>
-                              {e.cuisine_name}
-                              {i !== profile?.cuisines?.length - 1 && ','}{' '}
-                            </Text>
-                          ))}
-                          {profile?.cuisines?.length > 6 && (
-                            <TouchableOpacity
-                              activeOpacity={0.7}
-                              onPress={() => {
-                                setStretch(prev => !prev);
-                              }}>
+                          {profile?.mealTimes
+                            ?.filter(e => e.selected == 1)
+                            ?.map((e, i) => (
                               <Text
                                 style={[
-                                  gs.fs12,
+                                  gs.fs14,
                                   {
-                                    fontFamily: ts.jakartamedium,
-                                    color: ts.primary,
+                                    fontFamily: ts.jakartaregular,
+                                    color: ts.primarytext,
                                   },
-                                ]}>
-                                {stretch ? 'less' : 'more'}
+                                ]}
+                                key={i}
+                                numberOfLines={2}>
+                                {e.meal_time_name}
+                                {i !==
+                                  profile?.mealTimes?.filter(
+                                    e => e.selected == 1,
+                                  )?.length -
+                                    1 && ','}{' '}
                               </Text>
-                            </TouchableOpacity>
-                          )}
-                          <CuisinesExpanded
-                            cuisines={profile?.cuisines}
-                            stretch={stretch}
-                            setStretch={setStretch}
-                            from={'Tiffins'}
-                          />
+                            ))}
                         </Flex>
                       ) : (
                         <Text
@@ -464,19 +448,23 @@ export default function TiffinProfile({navigation, route}) {
                   </View>
                   <View>
                     <Text style={[styles.subtxt, gs.fs14]}>Kitchen Type</Text>
-                    <Flex direction="row">
+                    <Flex direction="row" style={{width: width / 1.5}}>
                       {profile?.kitchenTypes?.length ? (
-                        profile?.kitchenTypes?.slice(0, 2)?.map((e, i) => (
-                          <Text
-                            style={[styles.servicedesc, gs.fs16, gs.mt5]}
-                            numberOfLines={1}
-                            key={i}>
-                            {e.kitchen_type_name}
-                            {profile?.kitchenTypes?.length == 1
-                              ? null
-                              : i != 1 && ','}{' '}
-                          </Text>
-                        ))
+                        profile?.kitchenTypes
+                          ?.filter(e => e.selected == 1)
+                          ?.map((e, i) => (
+                            <Text
+                              style={[{...styles.servicedesc}, gs.fs16, gs.mt5]}
+                              // numberOfLines={1}
+                              key={i}>
+                              {e.kitchen_type_name}
+                              {profile?.kitchenTypes?.filter(
+                                e => e.selected == 1,
+                              )?.length == 1
+                                ? null
+                                : i != 1 && ','}{' '}
+                            </Text>
+                          ))
                       ) : (
                         <Text style={[styles.servicedesc, gs.fs16, gs.mt5]}>
                           N/A
@@ -555,6 +543,84 @@ export default function TiffinProfile({navigation, route}) {
                   </View>
                 </View>
               </Flex>
+            </View>
+
+            {/* =====CUISINES======= */}
+            <View style={[gs.ph15, gs.mt20]}>
+              <Text
+                style={[
+                  {fontFamily: ts.jakartabold, color: '#000'},
+                  gs.fs20,
+                  gs.pb10,
+                ]}>
+                Cuisines
+              </Text>
+              {profile?.cuisines?.filter(e => e.selected == 1)?.length ? (
+                <Flex
+                  direction="row"
+                  align="center"
+                  flexWrap="wrap"
+                  style={[gs.mt5]}>
+                  {profile?.cuisines
+                    ?.filter(e => e.selected == 1)
+                    ?.slice(0, 6)
+                    ?.map((e, i) => (
+                      <Text
+                        style={[
+                          gs.fs16,
+                          {
+                            fontFamily: ts.jakartaregular,
+                            color: ts.primarytext,
+                          },
+                        ]}
+                        key={i}
+                        numberOfLines={2}>
+                        {e.cuisine_name}
+                        {i !==
+                          profile?.cuisines?.filter(e => e.selected == 1)
+                            ?.length -
+                            1 && ','}{' '}
+                      </Text>
+                    ))}
+                  {profile?.cuisines?.filter(e => e.selected == 1)?.length >
+                    6 && (
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        setStretch(prev => !prev);
+                      }}>
+                      <Text
+                        style={[
+                          gs.fs16,
+                          {
+                            fontFamily: ts.jakartamedium,
+                            color: ts.primary,
+                          },
+                        ]}>
+                        {stretch ? 'less' : 'more'}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  <CuisinesExpanded
+                    cuisines={profile?.cuisines}
+                    stretch={stretch}
+                    setStretch={setStretch}
+                    from={'Tiffins'}
+                  />
+                </Flex>
+              ) : (
+                <Text
+                  style={[
+                    gs.fs13,
+                    {
+                      fontFamily: ts.jakartaregular,
+                      color: ts.primarytext,
+                    },
+                  ]}>
+                  {' '}
+                  N/A
+                </Text>
+              )}
             </View>
 
             {/* =====ABOUT US / BRANCHES========== */}
@@ -784,9 +850,10 @@ export default function TiffinProfile({navigation, route}) {
                     style={[
                       {
                         ...styles.btn,
-                        backgroundColor:!review && rating == 0
-                          ? '#eee'
-                          : 'rgba(217, 130, 43, 0.2)',
+                        backgroundColor:
+                          !review && rating == 0
+                            ? '#eee'
+                            : 'rgba(217, 130, 43, 0.2)',
                       },
                     ]}>
                     <Text

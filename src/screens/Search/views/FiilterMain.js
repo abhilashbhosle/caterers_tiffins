@@ -27,11 +27,13 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   clearFilter,
   getBudget,
+  getFoodTypes,
   getHeadCount,
   getRatings,
   getService,
   getServing,
   getSort,
+  getSubscription,
 } from '../../Home/controllers/FilterMainController';
 import {
   handleBudget,
@@ -57,6 +59,8 @@ import {getOccassions} from '../../Home/controllers/OccassionController';
 import {getCuisines} from '../../Home/controllers/ExploreCuisineController';
 import LinearGradient from 'react-native-linear-gradient';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {Star} from '../../../components/Star';
+import {clearFilterService} from '../../Home/services/FilterMainService';
 
 export default function FiilterMain({navigation, route}) {
   const {address, ssd, sse, location, from} = route.params;
@@ -122,6 +126,8 @@ export default function FiilterMain({navigation, route}) {
     dispatch(getHeadCount());
     dispatch(getSort());
     dispatch(getRatings());
+    dispatch(getSubscription({from: 'Caterers'}));
+
   }, []);
 
   useEffect(() => {
@@ -187,6 +193,47 @@ export default function FiilterMain({navigation, route}) {
       setCuisine(cuisineData);
     }
   }, [search]);
+  const handleClearFilter = async () => {
+    const sub = await subData.map((item, i=0) =>
+      i === 0
+        ? {...item, selected: (item.selected = '1')}
+        : {...item, selected: '0'},
+    );
+    const food=  await foodTypeData.map((item, i=0) =>
+      i === 0
+        ? {...item, selected: (item.selected = '1')}
+        : {...item, selected: '0'},
+    );
+    await setSearchHomeJson({
+      latitude: '',
+      longitude: '',
+      city: '',
+      pincode: '',
+      place_id: '',
+      from,
+      selectedStartDate: ssd,
+      selectedEndDate: sse,
+      foodTypeData:food,
+      subData:sub,
+      cuisines_filter: [],
+      occasions_filter: [],
+      serving_types_filter: [],
+      ratings_filter: [],
+      service_types_filter: [],
+      head_count_ranges: [],
+      order_by_filter: [],
+      price_ranges:[]
+    });
+    await dispatch(
+      clearFilter({
+        navigation,
+        type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
+      }),
+    );
+    dispatch(updateFilterData());
+    dispatch(getSubscription({from: 'Caterers'}));
+    dispatch(getFoodTypes());
+  };
 
   const handleGoBack = () => {
     Alert.alert(
@@ -200,56 +247,7 @@ export default function FiilterMain({navigation, route}) {
         {
           text: 'OK',
           onPress: async () => {
-            await dispatch(clearFilter({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
-            await setSearchHomeJson({
-              latitude: location?.latitude,
-              longitude: location?.longitude,
-              city: location?.city,
-              pincode: location?.pincode,
-              place_id: location?.place_id,
-              from,
-              selectedStartDate: ssd,
-              selectedEndDate: sse,
-              foodTypeData,
-              subData,
-              cuisines_filter: cuisineSortData,
-              occasions_filter: occasionSortData,
-            });
-            dispatch(updateFilterData());
-            let params = {
-              latitude: location?.latitude,
-              longitude: location?.longitude,
-              city: location?.city,
-              pincode: location?.pincode,
-              place_id: location?.place_id,
-              vendor_type: from == 'Caterers' ? 'Caterer' : 'Tiffin',
-              app_type: 'app',
-              start_date: moment(ssd).format('YYYY-MM-DD'),
-              end_date: moment(sse).format('YYYY-MM-DD'),
-              food_types_filter: foodSortData,
-              subscription_types_filter: subSortData,
-              cuisines_filter: cuisineSortData,
-              occasions_filter: occasionSortData,
-              search_term: '',
-              save_filter: 1,
-            };
-            dispatch(
-              getCaterersSearch({
-                params: {
-                  ...params,
-                  current_page: 1,
-                  limit: 5,
-                },
-              }),
-            );
-            navigation.navigate('PageStack', {
-              screen: 'SearchMain',
-              params: {
-                from,
-                ssd,
-                sse,
-              },
-            });
+            await handleClearFilter();
           },
         },
       ],
@@ -264,12 +262,13 @@ export default function FiilterMain({navigation, route}) {
         bgColor={ts.secondary}
         dispatch={dispatch}
       /> */}
-      
+
       <KeyboardAwareScrollView
         enableOnAndroid={true}
         showsVerticalScrollIndicator={false}
-        style={[{flex: 1, backgroundColor: '#fff',top:-10}, 
-        // gs.ph10, gs.pv20
+        style={[
+          {flex: 1, backgroundColor: '#fff', top: -10},
+          // gs.ph10, gs.pv20
         ]}>
         <LinearGradient
           colors={['#f8b4b3', '#fbe3e1', '#fff']}
@@ -283,7 +282,7 @@ export default function FiilterMain({navigation, route}) {
                 {
                   paddingTop:
                     Platform.OS == 'android'
-                      ? StatusBar.currentHeight-20
+                      ? StatusBar.currentHeight - 20
                       : 20,
                 },
                 gs.pb10,
@@ -311,154 +310,304 @@ export default function FiilterMain({navigation, route}) {
                     Filters
                   </Text>
                 </Flex>
-                <TouchableOpacity activeOpacity={0.7} onPress={()=>{dispatch(clearFilter({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}))}}>
-                <Text style={[{color:'#000',fontFamily:ts.jakartamedium},gs.fs12]}>Clear All</Text>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={async () => {
+                    await handleClearFilter();
+                  }}>
+                  <Text
+                    style={[
+                      {color: '#000', fontFamily: ts.jakartamedium},
+                      gs.fs12,
+                    ]}>
+                    Clear All
+                  </Text>
                 </TouchableOpacity>
               </Flex>
             </View>
           </SafeAreaView>
         </LinearGradient>
-        
-        <View style={styles.topcontainer}>
-        {/* ========BUDGET SELECTION========= */}
-        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>
-            Your Budget (Per plate cost)
-          </Text>
-          <Divider style={[gs.mv15]} />
-          <View style={[gs.ph10]}>
-            {budgetLoading && (
-              <Center>
-                <Spinner color={ts.secondary} />
-              </Center>
-            )}
-            {budgetError?.message && (
-              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                No Budget found
-              </Text>
-            )}
-            {!budgetError &&
-              !budgetLoading &&
-              budget?.map((e, i) => (
-                <TouchableOpacity
-                  key={i}
-                  onPress={() => {
-                    handleBudget({
-                      index: i,
-                      setBudget,
-                      budget,
-                      ssd,
-                      sse,
-                      location,
-                      from: 'Caterers',
-                      subData: subSortData,
-                      foodTypeData: foodSortData,
-                      occassionData: occasionSortData,
-                      cuisineData: cuisineSortData,
-                      dispatch,
-                    });
-                  }}
-                  activeOpacity={0.7}>
-                  <Flex direction="row" justify="space-between" align="center" style={[gs.ph10]}>
-                    <Text
-                      style={[
-                        styles.servicetxt,
-                        gs.fs13,
-                        gs.mv10,
-                      ]}>{`Rs. ${e.start_price} - Rs. ${e?.end_price}`}</Text>
-                    <MaterialIcons
-                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
-                      style={[
-                        gs.fs20,
-                        gs.mr3,
-                        {
-                          color: e.selected == 1 ? ts.secondary : ts.alternate,
-                        },
-                      ]}
-                    />
-                  </Flex>
-                </TouchableOpacity>
-              ))}
-          </View>
-        </Card>
 
-        {/* ======CHOOSE CUISINE======= */}
-        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>Choose Cuisine</Text>
-          <Divider style={[gs.mv15]} />
-          <View style={[gs.ph15]}>
-            <View style={{position: 'relative'}}>
-              <TextInput
-                placeholder="Search here.."
-                style={[
-                  {
-                    ...styles.txtinput,
-                    borderColor: searchenabled ? ts.secondary : '#bbb',
-                  },
-                ]}
-                placeholderTextColor={
-                  searchenabled ? ts.secondary : ts.secondarytext
-                }
-                onFocus={() => {
-                  setSearchEnabled(true);
-                }}
-                onBlur={() => {
-                  setSearchEnabled(false);
-                }}
-                value={search}
-                onChangeText={text => {
-                  handleSearch(text);
-                }}
-              />
-              <View style={styles.searchcontainer}>
-                <FontistoIcon
-                  name="search"
-                  style={[
-                    gs.fs16,
-                    {color: searchenabled ? ts.secondary : ts.secondarytext},
-                  ]}
-                />
-              </View>
+        <View style={styles.topcontainer}>
+          {/* ========BUDGET SELECTION========= */}
+          <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
+            <Text style={[styles.heading, gs.fs15, gs.pl15]}>
+              Your Budget (Per plate cost)
+            </Text>
+            <Divider style={[gs.mv15]} />
+            <View style={[gs.ph10]}>
+              {budgetLoading && (
+                <Center>
+                  <Spinner color={ts.secondary} />
+                </Center>
+              )}
+              {budgetError?.message && (
+                <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                  No Budget found
+                </Text>
+              )}
+              {!budgetError &&
+                !budgetLoading &&
+                budget?.map((e, i) => (
+                  <TouchableOpacity
+                    key={i}
+                    onPress={() => {
+                      handleBudget({
+                        index: i,
+                        setBudget,
+                        budget,
+                        ssd,
+                        sse,
+                        location,
+                        from: 'Caterers',
+                        subData: subSortData,
+                        foodTypeData: foodSortData,
+                        occassionData: occasionSortData,
+                        cuisineData: cuisineSortData,
+                        dispatch,
+                      });
+                    }}
+                    activeOpacity={0.7}>
+                    <Flex
+                      direction="row"
+                      justify="space-between"
+                      align="center"
+                      style={[gs.ph10]}>
+                      <Text
+                        style={[
+                          styles.servicetxt,
+                          gs.fs13,
+                          gs.mv10,
+                        ]}>{`Rs. ${e.start_price} - Rs. ${e?.end_price}`}</Text>
+                      <MaterialIcons
+                        name={
+                          e.selected == 1 ? 'check-circle' : 'circle-outline'
+                        }
+                        style={[
+                          gs.fs20,
+                          gs.mr3,
+                          {
+                            color:
+                              e.selected == 1 ? ts.secondary : ts.alternate,
+                          },
+                        ]}
+                      />
+                    </Flex>
+                  </TouchableOpacity>
+                ))}
             </View>
-            {cuisineLoading && (
-              <Center>
-                <Spinner color={ts.secondary} />
-              </Center>
-            )}
-            {cuisineError?.message && (
-              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                No Cuisine found
-              </Text>
-            )}
-            {!cuisineError &&
-              !cuisineLoading &&
-              cuisine?.map((e, i) => (
-                <View key={i}>
-                  <Flex direction="row" justify="space-between" align="center">
-                    <Flex direction="row" alignItems="center">
+          </Card>
+
+          {/* ======CHOOSE CUISINE======= */}
+          <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
+            <Text style={[styles.heading, gs.fs15, gs.pl15]}>
+              Choose Cuisine
+            </Text>
+            <Divider style={[gs.mv15]} />
+            <View style={[gs.ph15]}>
+              <View style={{position: 'relative'}}>
+                <TextInput
+                  placeholder="Search here.."
+                  style={[
+                    {
+                      ...styles.txtinput,
+                      borderColor: searchenabled ? ts.secondary : '#bbb',
+                    },
+                  ]}
+                  placeholderTextColor={
+                    searchenabled ? ts.secondary : ts.secondarytext
+                  }
+                  onFocus={() => {
+                    setSearchEnabled(true);
+                  }}
+                  onBlur={() => {
+                    setSearchEnabled(false);
+                  }}
+                  value={search}
+                  onChangeText={text => {
+                    handleSearch(text);
+                  }}
+                />
+                <View style={styles.searchcontainer}>
+                  <FontistoIcon
+                    name="search"
+                    style={[
+                      gs.fs16,
+                      {color: searchenabled ? ts.secondary : ts.secondarytext},
+                    ]}
+                  />
+                </View>
+              </View>
+              {cuisineLoading && (
+                <Center>
+                  <Spinner color={ts.secondary} />
+                </Center>
+              )}
+              {cuisineError?.message && (
+                <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                  No Cuisine found
+                </Text>
+              )}
+              {!cuisineError &&
+                !cuisineLoading &&
+                cuisine?.map((e, i) => (
+                  <View key={i}>
+                    <Flex
+                      direction="row"
+                      justify="space-between"
+                      align="center">
+                      <Flex direction="row" alignItems="center">
+                        <TouchableOpacity
+                          onPress={() => {
+                            setExpanded(prev => (prev == i ? -1 : i));
+                          }}>
+                          <AntIcon
+                            name={
+                              expanded == i
+                                ? 'chevron-up-outline'
+                                : 'chevron-down-outline'
+                            }
+                            style={[gs.pr10, gs.pv10, gs.fs16, {color: '#777'}]}
+                          />
+                        </TouchableOpacity>
+                        <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                          {e.name}
+                        </Text>
+                      </Flex>
                       <TouchableOpacity
-                        onPress={() => {
-                          setExpanded(prev => (prev == i ? -1 : i));
-                        }}>
-                        <AntIcon
+                        onPress={() =>
+                          handleParentCuisines({
+                            index: i,
+                            cuisine,
+                            setCuisine,
+                            ssd,
+                            sse,
+                            location,
+                            from: 'Caterers',
+                            subData: subSortData,
+                            foodTypeData: foodSortData,
+                            occassionData: occasionSortData,
+                            cuisineData: cuisineSortData,
+                            dispatch,
+                          })
+                        }>
+                        <MaterialIcons
                           name={
-                            expanded == i
-                              ? 'chevron-up-outline'
-                              : 'chevron-down-outline'
+                            e.selected == 1
+                              ? 'checkbox-marked'
+                              : 'checkbox-blank-outline'
                           }
-                          style={[gs.pr10, gs.pv10, gs.fs16, {color: '#777'}]}
+                          style={[
+                            gs.fs20,
+                            gs.mr3,
+                            {
+                              color:
+                                e.selected == 1 ? ts.secondary : ts.alternate,
+                            },
+                          ]}
                         />
                       </TouchableOpacity>
-                      <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                        {e.name}
-                      </Text>
                     </Flex>
+                    {expanded == i &&
+                      e?.children?.map((child, index) => (
+                        <Flex
+                          direction="row"
+                          justify="space-between"
+                          align="center"
+                          key={index}
+                          style={[gs.ph20]}>
+                          <Flex direction="row" alignItems="center">
+                            <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                              {child.name}
+                            </Text>
+                          </Flex>
+                          <TouchableOpacity
+                            onPress={() => {
+                              handleChildrenCuisines({
+                                pi: i,
+                                i: index,
+                                cuisine,
+                                setCuisine,
+                                ssd,
+                                sse,
+                                location,
+                                from: 'Caterers',
+                                subData: subSortData,
+                                foodTypeData: foodSortData,
+                                occassionData: occasionSortData,
+                                cuisineData: cuisineSortData,
+                                dispatch,
+                              });
+                            }}>
+                            <MaterialIcons
+                              name={
+                                child.selected == 1
+                                  ? 'checkbox-marked'
+                                  : 'checkbox-blank-outline'
+                              }
+                              style={[
+                                gs.fs20,
+                                gs.mr3,
+                                {
+                                  color:
+                                    child.selected == 1
+                                      ? ts.secondary
+                                      : ts.alternate,
+                                },
+                              ]}
+                            />
+                          </TouchableOpacity>
+                        </Flex>
+                      ))}
+                    <Divider />
+                  </View>
+                ))}
+            </View>
+          </Card>
+          {/* ====CATER SERVING TYPE====== */}
+          <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
+            <Text style={[styles.heading, gs.fs15, gs.pl15]}>
+              Cater Serving Type
+            </Text>
+            <Divider style={[gs.mv15]} />
+            <Flex
+              direction="row"
+              alignItems="center"
+              justifyContent="space-around">
+              {servingLoading && (
+                <Center>
+                  <Spinner color={ts.secondary} />
+                </Center>
+              )}
+              {servingError?.message && (
+                <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                  No Serving type found
+                </Text>
+              )}
+              {!servingLoading &&
+                !servingLoading &&
+                serving.map((e, i) => (
+                  <Flex justify="center" alignItems="center" key={i}>
+                    {e?.name == 'Table Service' ? (
+                      <Image
+                        alt="tableservice"
+                        source={require('../../../assets/Search/tableservice.png')}
+                        style={styles.img}
+                      />
+                    ) : (
+                      <Image
+                        alt="buffetservice"
+                        source={require('../../../assets/Search/buffetservice.png')}
+                        style={styles.buffetimg}
+                      />
+                    )}
+
                     <TouchableOpacity
-                      onPress={() =>
-                        handleParentCuisines({
+                      onPress={() => {
+                        handleServing({
                           index: i,
-                          cuisine,
-                          setCuisine,
+                          setServing,
+                          serving,
                           ssd,
                           sse,
                           location,
@@ -468,8 +617,299 @@ export default function FiilterMain({navigation, route}) {
                           occassionData: occasionSortData,
                           cuisineData: cuisineSortData,
                           dispatch,
-                        })
-                      }>
+                        });
+                      }}>
+                      <Flex
+                        direction="row"
+                        alignItems="center"
+                        style={[gs.mt10, gs.mb5]}>
+                        <MaterialIcons
+                          name={
+                            e.selected == 0
+                              ? 'circle-outline'
+                              : 'circle-slice-8'
+                          }
+                          style={[
+                            gs.fs20,
+                            gs.mr3,
+                            {
+                              color:
+                                e.selected == 1
+                                  ? ts.secondary
+                                  : ts.secondarytext,
+                            },
+                          ]}
+                        />
+                        <Text style={[styles.servicetxt, gs.fs13, gs.ml5]}>
+                          {e?.name}
+                        </Text>
+                      </Flex>
+                    </TouchableOpacity>
+                  </Flex>
+                ))}
+            </Flex>
+          </Card>
+          {/* ========SORT BY RATINGS========= */}
+          <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
+            <Text style={[styles.heading, gs.fs15, gs.pl15]}>
+              Sort By Rating
+            </Text>
+            <Divider style={[gs.mv15]} />
+            {ratingLoading && (
+              <Center>
+                <Spinner color={ts.secondary} />
+              </Center>
+            )}
+            {ratingError?.message && (
+              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                No Sorts found
+              </Text>
+            )}
+            {!ratingLoading && !ratingError && rating?.length > 0 && (
+              <View style={[gs.ph20]}>
+                {rating.map((e, i) => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleRating({
+                        index: i,
+                        setRating,
+                        rating,
+                        ssd,
+                        sse,
+                        location,
+                        from: 'Caterers',
+                        subData: subSortData,
+                        foodTypeData: foodSortData,
+                        occassionData: occasionSortData,
+                        cuisineData: cuisineSortData,
+                        dispatch,
+                      });
+                    }}
+                    key={i}>
+                    <Flex
+                      direction="row"
+                      justify="space-between"
+                      align="center">
+                      {/* <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}> */}
+                      {Star({number: i + 1, theme: ts.secondary})}
+                      {/* </Text> */}
+                      <MaterialIcons
+                        name={
+                          e.selected == 1 ? 'check-circle' : 'circle-outline'
+                        }
+                        style={[
+                          gs.fs20,
+                          gs.mr3,
+                          {
+                            color:
+                              e.selected == 1 ? ts.secondary : ts.alternate,
+                          },
+                        ]}
+                      />
+                    </Flex>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          </Card>
+          {/* =======HEAD COUNT========= */}
+          <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
+            <Text style={[styles.heading, gs.fs15, gs.pl15]}>
+              Choose Head count
+            </Text>
+            <Divider style={[gs.mv15]} />
+            <View style={[gs.ph20]}>
+              {headLoading && (
+                <Center>
+                  <Spinner color={ts.secondary} />
+                </Center>
+              )}
+              {headError?.message && (
+                <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                  No Head count found
+                </Text>
+              )}
+              {!headError &&
+                !headLoading &&
+                headCount?.map((e, i) => (
+                  <TouchableWithoutFeedback
+                    key={i}
+                    onPress={() => {
+                      handleCount({
+                        index: i,
+                        setHeadCount,
+                        headCount,
+                        ssd,
+                        sse,
+                        location,
+                        from: 'Caterers',
+                        subData: subSortData,
+                        foodTypeData: foodSortData,
+                        occassionData: occasionSortData,
+                        cuisineData: cuisineSortData,
+                        dispatch,
+                      });
+                    }}>
+                    <Flex
+                      direction="row"
+                      justify="space-between"
+                      align="center">
+                      <Text
+                        style={[
+                          styles.servicetxt,
+                          gs.fs13,
+                          gs.mv10,
+                        ]}>{`${e.start} - ${e.end}`}</Text>
+                      <MaterialIcons
+                        name={
+                          e.selected == 1 ? 'check-circle' : 'circle-outline'
+                        }
+                        style={[
+                          gs.fs20,
+                          gs.mr3,
+                          {
+                            color:
+                              e.selected == 1 ? ts.secondary : ts.alternate,
+                          },
+                        ]}
+                      />
+                    </Flex>
+                  </TouchableWithoutFeedback>
+                ))}
+            </View>
+          </Card>
+
+          {/* ===SERVICE TYPE======= */}
+          <Card style={[gs.mh5, gs.pv10, {backgroundColor: '#fff'}]}>
+            <Text style={[styles.heading, gs.fs15, gs.pl15]}>
+              Cater Service Type
+            </Text>
+            <Divider style={[gs.mv15]} />
+            <Flex
+              direction="row"
+              alignItems="center"
+              justifyContent="space-around">
+              {serviceLoading && (
+                <Center>
+                  <Spinner color={ts.secondary} />
+                </Center>
+              )}
+              {serviceError?.message && (
+                <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                  No Service type found
+                </Text>
+              )}
+              {!serviceLoading &&
+                !serviceError &&
+                service?.map((e, i) => (
+                  <Flex justify="center" alignItems="center" key={i}>
+                    <Image
+                      alt="delivery"
+                      source={
+                        (e?.name == 'Delivery' &&
+                          require('../../../assets/Search/delivery.png')) ||
+                        (e?.name == 'Takeaway' &&
+                          require('../../../assets/Search/takeaway.png')) ||
+                        (e?.name == 'Dine In' &&
+                          require('../../../assets/Search/dinein.png'))
+                      }
+                      style={styles.img}
+                    />
+                    <TouchableOpacity
+                      onPress={() => {
+                        handleService({
+                          index: i,
+                          setService,
+                          service,
+                          ssd,
+                          sse,
+                          location,
+                          from: 'Caterers',
+                          subData: subSortData,
+                          foodTypeData: foodSortData,
+                          occassionData: occasionSortData,
+                          cuisineData: cuisineSortData,
+                          dispatch,
+                        });
+                      }}>
+                      <Flex
+                        direction="row"
+                        alignItems="center"
+                        style={[gs.mt10, gs.mb5]}>
+                        <MaterialIcons
+                          name={
+                            e.selected == 0
+                              ? 'circle-outline'
+                              : 'circle-slice-8'
+                          }
+                          style={[
+                            gs.fs20,
+                            gs.mr3,
+                            {
+                              color:
+                                e.selected == 1
+                                  ? ts.secondary
+                                  : ts.secondarytext,
+                            },
+                          ]}
+                        />
+                        <Text style={[styles.servicetxt, gs.fs13, gs.ml5]}>
+                          {e.name}
+                        </Text>
+                      </Flex>
+                    </TouchableOpacity>
+                  </Flex>
+                ))}
+            </Flex>
+          </Card>
+          {/* ======CHOOSE OCCASION======= */}
+          <Card style={[gs.pv10, gs.mv15, {backgroundColor: '#fff'}, gs.mh5]}>
+            <Text style={[styles.heading, gs.fs15, gs.pl15]}>
+              Choose Occasions
+            </Text>
+            <Divider style={[gs.mv15]} />
+            <View style={[gs.ph15]}>
+              {loading && (
+                <Center>
+                  <Spinner color={ts.secondary} />
+                </Center>
+              )}
+              {error?.message && (
+                <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                  No Occassions found
+                </Text>
+              )}
+              {!loading &&
+                !error &&
+                occasion?.map((e, i) => (
+                  <TouchableOpacity
+                    key={i}
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      handleOccassion({
+                        index: i,
+                        setOccasion,
+                        occasion,
+                        ssd,
+                        sse,
+                        location,
+                        from: 'Caterers',
+                        subData: subSortData,
+                        foodTypeData: foodSortData,
+                        occassionData: occasionSortData,
+                        cuisineData: cuisineSortData,
+                        dispatch,
+                      });
+                    }}>
+                    <Flex
+                      direction="row"
+                      justify="space-between"
+                      align="center">
+                      <Text
+                        style={[styles.servicetxt, gs.fs13, gs.mv10, gs.ph5]}>
+                        {e.occasion_name}
+                      </Text>
+
                       <MaterialIcons
                         name={
                           e.selected == 1
@@ -485,303 +925,40 @@ export default function FiilterMain({navigation, route}) {
                           },
                         ]}
                       />
-                    </TouchableOpacity>
-                  </Flex>
-                  {expanded == i &&
-                    e?.children?.map((child, index) => (
-                      <Flex
-                        direction="row"
-                        justify="space-between"
-                        align="center"
-                        key={index}
-                        style={[gs.ph20]}>
-                        <Flex direction="row" alignItems="center">
-                          <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                            {child.name}
-                          </Text>
-                        </Flex>
-                        <TouchableOpacity
-                          onPress={() => {
-                            handleChildrenCuisines({
-                              pi: i,
-                              i: index,
-                              cuisine,
-                              setCuisine,
-                              ssd,
-                              sse,
-                              location,
-                              from: 'Caterers',
-                              subData: subSortData,
-                              foodTypeData: foodSortData,
-                              occassionData: occasionSortData,
-                              cuisineData: cuisineSortData,
-                              dispatch,
-                            });
-                          }}>
-                          <MaterialIcons
-                            name={
-                              child.selected == 1
-                                ? 'checkbox-marked'
-                                : 'checkbox-blank-outline'
-                            }
-                            style={[
-                              gs.fs20,
-                              gs.mr3,
-                              {
-                                color:
-                                  child.selected == 1
-                                    ? ts.secondary
-                                    : ts.alternate,
-                              },
-                            ]}
-                          />
-                        </TouchableOpacity>
-                      </Flex>
-                    ))}
-                  <Divider />
-                </View>
-              ))}
-          </View>
-        </Card>
-        {/* ====CATER SERVING TYPE====== */}
-        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>
-            Cater Serving Type
-          </Text>
-          <Divider style={[gs.mv15]} />
-          <Flex
-            direction="row"
-            alignItems="center"
-            justifyContent="space-around">
-            {servingLoading && (
-              <Center>
-                <Spinner color={ts.secondary} />
-              </Center>
-            )}
-            {servingError?.message && (
-              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                No Serving type found
-              </Text>
-            )}
-            {!servingLoading &&
-              !servingLoading &&
-              serving.map((e, i) => (
-                <Flex justify="center" alignItems="center" key={i}>
-                  {e?.name == 'Table Service' ? (
-                    <Image
-                      alt="tableservice"
-                      source={require('../../../assets/Search/tableservice.png')}
-                      style={styles.img}
-                    />
-                  ) : (
-                    <Image
-                      alt="buffetservice"
-                      source={require('../../../assets/Search/buffetservice.png')}
-                      style={styles.buffetimg}
-                    />
-                  )}
-
-                  <TouchableOpacity
-                    onPress={() => {
-                      handleServing({
-                        index: i,
-                        setServing,
-                        serving,
-                        ssd,
-                        sse,
-                        location,
-                        from: 'Caterers',
-                        subData: subSortData,
-                        foodTypeData: foodSortData,
-                        occassionData: occasionSortData,
-                        cuisineData: cuisineSortData,
-                        dispatch,
-                      });
-                    }}>
-                    <Flex
-                      direction="row"
-                      alignItems="center"
-                      style={[gs.mt10, gs.mb5]}>
-                      <MaterialIcons
-                        name={
-                          e.selected == 0 ? 'circle-outline' : 'circle-slice-8'
-                        }
-                        style={[
-                          gs.fs20,
-                          gs.mr3,
-                          {
-                            color:
-                              e.selected == 1 ? ts.secondary : ts.secondarytext,
-                          },
-                        ]}
-                      />
-                      <Text style={[styles.servicetxt, gs.fs13, gs.ml5]}>
-                        {e?.name}
-                      </Text>
                     </Flex>
                   </TouchableOpacity>
-                </Flex>
-              ))}
-          </Flex>
-        </Card>
-        {/* ========SORT BY RATINGS========= */}
-        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By Rating</Text>
-          <Divider style={[gs.mv15]} />
-          {ratingLoading && (
-            <Center>
-              <Spinner color={ts.secondary} />
-            </Center>
-          )}
-          {ratingError?.message && (
-            <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-              No Sorts found
-            </Text>
-          )}
-          {!ratingLoading && !ratingError && rating?.length > 0 && (
-            <View style={[gs.ph20]}>
-              {rating.map((e, i) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    handleRating({
-                      index: i,
-                      setRating,
-                      rating,
-                      ssd,
-                      sse,
-                      location,
-                      from: 'Caterers',
-                      subData: subSortData,
-                      foodTypeData: foodSortData,
-                      occassionData: occasionSortData,
-                      cuisineData: cuisineSortData,
-                      dispatch,
-                    });
-                  }}
-                  key={i}>
-                  <Flex direction="row" justify="space-between" align="center">
-                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                      {e.rating}
-                    </Text>
-                    <MaterialIcons
-                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
-                      style={[
-                        gs.fs20,
-                        gs.mr3,
-                        {
-                          color: e.selected == 1 ? ts.secondary : ts.alternate,
-                        },
-                      ]}
-                    />
-                  </Flex>
-                </TouchableOpacity>
-              ))}
+                ))}
             </View>
-          )}
-        </Card>
-        {/* =======HEAD COUNT========= */}
-        <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>
-            Choose Head count
-          </Text>
-          <Divider style={[gs.mv15]} />
-          <View style={[gs.ph20]}>
-            {headLoading && (
+          </Card>
+          {/* ========SORT BY========= */}
+          <Card
+            style={[
+              gs.pv10,
+              gs.mt15,
+              {backgroundColor: '#fff', marginBottom: 80},
+              gs.mh5,
+            ]}>
+            <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By</Text>
+            <Divider style={[gs.mv15]} />
+            {sortLoading && (
               <Center>
                 <Spinner color={ts.secondary} />
               </Center>
             )}
-            {headError?.message && (
+            {sortError?.message && (
               <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                No Head count found
+                No Sorts found
               </Text>
             )}
-            {!headError &&
-              !headLoading &&
-              headCount?.map((e, i) => (
-                <TouchableWithoutFeedback
-                  key={i}
-                  onPress={() => {
-                    handleCount({
-                      index: i,
-                      setHeadCount,
-                      headCount,
-                      ssd,
-                      sse,
-                      location,
-                      from: 'Caterers',
-                      subData: subSortData,
-                      foodTypeData: foodSortData,
-                      occassionData: occasionSortData,
-                      cuisineData: cuisineSortData,
-                      dispatch,
-                    });
-                  }}>
-                  <Flex direction="row" justify="space-between" align="center">
-                    <Text
-                      style={[
-                        styles.servicetxt,
-                        gs.fs13,
-                        gs.mv10,
-                      ]}>{`${e.start} - ${e.end}`}</Text>
-                    <MaterialIcons
-                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
-                      style={[
-                        gs.fs20,
-                        gs.mr3,
-                        {
-                          color: e.selected == 1 ? ts.secondary : ts.alternate,
-                        },
-                      ]}
-                    />
-                  </Flex>
-                </TouchableWithoutFeedback>
-              ))}
-          </View>
-        </Card>
-
-        {/* ===SERVICE TYPE======= */}
-        <Card style={[gs.mh5, gs.pv10, {backgroundColor: '#fff'}]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>
-            Cater Service Type
-          </Text>
-          <Divider style={[gs.mv15]} />
-          <Flex
-            direction="row"
-            alignItems="center"
-            justifyContent="space-around">
-            {serviceLoading && (
-              <Center>
-                <Spinner color={ts.secondary} />
-              </Center>
-            )}
-            {serviceError?.message && (
-              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                No Service type found
-              </Text>
-            )}
-            {!serviceLoading &&
-              !serviceError &&
-              service?.map((e, i) => (
-                <Flex justify="center" alignItems="center" key={i}>
-                  <Image
-                    alt="delivery"
-                    source={
-                      (e?.name == 'Delivery' &&
-                        require('../../../assets/Search/delivery.png')) ||
-                      (e?.name == 'Takeaway' &&
-                        require('../../../assets/Search/takeaway.png')) ||
-                      (e?.name == 'Dine In' &&
-                        require('../../../assets/Search/dinein.png'))
-                    }
-                    style={styles.img}
-                  />
+            {!sortLoading && !sortError && sort?.length > 0 && (
+              <View style={[gs.ph10]}>
+                {sort.map((e, i) => (
                   <TouchableOpacity
                     onPress={() => {
-                      handleService({
+                      handleSort({
                         index: i,
-                        setService,
-                        service,
+                        setSort,
+                        sort,
                         ssd,
                         sse,
                         location,
@@ -792,160 +969,38 @@ export default function FiilterMain({navigation, route}) {
                         cuisineData: cuisineSortData,
                         dispatch,
                       });
-                    }}>
+                    }}
+                    key={i}>
                     <Flex
                       direction="row"
-                      alignItems="center"
-                      style={[gs.mt10, gs.mb5]}>
-                      <MaterialIcons
-                        name={
-                          e.selected == 0 ? 'circle-outline' : 'circle-slice-8'
-                        }
-                        style={[
-                          gs.fs20,
-                          gs.mr3,
-                          {
-                            color:
-                              e.selected == 1 ? ts.secondary : ts.secondarytext,
-                          },
-                        ]}
-                      />
-                      <Text style={[styles.servicetxt, gs.fs13, gs.ml5]}>
+                      justify="space-between"
+                      align="center">
+                      <Text
+                        style={[styles.servicetxt, gs.fs13, gs.mv10, gs.ph5]}>
                         {e.name}
                       </Text>
+                      <MaterialIcons
+                        name={
+                          e.selected == 1 ? 'check-circle' : 'circle-outline'
+                        }
+                        style={[
+                          gs.fs20,
+                          gs.mr3,
+                          {
+                            color:
+                              e.selected == 1 ? ts.secondary : ts.alternate,
+                          },
+                        ]}
+                      />
                     </Flex>
                   </TouchableOpacity>
-                </Flex>
-              ))}
-          </Flex>
-        </Card>
-        {/* ======CHOOSE OCCASION======= */}
-        <Card style={[ gs.pv10, gs.mv15, {backgroundColor: '#fff'},gs.mh5]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>
-            Choose Occasions
-          </Text>
-          <Divider style={[gs.mv15]} />
-          <View style={[gs.ph15]}>
-            {loading && (
-              <Center>
-                <Spinner color={ts.secondary} />
-              </Center>
+                ))}
+              </View>
             )}
-            {error?.message && (
-              <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                No Occassions found
-              </Text>
-            )}
-            {!loading &&
-              !error &&
-              occasion?.map((e, i) => (
-                <TouchableOpacity
-                  key={i}
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    handleOccassion({
-                      index: i,
-                      setOccasion,
-                      occasion,
-                      ssd,
-                      sse,
-                      location,
-                      from: 'Caterers',
-                      subData: subSortData,
-                      foodTypeData: foodSortData,
-                      occassionData: occasionSortData,
-                      cuisineData: cuisineSortData,
-                      dispatch,
-                    });
-                  }}>
-                  <Flex direction="row" justify="space-between" align="center">
-                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10,gs.ph5]}>
-                      {e.occasion_name}
-                    </Text>
-
-                    <MaterialIcons
-                      name={
-                        e.selected == 1
-                          ? 'checkbox-marked'
-                          : 'checkbox-blank-outline'
-                      }
-                      style={[
-                        gs.fs20,
-                        gs.mr3,
-                        {
-                          color: e.selected == 1 ? ts.secondary : ts.alternate,
-                        },
-                      ]}
-                    />
-                  </Flex>
-                </TouchableOpacity>
-              ))}
-          </View>
-        </Card>
-        {/* ========SORT BY========= */}
-        <Card
-          style={[
-            gs.pv10,
-            gs.mt15,
-            {backgroundColor: '#fff', marginBottom: 80},
-            gs.mh5
-          ]}>
-          <Text style={[styles.heading, gs.fs15, gs.pl15]}>Sort By</Text>
-          <Divider style={[gs.mv15]} />
-          {sortLoading && (
-            <Center>
-              <Spinner color={ts.secondary} />
-            </Center>
-          )}
-          {sortError?.message && (
-            <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-              No Sorts found
-            </Text>
-          )}
-          {!sortLoading && !sortError && sort?.length > 0 && (
-            <View style={[gs.ph10]}>
-              {sort.map((e, i) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    handleSort({
-                      index: i,
-                      setSort,
-                      sort,
-                      ssd,
-                      sse,
-                      location,
-                      from: 'Caterers',
-                      subData: subSortData,
-                      foodTypeData: foodSortData,
-                      occassionData: occasionSortData,
-                      cuisineData: cuisineSortData,
-                      dispatch,
-                    });
-                  }}
-                  key={i}>
-                  <Flex direction="row" justify="space-between" align="center">
-                    <Text style={[styles.servicetxt, gs.fs13, gs.mv10,gs.ph5]}>
-                      {e.name}
-                    </Text>
-                    <MaterialIcons
-                      name={e.selected == 1 ? 'check-circle' : 'circle-outline'}
-                      style={[
-                        gs.fs20,
-                        gs.mr3,
-                        {
-                          color: e.selected == 1 ? ts.secondary : ts.alternate,
-                        },
-                      ]}
-                    />
-                  </Flex>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-        </Card>
+          </Card>
         </View>
       </KeyboardAwareScrollView>
-       <View style={{marginTop:-10}}></View>
+      <View style={{marginTop: -10}}></View>
       <Card
         style={[{borderRadius: 0, backgroundColor: '#fff'}, gs.ph15, gs.pb10]}>
         <Flex
@@ -1016,7 +1071,6 @@ export default function FiilterMain({navigation, route}) {
           )}
         </Flex>
       </Card>
-      
     </ScreenWrapper>
   );
 }
@@ -1067,7 +1121,7 @@ const styles = ScaledSheet.create({
   },
   topcontainer: {
     marginTop: Platform.OS == 'ios' ? '-290@ms' : '-290@ms',
-    paddingHorizontal:'10@ms'
+    paddingHorizontal: '10@ms',
   },
   tabbarcontainer: {
     backgroundColor: 'rgba(39, 45, 55, 0.1)',

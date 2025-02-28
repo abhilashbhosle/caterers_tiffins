@@ -71,8 +71,8 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
       longitude: e.geometry.location.lng,
       dispatch,
       from: 'internal',
-      formatted_address:e.formatted_address,
-      place_id:e.place_id
+      formatted_address: e.formatted_address,
+      place_id: e.place_id,
     });
     setTimeout(() => {
       dispatch(getUser());
@@ -85,106 +85,113 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
   };
   return (
     <Actionsheet isOpen={locSheetOpen} onClose={handleClose}>
-      <Actionsheet.Content style={[{height: height / 1.3}]}>
+      <Actionsheet.Content style={[{height: height / 1.5}]}>
         <KeyboardAwareScrollView style={{width: '100%'}}>
-          <View style={{position: 'relative'}}>
-            <TextInput
-              label="Try A2B, Mg road, Banglore.."
-              style={styles.inputcontainer}
-              placeholderTextColor={'#777'}
-              mode="outlined"
-              activeOutlineColor={
-                from === 'Caterers' ? ts.secondary : ts.primary
-              }
-              onFocus={() => {
-                setFocused(true);
-              }}
-              onBlur={() => {
-                setFocused(false);
-              }}
-              outlineStyle={gs.br10}
-              textColor={ts.primarytext}
-              value={location}
-              onChangeText={text => {
-                handleOnChange(text);
-              }}
-              right={
-                  // <TouchableOpacity>
-                    <TextInput.Icon icon="close" onPress={()=>{setLocation("")}}/>
-                  // </TouchableOpacity>
-              }
-            />
-            <View style={[{position: 'absolute', left: 20}, gs.mt18]}>
-              <MaterialIcons
-                name="map-marker-radius"
-                style={[
-                  gs.fs20,
-                  {
-                    color: focused
-                      ? from == 'Caterers'
-                        ? ts.secondary
-                        : ts.primary
-                      : '#777',
-                  },
-                ]}
-              />
-            </View>
-          </View>
-          {!focused && !searchData?.length &&(
-            <>
-              <Flex
-                direction="row"
-                flex={1}
-                align="center"
-                justify="space-between"
-                style={[gs.mt15]}>
-                <View style={styles.border}></View>
-                <Text
-                  style={[
-                    gs.fs13,
-                    {color: '#777', fontFamily: ts.secondaryregular},
-                  ]}>
-                  or
-                </Text>
-                <View style={styles.border}></View>
-              </Flex>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={checkLocation}
-                style={[gs.mt15]}>
-                <ThemeSepBtn
-                  btntxt="Allow current location"
-                  themecolor={from == 'Caterers' ? ts.secondary : ts.primary}
-                />
-              </TouchableOpacity>
-            </>
-          )}
-          {/* ======SEARCH RESULTS========= */}
-          {searchData?.length > 0 &&
-            location?.length > 0 &&
-            !searchLoading &&
-            !searchError && (
-              <ScrollView style={styles.searchContainer}>
-                {searchData?.map((e, i) => (
-                  <View key={i}>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
+          <Flex justifyContent="space-between" style={{height: height / 1.7}}>
+            <View>
+              <View style={{position: 'relative'}}>
+                <TextInput
+                  label="Try A2B, Mg road, Banglore.."
+                  style={styles.inputcontainer}
+                  placeholderTextColor={'#777'}
+                  mode="outlined"
+                  activeOutlineColor={
+                    from === 'Caterers' ? ts.secondary : ts.primary
+                  }
+                  onFocus={() => {
+                    setFocused(true);
+                  }}
+                  onBlur={() => {
+                    setFocused(false);
+                  }}
+                  outlineStyle={gs.br10}
+                  textColor={ts.primarytext}
+                  value={location}
+                  onChangeText={text => {
+                    handleOnChange(text);
+                  }}
+                  right={
+                    // <TouchableOpacity>
+                    <TextInput.Icon
+                      icon="close"
                       onPress={() => {
-                        handleSelectedSearch(e);
-                      }}>
-                      <Text style={styles.loctxt} numberOfLines={2}>
-                        {e?.formatted_address}
-                      </Text>
-                      <Divider
-                        backgroundColor={
-                          from == 'Caterers' ? ts.secondary : ts.primary
-                        }
-                      />
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              </ScrollView>
+                        setLocation('');
+                      }}
+                    />
+                    // </TouchableOpacity>
+                  }
+                />
+                <View style={[{position: 'absolute', left: 20}, gs.mt18]}>
+                  <MaterialIcons
+                    name="map-marker-radius"
+                    style={[
+                      gs.fs20,
+                      {
+                        color: focused
+                          ? from == 'Caterers'
+                            ? ts.secondary
+                            : ts.primary
+                          : '#777',
+                      },
+                    ]}
+                  />
+                </View>
+              </View>
+              {/* ======SEARCH RESULTS========= */}
+              {searchData?.length > 0 &&
+                location?.length > 0 &&
+                !searchLoading &&
+                !searchError && (
+                  <ScrollView style={styles.searchContainer}>
+                    {searchData?.map((e, i) => (
+                      <View key={i}>
+                        <TouchableOpacity
+                          activeOpacity={0.7}
+                          onPress={() => {
+                            handleSelectedSearch(e);
+                          }}>
+                          <Text style={styles.loctxt} numberOfLines={2}>
+                            {e?.formatted_address}
+                          </Text>
+                          <Divider
+                            backgroundColor={
+                              from == 'Caterers' ? ts.secondary : ts.primary
+                            }
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </ScrollView>
+                )}
+            </View>
+            {!focused && !searchData?.length && (
+              <View>
+                {/* <TouchableOpacity >
+                  <Text
+                    style={[
+                      gs.mb10,
+                      {
+                        textAlign: 'center',
+                        color: from == 'Caterers' ? ts.secondary : ts.primary,
+                        fontFamily: ts.secondarymedium,
+                      },
+                      gs.fs14,
+                    ]}>
+                    Clear Location
+                  </Text>
+                </TouchableOpacity> */}
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={checkLocation}
+                  style={[gs.mt15]}>
+                  <ThemeSepBtn
+                    btntxt="Allow current location"
+                    themecolor={from == 'Caterers' ? ts.secondary : ts.primary}
+                  />
+                </TouchableOpacity>
+              </View>
             )}
+          </Flex>
         </KeyboardAwareScrollView>
       </Actionsheet.Content>
     </Actionsheet>

@@ -49,7 +49,7 @@ export default function TiffinProviders() {
           pinCode: userDetails[0]?.pincode,
           placeId: userDetails[0]?.place_id,
           startDate: today,
-          endDate: dateAfter7Days,
+          endDate: today,
         }),
       );
     }

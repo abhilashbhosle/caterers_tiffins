@@ -81,6 +81,7 @@ export const getLoginOtpService = async ({phoneNumber, navigation}) => {
     }
     return res;
   } catch (error) {
+  console.log("error into get otp",error)
     if (error.response && error.response.data) {
       showMessage({
         message: 'Request Failed!',
@@ -286,6 +287,7 @@ export const getLocationService = async ({
         params: {
           place_id,
           key: GOOGLE_KEY,
+          components: "country:IN",
         },
       }
     );
@@ -359,6 +361,7 @@ export const updateLocationService = async ({
     }
     return res;
   } catch (error) {
+    console.log(error)
     dispatch(startLoader(false));
     if (error.response && error.response.data) {
       showMessage({

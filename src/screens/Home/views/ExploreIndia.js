@@ -35,6 +35,7 @@ function ExploreIndia() {
   const navigation = useNavigation();
 
   const handleCities = async location => {
+    dispatch(clearSearch());
     try {
       let loc = {
         latitude: location?.latitude,
@@ -56,7 +57,7 @@ function ExploreIndia() {
         pincode: 1211111,
         from: route?.name == 'Caterings' ? 'Caterers' : 'Tiffin',
         selectedStartDate: today,
-        selectedEndDate: dateAfter7Days,
+        selectedEndDate: today,
         foodTypeData,
         subData,
         selected_vendor:[],
@@ -67,7 +68,7 @@ function ExploreIndia() {
         params: {
           from: route?.name == 'Caterings' ? 'Caterers' : 'Tiffin',
           ssd: today,
-          sse: dateAfter7Days,
+          sse: today,
         },
       });
     } catch (err) {

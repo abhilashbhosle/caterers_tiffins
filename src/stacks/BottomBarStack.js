@@ -6,7 +6,7 @@ import {
   ImageBackground,
   Dimensions,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Caterers from '../screens/Home/views/Caterers';
 import Tiffins from '../screens/Home/views/Tiffins';
@@ -17,24 +17,28 @@ import {ScaledSheet} from 'react-native-size-matters';
 import {useDispatch} from 'react-redux';
 import ProfileMain from '../screens/Profile/views/ProfileMain';
 import LinearGradient from 'react-native-linear-gradient';
+import {useNavigationState} from '@react-navigation/native';
+import {clearSearch} from '../screens/Home/controllers/SearchController';
 
 const Tab = createBottomTabNavigator();
 const {width} = Dimensions.get('screen');
 
 export default function BottomBarStack() {
-  const dispatch = useDispatch();
+const dispatch=useDispatch()
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
-        tabBarStyle:route.name=="Profile"?{display:'none'}: styles.tabbar,
+
+        tabBarStyle:
+          route.name == 'Profile' ? {display: 'none'} : styles.tabbar,
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
           if (route.name === 'Caterings') {
             iconName = focused ? 'caterersf' : 'catererso';
           } else if (route.name === 'Tiffins') {
             iconName = focused ? 'tiffinsf' : 'tiffinso';
-          }else if(route.name=="Profile"){
-            iconName="profileo"
+          } else if (route.name == 'Profile') {
+            iconName = 'profileo';
           }
           if (iconName == 'caterersf') {
             return (
@@ -88,7 +92,7 @@ export default function BottomBarStack() {
                 style={styles.icons}
               />
             );
-          }else if(iconName=="profileo"){
+          } else if (iconName == 'profileo') {
             return (
               <Image
                 source={require('../assets/Bottombar/profileo.png')}
@@ -106,8 +110,24 @@ export default function BottomBarStack() {
           {bottom: Platform.OS == 'android' ? 10 : 0},
         ],
       })}>
-      <Tab.Screen name="Caterings" component={Caterers} />
-      <Tab.Screen name="Tiffins" component={Tiffins} />
+      <Tab.Screen name="Caterings" component={Caterers} 
+      listeners={({ navigation }) => ({
+        tabPress: (e) => {
+          e.preventDefault(); // Prevent immediate navigation
+          dispatch(clearSearch()) // Call your function
+          navigation.navigate('Caterings')// Navigate after a slight delay
+        },
+      })}
+      />
+      <Tab.Screen name="Tiffins" component={Tiffins} 
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault(); // Prevent immediate navigation
+            dispatch(clearSearch()) // Call your function
+            navigation.navigate('Tiffins')// Navigate after a slight delay
+          },
+        })}
+      />
       <Tab.Screen name="Profile" component={ProfileMain} />
     </Tab.Navigator>
   );
@@ -121,7 +141,7 @@ const styles = ScaledSheet.create({
     height: Platform.OS == 'ios' ? '75@ms' : '65@ms',
   },
   cateringF: {
-    height:Platform?.OS=="android"? '60@ms':'40@ms',
+    height: Platform?.OS == 'android' ? '60@ms' : '40@ms',
     justifyContent: 'center',
     alignItems: 'center',
     width: width / 3,
@@ -130,11 +150,11 @@ const styles = ScaledSheet.create({
     borderTopColor: ts.secondary,
   },
   tiffinsF: {
-    height:Platform?.OS=="android"? '60@ms':'40@ms',
+    height: Platform?.OS == 'android' ? '60@ms' : '40@ms',
     justifyContent: 'center',
     alignItems: 'center',
     width: width / 3,
-    top:'3@ms',
+    top: '3@ms',
     borderTopWidth: '2@ms',
     borderTopColor: ts.primary,
   },

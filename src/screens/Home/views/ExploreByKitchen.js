@@ -29,9 +29,11 @@ import {startLoader} from '../../../redux/CommonSlicer';
 import {getOccassionService} from '../services/OccassionService';
 import {setSearchHomeJson} from '../controllers/SearchCommonController';
 import MorePrimarybtn from '../../../components/MorePrimarybtn';
+import { getKitchen } from '../controllers/FilterTiffinController';
 
 function ExploreByKitchen() {
   const {width, height} = useWindowDimensions();
+  const dispatch=useDispatch();
   const kitchenTypes = [
     {name: 'Homemade', img: require('../../../assets/Common/homemade.png')},
     {name: 'Restaurant', img: require('../../../assets/Common/kitchen.png')},
@@ -39,6 +41,16 @@ function ExploreByKitchen() {
     {name: 'Commercial', img: require('../../../assets/Common/commercial.png')},
     {name: 'Cloud', img: require('../../../assets/Common/cloud.png')},
   ];
+   const {
+      kitchenLoading,
+      kitchenData,
+      kitchenError,
+    } = useSelector(state => state.filterTiffin);
+  useEffect(()=>{
+     dispatch(getKitchen());
+  },[])
+
+  console.log(kitchenData)
 
   const renderItem = ({item, index}) => {
     return (
