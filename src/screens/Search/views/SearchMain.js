@@ -80,9 +80,9 @@ export default function SearchMain({route, navigation}) {
   }, [foodTypeData]);
 
   useMemo(() => {
-    console.log("updated subdata",updatedSubData)
+    console.log("updated subdata",subData)
     // if (subType?.length == 0) {
-    setSubType(updatedSubData);
+    setSubType(subData);
     // }
   }, [subData]);
 

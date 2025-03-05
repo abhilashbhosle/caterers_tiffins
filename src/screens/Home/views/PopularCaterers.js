@@ -37,6 +37,7 @@ import PopularCatSkel from '../../../components/skeletons/PopularCatSkel';
 import {setSearchHomeJson} from '../controllers/SearchCommonController';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import MoreSecondarybtn from '../../../components/MoreSecondarybtn';
+import {updateSubscriptionFilter} from '../services/SearchService';
 
 function PopularCaterers() {
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
@@ -96,7 +97,12 @@ function PopularCaterers() {
         selected: e.selected,
       }));
       if (subscription_types_filter?.length) {
-        await dispatch(updateSubscriptions(result));
+        await updateSubscriptionFilter({
+          subscription_types_filter,
+          from: 'Caterers',
+          dispatch,
+        });
+        dispatch(updateSubscriptions(result));
         dispatch(clearCaterers());
         await setSearchHomeJson({
           latitude: location?.latitude,

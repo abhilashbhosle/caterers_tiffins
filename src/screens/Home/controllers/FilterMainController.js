@@ -192,7 +192,7 @@ const filterSlice = createSlice({
       state.sortData = action.payload;
     },
     updateSubscriptions: (state, action) => {
-      state.updatedSubData = action.payload;
+      state.subData = action.payload;
     },
     updateRating: (state, action) => {
       state.ratingData = action.payload;

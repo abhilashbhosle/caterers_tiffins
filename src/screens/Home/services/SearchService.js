@@ -107,9 +107,9 @@ export const updateSubscriptionFilter = async ({
     });
     console.log('result in updated subscription', res.data.data.request);
     // if (res?.data?.status == 'success') {
-    //   setTimeout(async () => {
+      setTimeout(async () => {
         await dispatch(getSubscription({from}));
-      // }, 2000);
+      }, 2000);
     // }
     return res.data;
   } catch (error) {
