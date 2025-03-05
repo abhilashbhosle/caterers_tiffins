@@ -9,6 +9,7 @@ import {
   Alert,
   Platform,
   StatusBar,
+  RefreshControl,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
@@ -116,8 +117,8 @@ export default function FiilterMain({navigation, route}) {
   const [subSortData, setSubSortData] = useState([]);
   const [cuisineSortData, setCuisineSortData] = useState([]);
   const [occasionSortData, setOccassionSortData] = useState([]);
-
-  useEffect(() => {
+  const [refreshing, setRefreshing] = useState(false);
+  const getAllData = () => {
     dispatch(getServing());
     dispatch(getService({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
     dispatch(getOccassions());
@@ -127,7 +128,9 @@ export default function FiilterMain({navigation, route}) {
     dispatch(getSort());
     dispatch(getRatings());
     dispatch(getSubscription({from: 'Caterers'}));
-
+  };
+  useEffect(() => {
+    getAllData();
   }, []);
 
   useEffect(() => {
@@ -194,12 +197,12 @@ export default function FiilterMain({navigation, route}) {
     }
   }, [search]);
   const handleClearFilter = async () => {
-    const sub = await subData.map((item, i=0) =>
+    const sub = await subData.map((item, i = 0) =>
       i === 0
         ? {...item, selected: (item.selected = '1')}
         : {...item, selected: '0'},
     );
-    const food=  await foodTypeData.map((item, i=0) =>
+    const food = await foodTypeData.map((item, i = 0) =>
       i === 0
         ? {...item, selected: (item.selected = '1')}
         : {...item, selected: '0'},
@@ -213,8 +216,8 @@ export default function FiilterMain({navigation, route}) {
       from,
       selectedStartDate: ssd,
       selectedEndDate: sse,
-      foodTypeData:food,
-      subData:sub,
+      foodTypeData: food,
+      subData: sub,
       cuisines_filter: [],
       occasions_filter: [],
       serving_types_filter: [],
@@ -222,7 +225,7 @@ export default function FiilterMain({navigation, route}) {
       service_types_filter: [],
       head_count_ranges: [],
       order_by_filter: [],
-      price_ranges:[]
+      price_ranges: [],
     });
     await dispatch(
       clearFilter({
@@ -253,6 +256,13 @@ export default function FiilterMain({navigation, route}) {
       ],
     );
   };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    getAllData()
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 500); // To give some delay for UI indication
+  };
   return (
     <ScreenWrapper>
       {/* <ThemeHeaderWrapper
@@ -269,7 +279,10 @@ export default function FiilterMain({navigation, route}) {
         style={[
           {flex: 1, backgroundColor: '#fff', top: -10},
           // gs.ph10, gs.pv20
-        ]}>
+        ]}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <LinearGradient
           colors={['#f8b4b3', '#fbe3e1', '#fff']}
           start={{x: 0, y: 0}}

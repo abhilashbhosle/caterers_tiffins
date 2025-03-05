@@ -31,6 +31,7 @@ function ExploreIndia() {
   const {subData, foodTypeData} = useSelector(state => state?.filterCater);
   useEffect(() => {
     dispatch(getCities());
+    
   }, []);
   const navigation = useNavigation();
 

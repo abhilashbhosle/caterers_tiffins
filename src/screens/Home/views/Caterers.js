@@ -6,6 +6,7 @@ import {
   BackHandler,
   Alert,
   ScrollView,
+  RefreshControl,
 } from 'react-native';
 import React, {useCallback, useEffect} from 'react';
 import HeaderView from './HeaderView';
@@ -22,8 +23,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import {StatusBar} from 'native-base';
 import {gs} from '../../../../GlobalStyles';
-import { useDispatch, useSelector } from 'react-redux';
-import { clearSearch } from '../controllers/SearchController';
+import {useDispatch, useSelector} from 'react-redux';
+import {clearSearch} from '../controllers/SearchController';
+import {getCuisines} from '../controllers/ExploreCuisineController';
+import {getCities} from '../controllers/ExploreIndiaController';
+import {getUser} from '../../Onboarding/controllers/AuthController';
+import {getBranded, getPopular} from '../controllers/HomeController';
+import {getOccassions} from '../controllers/OccassionController';
 
 const MemoizedHeaderView = React.memo(HeaderView);
 const MemoizedExploreCusines = React.memo(ExploreCusines);
@@ -33,6 +39,9 @@ const MemoizedPopularCaterers = React.memo(PopularCaterers);
 const MemoizedOccasions = React.memo(Occasions);
 
 export default function Caterers({navigation}) {
+  const [refreshing, setRefreshing] = React.useState(false);
+  const userDetails = useSelector(state => state.auth?.userInfo?.data);
+  const dispatch = useDispatch();
   useFocusEffect(
     useCallback(() => {
       (async () => {
@@ -41,6 +50,9 @@ export default function Caterers({navigation}) {
       })();
     }, [navigation]),
   );
+  useEffect(() => {
+    dispatch(getUser());
+  }, []);
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -71,13 +83,45 @@ export default function Caterers({navigation}) {
       },
     ]);
   };
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    dispatch(getCuisines());
+    dispatch(getCities());
+    dispatch(getOccassions());
+    if (userDetails?.length && userDetails[0]?.formatted_address) {
+      dispatch(
+        getBranded({
+          latitude: userDetails[0]?.latitude,
+          longitude: userDetails[0]?.longitude,
+          vendorType: 'Caterer',
+          subscriptionType: '3',
+        }),
+      );
+      dispatch(
+        getPopular({
+          latitude: userDetails[0]?.latitude,
+          longitude: userDetails[0]?.longitude,
+          vendorType: 'Caterer',
+          subscriptionType: '2',
+        }),
+      );
+    }
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
 
   return (
     <ScreenWrapper>
       <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}
-        bounces={false}>
+        bounces={false}
+        refreshControl={
+          // <View style={{paddingTop: 50}}>
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          // </View>
+        }>
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 0.2, y: 1}}
@@ -92,7 +136,6 @@ export default function Caterers({navigation}) {
         <MemoizedBranded />
         <MemoizedOccasions />
         <MemoizedPopularCaterers />
-
       </ScrollView>
       <View style={styles.leveler}></View>
     </ScreenWrapper>
@@ -104,7 +147,7 @@ const styles = ScaledSheet.create({
     flex: 1,
     top: '-10@ms',
   },
-  leveler:{
-    marginTop:'-10@ms'
-  }
+  leveler: {
+    marginTop: '-10@ms',
+  },
 });

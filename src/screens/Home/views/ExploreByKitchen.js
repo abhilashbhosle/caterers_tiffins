@@ -8,7 +8,7 @@ import {
 import React, {memo, useEffect, useState} from 'react';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
-import {Center, FlatList, Flex} from 'native-base';
+import {Center, FlatList, Flex, Skeleton} from 'native-base';
 import {occasions} from '../../../constants/Constants';
 import {ScaledSheet} from 'react-native-size-matters';
 import {Card} from 'react-native-paper';
@@ -29,11 +29,11 @@ import {startLoader} from '../../../redux/CommonSlicer';
 import {getOccassionService} from '../services/OccassionService';
 import {setSearchHomeJson} from '../controllers/SearchCommonController';
 import MorePrimarybtn from '../../../components/MorePrimarybtn';
-import { getKitchen } from '../controllers/FilterTiffinController';
+import {getKitchen} from '../controllers/FilterTiffinController';
 
 function ExploreByKitchen() {
   const {width, height} = useWindowDimensions();
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   const kitchenTypes = [
     {name: 'Homemade', img: require('../../../assets/Common/homemade.png')},
     {name: 'Restaurant', img: require('../../../assets/Common/kitchen.png')},
@@ -41,21 +41,19 @@ function ExploreByKitchen() {
     {name: 'Commercial', img: require('../../../assets/Common/commercial.png')},
     {name: 'Cloud', img: require('../../../assets/Common/cloud.png')},
   ];
-   const {
-      kitchenLoading,
-      kitchenData,
-      kitchenError,
-    } = useSelector(state => state.filterTiffin);
-  useEffect(()=>{
-     dispatch(getKitchen());
-  },[])
+  const {kitchenLoading, kitchenData, kitchenError} = useSelector(
+    state => state.filterTiffin,
+  );
+  useEffect(() => {
+    dispatch(getKitchen());
+  }, []);
 
-  console.log(kitchenData)
+  // console.log(kitchenData)
 
   const renderItem = ({item, index}) => {
     return (
       <Flex alignItems="center">
-        <Card style={[ gs.mb10, gs.mr10,{backgroundColor:'transparent'}]}>
+        <Card style={[gs.mb10, gs.mr10, {backgroundColor: 'transparent'}]}>
           <TouchableOpacity activeOpacity={0.7}>
             <ImageBackground
               source={item.img}
@@ -99,15 +97,23 @@ function ExploreByKitchen() {
           </TouchableOpacity> */}
         </Flex>
       </View>
-      <FlatList
-        data={kitchenTypes}
-        renderItem={renderItem}
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item, index) => String(index)}
-        contentContainerStyle={styles.contentContainerStyle}
-        horizontal
-        overScrollMode='never'
-      />
+      {kitchenLoading ? (
+        <Flex direction="row" style={[gs.ph15]}>
+          {[1, 2, 3, 4].map((e, i) => (
+            <Skeleton style={[styles.img, gs.br12,gs.mr10]} key={i} />
+          ))}
+        </Flex>
+      ) : (
+        <FlatList
+          data={kitchenTypes}
+          renderItem={renderItem}
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item, index) => String(index)}
+          contentContainerStyle={styles.contentContainerStyle}
+          horizontal
+          overScrollMode="never"
+        />
+      )}
     </>
   );
 }
@@ -116,7 +122,7 @@ const styles = ScaledSheet.create({
   contentContainerStyle: {
     paddingBottom: '10@ms',
     paddingTop: '15@ms',
-    paddingHorizontal:'15@ms'
+    paddingHorizontal: '15@ms',
     // position: 'relative',
   },
   img: {

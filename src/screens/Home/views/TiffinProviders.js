@@ -7,7 +7,7 @@ import {
   useWindowDimensions,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {memo, useEffect} from 'react';
 import {gs} from '../../../../GlobalStyles';
 import {ts} from '../../../../ThemeStyles';
 import {ScaledSheet} from 'react-native-size-matters';
@@ -21,8 +21,9 @@ import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import {styles} from '../styles/TiffinProviderStyles';
+import {BrandedSkeleton} from '../../../components/skeletons/BrandedSkeletons';
 
-export default function TiffinProviders() {
+function TiffinProviders() {
   const {width, height} = useWindowDimensions();
   const dispatch = useDispatch();
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
@@ -31,9 +32,9 @@ export default function TiffinProviders() {
   );
   const navigation = useNavigation();
 
-  useEffect(() => {
-    dispatch(getUser());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(getUser());
+  // }, []);
 
   useEffect(() => {
     let today = new Date();
@@ -205,9 +206,7 @@ export default function TiffinProviders() {
       </Card>
     );
   };
-  if (tiffinLoading) {
-    return;
-  }
+
   return (
     <>
       <View style={[gs.ph15, gs.mt15]}>
@@ -220,29 +219,39 @@ export default function TiffinProviders() {
           Tiffins near you
         </Text>
       </View>
-      {!tiffinError && tiffinData?.vendors?.length > 0 ? (
-          <FlatList
-            data={tiffinData?.vendors}
-            keyExtractor={(item, index) => String(index)}
-            renderItem={renderItem}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.contentContainerStyle}
-            overScrollMode='never'
-            
-          />
-      ) : 
-      <Text
-      style={[
-        gs.fs12,
-        {color: '#000', fontFamily: ts.secondaryregular},
-        gs.ph15,
-        gs.mb15,
-        gs.ml5
-      ]}>
-      No near by tiffins
-    </Text>
-      }
+      {tiffinLoading ? (
+        <Flex direction="row">
+          {[1, 2]?.map((e, i) => (
+            <View style={styles.contentContainerStyle} key={i}>
+              <BrandedSkeleton />
+            </View>
+          ))}
+        </Flex>
+      ) : null}
+      {!tiffinError && tiffinData?.vendors?.length > 0 && !tiffinLoading? (
+        <FlatList
+          data={tiffinData?.vendors}
+          keyExtractor={(item, index) => String(index)}
+          renderItem={renderItem}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.contentContainerStyle}
+          overScrollMode="never"
+        />
+      ) : (
+        !tiffinLoading &&
+        <Text
+          style={[
+            gs.fs12,
+            {color: '#000', fontFamily: ts.secondaryregular},
+            gs.ph15,
+            gs.mb15,
+            gs.ml5,
+          ]}>
+          No near by tiffins
+        </Text>
+      )}
     </>
   );
 }
+export default memo(TiffinProviders);

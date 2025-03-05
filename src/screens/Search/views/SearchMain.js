@@ -9,6 +9,7 @@ import {
   Keyboard,
   ScrollView,
   Image,
+  RefreshControl,
 } from 'react-native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
@@ -58,8 +59,7 @@ export default function SearchMain({route, navigation}) {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [enableFoodTypeDD, setEnableFoodTypeDD] = useState(false);
   const loading = useSelector(state => state.common.loading);
-
-
+  const [refreshing, setRefreshing] = useState(false);
   const location = useSelector(state => state.location.locationRes);
   useFocusEffect(
     useCallback(() => {
@@ -81,7 +81,7 @@ export default function SearchMain({route, navigation}) {
 
   useMemo(() => {
     // if (subType?.length == 0) {
-      setSubType(subData);
+    setSubType(subData);
     // }
   }, [subData]);
 
@@ -90,7 +90,7 @@ export default function SearchMain({route, navigation}) {
       let searchJson = await AsyncStorage.getItem('searchJson');
       let searchData = await JSON.parse(searchJson);
       let params = searchData;
-      console.log("params passing",params)
+      console.log('params passing', params);
       dispatch(
         getCaterersSearch({
           params: {
@@ -148,7 +148,7 @@ export default function SearchMain({route, navigation}) {
     if (caterersLoading) {
       return (
         // <View style={{height: 200}}>
-          <Spinner color={ts.secondarytext} />
+        <Spinner color={ts.secondarytext} />
         // </View>
       );
     }
@@ -192,12 +192,39 @@ export default function SearchMain({route, navigation}) {
   const handleFoodTpeDD = () => {
     setEnableFoodTypeDD(prev => !prev);
   };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setSubType([])
+    setFoodType([])
+    setVendorData([]);
+    let searchJson = await AsyncStorage.getItem('searchJson');
+    let searchData = JSON.parse(searchJson);
+    dispatch(getSubscription({from}));
+    setSubType(subData);
+    setFoodType(foodTypeData);
+    dispatch(
+      getCaterersSearch({
+        params: {
+          ...searchData,
+          current_page: 1,
+          limit: 5,
+        },
+      }),
+    );
+    setPage(1);
 
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 500); // To give some delay for UI indication
+  };
 
   return (
     <ScreenWrapper>
       <ScrollView
-        style={{...styles.container, flex: 1, backgroundColor: '#fff'}}>
+        style={{...styles.container, flex: 1, backgroundColor: '#fff'}}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         {/* =====SEARCH BAR */}
         <LinearGradient
           style={[
@@ -256,7 +283,10 @@ export default function SearchMain({route, navigation}) {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.scrollcontainer}>
               {/* ========TOP SELECTOR============ */}
-              {firstItemVisible && !keyboardVisible && foodType?.length && subType?.length ? (
+              {firstItemVisible &&
+              !keyboardVisible &&
+              foodType?.length &&
+              subType?.length ? (
                 <Flex style={[{width}]} direction="row" alignItems="center">
                   <TouchableWithoutFeedback
                     onPress={() => {
@@ -430,14 +460,17 @@ export default function SearchMain({route, navigation}) {
                       <Text style={styles.btntxt}>Map</Text>
                     </Flex>
                   </TouchableOpacity>
-
-                  <Badges
-                    from={from}
-                    subType={subType}
-                    setSubType={setSubType}
-                    setPage={setPage}
-                    setVendorData={setVendorData}
-                  />
+                  {/* {!refreshing ? ( */}
+                    <Badges
+                      from={from}
+                      subType={subType}
+                      setSubType={setSubType}
+                      setPage={setPage}
+                      setVendorData={setVendorData}
+                    />
+                  {/* ) : (
+                    <View style={{style:60}}></View>
+                  )} */}
                 </Flex>
               ) : null}
             </ScrollView>

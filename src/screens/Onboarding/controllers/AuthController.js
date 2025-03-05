@@ -189,13 +189,13 @@ export const getLocation = createAsyncThunk(
     'getUser',
     async (_,{dispatch}) => {
       try {
-        dispatch(startLoader(true));
+        // dispatch(startLoader(true));
         const res = await getUserService(dispatch);
         return res.data
       } catch (error) {
         // return error;
       } finally {
-        dispatch(startLoader(false));
+        // dispatch(startLoader(false));
       }
     },
   );

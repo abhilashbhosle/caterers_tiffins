@@ -13,6 +13,7 @@ import {
   Linking,
   Alert,
   Pressable,
+  RefreshControl,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
@@ -61,6 +62,7 @@ import CuisinesExpanded from '../../../components/CuisinesExpanded';
 import moment from 'moment';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {showMessage} from 'react-native-flash-message';
+import {shareProfile} from '../../../components/Share';
 
 export default function CatererProfile({navigation, route}) {
   const {branch_id, vendor_id, location} = route.params;
@@ -76,6 +78,7 @@ export default function CatererProfile({navigation, route}) {
   const [rating, setRating] = useState(0);
   const [showPopular, setShowPopular] = useState(false);
   const [showReviews, setShowReviews] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const scrollViewRef = useRef(null);
 
   useEffect(() => {
@@ -90,6 +93,14 @@ export default function CatererProfile({navigation, route}) {
       setProfile(data);
     }
   }, [data]);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    dispatch(getVendorProfile({branch_id, vendor_id}));
+    dispatch(getSubscription({from: 'Caterers'}));
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
   return (
     <ScreenWrapper>
       {loading ? null : profile?.vendor_service_name ? ( // <ProfileSkeleton />
@@ -99,7 +110,10 @@ export default function CatererProfile({navigation, route}) {
           // enableOnAndroid={true}
           nestedScrollEnabled={true}
           extraScrollHeight={Platform.OS == 'ios' ? 100 : 0}
-          ref={scrollViewRef}>
+          ref={scrollViewRef}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
           {/* =======BANNER SLIDERS======= */}
           <View>
             <View style={{position: 'relative'}}>
@@ -138,7 +152,15 @@ export default function CatererProfile({navigation, route}) {
                         style={styles.backicon}
                       />
                     </Pressable>
-                    <Pressable>
+                    <Pressable
+                      onPress={() => {
+                        shareProfile({
+                          vendor_name: profile?.vendor_service_name,
+                          vendor_type: 'Catererings & Tiffins: ',
+                          profile_id: vendor_id,
+                          branch_id: branch_id,
+                        });
+                      }}>
                       <Image
                         source={require('../../../assets/Common/share.png')}
                         style={styles.backicon}
@@ -177,7 +199,12 @@ export default function CatererProfile({navigation, route}) {
                       style={styles.profile}
                     />
                   ) : (
-                    <View style={{...styles.profile,justifyContent:'center',alignItems:'center'}}>
+                    <View
+                      style={{
+                        ...styles.profile,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
                       <EntypoIcon
                         name="image-inverted"
                         style={[{color: ts.secondarytext}, gs.fs20]}

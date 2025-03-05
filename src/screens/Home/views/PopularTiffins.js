@@ -54,9 +54,10 @@ function PopularTiffins() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  useEffect(() => {
-    dispatch(getUser());
-  }, []);
+  // useEffect(() => {
+  //   console.log("entered in popular tiffins get user")
+  //   dispatch(getUser());
+  // }, []);
 
   useFocusEffect(
     useCallback(() => {

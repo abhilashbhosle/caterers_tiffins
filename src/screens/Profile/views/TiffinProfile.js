@@ -11,6 +11,7 @@ import {
   Image,
   Pressable,
   Linking,
+  RefreshControl,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {ts} from '../../../../ThemeStyles';
@@ -45,6 +46,7 @@ import CuisinesExpanded from '../../../components/CuisinesExpanded';
 import moment from 'moment';
 import {showMessage} from 'react-native-flash-message';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
+import {shareProfile} from '../../../components/Share';
 
 export default function TiffinProfile({navigation, route}) {
   const {branch_id, vendor_id, location} = route.params;
@@ -61,6 +63,7 @@ export default function TiffinProfile({navigation, route}) {
   const [showPopular, setShowPopular] = useState(false);
   const [showReviews, setShowReviews] = useState(false);
   const scrollViewRef = useRef(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const handleFocus = () => {
     setCmtfocus(true);
@@ -81,7 +84,15 @@ export default function TiffinProfile({navigation, route}) {
     }
   }, [branch_id, vendor_id]);
 
-  console.log(profile);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    dispatch(getVendorProfile({branch_id, vendor_id}));
+    dispatch(getSubscription({from: 'Tiffins'}));
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
+
   return (
     <ScreenWrapper>
       {profile?.vendor_service_name ? (
@@ -92,7 +103,10 @@ export default function TiffinProfile({navigation, route}) {
             // enableOnAndroid={true}
             nestedScrollEnabled={true}
             extraScrollHeight={Platform.OS == 'ios' ? 100 : 0}
-            ref={scrollViewRef}>
+            ref={scrollViewRef}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
             {/* =======BANNER SLIDERS======= */}
             <View>
               <View style={{position: 'relative'}}>
@@ -126,7 +140,15 @@ export default function TiffinProfile({navigation, route}) {
                           style={styles.backicon}
                         />
                       </Pressable>
-                      <Pressable>
+                      <Pressable
+                        onPress={() => {
+                          shareProfile({
+                            vendor_name: profile?.vendor_service_name,
+                            vendor_type: 'Catererings & Tiffins: ',
+                            profile_id: vendor_id,
+                            branch_id: branch_id,
+                          });
+                        }}>
                         <Image
                           source={require('../../../assets/Common/share.png')}
                           style={styles.backicon}

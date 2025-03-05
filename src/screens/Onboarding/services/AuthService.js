@@ -379,7 +379,7 @@ export const updateLocationService = async ({
 //   =======GET USER======//
 export const getUserService = async dispatch => {
   try {
-    dispatch(startLoader(true));
+    // dispatch(startLoader(true));
     let token = await AsyncStorage.getItem('token');
     let res = await axios.get(`${endpoints.baseUrl}get-user-info`, {
       headers: {
@@ -389,7 +389,7 @@ export const getUserService = async dispatch => {
     });
     return res;
   } catch (error) {
-    dispatch(startLoader(false));
+    // dispatch(startLoader(false));
     if (error.response && error.response.data) {
       showMessage({
         message: 'Request Failed!',

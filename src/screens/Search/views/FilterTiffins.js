@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   Platform,
   StatusBar,
+  RefreshControl,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
@@ -58,7 +59,7 @@ import {
 import {setSearchHomeJson} from '../../Home/controllers/SearchCommonController';
 import moment from 'moment';
 import LinearGradient from 'react-native-linear-gradient';
-import { Star } from '../../../components/Star';
+import {Star} from '../../../components/Star';
 
 export default function FilterTiffins({navigation, route}) {
   const {address, ssd, sse, location, from} = route.params;
@@ -117,7 +118,8 @@ export default function FilterTiffins({navigation, route}) {
   const [subSortData, setSubSortData] = useState([]);
   const [cuisineSortData, setCuisineSortData] = useState([]);
   const [occasionSortData, setOccassionSortData] = useState([]);
-  useEffect(() => {
+  const [refreshing, setRefreshing] = useState(false);
+  const getAllData = () => {
     dispatch(getService({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
     dispatch(getBudget({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
     dispatch(getCuisines());
@@ -126,7 +128,10 @@ export default function FilterTiffins({navigation, route}) {
     dispatch(getMeal());
     dispatch(getKitchen());
     dispatch(getRatings());
-       dispatch(getSubscription({from: 'Tiffind'}));
+    dispatch(getSubscription({from: 'Tiffins'}));
+  };
+  useEffect(() => {
+    getAllData();
   }, []);
 
   useEffect(() => {
@@ -191,48 +196,48 @@ export default function FilterTiffins({navigation, route}) {
     }
   }, [search]);
   const handleClearFilter = async () => {
-      const sub = await subData.map((item, i=0) =>
-        i === 0
-          ? {...item, selected: (item.selected = '1')}
-          : {...item, selected: '0'},
-      );
-      const food=  await foodTypeData.map((item, i=0) =>
-        i === 0
-          ? {...item, selected: (item.selected = '1')}
-          : {...item, selected: '0'},
-      );
-      await setSearchHomeJson({
-        latitude: '',
-        longitude: '',
-        city: '',
-        pincode: '',
-        place_id: '',
-        from,
-        selectedStartDate: ssd,
-        selectedEndDate: sse,
-        foodTypeData:food,
-        subData:sub,
-        cuisines_filter: [],
-        occasions_filter: [],
-        serving_types_filter: [],
-        ratings_filter: [],
-        service_types_filter: [],
-        head_count_ranges: [],
-        order_by_filter: [],
-        kitchen_types_filter:[],
-        meal_times_filter:[],
-        price_ranges:[]
-      });
-      await dispatch(
-        clearFilter({
-          navigation,
-          type: 'Tiffin',
-        }),
-      );
-      dispatch(updateFilterData());
-      dispatch(getSubscription({from: 'Tiffins'}));
-      dispatch(getFoodTypes());
-    };
+    const sub = await subData.map((item, i = 0) =>
+      i === 0
+        ? {...item, selected: (item.selected = '1')}
+        : {...item, selected: '0'},
+    );
+    const food = await foodTypeData.map((item, i = 0) =>
+      i === 0
+        ? {...item, selected: (item.selected = '1')}
+        : {...item, selected: '0'},
+    );
+    await setSearchHomeJson({
+      latitude: '',
+      longitude: '',
+      city: '',
+      pincode: '',
+      place_id: '',
+      from,
+      selectedStartDate: ssd,
+      selectedEndDate: sse,
+      foodTypeData: food,
+      subData: sub,
+      cuisines_filter: [],
+      occasions_filter: [],
+      serving_types_filter: [],
+      ratings_filter: [],
+      service_types_filter: [],
+      head_count_ranges: [],
+      order_by_filter: [],
+      kitchen_types_filter: [],
+      meal_times_filter: [],
+      price_ranges: [],
+    });
+    await dispatch(
+      clearFilter({
+        navigation,
+        type: 'Tiffin',
+      }),
+    );
+    dispatch(updateFilterData());
+    dispatch(getSubscription({from: 'Tiffins'}));
+    dispatch(getFoodTypes());
+  };
 
   const handleGoBack = () => {
     Alert.alert(
@@ -248,10 +253,17 @@ export default function FilterTiffins({navigation, route}) {
           onPress: async () => {
             // await dispatch(clearFilter({type: from == 'Caterers' ? 'Caterer' : 'Tiffin',navigation}));
             await handleClearFilter();
-          }
+          },
         },
       ],
     );
+  };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    getAllData()
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 500); // To give some delay for UI indication
   };
 
   return (
@@ -266,7 +278,10 @@ export default function FilterTiffins({navigation, route}) {
       <KeyboardAwareScrollView
         enableOnAndroid={true}
         showsVerticalScrollIndicator={false}
-        style={[{flex: 1, backgroundColor: '#fff',top:-10}]}>
+        style={[{flex: 1, backgroundColor: '#fff', top: -10}]}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <LinearGradient
           colors={['#F6D6B2', '#fff', '#FFF']}
           start={{x: 0, y: 0}}
@@ -279,7 +294,7 @@ export default function FilterTiffins({navigation, route}) {
                 {
                   paddingTop:
                     Platform.OS == 'android'
-                      ? StatusBar.currentHeight+30
+                      ? StatusBar.currentHeight + 30
                       : 20,
                 },
                 gs.pb10,
@@ -309,8 +324,8 @@ export default function FilterTiffins({navigation, route}) {
                 </Flex>
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={async() => {
-                    await handleClearFilter()
+                  onPress={async () => {
+                    await handleClearFilter();
                   }}>
                   <Text
                     style={[
@@ -532,7 +547,7 @@ export default function FilterTiffins({navigation, route}) {
                       direction="row"
                       justify="space-between"
                       align="center">
-                      {Star({number:i+1,theme:ts.primary})}
+                      {Star({number: i + 1, theme: ts.primary})}
                       <MaterialIcons
                         name={
                           e.selected == 1 ? 'check-circle' : 'circle-outline'
@@ -620,9 +635,7 @@ export default function FilterTiffins({navigation, route}) {
 
           {/* ====TIFFIN SERVICE TYPE====== */}
           <Card style={[gs.mh5, gs.pv10, gs.mv15, {backgroundColor: '#fff'}]}>
-            <Text style={[styles.heading, gs.fs15, gs.pl15]}>
-               Service Type
-            </Text>
+            <Text style={[styles.heading, gs.fs15, gs.pl15]}>Service Type</Text>
             <Divider style={[gs.mv15]} />
             <Flex
               direction="row"
@@ -807,7 +820,8 @@ export default function FilterTiffins({navigation, route}) {
                       direction="row"
                       justify="space-between"
                       align="center">
-                      <Text style={[styles.servicetxt, gs.fs13, gs.mv10,gs.ph5]}>
+                      <Text
+                        style={[styles.servicetxt, gs.fs13, gs.mv10, gs.ph5]}>
                         {e.name}
                       </Text>
                       <MaterialIcons
@@ -872,7 +886,8 @@ export default function FilterTiffins({navigation, route}) {
                       direction="row"
                       justify="space-between"
                       align="center">
-                      <Text style={[styles.servicetxt, gs.fs13, gs.mv10,gs.ph5]}>
+                      <Text
+                        style={[styles.servicetxt, gs.fs13, gs.mv10, gs.ph5]}>
                         {e.name}
                       </Text>
                       <MaterialIcons
@@ -895,7 +910,7 @@ export default function FilterTiffins({navigation, route}) {
           </Card>
         </View>
       </KeyboardAwareScrollView>
-       <View style={{marginTop:-10}}></View>
+      <View style={{marginTop: -10}}></View>
       <Card
         style={[{borderRadius: 0, backgroundColor: '#fff'}, gs.ph15, gs.pb10]}>
         <Flex

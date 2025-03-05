@@ -228,6 +228,7 @@ function SearchBar({from, navigation, ssd, sse}) {
   }, [ssd, sse]);
 
   useEffect(() => {
+    console.log("triggered")
     dispatch(getFoodTypes());
     dispatch(getSubscription({from}));
     dispatch(getServing());

@@ -1,5 +1,5 @@
-import {View, Text, Platform} from 'react-native';
-import React, {useCallback, useEffect} from 'react';
+import {View, Text, Platform, RefreshControl} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
 import HeaderView from './HeaderView';
 import RecentSearches from './RecentSearches';
 import Branded from './Branded';
@@ -14,10 +14,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import ExploreByKitchen from './ExploreByKitchen';
 import {gs} from '../../../../GlobalStyles';
-import { useDispatch } from 'react-redux';
-import { clearSearch } from '../controllers/SearchController';
+import {useDispatch} from 'react-redux';
+import {clearSearch} from '../controllers/SearchController';
+import { getKitchen } from '../controllers/FilterTiffinController';
 
+const MemoizedHeaderView = React.memo(HeaderView);
 export default function Tiffins({navigation}) {
+  const [refreshing, setRefreshing] = useState(false);
+  const dispatch=useDispatch();
   useFocusEffect(
     useCallback(() => {
       (async () => {
@@ -26,19 +30,29 @@ export default function Tiffins({navigation}) {
       })();
     }, [navigation]),
   );
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    // dispatch(getKitchen());
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
   return (
     <ScreenWrapper>
       <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}
-        bounces={false}>
+        bounces={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <LinearGradient
           start={{x: 0, y: 0.2}}
           end={{x: 0.4, y: 2}}
           colors={['#F6D6B2', '#fff', '#FFF']} // Lighter and softer shades
         >
           <View style={[gs.mt10]}>
-            <HeaderView from="Tiffins" navigation={navigation} />
+            <MemoizedHeaderView from="Tiffins" navigation={navigation} />
           </View>
           <ExploreIndia />
         </LinearGradient>
@@ -48,13 +62,13 @@ export default function Tiffins({navigation}) {
         {/* <Branded/> */}
         <TiffinProviders />
       </ScrollView>
-         <View style={styles.leveler}></View>
+      <View style={styles.leveler}></View>
     </ScreenWrapper>
   );
 }
 const styles = ScaledSheet.create({
   container: {backgroundColor: '#fff', top: '-10@ms'},
-  leveler:{
-    marginTop:'-10@ms'
-  }
+  leveler: {
+    marginTop: '-10@ms',
+  },
 });

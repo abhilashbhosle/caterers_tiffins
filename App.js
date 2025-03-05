@@ -1,4 +1,12 @@
-import {View, Text, Platform, StyleSheet, Image, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  Platform,
+  StyleSheet,
+  Image,
+  Dimensions,
+  StatusBar,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {gs} from './GlobalStyles';
 import RootStack from './src/stacks/RootStack';
@@ -7,6 +15,7 @@ import {NativeBaseProvider} from 'native-base';
 import {NavigationContainer} from '@react-navigation/native';
 import {store} from './src/redux/store';
 import {Provider} from 'react-redux';
+import {ts} from './ThemeStyles';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -15,12 +24,16 @@ export default function App() {
       setShowSplash(false);
     }, 1800);
   }, []);
-  const {height,width}=Dimensions.get('screen');
+  const {height, width} = Dimensions.get('screen');
   return showSplash ? (
+    <View style={[styles.splashContainer, {backgroundColor: ts.secondary}]}>
+      <StatusBar backgroundColor={ts.secondary} barStyle="light-content" />
       <Image
         source={require('./src/assets/splash/2.gif')}
-        style={{height,width}}
+        style={styles.splashImage}
+        resizeMode="cover"
       />
+    </View>
   ) : (
     <Provider store={store}>
       <PaperProvider>
@@ -45,5 +58,15 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0,
+  },
+  splashContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  splashImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
   },
 });
