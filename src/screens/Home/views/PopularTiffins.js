@@ -42,6 +42,7 @@ import {startLoader} from '../../../redux/CommonSlicer';
 import {setSearchHomeJson} from '../controllers/SearchCommonController';
 import {styles} from '../styles/PopularTiffinStyles';
 import MorePrimarybtn from '../../../components/MorePrimarybtn';
+import {updateSubscriptionFilter} from '../services/SearchService';
 
 function PopularTiffins() {
   const userDetails = useSelector(state => state.auth?.userInfo?.data);
@@ -106,7 +107,12 @@ function PopularTiffins() {
         selected: e.selected,
       }));
       if (subscription_types_filter?.length) {
-        await dispatch(updateSubscriptions(result));
+        await updateSubscriptionFilter({
+          subscription_types_filter,
+          from: 'Tiffins',
+          dispatch,
+        });
+        dispatch(updateSubscriptions(result));
         dispatch(clearCaterers());
         await setSearchHomeJson({
           latitude: location?.latitude,
@@ -186,12 +192,20 @@ function PopularTiffins() {
                 alt={item.name}
               />
             ) : (
-                <View style={[styles.img, {...styles.imageStyle,justifyContent:'center',alignItems:'center'}]}>
-                              <EntypoIcon
-                                name="image-inverted"
-                                style={[{color: ts.secondarytext}, gs.fs30]}
-                              />
-                            </View>
+              <View
+                style={[
+                  styles.img,
+                  {
+                    ...styles.imageStyle,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  },
+                ]}>
+                <EntypoIcon
+                  name="image-inverted"
+                  style={[{color: ts.secondarytext}, gs.fs30]}
+                />
+              </View>
             )}
 
             <Flex direction="row" style={styles.profileContainer}>
@@ -333,9 +347,11 @@ function PopularTiffins() {
             </Text>
           </View>
           {popularTData?.length ? (
-            <TouchableOpacity activeOpacity={0.7} onPress={()=>{
-              handleBranded()
-              dispatch(clearSearch());
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                handleBranded();
+                dispatch(clearSearch());
               }}>
               <MorePrimarybtn />
             </TouchableOpacity>
@@ -361,7 +377,7 @@ function PopularTiffins() {
             contentContainerStyle={{
               ...styles.contentContainerStyle,
             }}
-            overScrollMode='never'
+            overScrollMode="never"
           />
         )
       )}
