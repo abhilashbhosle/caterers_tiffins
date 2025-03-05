@@ -223,7 +223,7 @@ export default function SearchMain({route, navigation}) {
       <ScrollView
         style={{...styles.container, flex: 1, backgroundColor: '#fff'}}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh}   progressViewOffset={60}/>
         }>
         {/* =====SEARCH BAR */}
         <LinearGradient

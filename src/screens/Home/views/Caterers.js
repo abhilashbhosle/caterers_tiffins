@@ -118,10 +118,14 @@ export default function Caterers({navigation}) {
         showsVerticalScrollIndicator={false}
         bounces={false}
         refreshControl={
-          // <View style={{paddingTop: 50}}>
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          // </View>
-        }>
+          <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          progressViewOffset={60}
+        />
+    
+        }  
+        >
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 0.2, y: 1}}

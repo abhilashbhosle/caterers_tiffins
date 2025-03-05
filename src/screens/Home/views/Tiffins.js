@@ -16,12 +16,12 @@ import ExploreByKitchen from './ExploreByKitchen';
 import {gs} from '../../../../GlobalStyles';
 import {useDispatch} from 'react-redux';
 import {clearSearch} from '../controllers/SearchController';
-import { getKitchen } from '../controllers/FilterTiffinController';
+import {getKitchen} from '../controllers/FilterTiffinController';
 
 const MemoizedHeaderView = React.memo(HeaderView);
 export default function Tiffins({navigation}) {
   const [refreshing, setRefreshing] = useState(false);
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   useFocusEffect(
     useCallback(() => {
       (async () => {
@@ -44,7 +44,11 @@ export default function Tiffins({navigation}) {
         showsVerticalScrollIndicator={false}
         bounces={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl 
+          refreshing={refreshing} 
+          onRefresh={onRefresh} 
+          progressViewOffset={60}
+          />
         }>
         <LinearGradient
           start={{x: 0, y: 0.2}}

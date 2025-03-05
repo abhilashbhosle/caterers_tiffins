@@ -105,7 +105,7 @@ export default function TiffinProfile({navigation, route}) {
             extraScrollHeight={Platform.OS == 'ios' ? 100 : 0}
             ref={scrollViewRef}
             refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh}   progressViewOffset={60}/>
             }>
             {/* =======BANNER SLIDERS======= */}
             <View>

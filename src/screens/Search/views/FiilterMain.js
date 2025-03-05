@@ -281,7 +281,7 @@ export default function FiilterMain({navigation, route}) {
           // gs.ph10, gs.pv20
         ]}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh}   progressViewOffset={60}/>
         }>
         <LinearGradient
           colors={['#f8b4b3', '#fbe3e1', '#fff']}

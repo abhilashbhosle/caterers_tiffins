@@ -280,7 +280,7 @@ export default function FilterTiffins({navigation, route}) {
         showsVerticalScrollIndicator={false}
         style={[{flex: 1, backgroundColor: '#fff', top: -10}]}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh}  progressViewOffset={60}/>
         }>
         <LinearGradient
           colors={['#F6D6B2', '#fff', '#FFF']}
