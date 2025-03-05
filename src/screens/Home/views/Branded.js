@@ -111,6 +111,7 @@ function Branded() {
           from: 'Caterers',
           dispatch,
         });
+        // console.log(result)
         dispatch(updateSubscriptions(result));
         dispatch(clearCaterers());
         await setSearchHomeJson({

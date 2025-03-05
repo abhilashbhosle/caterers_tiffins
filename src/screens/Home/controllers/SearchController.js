@@ -64,6 +64,7 @@ export const handleSearchResults = ({
   subData,
   searchTerm,
   selected_vendor,
+  is_city_search
 }) => {
   let flag = false;
   if (!selectedStartDate || !selectedEndDate) {
@@ -117,6 +118,7 @@ export const handleSearchResults = ({
       subData,
       searchTerm: '',
       selected_vendor: '',
+      is_city_search:is_city_search
     });
     navigation.push('PageStack', {
       screen: 'SearchMain',

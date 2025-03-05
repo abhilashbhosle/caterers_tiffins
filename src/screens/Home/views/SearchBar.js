@@ -332,6 +332,7 @@ function SearchBar({from, navigation, ssd, sse}) {
                       search != userDetails[0]?.formatted_address
                         ? vendorId
                         : '',
+                    is_city_search:1    
                   });
                   handleSearchResults({
                     navigation,
@@ -351,6 +352,7 @@ function SearchBar({from, navigation, ssd, sse}) {
                       search != userDetails[0]?.formatted_address
                         ? vendorId
                         : '',
+                    is_city_search:1     
                   });
                 }}>
                 <Image

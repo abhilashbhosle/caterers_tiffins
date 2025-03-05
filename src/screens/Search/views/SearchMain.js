@@ -48,7 +48,7 @@ export default function SearchMain({route, navigation}) {
   const [foodType, setFoodType] = useState([]);
   const [total, setTotal] = useState(-1);
   const dispatch = useDispatch();
-  const {foodTypeData, subData} = useSelector(state => state?.filterCater);
+  const {foodTypeData, subData,updatedSubData} = useSelector(state => state?.filterCater);
   const [foodText, setFoodText] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
@@ -80,8 +80,9 @@ export default function SearchMain({route, navigation}) {
   }, [foodTypeData]);
 
   useMemo(() => {
+    console.log("updated subdata",updatedSubData)
     // if (subType?.length == 0) {
-    setSubType(subData);
+    setSubType(updatedSubData);
     // }
   }, [subData]);
 
@@ -217,6 +218,7 @@ export default function SearchMain({route, navigation}) {
       setRefreshing(false);
     }, 500); // To give some delay for UI indication
   };
+  
 
   return (
     <ScreenWrapper>

@@ -20,7 +20,8 @@ export const setSearchHomeJson = async ({
   order_by,
   price_ranges,
   kitchen_types_filter,
-  meal_times_filter
+  meal_times_filter,
+  is_city_search
 }) => {
   try {
     let food_types_filter = await foodTypeData?.map(e => ({
@@ -52,6 +53,7 @@ export const setSearchHomeJson = async ({
       price_ranges:price_ranges?.length?price_ranges:[],
       kitchen_types_filter:kitchen_types_filter?.length?kitchen_types_filter:[],
       meal_times_filter:meal_times_filter?.length?meal_times_filter:[],
+      is_city_search:is_city_search?is_city_search:""
     };
     await AsyncStorage.setItem('searchJson', JSON.stringify(params));
   } catch (error) {

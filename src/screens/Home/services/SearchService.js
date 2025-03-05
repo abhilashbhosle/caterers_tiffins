@@ -49,7 +49,7 @@ export const getCatererSearchService = async ({params}) => {
   try {
     let token = await AsyncStorage.getItem('token');
     let res = await axios.get(`${endpoints.baseUrl}search-vendors`, {
-      params: {...params,save_filter:1},
+      params: {...params, save_filter: 1},
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: `Bearer ${token}`,
@@ -105,7 +105,12 @@ export const updateSubscriptionFilter = async ({
         Authorization: `Bearer ${token}`,
       },
     });
-    await dispatch(getSubscription({from}))
+    console.log('result in updated subscription', res.data.data.request);
+    // if (res?.data?.status == 'success') {
+    //   setTimeout(async () => {
+        await dispatch(getSubscription({from}));
+      // }, 2000);
+    // }
     return res.data;
   } catch (error) {
     console.log('error in update subfilter', error);

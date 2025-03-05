@@ -36,14 +36,15 @@ function ExploreIndia() {
   const navigation = useNavigation();
 
   const handleCities = async location => {
+    // console.log(location)
     dispatch(clearSearch());
     try {
       let loc = {
         latitude: location?.latitude,
         longitude: location?.longitude,
         city: location?.name,
-        place_id: 133333,
-        pincode: 1211111,
+        // place_id: 133333,
+        // pincode: 1211111,
       };
       dispatch(setLocationres(loc));
       let today = new Date();
@@ -54,15 +55,16 @@ function ExploreIndia() {
         latitude: location?.latitude,
         longitude: location?.longitude,
         city: location?.name,
-        place_id: 133333,
-        pincode: 1211111,
+        // place_id: 133333,
+        // pincode: 1211111,
         from: route?.name == 'Caterings' ? 'Caterers' : 'Tiffin',
         selectedStartDate: today,
         selectedEndDate: today,
         foodTypeData,
         subData,
         selected_vendor:[],
-        searchTerm:""
+        searchTerm:"",
+        is_city_search:1
       });
       navigation.push('PageStack', {
         screen: 'SearchMain',
