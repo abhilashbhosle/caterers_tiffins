@@ -20,7 +20,7 @@ import {
   getLocationData,
   getLocations,
 } from '../screens/Home/controllers/SearchController';
-import {getLocationService} from '../screens/Onboarding/services/AuthService';
+import {clearLocation, getLocationService} from '../screens/Onboarding/services/AuthService';
 import {useNavigation} from '@react-navigation/native';
 import {showMessage} from 'react-native-flash-message';
 
@@ -83,6 +83,20 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
   const checkLocation = () => {
     dispatch(getLocation({navigation, from: 'internal'}));
   };
+  const handleClearLocation=async()=>{
+    try{
+      const res=await clearLocation();
+      console.log(res.status);
+      if(res?.status){
+        setTimeout(()=>{
+        dispatch(getUser());
+        },500)
+        setLocation("");
+      }
+    }catch(err){
+      console.log("error in clear location")
+    }
+  }
   return (
     <Actionsheet isOpen={locSheetOpen} onClose={handleClose}>
       <Actionsheet.Content style={[{height: height / 1.5}]}>
@@ -166,7 +180,7 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
             </View>
             {!focused && !searchData?.length && (
               <View>
-                {/* <TouchableOpacity >
+                <TouchableOpacity onPress={handleClearLocation}>
                   <Text
                     style={[
                       gs.mb10,
@@ -179,7 +193,7 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
                     ]}>
                     Clear Location
                   </Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
                 <TouchableOpacity
                   activeOpacity={0.7}
                   onPress={checkLocation}

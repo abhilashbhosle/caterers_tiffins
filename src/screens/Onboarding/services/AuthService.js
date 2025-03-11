@@ -376,6 +376,34 @@ export const updateLocationService = async ({
   }
 };
 
+//   =======CLEAR LOCATION======//
+export const clearLocation = async() => {
+  try {
+    // dispatch(startLoader(true));
+    let token = await AsyncStorage.getItem('token');
+    console.log(token)
+    let res = await axios.post(`${endpoints.baseUrl}clear-location-filters-app`,null, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    // dispatch(startLoader(false));
+    if (error.response && error.response.data) {
+      showMessage({
+        message: 'Request Failed!',
+        description: error.response.data.message,
+        type: 'danger',
+      });
+      return error.response.data;
+    } else {
+      return error.message;
+    }
+  }
+};
+
 //   =======GET USER======//
 export const getUserService = async dispatch => {
   try {

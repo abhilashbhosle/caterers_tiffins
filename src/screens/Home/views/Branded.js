@@ -241,7 +241,7 @@ function Branded() {
             )}
           </Text>
           <Text style={[gs.fs12, styles.area]}>
-            {item?.street_name ? item.street_name.slice(0, 17) : item?.area},{' '}
+            {item?.area}{item?.area?", ":''}{' '}
             {item?.city}
           </Text>
           <Flex

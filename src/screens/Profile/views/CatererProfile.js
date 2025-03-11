@@ -645,6 +645,57 @@ export default function CatererProfile({navigation, route}) {
               </View>
             </Flex>
           </View>
+          {profile?.occasions?.length ? (
+            <View style={[gs.ph15, gs.mt20]}>
+              <Text
+                style={[
+                  {fontFamily: ts.jakartabold, color: '#000'},
+                  gs.fs20,
+                  gs.pb10,
+                ]}>
+                Occasions We Cater
+              </Text>
+              <Flex direction="row" align="center" flexWrap="wrap">
+                {profile?.occasions?.filter(e=>e.selected==1)?.length ? (
+                  profile?.occasions?.filter(e=>e.selected==1)?.map((e, i) => (
+                      <Text
+                        style={[
+                          styles.subtxt,
+                          gs.fs16,
+                          {
+                            fontFamily: ts.jakartaregular,
+                            color: ts.primarytext,
+                          },
+                        ]}>
+                        {e?.occasion_name}
+                        {i !== profile?.occasions?.filter(e=>e.selected==1)?.length - 1 ? ', ' : ''}{' '}
+                      </Text>
+                    ))
+                ) : (
+                  <Text
+                    style={[
+                      styles.subtxt,
+                      gs.fs16,
+                      {fontFamily: ts.jakartaregular, color: ts.primarytext},
+                    ]}>
+                    N/A
+                  </Text>
+                )}
+                {/* {profile?.branches?.length > 5 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setBranchStretch(!branchStretch);
+                    }}>
+                    <Text
+                      style={[styles.subtxt, gs.fs10, {color: ts.secondary}]}>
+                      {!branchStretch ? 'View all' : 'View less'}
+                    </Text>
+                  </TouchableOpacity>
+                )} */}
+              </Flex>
+            </View>
+          ) : null}
+        
           {/* =====ABOUT US / BRANCHES========== */}
 
           <View style={[gs.ph15, gs.mt20]}>
@@ -694,58 +745,7 @@ export default function CatererProfile({navigation, route}) {
             )}
           </View>
 
-          {profile?.branches?.length ? (
-            <View style={[gs.ph15, gs.mt20]}>
-              <Text
-                style={[
-                  {fontFamily: ts.jakartabold, color: '#000'},
-                  gs.fs20,
-                  gs.pb10,
-                ]}>
-                Our Branches
-              </Text>
-              <Flex direction="row" align="center" flexWrap="wrap">
-                {profile?.branches?.length ? (
-                  profile?.branches
-                    ?.slice(0, branchStretch ? profile.branches.length : 5)
-                    .map((e, i) => (
-                      <Text
-                        style={[
-                          styles.subtxt,
-                          gs.fs16,
-                          {
-                            fontFamily: ts.jakartaregular,
-                            color: ts.primarytext,
-                          },
-                        ]}>
-                        {e?.city}
-                        {i !== profile?.branches?.length - 1 ? ',' : '.'}{' '}
-                      </Text>
-                    ))
-                ) : (
-                  <Text
-                    style={[
-                      styles.subtxt,
-                      gs.fs16,
-                      {fontFamily: ts.jakartaregular, color: ts.primarytext},
-                    ]}>
-                    -
-                  </Text>
-                )}
-                {profile?.branches?.length > 5 && (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setBranchStretch(!branchStretch);
-                    }}>
-                    <Text
-                      style={[styles.subtxt, gs.fs10, {color: ts.secondary}]}>
-                      {!branchStretch ? 'View all' : 'View less'}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </Flex>
-            </View>
-          ) : null}
+         
 
           {/* <View style={[gs.ph5, gs.pb15]}>
             <Divider />
