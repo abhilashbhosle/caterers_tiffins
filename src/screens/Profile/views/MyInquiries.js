@@ -206,7 +206,7 @@ export default function MyInquiries({navigation}) {
       contentContainerStyle={[gs.ph15, gs.pv10]}
       ListFooterComponent={renderFooter}
       ListEmptyComponent={
-        !inquiryLoading && inquiryCatererData?.length == 0 ? (
+        !inquiryLoading && !inquiryCatererData?.length? (
           <Text
             style={[
               gs.fs14,
@@ -378,7 +378,7 @@ export default function MyInquiries({navigation}) {
         contentContainerStyle={[gs.ph15, gs.pv10]}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={
-          !inquiryLoading && inquiryTiffinData?.length == 0 ? (
+          !inquiryLoading && !inquiryTiffinData?.length ? (
             <Text
               style={[
                 gs.fs14,
@@ -469,9 +469,9 @@ export default function MyInquiries({navigation}) {
                     }}>
                     {route.title}{' '}
                     {focused && route.title == 'Caterers'
-                      ? `(${inquiryCatererData?.length})`
+                      ? `(${inquiryCatererData?.length?inquiryCatererData?.length:0})`
                       : focused && route.title == 'Tiffins'
-                      ? `(${inquiryTiffinData?.length})`
+                      ? `(${inquiryTiffinData?.length?inquiryTiffinData?.length:0})`
                       : null}
                   </Text>
                 );
