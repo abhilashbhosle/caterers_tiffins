@@ -6,7 +6,7 @@ import {
   ImageBackground,
   Dimensions,
 } from 'react-native';
-import React, {useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Caterers from '../screens/Home/views/Caterers';
 import Tiffins from '../screens/Home/views/Tiffins';
@@ -19,12 +19,15 @@ import ProfileMain from '../screens/Profile/views/ProfileMain';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigationState} from '@react-navigation/native';
 import {clearSearch} from '../screens/Home/controllers/SearchController';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 const {width} = Dimensions.get('screen');
 
 export default function BottomBarStack() {
 const dispatch=useDispatch()
+
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({

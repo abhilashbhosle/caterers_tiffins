@@ -43,6 +43,7 @@ import {
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
 import {Card} from 'react-native-paper';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
 export default function ProfileMain({navigation}) {
   const dispatch = useDispatch();

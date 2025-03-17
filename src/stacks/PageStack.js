@@ -1,5 +1,5 @@
 import {View, Text} from 'react-native';
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SearchMain from '../screens/Search/views/SearchMain';
 import ProfileMain from '../screens/Profile/views/ProfileMain';
@@ -19,9 +19,14 @@ import MapSingle from '../screens/Maps/MapSingle';
 import  MapMultiple  from '../screens/Maps/MapMultiple';
 import { Webview } from '../components/WebView';
 // import Notifications from '../screens/Home/views/Notifications';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 const Stack = createNativeStackNavigator();
 export default function PageStack() {
+ 
+
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="SearchMain" component={SearchMain} />

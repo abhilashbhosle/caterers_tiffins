@@ -10,12 +10,14 @@ import {
   StatusBar,
   Image,
   Dimensions,
+  Linking,
+  Alert,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
 import {ts} from '../../../../ThemeStyles';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
-import {Flex} from 'native-base';
+import {Flex, Spinner} from 'native-base';
 import {ScaledSheet} from 'react-native-size-matters';
 import {caterersinquiry, tiffinsenquiry} from '../../../constants/Constants';
 import {Card, Divider} from 'react-native-paper';
@@ -23,6 +25,9 @@ import {gs} from '../../../../GlobalStyles';
 import FontIcons from 'react-native-vector-icons/FontAwesome';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import LinearGradient from 'react-native-linear-gradient';
+import {useDispatch, useSelector} from 'react-redux';
+import {getInquiries} from '../../Home/controllers/InquiryController';
+import moment from 'moment';
 export default function MyInquiries({navigation}) {
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
@@ -31,6 +36,19 @@ export default function MyInquiries({navigation}) {
     {key: 'second', title: 'Tiffins'},
   ]);
   const {height, width} = Dimensions.get('screen');
+  const dispatch = useDispatch();
+  const {inquiryLoading, inquiryCatererData, inquiryTiffinData, inquiryError} =
+    useSelector(state => state.inquiry);
+  useEffect(() => {
+    dispatch(getInquiries({page: 1, limit: 100}));
+  }, []);
+
+  const renderFooter = () => {
+    if (inquiryLoading) {
+      return <Spinner color={ts.secondarytext} />;
+    }
+  };
+
   //   ========CATERERS INWUIRY LIST=============== //
   const renderCaterers = ({item}) => {
     return (
@@ -46,7 +64,7 @@ export default function MyInquiries({navigation}) {
               gs.ml15,
             ]}
             numberOfLines={1}>
-            {item.name}
+            {item?.vendor_service_name}
           </Text>
           <Image
             source={require('../../../assets/Common/brandedrev.png')}
@@ -61,7 +79,7 @@ export default function MyInquiries({navigation}) {
             gs.mb10,
             gs.ml15,
           ]}>
-          {item.area}
+          {item?.area ? item?.area : 'N/A'}
         </Text>
         <Divider />
 
@@ -70,29 +88,69 @@ export default function MyInquiries({navigation}) {
             <Text style={[styles.types, gs.fs14, gs.mt10, gs.mb5]}>
               Food Type{' '}
             </Text>
-            <Flex direction="row" align="center">
-              <Image
-                source={require('../../../assets/Common/veg.png')}
-                style={styles.foodtypimg}
-              />
-              <Text style={[styles.typestxt, gs.fs14]}>
-                {item.type.toUpperCase()}
-              </Text>
-            </Flex>
+            {item?.insertedData?.food_types?.length ? (
+              item.insertedData.food_types.map((e, i) => (
+                <Flex direction="row" align="center" key={i}>
+                  {e?.food_type_name == 'Veg' || e?.food_type_name == 'All' ? (
+                    <Image
+                      source={require('../../../assets/Common/veg.png')}
+                      style={styles.foodtypimg}
+                    />
+                  ) : null}
+                  {e?.food_type_name == 'NonVeg' ||
+                  e?.food_type_name == 'All' ? (
+                    <Image
+                      source={require('../../../assets/Common/nonveg.png')}
+                      style={styles.foodtypimg}
+                    />
+                  ) : null}
+                  <Text style={[styles.typestxt, gs.fs14]}>
+                    {e?.food_type_name.toUpperCase()}
+                  </Text>
+                </Flex>
+              ))
+            ) : (
+              <Text style={[styles.typestxt, gs.fs14]}>N/A</Text>
+            )}
+
             <Text style={[styles.types, gs.fs14, gs.mt10, gs.mb5]}>
               Occasion{' '}
             </Text>
-            <Text style={[styles.typestxt, gs.fs14]}>{item.occasion}</Text>
+            {item?.insertedData?.occasions?.length ? (
+              item.insertedData.occasions.map((e, i) => (
+                <Text style={[styles.typestxt, gs.fs14]} key={i}>
+                  {e.occasion_name}{' '}
+                </Text>
+              ))
+            ) : (
+              <Text style={[styles.typestxt, gs.fs14]}>N/A</Text>
+            )}
           </View>
           <View style={{marginLeft: 80}}>
             <Text style={[styles.types, gs.fs14, gs.mt10, gs.mb5]}>
               Cuisines{' '}
             </Text>
-            <Text style={[styles.typestxt, gs.fs14]}>{item.cuisine}</Text>
+            {item?.insertedData?.cuisines?.length ? (
+              item.insertedData.cuisines.map((e, i) => (
+                <Text style={[styles.typestxt, gs.fs14]} key={i}>
+                  {e.cuisine_name}{' '}
+                </Text>
+              ))
+            ) : (
+              <Text style={[styles.typestxt, gs.fs14]}>N/A</Text>
+            )}
             <Text style={[styles.types, gs.fs14, gs.mt10, gs.mb5]}>
               Service{' '}
             </Text>
-            <Text style={[styles.typestxt, gs.fs14]}>{item.service}</Text>
+            {item?.insertedData?.service_types?.length ? (
+              item.insertedData.service_types.map((e, i) => (
+                <Text style={[styles.typestxt, gs.fs14]} key={i}>
+                  {e.service_type_name}{' '}
+                </Text>
+              ))
+            ) : (
+              <Text style={[styles.typestxt, gs.fs14]}>N/A</Text>
+            )}
           </View>
         </Flex>
         <Divider style={[gs.mv10]} />
@@ -100,27 +158,34 @@ export default function MyInquiries({navigation}) {
           direction="row"
           alignItems="center"
           justifyContent="space-between"
-          style={[gs.mh15]}
-          >
+          style={[gs.mh15]}>
           <Text
             style={[gs.fs14, {fontFamily: ts.jakartamedium, color: '#70747b'}]}>
-            {item.contactdate}
+            {moment(item?.enquiry_date).format('DD/MM/YYYYY')}
           </Text>
           <TouchableOpacity
             activeOpacity={0.8}
             style={[
               styles.callnowbtn,
               gs.br20,
-              {backgroundColor:ts.secondary}
-            ]}>
+              {backgroundColor: ts.secondary},
+            ]}
+            onPress={() => {
+              item?.user_phone_number
+                ? Linking.openURL(`tel:${item?.user_phone_number}`)
+                : Alert.alert('No Phone Number Found.');
+            }}>
             <Flex direction="row" alignItems="center">
-              <Image style={styles.phoneicon} source={require('../../../assets/Common/phone.png')}/>
+              <Image
+                style={styles.phoneicon}
+                source={require('../../../assets/Common/phone.png')}
+              />
               <Text
                 style={[
                   gs.fs14,
                   {fontFamily: ts.jakartasemibold, color: '#fff'},
                   gs.ml5,
-                  gs.mb4
+                  gs.mb4,
                 ]}>
                 Call Now
               </Text>
@@ -130,125 +195,202 @@ export default function MyInquiries({navigation}) {
       </Card>
     );
   };
-
+  // console.log(caterersinquiry)
   // =========CATERERS==========//
   const Caterers = () => (
     <FlatList
-      data={caterersinquiry}
+      data={!inquiryLoading ? inquiryCatererData : []}
       keyExtractor={(item, index) => String(index)}
       renderItem={renderCaterers}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={[gs.ph15, gs.pv10]}
+      ListFooterComponent={renderFooter}
+      ListEmptyComponent={
+        !inquiryLoading && inquiryCatererData?.length == 0 ? (
+          <Text
+            style={[
+              gs.fs14,
+              {fontFamily: ts.jakartalight, color: '#000'},
+              gs.mt5,
+              gs.mb10,
+              gs.ml15,
+            ]}>
+            No Inquiries found
+          </Text>
+        ) : null
+      }
     />
   );
   //   ========TIFFINS INWUIRY LIST=============== //
   const renderTiffins = ({item}) => {
     return (
       <Card style={[{backgroundColor: '#fff'}, gs.mt10, gs.pv15]}>
-      <Flex
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center">
+        <Flex
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center">
+          <Text
+            style={[
+              gs.fs17,
+              {width: width / 1.7, color: '#000', fontFamily: ts.jakartabold},
+              gs.ml15,
+            ]}
+            numberOfLines={1}>
+            {item?.vendor_service_name}
+          </Text>
+          <Image
+            source={require('../../../assets/Common/brandedrev.png')}
+            style={styles.labelStyle}
+          />
+        </Flex>
         <Text
           style={[
-            gs.fs17,
-            {width: width / 1.7, color: '#000', fontFamily: ts.jakartabold},
+            gs.fs14,
+            {fontFamily: ts.jakartalight, color: '#000'},
+            gs.mt5,
+            gs.mb10,
             gs.ml15,
-          ]}
-          numberOfLines={1}>
-          {item.name}
-        </Text>
-        <Image
-          source={require('../../../assets/Common/brandedrev.png')}
-          style={styles.labelStyle}
-        />
-      </Flex>
-      <Text
-        style={[
-          gs.fs14,
-          {fontFamily: ts.jakartalight, color: '#000'},
-          gs.mt5,
-          gs.mb10,
-          gs.ml15,
-        ]}>
-        {item.area}
-      </Text>
-      <Divider />
-
-      <Flex direction="row" align="center" style={[gs.mb5, gs.mh15]}>
-        <View>
-          <Text style={[styles.types, gs.fs14, gs.mt10, gs.mb5]}>
-            Food Type{' '}
-          </Text>
-          <Flex direction="row" align="center">
-            <Image
-              source={require('../../../assets/Common/veg.png')}
-              style={styles.foodtypimg}
-            />
-            <Text style={[styles.typestxt, gs.fs14]}>
-              {item.type.toUpperCase()}
-            </Text>
-          </Flex>
-          <Text style={[styles.types, gs.fs14, gs.mt10, gs.mb5]}>
-            Occasion{' '}
-          </Text>
-          <Text style={[styles.typestxt, gs.fs14]}>{item.occasion}</Text>
-        </View>
-        <View style={{marginLeft: 80}}>
-          <Text style={[styles.types, gs.fs14, gs.mt10, gs.mb5]}>
-            Cuisines{' '}
-          </Text>
-          <Text style={[styles.typestxt, gs.fs14]}>{item.cuisine}</Text>
-          <Text style={[styles.types, gs.fs14, gs.mt10, gs.mb5]}>
-            Service{' '}
-          </Text>
-          <Text style={[styles.typestxt, gs.fs14]}>{item.service}</Text>
-        </View>
-      </Flex>
-      <Divider style={[gs.mv10]} />
-      <Flex
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        style={[gs.mh15]}
-        >
-        <Text
-          style={[gs.fs14, {fontFamily: ts.jakartamedium, color: '#70747b'}]}>
-          {item.contactdate}
-        </Text>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={[
-            styles.callnowbtn,
-            gs.br20,
-            {backgroundColor:ts.primary}
           ]}>
-          <Flex direction="row" alignItems="center">
-            <Image style={styles.phoneicon} source={require('../../../assets/Common/phone.png')}/>
-            <Text
-              style={[
-                gs.fs14,
-                {fontFamily: ts.jakartasemibold, color: '#fff'},
-                gs.ml5,
-                gs.mb4
-              ]}>
-              Call Now
+          {item?.area ? item?.area : 'N/A'}
+        </Text>
+        <Divider />
+
+        <Flex direction="row" align="center" style={[gs.mb5, gs.mh15]}>
+          <View>
+            <Text style={[styles.types, gs.fs14, gs.mt10, gs.mb5]}>
+              Food Type{' '}
             </Text>
-          </Flex>
-        </TouchableOpacity>
-      </Flex>
-    </Card>
+            {item?.insertedData?.food_types?.length ? (
+              item.insertedData.food_types.map((e, i) => (
+                <Flex direction="row" align="center" key={i}>
+                  {e?.food_type_name == 'Veg' || e?.food_type_name == 'All' ? (
+                    <Image
+                      source={require('../../../assets/Common/veg.png')}
+                      style={styles.foodtypimg}
+                    />
+                  ) : null}
+                  {e?.food_type_name == 'NonVeg' ||
+                  e?.food_type_name == 'All' ? (
+                    <Image
+                      source={require('../../../assets/Common/nonveg.png')}
+                      style={styles.foodtypimg}
+                    />
+                  ) : null}
+                  <Text style={[styles.typestxt, gs.fs14]}>
+                    {e?.food_type_name.toUpperCase()}
+                  </Text>
+                </Flex>
+              ))
+            ) : (
+              <Text style={[styles.typestxt, gs.fs14]}>N/A</Text>
+            )}
+
+            <Text style={[styles.types, gs.fs14, gs.mt10, gs.mb5]}>
+              Occasion{' '}
+            </Text>
+            {item?.insertedData?.occasions?.length ? (
+              item.insertedData.occasions.map((e, i) => (
+                <Text style={[styles.typestxt, gs.fs14]} key={i}>
+                  {e.occasion_name}{' '}
+                </Text>
+              ))
+            ) : (
+              <Text style={[styles.typestxt, gs.fs14]}>N/A</Text>
+            )}
+          </View>
+          <View style={{marginLeft: 80}}>
+            <Text style={[styles.types, gs.fs14, gs.mt10, gs.mb5]}>
+              Cuisines{' '}
+            </Text>
+            {item?.insertedData?.cuisines?.length ? (
+              item.insertedData.cuisines.map((e, i) => (
+                <Text style={[styles.typestxt, gs.fs14]} key={i}>
+                  {e.cuisine_name}{' '}
+                </Text>
+              ))
+            ) : (
+              <Text style={[styles.typestxt, gs.fs14]}>N/A</Text>
+            )}
+            <Text style={[styles.types, gs.fs14, gs.mt10, gs.mb5]}>
+              Service{' '}
+            </Text>
+            {item?.insertedData?.service_types?.length ? (
+              item.insertedData.service_types.map((e, i) => (
+                <Text style={[styles.typestxt, gs.fs14]} key={i}>
+                  {e.service_type_name}{' '}
+                </Text>
+              ))
+            ) : (
+              <Text style={[styles.typestxt, gs.fs14]}>N/A</Text>
+            )}
+          </View>
+        </Flex>
+        <Divider style={[gs.mv10]} />
+        <Flex
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          style={[gs.mh15]}>
+          <Text
+            style={[gs.fs14, {fontFamily: ts.jakartamedium, color: '#70747b'}]}>
+            {moment(item?.enquiry_date).format('DD/MM/YYYYY')}
+          </Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[
+              styles.callnowbtn,
+              gs.br20,
+              {backgroundColor: ts.primary},
+            ]}
+            onPress={() => {
+              item?.user_phone_number
+                ? Linking.openURL(`tel:${item?.user_phone_number}`)
+                : Alert.alert('No Phone Number Found.');
+            }}>
+            <Flex direction="row" alignItems="center">
+              <Image
+                style={styles.phoneicon}
+                source={require('../../../assets/Common/phone.png')}
+              />
+              <Text
+                style={[
+                  gs.fs14,
+                  {fontFamily: ts.jakartasemibold, color: '#fff'},
+                  gs.ml5,
+                  gs.mb4,
+                ]}>
+                Call Now
+              </Text>
+            </Flex>
+          </TouchableOpacity>
+        </Flex>
+      </Card>
     );
   };
   //   =====TIFFINS========//
   const Tiffins = () => (
     <ScreenWrapper>
       <FlatList
-        data={tiffinsenquiry}
+        data={!inquiryLoading ? inquiryTiffinData : []}
         keyExtractor={(item, index) => String(index)}
         renderItem={renderTiffins}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[gs.ph15, gs.pv10]}
+        ListFooterComponent={renderFooter}
+        ListEmptyComponent={
+          !inquiryLoading && inquiryTiffinData?.length == 0 ? (
+            <Text
+              style={[
+                gs.fs14,
+                {fontFamily: ts.jakartalight, color: '#000'},
+                gs.mt5,
+                gs.mb10,
+                gs.ml15,
+              ]}>
+              No Inquiries found
+            </Text>
+          ) : null
+        }
       />
     </ScreenWrapper>
   );
@@ -256,8 +398,9 @@ export default function MyInquiries({navigation}) {
     first: Caterers,
     second: Tiffins,
   });
+
   return (
-    <View style={{flex: 1,backgroundColor:'#fff'}}>
+    <View style={{flex: 1, backgroundColor: '#fff'}}>
       <LinearGradient
         colors={['#fff0f0', '#FFFDF5', '#fff']}
         start={{x: 0.2, y: 0.5}}
@@ -326,9 +469,9 @@ export default function MyInquiries({navigation}) {
                     }}>
                     {route.title}{' '}
                     {focused && route.title == 'Caterers'
-                      ? '(3)'
+                      ? `(${inquiryCatererData?.length})`
                       : focused && route.title == 'Tiffins'
-                      ? '(2)'
+                      ? `(${inquiryTiffinData?.length})`
                       : null}
                   </Text>
                 );
@@ -409,8 +552,8 @@ const styles = ScaledSheet.create({
     height: '20@ms',
     marginRight: '4@ms',
   },
-  phoneicon:{
-    width:'15@ms',
-    height:'15@ms'
-  }
+  phoneicon: {
+    width: '15@ms',
+    height: '15@ms',
+  },
 });

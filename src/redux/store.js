@@ -11,6 +11,7 @@ import VendorProfileController from '../screens/Home/controllers/VendorProfileCo
 import ReviewController from '../screens/Home/controllers/ReviewController'
 import WishListController from '../screens/Home/controllers/WishListController'
 import HomeController from '../screens/Home/controllers/HomeController'
+import InquiryController from '../screens/Home/controllers/InquiryController'
 export const store = configureStore({
   reducer: {
 	common:commonreducer,
@@ -24,6 +25,7 @@ export const store = configureStore({
 	vendor:VendorProfileController,
 	review:ReviewController,
 	wish:WishListController,
-	home:HomeController
+	home:HomeController,
+	inquiry:InquiryController,
   },
 })
