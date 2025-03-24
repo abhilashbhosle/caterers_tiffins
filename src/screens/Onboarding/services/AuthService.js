@@ -267,6 +267,49 @@ export const verifyLoginOtpService = async ({
     }
   }
 };
+// ======GET ADDRESS=======//
+export const getAddress = async ({
+  place_id
+}) => {
+  console.log("placeid", place_id);
+  try {
+    // dispatch(startLoader(true));
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/place/details/json`,
+      {
+        params: {
+          place_id,
+          key: GOOGLE_KEY,
+          components: "country:IN",
+        },
+      }
+    );
+
+    const { address_components, formatted_address, geometry } = response.data.result;
+
+    const getAddressComponent = (components, type) =>
+      components.find((component) => component.types.includes(type))?.long_name || '';
+
+      const addressData = {
+        street_name: getAddressComponent(address_components, 'route') || 'Unknown Street',
+        area: getAddressComponent(address_components, 'sublocality_level_1') || '',
+        pincode: getAddressComponent(address_components, 'postal_code') || '',
+        city: getAddressComponent(address_components, 'locality') ||
+              getAddressComponent(address_components, 'administrative_area_level_2'),
+        state: getAddressComponent(address_components, 'administrative_area_level_1') || '',
+        country: getAddressComponent(address_components, 'country') || '',
+        latitude: geometry.location.lat,
+        longitude: geometry.location.lng,
+        formatted_address,
+        place_id,
+      };
+      return addressData;
+  } catch (error) {
+    console.error('Error in getLocationService:', error);
+  } finally {
+    // dispatch(startLoader(false));
+  }
+};
 // ===========GET LOCATION===========//
 
 export const getLocationService = async ({

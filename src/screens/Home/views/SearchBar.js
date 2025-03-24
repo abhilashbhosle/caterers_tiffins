@@ -70,10 +70,11 @@ import {
   setSearchHomeJson,
   setSearchJson,
 } from '../controllers/SearchCommonController';
+import {getAddress} from '../../Onboarding/services/AuthService';
 const minDate = new Date(); // Today
 const maxDate = new Date(2037, 6, 3);
 
-function SearchBar({from, navigation, ssd, sse}) {
+function SearchBar({from, navigation, ssd, sse, hideDate}) {
   const route = useRoute();
   const calendarRef = useRef();
   let today = new Date();
@@ -92,6 +93,7 @@ function SearchBar({from, navigation, ssd, sse}) {
   const [searchTerm, setSearchTerm] = useState('');
   const [vendorId, setVendorId] = useState('');
   const [userDetails, setUserDetails] = useState([]);
+  const [selection, setSelection] = useState(null);
   const inputRef = useRef();
 
   const [selectedLocation, setSelectedLocation] = useState({
@@ -113,8 +115,8 @@ function SearchBar({from, navigation, ssd, sse}) {
   useEffect(() => {
     if (searchRes) {
       setSearch(searchRes);
-    }else{
-      setSearch("");
+    } else {
+      setSearch('');
     }
     if (locationRes) {
       setSelectedLocation(locationRes);
@@ -123,6 +125,10 @@ function SearchBar({from, navigation, ssd, sse}) {
   const {vendorData, vendorLoading, vendorError} = useSelector(
     state => state.location,
   );
+  const {searchData, searchLoading, searchError} = useSelector(
+    state => state.location,
+  );
+
   const onDateChange = (date, type) => {
     if (type === 'END_DATE') {
       setSelectedEndDate(date);
@@ -175,32 +181,38 @@ function SearchBar({from, navigation, ssd, sse}) {
         app_type: 'app',
       };
       if (text?.length > 0 && text != userDetails[0]?.formatted_address) {
-        dispatch(getSearchVendors({params}));
-        setSearchTerm(text);
+        console.log('hellooo');
+        // dispatch(getSearchVendors({params}));
+        dispatch(getLocations({data: text}));
+        // setSearchTerm(text);
       } else {
         dispatch(clearSearch());
       }
-      // dispatch(getLocations({data: text}));
     }, 500),
     [],
   );
 
   const handleSelectedSearch = async e => {
-    
-    let tempData = e.formatted_address.split(',');
+    // let tempData = e.formatted_address.split(',');
+    let address = await getAddress({place_id: e.place_id});
+    // console.log(address)
     setSelectedLocation({
       ...selectedLocation,
-      latitude: e.latitude,
-      longitude: e.latitude,
-      place_id: e?.place_id ? e.place_id : '',
-      city: e?.city,
-      area: e?.area,
+      latitude: address?.latitude,
+      longitude: address?.longitude,
+      place_id: address?.place_id,
+      city: address?.city,
+      area: address?.area ? address.area : '',
+      pincode: address?.pincode ? address.pincode : '',
     });
-    setVendorId(e?.id);
-    setSearch(e.catering_service_name);
-    setSelectedSearch(e);
+    // console.log("address",address);
+    // console.log(e);
+    // setVendorId(e?.id);
+    setSearch(e.formatted_address);
+    setSelection({ start: 0, end: 0 });
     dispatch(clearSearch());
-    // inputRef.current.focus();
+    setSelectedSearch(e);
+    setSelection(null)
   };
 
   const handleCalendarPicker = () => {
@@ -228,7 +240,7 @@ function SearchBar({from, navigation, ssd, sse}) {
   }, [ssd, sse]);
 
   useEffect(() => {
-    console.log("triggered")
+    console.log('triggered');
     dispatch(getFoodTypes());
     dispatch(getSubscription({from}));
     dispatch(getServing());
@@ -249,43 +261,48 @@ function SearchBar({from, navigation, ssd, sse}) {
   return (
     <>
       <View
-        style={[ styles.container,{
-          borderColor: from == 'Caterers' ? '#ed9f9e' : '#efb76e',
-        },gs.br10]
-      }
-        >
+        style={[
+          styles.container,
+          {
+            borderColor: from == 'Caterers' ? '#ed9f9e' : '#efb76e',
+          },
+          gs.br10,
+        ]}>
         <Flex direction="row" alignItems="center">
           {/* =====CALENDAR====== */}
-          <TouchableWithoutFeedback
-            onPress={() => {
-              setOpenCalendarPicker(true);
-            }}>
-            <Flex
-              style={[styles.calendarTextInput, gs.pl10]}
-              direction="row"
-              alignItems="center"
-              justifyContent="flex-start">
-              <View>
-                <Image
-                  source={
-                    route.name == 'Caterings' || from == 'Caterers'
-                      ? require('../../../assets/Search/calender_new.png')
-                      : require('../../../assets/Search/calender_newt.png')
-                  }
-                  style={styles.calIcon}
-                />
-              </View>
-              <View>
-                {fromdate && enddate ? (
-                  <Text style={styles.searchtxt}>
-                    {fromdate} - {enddate?.slice(4)}
-                  </Text>
-                ) : (
-                  <Text style={styles.searchtxt}>Date</Text>
-                )}
-              </View>
-            </Flex>
-          </TouchableWithoutFeedback>
+          {hideDate ? null : (
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setOpenCalendarPicker(true);
+              }}>
+              <Flex
+                style={[styles.calendarTextInput, gs.pl10]}
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start">
+                <View>
+                  <Image
+                    source={
+                      route.name == 'Caterings' || from == 'Caterers'
+                        ? require('../../../assets/Search/calender_new.png')
+                        : require('../../../assets/Search/calender_newt.png')
+                    }
+                    style={styles.calIcon}
+                  />
+                </View>
+                <View>
+                  {fromdate && enddate ? (
+                    <Text style={styles.searchtxt}>
+                      {fromdate} - {enddate?.slice(4)}
+                    </Text>
+                  ) : (
+                    <Text style={styles.searchtxt}>Date</Text>
+                  )}
+                </View>
+              </Flex>
+            </TouchableWithoutFeedback>
+          )}
+
           {/* ======SEARCH======= */}
 
           <View style={[{width: '89%'}]}>
@@ -297,19 +314,27 @@ function SearchBar({from, navigation, ssd, sse}) {
                     ...styles.searchTextInput,
                     color: ts.secondarytext,
                     fontFamily: ts.jakartasemibold,
+                    width: hideDate ? '100%' : '63%',
+                    borderTopLeftRadius: hideDate ? 10 : 0,
+                    borderBottomLeftRadius: hideDate ? 10 : 0,
+                    marginLeft: hideDate ? '0@ms' : '-1@ms',
                   },
                   gs.fs14,
                   gs.ph10,
                 ]}
-                placeholder={from == 'Caterers' ? 'Search Caterers' : 'Search Tiffins'}
+                placeholder={
+                  // from == 'Caterers' ? 'Search Caterers' : 'Search Tiffins'
+                  ' Search Area, City'
+                }
                 placeholderTextColor="gray"
                 value={search}
                 onChangeText={text => handleOnChange(text)}
                 returnKeyType="search"
                 returnKeyLabel="search"
                 ref={inputRef}
+                selection={selection}
               />
-              <View style={styles.seperator}></View>
+              {hideDate == true ? null : <View style={styles.seperator}></View>}
               <Pressable
                 style={styles.searchIconContainers}
                 onPress={async () => {
@@ -323,23 +348,28 @@ function SearchBar({from, navigation, ssd, sse}) {
                     pincode: selectedLocation.pincode,
                     place_id: selectedLocation.place_id,
                     from,
-                    selectedStartDate:selectedStartDate?selectedStartDate:today,
-                    selectedEndDate:selectedEndDate?selectedEndDate:today,
+                    selectedStartDate: selectedStartDate
+                      ? selectedStartDate
+                      : today,
+                    selectedEndDate: selectedEndDate ? selectedEndDate : today,
                     foodTypeData,
                     subData,
-                    searchTerm:search,
+                    searchTerm: '',
                     selected_vendor:
                       search != userDetails[0]?.formatted_address
                         ? vendorId
                         : '',
-                    is_city_search:1    
+                    is_city_search: 1,
+                    order_by: 'distance',
                   });
                   handleSearchResults({
                     navigation,
                     from,
                     search,
-                    selectedStartDate:selectedStartDate?selectedStartDate:today,
-                    selectedEndDate:selectedEndDate?selectedEndDate:today,
+                    selectedStartDate: selectedStartDate
+                      ? selectedStartDate
+                      : today,
+                    selectedEndDate: selectedEndDate ? selectedEndDate : today,
                     userDetails,
                     selectedLocation,
                     setSelectedLocation,
@@ -347,12 +377,12 @@ function SearchBar({from, navigation, ssd, sse}) {
                     dispatch,
                     foodTypeData,
                     subData,
-                    searchTerm:search,
+                    searchTerm: search,
                     selected_vendor:
                       search != userDetails[0]?.formatted_address
                         ? vendorId
                         : '',
-                    is_city_search:1     
+                    is_city_search: 1,
                   });
                 }}>
                 <Image
@@ -368,12 +398,12 @@ function SearchBar({from, navigation, ssd, sse}) {
           </View>
         </Flex>
         {/* ======SEARCH RESULTS========= */}
-        {vendorData?.vendors?.length > 0 &&
+        {searchData?.length > 0 &&
           search?.length > 0 &&
-          !vendorLoading &&
-          !vendorError && (
-            <ScrollView style={[styles.searchContainer, gs.mt2, gs.br10]}>
-              {vendorData?.vendors?.map((e, i) => (
+          !searchLoading &&
+          !searchError && (
+            <ScrollView style={[styles.searchContainer, gs.mt2, gs.br10]} showsVerticalScrollIndicator={false}>
+              {searchData?.map((e, i) => (
                 <View key={i}>
                   <TouchableOpacity
                     activeOpacity={0.7}
@@ -381,9 +411,9 @@ function SearchBar({from, navigation, ssd, sse}) {
                       handleSelectedSearch(e);
                     }}>
                     <Text style={styles.loctxt} numberOfLines={1}>
-                      {e?.catering_service_name}
+                      {e?.formatted_address}
                     </Text>
-                    {e?.area ? (
+                    {/* {e?.area ? (
                       <Text
                         style={[
                           {...styles.loctxt, color: ts.secondarytext},
@@ -395,7 +425,7 @@ function SearchBar({from, navigation, ssd, sse}) {
                           <Text numberOfLines={1}>, {e?.city}</Text>
                         ) : null}
                       </Text>
-                    ) : null}
+                    ) : null} */}
 
                     <Divider
                       backgroundColor={
@@ -408,7 +438,7 @@ function SearchBar({from, navigation, ssd, sse}) {
               ))}
             </ScrollView>
           )}
-        {vendorLoading && (
+        {searchLoading && (
           <Center>
             <View style={{...styles.searchContainer}}>
               <Spinner color={ts.secondarytext} />

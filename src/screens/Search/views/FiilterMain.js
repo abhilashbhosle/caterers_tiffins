@@ -24,6 +24,7 @@ import FontistoIcon from 'react-native-vector-icons/Fontisto';
 import AntIcon from 'react-native-vector-icons/Ionicons';
 import ThemeSepBtn from '../../../components/ThemeSepBtn';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
+import LottieView from 'lottie-react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   clearFilter,
@@ -62,6 +63,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Star} from '../../../components/Star';
 import {clearFilterService} from '../../Home/services/FilterMainService';
+import { debounce } from 'lodash';
+import { startLoader } from '../../../redux/CommonSlicer';
 
 export default function FiilterMain({navigation, route}) {
   const {address, ssd, sse, location, from} = route.params;
@@ -118,18 +121,25 @@ export default function FiilterMain({navigation, route}) {
   const [cuisineSortData, setCuisineSortData] = useState([]);
   const [occasionSortData, setOccassionSortData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const getAllData = () => {
-    dispatch(getServing());
-    dispatch(getService({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
-    dispatch(getOccassions());
-    dispatch(getBudget({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
-    dispatch(getCuisines());
-    dispatch(getHeadCount());
-    dispatch(getSort());
-    dispatch(getRatings());
-    dispatch(getSubscription({from: 'Caterers'}));
-  };
+
   useEffect(() => {
+    const getAllData = async () => {
+      dispatch(startLoader(true));
+      await Promise.all([
+        dispatch(getServing()),
+        dispatch(
+          getService({type: from === 'Caterers' ? 'Caterer' : 'Tiffin'}),
+        ),
+        dispatch(getOccassions()),
+        dispatch(getBudget({type: from === 'Caterers' ? 'Caterer' : 'Tiffin'})),
+        dispatch(getCuisines()),
+        dispatch(getHeadCount()),
+        dispatch(getSort()),
+        dispatch(getRatings()),
+        dispatch(getSubscription({from: 'Caterers'})),
+      ]);
+      dispatch(startLoader(false));
+    }
     getAllData();
   }, []);
 
@@ -158,25 +168,19 @@ export default function FiilterMain({navigation, route}) {
     if (ratingData?.length) {
       setRating(ratingData);
     }
-
+  
     (async () => {
-      let asyncData = await AsyncStorage.getItem('searchJson');
-      let parsed = JSON.parse(asyncData);
-      setFoodSortData(parsed?.food_types_filter);
-      setSubSortData(parsed?.subscription_types_filter);
-      setCuisineSortData(parsed?.cuisines_filter);
-      setOccassionSortData(parsed?.occasions_filter);
+      const asyncData = await AsyncStorage.getItem('searchJson');
+      if (asyncData) {
+        const parsed = JSON.parse(asyncData);
+        setFoodSortData(parsed?.food_types_filter || []);
+        setSubSortData(parsed?.subscription_types_filter || []);
+        setCuisineSortData(parsed?.cuisines_filter || []);
+        setOccassionSortData(parsed?.occasions_filter || []);
+      }
     })();
-  }, [
-    servingData,
-    serviceData,
-    data,
-    budgetData,
-    cuisineData,
-    headData,
-    sortData,
-    ratingData,
-  ]);
+  }, [servingData, serviceData, data, budgetData, cuisineData, headData, sortData, ratingData]);
+  
   // =======SEARCH CUISINE========//
   const handleSearch = text => {
     setSearch(text);
@@ -258,11 +262,12 @@ export default function FiilterMain({navigation, route}) {
   };
   const onRefresh = async () => {
     setRefreshing(true);
-    getAllData()
+    getAllData();
     setTimeout(() => {
       setRefreshing(false);
     }, 500); // To give some delay for UI indication
   };
+
   return (
     <ScreenWrapper>
       {/* <ThemeHeaderWrapper
@@ -281,7 +286,11 @@ export default function FiilterMain({navigation, route}) {
           // gs.ph10, gs.pv20
         ]}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh}   progressViewOffset={60}/>
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            progressViewOffset={60}
+          />
         }>
         <LinearGradient
           colors={['#f8b4b3', '#fbe3e1', '#fff']}

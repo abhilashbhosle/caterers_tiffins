@@ -346,7 +346,8 @@ const searchSlice = createSlice({
       state.searchData = [];
       state.locationData = [];
       state.vendorData = [];
-      state.searchRes=null
+      state.searchRes=null;
+      state.searchData=[];
     },
     clearCaterers: (state, action) => {
       state.caterersData = [];

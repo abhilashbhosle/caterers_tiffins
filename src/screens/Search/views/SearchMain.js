@@ -69,6 +69,9 @@ export default function SearchMain({route, navigation}) {
           from === 'Caterers' ? ts.secondary : ts.primary,
         );
       }
+      setPage(1);
+      setTotal(-1);
+      setVendorData([]);
     }, [from]),
   );
 
@@ -80,7 +83,6 @@ export default function SearchMain({route, navigation}) {
   }, [foodTypeData]);
 
   useMemo(() => {
-    console.log("updated subdata",subData)
     // if (subType?.length == 0) {
     setSubType(subData);
     // }
@@ -137,6 +139,7 @@ export default function SearchMain({route, navigation}) {
   }, [Keyboard]);
 
   const fetchMoreData = () => {
+    console.log("fetchmore data called")
     if (vendorData?.length < total) {
       if (vendorData?.length == 0) {
         setPage(1);
@@ -145,6 +148,7 @@ export default function SearchMain({route, navigation}) {
       }
     }
   };
+  console.log(vendorData?.length,total,page)
   const renderFooter = useMemo(() => {
     if (caterersLoading) {
       return (
@@ -219,7 +223,6 @@ export default function SearchMain({route, navigation}) {
     }, 500); // To give some delay for UI indication
   };
   
-
   return (
     <ScreenWrapper>
       <ScrollView
@@ -275,6 +278,7 @@ export default function SearchMain({route, navigation}) {
                   navigation={navigation}
                   ssd={ssd}
                   sse={sse}
+                  hideDate={true}
                 />
               </View>
             </Flex>

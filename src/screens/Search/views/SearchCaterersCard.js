@@ -135,7 +135,7 @@ function SearchCaterersCard({item, from, location}) {
 
             <Text numberOfLines={1} style={[{...styles.area}, gs.fs13]}>
               {item?.area?.length ? `${item?.area} ,` : null}
-              {location?.city ? location?.city : null}
+              {item?.city ? item?.city : null}
             </Text>
 
             <Flex direction="row" align="center" style={[gs.mt5]}>

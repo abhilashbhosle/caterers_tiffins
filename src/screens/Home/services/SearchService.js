@@ -13,7 +13,9 @@ export const getLocationService = async searchText => {
     let res = await axios.get(
       `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchText}&key=${GOOGLE_KEY}`,
     );
+    // console.log("indide location service",res.data.results)
     return res.data.results;
+
   } catch (error) {
     if (error.response && error.response.data) {
       throw new Error(error.response.data.message);

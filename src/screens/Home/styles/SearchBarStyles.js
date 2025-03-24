@@ -10,8 +10,8 @@ export const styles = ScaledSheet.create({
     width: '34%',
     height: '48@ms',
     backgroundColor: '#fff',
-    borderTopLeftRadius: '10@ms',
-    borderBottomLeftRadius: '10@ms',
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
   },
   searchTextInput: {
     width: '63%',
@@ -19,6 +19,7 @@ export const styles = ScaledSheet.create({
     backgroundColor: '#fff',
     marginLeft: '-1@ms',
     paddingLeft: '10@ms',
+
     // paddingRight:'40@ms',
   },
   searchIcon: {
@@ -30,8 +31,8 @@ export const styles = ScaledSheet.create({
     // position: 'absolute',
     width: '11%',
     backgroundColor: '#fff',
-    borderTopRightRadius: '10@ms',
-    borderBottomRightRadius: '10@ms',
+    borderTopRightRadius: 10,
+    borderBottomRightRadius:10,
     justifyContent:'center',
     alignItems:'center',
     left:'-1@ms'
@@ -60,8 +61,8 @@ export const styles = ScaledSheet.create({
     width: '12%',
     height: '40@ms',
     backgroundColor: '#fff',
-    borderTopRightRadius: '6@ms',
-    borderBottomRightRadius: '6@ms',
+    borderTopRightRadius: 6,
+    borderBottomRightRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -78,7 +79,7 @@ export const styles = ScaledSheet.create({
   midicon: {color: '#fff', fontSize: '40@ms'},
   searchContainer: {
     backgroundColor: '#fff',
-    maxHeight: '200@ms',
+    maxHeight: '210@ms',
     width: '100%',
     padding: '20@ms',
     //   borderRadius: '6@ms',

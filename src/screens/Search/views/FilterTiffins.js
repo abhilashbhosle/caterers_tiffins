@@ -60,6 +60,7 @@ import {setSearchHomeJson} from '../../Home/controllers/SearchCommonController';
 import moment from 'moment';
 import LinearGradient from 'react-native-linear-gradient';
 import {Star} from '../../../components/Star';
+import {startLoader} from '../../../redux/CommonSlicer';
 
 export default function FilterTiffins({navigation, route}) {
   const {address, ssd, sse, location, from} = route.params;
@@ -119,18 +120,23 @@ export default function FilterTiffins({navigation, route}) {
   const [cuisineSortData, setCuisineSortData] = useState([]);
   const [occasionSortData, setOccassionSortData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const getAllData = () => {
-    dispatch(getService({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
-    dispatch(getBudget({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'}));
-    dispatch(getCuisines());
-    dispatch(getHeadCount());
-    dispatch(getSort());
-    dispatch(getMeal());
-    dispatch(getKitchen());
-    dispatch(getRatings());
-    dispatch(getSubscription({from: 'Tiffins'}));
-  };
+
   useEffect(() => {
+    const getAllData = async () => {
+      dispatch(startLoader(true));
+      await Promise.all([
+        dispatch(getService({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'})),
+        dispatch(getBudget({type: from == 'Caterers' ? 'Caterer' : 'Tiffin'})),
+        dispatch(getCuisines()),
+        dispatch(getHeadCount()),
+        dispatch(getSort()),
+        dispatch(getMeal()),
+        dispatch(getKitchen()),
+        dispatch(getRatings()),
+        dispatch(getSubscription({from: 'Tiffins'})),
+      ]);
+      dispatch(startLoader(false));
+    };
     getAllData();
   }, []);
 
@@ -228,7 +234,7 @@ export default function FilterTiffins({navigation, route}) {
       meal_times_filter: [],
       price_ranges: [],
     });
-    await dispatch(
+    dispatch(
       clearFilter({
         navigation,
         type: 'Tiffin',
@@ -260,7 +266,7 @@ export default function FilterTiffins({navigation, route}) {
   };
   const onRefresh = async () => {
     setRefreshing(true);
-    getAllData()
+    getAllData();
     setTimeout(() => {
       setRefreshing(false);
     }, 500); // To give some delay for UI indication
@@ -280,7 +286,11 @@ export default function FilterTiffins({navigation, route}) {
         showsVerticalScrollIndicator={false}
         style={[{flex: 1, backgroundColor: '#fff', top: -10}]}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh}  progressViewOffset={60}/>
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            progressViewOffset={60}
+          />
         }>
         <LinearGradient
           colors={['#F6D6B2', '#fff', '#FFF']}

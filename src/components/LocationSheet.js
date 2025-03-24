@@ -86,7 +86,6 @@ function LocationSheet({locSheetOpen, setLocSheetOpen, from}) {
   const handleClearLocation=async()=>{
     try{
       const res=await clearLocation();
-      console.log(res.status);
       if(res?.status){
         setTimeout(()=>{
         dispatch(getUser());

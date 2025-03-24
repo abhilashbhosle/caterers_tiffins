@@ -91,6 +91,7 @@ function SearchList({
   }, [wish_id]);
 
 
+
   return (
     <>
       <Animated.FlatList

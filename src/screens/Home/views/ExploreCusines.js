@@ -94,7 +94,8 @@ function ExploreCusines() {
             foodTypeData,
             subData,
             cuisines_filter: JSON.stringify(temp),
-            order_by:"distance"
+            order_by:"distance",
+            is_city_search:1,
           });
         }
         await dispatch(setLocationres(res?.location));
