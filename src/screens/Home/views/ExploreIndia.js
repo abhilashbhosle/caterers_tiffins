@@ -64,7 +64,7 @@ function ExploreIndia() {
         subData,
         selected_vendor:[],
         searchTerm:"",
-        is_city_search:1
+        is_city_search:1,
       });
       navigation.push('PageStack', {
         screen: 'SearchMain',

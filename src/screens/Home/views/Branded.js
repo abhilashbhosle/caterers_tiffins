@@ -66,6 +66,7 @@ function Branded() {
           longitude: userDetails[0]?.longitude,
           vendorType: 'Caterer',
           subscriptionType: '3',
+          is_city_search:'1',
         }),
       );
     }

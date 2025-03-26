@@ -97,7 +97,7 @@ export const checkLocation = async ({
 // ======GET BRANDED VENDORS=======//
 export const getBranded = createAsyncThunk(
   'getBranded',
-  async ({latitude, longitude, vendorType, subscriptionType}, {dispatch}) => {
+  async ({latitude, longitude, vendorType, subscriptionType,is_city_search}, {dispatch}) => {
     let params = {
       latitude,
       longitude,
@@ -105,6 +105,7 @@ export const getBranded = createAsyncThunk(
       subscription_type_id: subscriptionType,
       limit: 3,
       current_page: 1,
+      is_city_search:is_city_search
     };
     try {
       const res = await getHomePageService({params});
@@ -126,6 +127,7 @@ export const getPopulaTiffin = createAsyncThunk(
       subscription_type_id: subscriptionType,
       limit: 3,
       current_page: 1,
+      is_city_search:1
     };
     try {
       const res = await getHomePageService({params});
@@ -144,8 +146,9 @@ export const getPopular = createAsyncThunk(
       longitude,
       vendor_type: vendorType,
       subscription_type_id: subscriptionType,
-      limit: 3,
-      current_page: 1,
+      // limit: 3,
+      // current_page: 1,
+      is_city_search:1
     };
     try {
       const res = await getHomePageService({params});

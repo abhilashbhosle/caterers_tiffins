@@ -48,6 +48,7 @@ export default function MyInquiries({navigation}) {
       return <Spinner color={ts.secondarytext} />;
     }
   };
+  // console.log(inquiryCatererData)
 
   //   ========CATERERS INWUIRY LIST=============== //
   const renderCaterers = ({item}) => {
@@ -171,8 +172,8 @@ export default function MyInquiries({navigation}) {
               {backgroundColor: ts.secondary},
             ]}
             onPress={() => {
-              item?.user_phone_number
-                ? Linking.openURL(`tel:${item?.user_phone_number}`)
+              item?.vendor_phone_number
+                ? Linking.openURL(`tel:${item?.vendor_phone_number}`)
                 : Alert.alert('No Phone Number Found.');
             }}>
             <Flex direction="row" alignItems="center">
@@ -343,8 +344,8 @@ export default function MyInquiries({navigation}) {
               {backgroundColor: ts.primary},
             ]}
             onPress={() => {
-              item?.user_phone_number
-                ? Linking.openURL(`tel:${item?.user_phone_number}`)
+              item?.vendor_phone_number
+                ? Linking.openURL(`tel:${item?.vendor_phone_number}`)
                 : Alert.alert('No Phone Number Found.');
             }}>
             <Flex direction="row" alignItems="center">
