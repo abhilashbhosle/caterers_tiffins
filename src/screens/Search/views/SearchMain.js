@@ -19,7 +19,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import SearchBar from '../../Home/views/SearchBar';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Actionsheet, Divider, Flex, Spinner} from 'native-base';
+import {Actionsheet, Divider, Flex, Spinner, theme} from 'native-base';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import Badges from './Badges';
 import SearchList from './SearchList';
@@ -48,7 +48,9 @@ export default function SearchMain({route, navigation}) {
   const [foodType, setFoodType] = useState([]);
   const [total, setTotal] = useState(-1);
   const dispatch = useDispatch();
-  const {foodTypeData, subData,updatedSubData} = useSelector(state => state?.filterCater);
+  const {foodTypeData, subData, updatedSubData} = useSelector(
+    state => state?.filterCater,
+  );
   const [foodText, setFoodText] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
@@ -78,7 +80,7 @@ export default function SearchMain({route, navigation}) {
   useEffect(() => {
     if (foodTypeData?.length) {
       setFoodType(foodTypeData);
-      setFoodText(foodTypeData[0]?.name);
+      setFoodText(null);
     }
   }, [foodTypeData]);
 
@@ -139,7 +141,7 @@ export default function SearchMain({route, navigation}) {
   }, [Keyboard]);
 
   const fetchMoreData = () => {
-    console.log("fetchmore data called")
+    console.log('fetchmore data called');
     if (vendorData?.length < total) {
       if (vendorData?.length == 0) {
         setPage(1);
@@ -148,7 +150,7 @@ export default function SearchMain({route, navigation}) {
       }
     }
   };
-  console.log(vendorData?.length,total,page)
+  console.log(vendorData?.length, total, page);
   const renderFooter = useMemo(() => {
     if (caterersLoading) {
       return (
@@ -163,8 +165,8 @@ export default function SearchMain({route, navigation}) {
   const handleSelection = async (arr, setData, index) => {
     const updatedFoodTypes = await arr.map((item, i) =>
       i === index
-        ? {...item, selected: (item.selected = '1')}
-        : {...item, selected: '0'},
+        ? {...item, selected: item.selected == '1' ? '0' : '1'}
+        : {...item, selected: item?.selected},
     );
 
     setData(updatedFoodTypes);
@@ -199,8 +201,8 @@ export default function SearchMain({route, navigation}) {
   };
   const onRefresh = async () => {
     setRefreshing(true);
-    setSubType([])
-    setFoodType([])
+    setSubType([]);
+    setFoodType([]);
     setVendorData([]);
     let searchJson = await AsyncStorage.getItem('searchJson');
     let searchData = JSON.parse(searchJson);
@@ -222,13 +224,17 @@ export default function SearchMain({route, navigation}) {
       setRefreshing(false);
     }, 500); // To give some delay for UI indication
   };
-  
+
   return (
     <ScreenWrapper>
       <ScrollView
         style={{...styles.container, flex: 1, backgroundColor: '#fff'}}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh}   progressViewOffset={60}/>
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            progressViewOffset={60}
+          />
         }>
         {/* =====SEARCH BAR */}
         <LinearGradient
@@ -359,21 +365,12 @@ export default function SearchMain({route, navigation}) {
                         align="center"
                         direction="row"
                         justifyContent="space-between">
-                        {foodText == 'Veg' && (
-                          <Image
-                            source={require('../../../assets/Common/veg.png')}
-                            style={[styles.icon, gs.mr5]}
-                            alt="vegicon"
-                          />
-                        )}
-                        {foodText == 'Non Veg' && (
-                          <Image
-                            source={require('../../../assets/Common/nonveg.png')}
-                            style={[styles.icon, gs.mr5]}
-                            alt="vegicon"
-                          />
-                        )}
-                        {foodText == 'All' ? (
+                        {foodType?.some(
+                          e => e.name === 'Veg' && e.selected == 0,
+                        ) &&
+                        foodType?.some(
+                          e => e.name === 'Non Veg' && e.selected == 0,
+                        ) ? (
                           <Flex direction="row" alignItems="center">
                             <Image
                               source={require('../../../assets/Common/veg.png')}
@@ -387,6 +384,25 @@ export default function SearchMain({route, navigation}) {
                             />
                           </Flex>
                         ) : null}
+                        {foodType?.some(
+                          e => e.name === 'Veg' && e.selected == 1,
+                        ) ? (
+                          <Image
+                            source={require('../../../assets/Common/veg.png')}
+                            style={[styles.icon, gs.mr5]}
+                            alt="vegicon"
+                          />
+                        ) : null}
+                        {foodType?.some(
+                          e => e.name === 'Non Veg' && e.selected == 1,
+                        ) ? (
+                          <Image
+                            source={require('../../../assets/Common/nonveg.png')}
+                            style={[styles.icon, gs.mr5]}
+                            alt="vegicon"
+                          />
+                        ) : null}
+
                         <Text style={styles.btntxt}>{foodText}</Text>
                         <Image
                           alt="downbtn"
@@ -407,22 +423,41 @@ export default function SearchMain({route, navigation}) {
                               onPress={() => {
                                 handleFoodTypes(i);
                                 handleFoodTpeDD();
-                                setFoodText(e.name);
+                                // setFoodText(e.name);
                               }}>
-                              <Text
-                                style={[
-                                  {
-                                    ...styles.btntxt,
-                                    fontFamily:
-                                      foodText == e.name
-                                        ? ts.secondarymedium
-                                        : ts.secondarylight,
-                                  },
-                                  gs.fs16,
-                                  gs.mv10,
-                                ]}>
-                                {e?.name}
-                              </Text>
+                              <Flex
+                                direction="row"
+                                alignItems="center"
+                                justifyContent="space-between">
+                                <Text
+                                  style={[
+                                    {
+                                      ...styles.btntxt,
+                                      fontFamily: ts.secondarymedium,
+                                    },
+                                    gs.fs16,
+                                    gs.mv10,
+                                  ]}>
+                                  {e?.name}
+                                </Text>
+                                <MaterialIcons
+                                  name={
+                                    e.selected == 1
+                                      ? 'checkbox-marked'
+                                      : 'checkbox-blank-outline'
+                                  }
+                                  style={[
+                                    gs.fs20,
+                                    gs.mr3,
+                                    {
+                                      color:
+                                        e.selected == 1
+                                          ? from=='Caterers'?ts.secondary:ts.primary
+                                          : ts.primarytext,
+                                    },
+                                  ]}
+                                />
+                              </Flex>
                             </TouchableOpacity>
                             <Divider />
                           </View>
@@ -467,13 +502,13 @@ export default function SearchMain({route, navigation}) {
                     </Flex>
                   </TouchableOpacity>
                   {/* {!refreshing ? ( */}
-                    <Badges
-                      from={from}
-                      subType={subType}
-                      setSubType={setSubType}
-                      setPage={setPage}
-                      setVendorData={setVendorData}
-                    />
+                  <Badges
+                    from={from}
+                    subType={subType}
+                    setSubType={setSubType}
+                    setPage={setPage}
+                    setVendorData={setVendorData}
+                  />
                   {/* ) : (
                     <View style={{style:60}}></View>
                   )} */}

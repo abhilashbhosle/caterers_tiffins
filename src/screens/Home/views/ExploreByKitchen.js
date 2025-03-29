@@ -41,22 +41,65 @@ function ExploreByKitchen() {
     {name: 'Commercial', img: require('../../../assets/Common/commercial.png')},
     {name: 'Cloud', img: require('../../../assets/Common/cloud.png')},
   ];
+  const navigation = useNavigation();
   const {kitchenLoading, kitchenData, kitchenError} = useSelector(
     state => state.filterTiffin,
   );
+  const userDetails = useSelector(state => state.auth?.userInfo?.data);
+  const {subData, foodTypeData} = useSelector(state => state?.filterCater);
   useEffect(() => {
     dispatch(getKitchen());
   }, []);
 
-  // console.log(kitchenData)
+  const handleKitchenType = async index => {
+    console.log(index);
+    const data = [];
+    kitchenData.map((e, i) => {
+      if (i == index) {
+        data.push({id: e.id, selected: 1});
+      } else {
+        data.push({id: e.id, selected: 0});
+      }
+    });
+    await setSearchHomeJson({
+      latitude: userDetails[0]?.latitude,
+      longitude: userDetails[0]?.longitude,
+      city: userDetails[0]?.city,
+      place_id: userDetails[0]?.place_id,
+      pincode: userDetails[0]?.pincode,
+      area: userDetails[0]?.area,
+      from: 'Tiffins',
+      selectedStartDate: new Date(),
+      selectedEndDate: new Date(),
+      kitchen_types_filter:JSON.stringify(data),
+      subData,
+      is_city_search: 1,
+      order_by:'distance',
+      foodTypeData
+    });
+    navigation.navigate('PageStack', {
+      screen: 'SearchMain',
+      params: {
+        from: 'Tiffins',
+        ssd: new Date(),
+        sse: new Date(),
+        move: 'forward',
+      },
+    });
+    console.log(data);
+  };
 
   const renderItem = ({item, index}) => {
     return (
       <Flex alignItems="center">
         <Card style={[gs.mb10, gs.mr10, {backgroundColor: 'transparent'}]}>
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              handleKitchenType(index);
+            }}>
             <ImageBackground
-              source={item.img}
+              source={{uri: item?.file_name?.medium}}
               style={[
                 {
                   ...styles.img,
@@ -74,7 +117,7 @@ function ExploreByKitchen() {
             // gs.mt5,
           ]}
           numberOfLines={1}>
-          {item.name}
+          {item?.name}
         </Text>
       </Flex>
     );
@@ -100,12 +143,12 @@ function ExploreByKitchen() {
       {kitchenLoading ? (
         <Flex direction="row" style={[gs.ph15]}>
           {[1, 2, 3, 4].map((e, i) => (
-            <Skeleton style={[styles.img, gs.br12,gs.mr10]} key={i} />
+            <Skeleton style={[styles.img, gs.br12, gs.mr10]} key={i} />
           ))}
         </Flex>
       ) : (
         <FlatList
-          data={kitchenTypes}
+          data={kitchenData}
           renderItem={renderItem}
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item, index) => String(index)}

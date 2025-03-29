@@ -229,7 +229,7 @@ function PopularCaterers() {
                           {color: '#f5f5f5', fontFamily: ts.jakartaregular},
                           Platform.OS == 'ios' && gs.pv2,
                         ]}>
-                        {item?.street_name ? item.street_name : item?.area},{' '}
+                        {item?.area},{' '}
                         {item?.city}
                       </Text>
                     </View>

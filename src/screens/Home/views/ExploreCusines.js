@@ -23,6 +23,7 @@ import {getCatererSearchService} from '../services/SearchService';
 import {startLoader} from '../../../redux/CommonSlicer';
 import {setSearchHomeJson} from '../controllers/SearchCommonController';
 import {showMessage} from 'react-native-flash-message';
+import FastImage from 'react-native-fast-image';
 
 function ExploreCusines() {
   const route = useRoute();
@@ -139,8 +140,11 @@ function ExploreCusines() {
             });
           }}>
           {item?.file_name?.original ? (
-            <Image
-              source={{uri: item?.file_name?.original}}
+            <FastImage
+              source={{
+                uri: item?.file_name?.original,
+                priority: FastImage.priority.high,
+              }}
               style={[styles.img]}
               alt={item.name}
             />

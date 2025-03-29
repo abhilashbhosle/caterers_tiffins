@@ -114,7 +114,7 @@ export const getFoodTypes = createAsyncThunk(
   async (_, {dispatch}) => {
     try {
       const res = await getFoodTypesService({dispatch});
-      return res.data;
+      return res.data.slice(1);
     } catch (error) {
       return rejectWithValue(error.message);
     }
