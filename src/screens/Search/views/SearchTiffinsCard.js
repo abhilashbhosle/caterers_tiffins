@@ -27,6 +27,7 @@ function SearchCaterersCard({item, from, location}) {
   const {height, width} = useWindowDimensions();
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  // console.log(item);
   return (
     <Card style={styles.cardcontainer}>
       <TouchableWithoutFeedback
@@ -138,8 +139,7 @@ function SearchCaterersCard({item, from, location}) {
               {item?.city ? item?.city : null}
             </Text>
 
-            <Flex direction="row" align="center" style={[gs.mt5]}>
-              {/* <Text style={[styles.foodtype, gs.fs11]}>Cuisines : </Text> */}
+            {/* <Flex direction="row" align="center" style={[gs.mt5]}>
               <Text numberOfLines={1}>
                 {item?.cuisines?.length > 2 &&
                   item?.cuisines?.slice(0, 2)?.map((e, i) => (
@@ -155,6 +155,95 @@ function SearchCaterersCard({item, from, location}) {
                   ))}
                 {item?.cuisines?.length > 2 && ''}
               </Text>
+            </Flex> */}
+
+            {/* MEAL TIMES */}
+            <Flex direction="row" align="center" style={[gs.mt5]}>
+              <Text numberOfLines={1}>
+                {item?.meal_times?.length <= 3 &&
+                  item?.meal_times?.slice(0, 3)?.map((e, i) => (
+                    <Text style={[styles.cuisine]} key={i}>
+                      {e} {item?.meal_times?.length >= 2 && i < 2 ? '.' : ' '}{' '}
+                    </Text>
+                  ))}
+                {item?.meal_times?.length > 3 && ''}
+              </Text>
+            </Flex>
+
+            <Flex direction="row" align="center" style={[gs.mt7]}>
+              {item?.kitchen_types?.map((e, i) => (
+                <View
+                  key={i}
+                  style={[
+                    {
+                      backgroundColor:
+                        e == 'Corporate'
+                          ? 'rgba(62, 187, 233, 0.3)'
+                          : e == 'Restaurant'
+                          ? 'rgba(232, 116, 8,0.3)'
+                          : e == 'Homemade'
+                          ? 'rgba(117, 55, 199,0.3)'
+                          : e == 'Commercial'
+                          ? 'rgba(0, 140, 94,0.2)'
+                          : e == 'Cloud'
+                          ? 'rgba(62, 159, 233,0.2)'
+                          : 'rgba(232, 116, 8,0.3)',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    },
+                    gs.br5,
+                    gs.mr4,
+                    gs.ph5,
+                    gs.pv2,
+                  ]}>
+                  <Flex direction="row" align="center" style={{bottom: 1}}>
+                    <Image
+                      source={
+                        e == 'Corporate'
+                          ? require('../../../assets/Kitchen_types/corporate.png')
+                          : e == 'Restaurant'
+                          ? require('../../../assets/Kitchen_types/restaurant.png')
+                          : e == 'Homemade'
+                          ? require('../../../assets/Kitchen_types/homemade.png')
+                          : e == 'Commercial'
+                          ? require('../../../assets/Kitchen_types/commercial.png')
+                          : e == 'Cloud'
+                          ? require('../../../assets/Kitchen_types/cloud.png')
+                          : null
+                      }
+                      style={
+                        e == 'Cloud'
+                          ? styles.cloud_icon
+                          : e == 'Commercial'
+                          ? styles.commercial_icon:
+                          e=="Homemade"?
+                          styles.homemade_icon
+                          : styles.servicesIcon
+                      }
+                    />
+                    <Text
+                      style={[
+                        {
+                          color:
+                            e == 'Corporate'
+                              ? '#00658A'
+                              : e == 'Homemade'
+                              ? '#7537C7'
+                              : e == 'Commercial'
+                              ? '#008C5E'
+                              : e == 'Cloud'
+                              ? '#005494'
+                              : '#c76407',
+                          fontFamily: ts.jakartamedium,
+                        },
+                        gs.fs13,
+                        gs.ml5,
+                      ]}>
+                      {e}
+                    </Text>
+                  </Flex>
+                </View>
+              ))}
             </Flex>
 
             <Flex
@@ -207,7 +296,7 @@ function SearchCaterersCard({item, from, location}) {
                   ))}
                 </Flex>
               </View>
-              <Flex direction="row" align="center" style={[gs.mt7, gs.mb5]}>
+              <Flex direction="row" align="center" style={[gs.mt2, gs.mb5]}>
                 {item?.food_types?.map((e, i) => (
                   <Flex direction="row" alignItems="center" key={i}>
                     {e == 'Veg' ? (

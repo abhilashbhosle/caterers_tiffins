@@ -28,7 +28,7 @@ function SearchCaterersCard({item, from, location}) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   return (
-    <Card style={styles.cardcontainer}>
+    <Card style={styles.cardccontainer}>
       <TouchableWithoutFeedback
         onPress={() => {
           navigation.navigate('PageStack', {
@@ -46,9 +46,9 @@ function SearchCaterersCard({item, from, location}) {
             {item?.brand_logo?.medium ? (
               <ImageBackground
                 source={{uri: item.brand_logo.medium}}
-                imageStyle={[{...styles.img, resizeMode: 'cover'}]}
+                imageStyle={[{...styles.imgc, resizeMode: 'cover'}]}
                 style={{
-                  ...styles.img,
+                  ...styles.imgc,
                   justifyContent: 'space-between',
                 }}>
                 <LinearGradient
@@ -72,7 +72,7 @@ function SearchCaterersCard({item, from, location}) {
             ) : (
               <View
                 style={{
-                  ...styles.img,
+                  ...styles.imgc,
                   justifyContent: 'space-between',
                   backgroundColor: '#fff',
                 }}>
