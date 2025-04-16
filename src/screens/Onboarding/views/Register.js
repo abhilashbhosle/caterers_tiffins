@@ -147,11 +147,15 @@ export default function Register({navigation}) {
                     gs.mt20,
                   ]}>
                   By Clicking I accept the{' '}
-                  <Text style={{textDecorationLine: 'underline'}}>
+                  <Text style={{textDecorationLine: 'underline'}} onPress={()=>{
+                     navigation.navigate('WebviewExternal', {url:'https://www.cateringsandtiffins.com/terms-and-conditions'});
+                  }}>
                     terms of service
                   </Text>{' '}
                   and{' '}
-                  <Text style={{textDecorationLine: 'underline'}}>
+                  <Text style={{textDecorationLine: 'underline'}} onPress={()=>{
+                    navigation.navigate('WebviewExternal', {url:'https://www.cateringsandtiffins.com/privacy-policy'});
+                  }}>
                     privacy policy
                   </Text>
                 </Text>

@@ -10,7 +10,7 @@ import {
   StatusBar,
   RefreshControl,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
 import {ts} from '../../../../ThemeStyles';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -61,6 +61,8 @@ import moment from 'moment';
 import LinearGradient from 'react-native-linear-gradient';
 import {Star} from '../../../components/Star';
 import {startLoader} from '../../../redux/CommonSlicer';
+import { useFocusEffect } from '@react-navigation/native';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
 export default function FilterTiffins({navigation, route}) {
   const {address, ssd, sse, location, from} = route.params;

@@ -27,6 +27,14 @@ const {width} = Dimensions.get('screen');
 
 export default function BottomBarStack() {
 const dispatch=useDispatch()
+useFocusEffect(
+  useCallback(() => {
+    changeNavigationBarColor('#ffffff', true);
+    return () => {
+      changeNavigationBarColor('#ffffff', false);
+    };
+  }, []),
+);
 
   return (
     <Tab.Navigator

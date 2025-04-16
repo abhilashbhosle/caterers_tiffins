@@ -16,10 +16,12 @@ import {NavigationContainer} from '@react-navigation/native';
 import {store} from './src/redux/store';
 import {Provider} from 'react-redux';
 import {ts} from './ThemeStyles';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   useEffect(() => {
+    changeNavigationBarColor('transparent', true);
     setTimeout(() => {
       setShowSplash(false);
     }, 1800);

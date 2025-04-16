@@ -1,14 +1,25 @@
 import { View, Text, Platform,StatusBar } from 'react-native'
-import React from 'react'
+import React, { useCallback } from 'react'
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Notification from '../screens/Onboarding/views/Notification';
 import Register from '../screens/Onboarding/views/Register';
 import VerifyOtp from '../screens/Onboarding/views/VerifyOtp';
 import Location from '../screens/Onboarding/views/Location';
 import Login from '../screens/Onboarding/views/Login';
+import { useFocusEffect } from '@react-navigation/native';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import { WebviewExternal } from '../components/WebviewExternal';
 
 const Stack=createNativeStackNavigator()
 export default function OnboardStack() {
+	useFocusEffect(
+		useCallback(() => {
+		  changeNavigationBarColor('transparent', true);
+		//   return () => {
+		// 	changeNavigationBarColor('transparent', false);
+		//   };
+		}, []),
+	  );
   return (
 	<>
 	{/* {
@@ -24,6 +35,7 @@ export default function OnboardStack() {
 		<Stack.Screen name='VerifyOtp' component={VerifyOtp}/>
 		<Stack.Screen name='Location' component={Location}/>
 		<Stack.Screen name='Login' component={Login}/>
+		<Stack.Screen name='WebviewExternal' component={WebviewExternal}/>
 	</Stack.Navigator>
 	</>
   )

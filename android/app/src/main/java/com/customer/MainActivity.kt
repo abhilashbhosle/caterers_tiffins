@@ -1,4 +1,4 @@
-package com.customer
+package com.cateringsandtiffins
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

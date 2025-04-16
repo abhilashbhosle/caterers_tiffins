@@ -1,4 +1,4 @@
-package com.customer
+package com.cateringsandtiffins
 
 import android.app.Application
 import com.facebook.react.PackageList

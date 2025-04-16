@@ -39,6 +39,7 @@ import {
   updateSubscriptions,
 } from '../../Home/controllers/FilterMainController';
 import LinearGradient from 'react-native-linear-gradient';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
 export default function SearchMain({route, navigation}) {
   const {width, height} = useWindowDimensions();
@@ -71,6 +72,7 @@ export default function SearchMain({route, navigation}) {
           from === 'Caterers' ? ts.secondary : ts.primary,
         );
       }
+      changeNavigationBarColor('#ffffff', true);
       setPage(1);
       setTotal(-1);
       setVendorData([]);

@@ -11,6 +11,7 @@ import {ScaledSheet} from 'react-native-size-matters';
 import LottieView from 'lottie-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {startLoader} from '../redux/CommonSlicer';
+import WebView from 'react-native-webview';
 
 const Stack = createNativeStackNavigator();
 export default function RootStack() {
@@ -49,7 +50,12 @@ export default function RootStack() {
   return (
     <>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        {!tk && <Stack.Screen name="OnboardStack" component={OnboardStack} />}
+        {!tk && 
+        <>
+        <Stack.Screen name="OnboardStack" component={OnboardStack} />
+        <Stack.Screen name="WebView" component={WebView}/>
+        </>
+        }
         <Stack.Screen name="BottomBarStack" component={BottomBarStack} />
         <Stack.Screen name="PageStack" component={PageStack} />
       </Stack.Navigator>

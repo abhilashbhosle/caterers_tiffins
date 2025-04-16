@@ -11,7 +11,7 @@ import {
   StatusBar,
   RefreshControl,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import ThemeHeaderWrapper from '../../../components/ThemeHeaderWrapper';
 import {Card} from 'react-native-paper';
 import {gs} from '../../../../GlobalStyles';
@@ -65,6 +65,8 @@ import {Star} from '../../../components/Star';
 import {clearFilterService} from '../../Home/services/FilterMainService';
 import { debounce } from 'lodash';
 import { startLoader } from '../../../redux/CommonSlicer';
+import { useFocusEffect } from '@react-navigation/native';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
 export default function FiilterMain({navigation, route}) {
   const {address, ssd, sse, location, from} = route.params;
@@ -121,6 +123,8 @@ export default function FiilterMain({navigation, route}) {
   const [cuisineSortData, setCuisineSortData] = useState([]);
   const [occasionSortData, setOccassionSortData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+
+
 
   useEffect(() => {
     const getAllData = async () => {
