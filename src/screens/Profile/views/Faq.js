@@ -180,6 +180,7 @@ const styles = ScaledSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: Platform?.OS == 'ios' ? 10.86 : 10.86,
     elevation: 1, // For Android shadow
+    backgroundColor: '#fff',
   },
   topcontainer: {
     top: Platform.OS == 'ios' ? '-280@ms' : '-300@ms',

@@ -12,14 +12,14 @@ import { WebviewExternal } from '../components/WebviewExternal';
 
 const Stack=createNativeStackNavigator()
 export default function OnboardStack() {
-	useFocusEffect(
-		useCallback(() => {
-		  changeNavigationBarColor('transparent', true);
+	// useFocusEffect(
+		// useCallback(() => {
+		//   changeNavigationBarColor('transparent', true);
 		//   return () => {
 		// 	changeNavigationBarColor('transparent', false);
 		//   };
-		}, []),
-	  );
+	// 	}, []),
+	//   );
   return (
 	<>
 	{/* {

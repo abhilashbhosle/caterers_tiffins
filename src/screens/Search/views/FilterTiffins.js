@@ -61,8 +61,7 @@ import moment from 'moment';
 import LinearGradient from 'react-native-linear-gradient';
 import {Star} from '../../../components/Star';
 import {startLoader} from '../../../redux/CommonSlicer';
-import { useFocusEffect } from '@react-navigation/native';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import {useFocusEffect} from '@react-navigation/native';
 
 export default function FilterTiffins({navigation, route}) {
   const {address, ssd, sse, location, from} = route.params;
@@ -424,9 +423,15 @@ export default function FilterTiffins({navigation, route}) {
                             style={[gs.pr10, gs.pv10, gs.fs16, {color: '#777'}]}
                           />
                         </TouchableOpacity>
-                        <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                          {e.name}
-                        </Text>
+                        <TouchableOpacity
+                          style={{width: '80%'}}
+                          onPress={() =>
+                            setExpanded(prev => (prev == i ? -1 : i))
+                          }>
+                          <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                            {e.name}
+                          </Text>
+                        </TouchableOpacity>
                       </Flex>
                       <TouchableOpacity
                         onPress={() =>

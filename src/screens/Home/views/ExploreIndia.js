@@ -36,7 +36,7 @@ function ExploreIndia() {
   const navigation = useNavigation();
 
   const handleCities = async location => {
-    // console.log(location)
+    // console.log(foodTypeData)
     dispatch(clearSearch());
     try {
       let loc = {
@@ -65,6 +65,7 @@ function ExploreIndia() {
         selected_vendor:[],
         searchTerm:"",
         is_city_search:1,
+        order_by:'distance'
       });
       navigation.push('PageStack', {
         screen: 'SearchMain',

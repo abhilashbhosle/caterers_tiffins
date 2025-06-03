@@ -65,9 +65,8 @@ function PopularTiffins() {
       dispatch(getSubscription({from: 'Tiffins'}));
     }, [route]),
   );
-
   useEffect(() => {
-    if (userDetails?.length && userDetails[0]?.formatted_address) {
+    if (userDetails?.length && userDetails[0]?.formatted_address && popularTData?.length==0 ) {
       dispatch(
         getPopulaTiffin({
           latitude: userDetails[0]?.latitude,
@@ -77,7 +76,7 @@ function PopularTiffins() {
         }),
       );
     }
-  }, [userDetails]);
+  }, [userDetails,popularTData]);
 
   const handleBranded = async () => {
     try {

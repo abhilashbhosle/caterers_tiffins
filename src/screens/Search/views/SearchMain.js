@@ -11,6 +11,7 @@ import {
   Image,
   RefreshControl,
 } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {ScreenWrapper} from '../../../components/ScreenWrapper';
 import {gs} from '../../../../GlobalStyles';
@@ -72,7 +73,7 @@ export default function SearchMain({route, navigation}) {
           from === 'Caterers' ? ts.secondary : ts.primary,
         );
       }
-      changeNavigationBarColor('#ffffff', true);
+      // changeNavigationBarColor('#ffffff', true);
       setPage(1);
       setTotal(-1);
       setVendorData([]);
@@ -152,7 +153,6 @@ export default function SearchMain({route, navigation}) {
       }
     }
   };
-  console.log(vendorData?.length, total, page);
   const renderFooter = useMemo(() => {
     if (caterersLoading) {
       return (
@@ -202,6 +202,7 @@ export default function SearchMain({route, navigation}) {
     setEnableFoodTypeDD(prev => !prev);
   };
   const onRefresh = async () => {
+    console.log('this is called');
     setRefreshing(true);
     setSubType([]);
     setFoodType([]);
@@ -227,10 +228,13 @@ export default function SearchMain({route, navigation}) {
     }, 500); // To give some delay for UI indication
   };
 
+
   return (
     <ScreenWrapper>
       <ScrollView
         style={{...styles.container, flex: 1, backgroundColor: '#fff'}}
+        contentContainerStyle={{flexGrow: 1}}
+        keyboardShouldPersistTaps="handled"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -454,7 +458,9 @@ export default function SearchMain({route, navigation}) {
                                     {
                                       color:
                                         e.selected == 1
-                                          ? from=='Caterers'?ts.secondary:ts.primary
+                                          ? from == 'Caterers'
+                                            ? ts.secondary
+                                            : ts.primary
                                           : ts.primarytext,
                                     },
                                   ]}
@@ -609,7 +615,16 @@ const styles = ScaledSheet.create({
     marginTop: '-138@ms',
   },
   selectorcontainer: {
-    marginTop: Platform.OS == 'ios' ? '-35@ms' : '-5@ms',
+    marginTop:
+      Platform.OS == 'ios'
+        ? DeviceInfo.getModel() == 'iPhone SE' ||
+          DeviceInfo.getModel() == 'iPhone 8' ||
+          DeviceInfo.getModel() == 'iPhone 7' ||
+          DeviceInfo.getModel() == 'iPhone 6' ||
+          DeviceInfo.getModel() == 'iPhone 5'
+          ? '-5@ms'
+          : '-35@ms'
+        : '-5@ms',
     marginLeft: '10@ms',
   },
   icon: {

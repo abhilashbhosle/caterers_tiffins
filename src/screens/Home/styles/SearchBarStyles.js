@@ -6,6 +6,12 @@ export const styles = ScaledSheet.create({
     borderWidth:'1@ms',
     backgroundColor:'#fff'
   },
+  ml:{
+    marginLeft: '-1@ms',
+  },
+  ml0:{
+    marginLeft: '-0@ms',
+  },
   calendarTextInput: {
     width: '34%',
     height: '48@ms',

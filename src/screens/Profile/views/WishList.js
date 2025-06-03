@@ -34,13 +34,13 @@ export default function WishList({navigation}) {
   const [tiffinsCount, setTiffinsCount] = useState(0);
   // =========CATERERS==========//
   const Caterers = () => (
-    <View style={[{flex: 1},gs.ph15]}>
+    <View style={[{flex: 1}, gs.ph15]}>
       <CaterersWish setCaterersCount={setCaterersCount} />
     </View>
   );
 
   const Tiffins = () => (
-    <View style={[{flex: 1,},gs.ph15]}>
+    <View style={[{flex: 1}, gs.ph15]}>
       <TiffinsWish setTiffinsCount={setTiffinsCount} />
     </View>
   );
@@ -50,7 +50,7 @@ export default function WishList({navigation}) {
   });
 
   return (
-    <View style={{flex: 1,backgroundColor:'#fff'}}>
+    <View style={{flex: 1, backgroundColor: '#fff'}}>
       <LinearGradient
         colors={['#fff0f0', '#FFFDF5', '#fff']}
         start={{x: 0.2, y: 0.5}}
@@ -106,19 +106,25 @@ export default function WishList({navigation}) {
               style={[styles.tabbarcontainer]}
               renderLabel={({focused, route}) => {
                 return (
-                  <Text
-                    size={20}
-                    category="Medium"
-                    style={{
-                      ...styles.title,
-                      color: '#000',
-                      backgroundColor: focused ? '#fff' : 'transparent',
-                      width: width / 2.21,
-                      // left:-2
-                    }}>
-                    {route.title} (
-                    {route?.title == 'Caterers' ? caterersCount : tiffinsCount})
-                  </Text>
+                  <View
+                    style={[
+                      styles.titlecontainer,
+                      {
+                        backgroundColor: focused ? '#fff' : 'transparent',   width: width / 2.21,
+                      },
+                    ]}>
+                    <Text
+                      style={{
+                        ...styles.title,
+                        color: '#000',
+                      }}>
+                      {route.title} (
+                      {route?.title == 'Caterers'
+                        ? caterersCount
+                        : tiffinsCount}
+                      )
+                    </Text>
+                  </View>
                 );
               }}
               indicatorStyle={{backgroundColor: 'transparent'}}
@@ -137,7 +143,13 @@ const styles = ScaledSheet.create({
     color: ts.primarytext,
     marginTop: '10@ms',
   },
-  titlecontainer: {fontFamily: ts.secondaryregular, fontSize: '15@ms'},
+  titlecontainer: {
+    borderRadius: '6@ms',
+    height: '23@ms',
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom: '9@ms',
+  },
   container: {
     height: '400@ms',
   },
@@ -157,7 +169,7 @@ const styles = ScaledSheet.create({
     fontFamily: ts.jakartasemibold,
     fontSize: '12@ms',
     textAlign: 'center',
-    bottom: '9.45@ms',
+    // bottom: '9.45@ms',
     paddingTop: '2@ms',
     height: '23@ms',
     borderRadius: '6@ms',

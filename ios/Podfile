@@ -36,13 +36,15 @@ target 'customer' do
 
   use_react_native!(
     :path => config[:reactNativePath],
-    :flipper_configuration => flipper_config,
+    # :flipper_configuration => flipper_config,
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
   target 'customerTests' do
     inherit! :complete
   end
+  
+
 
   post_install do |installer|
     react_native_post_install(
@@ -50,5 +52,10 @@ target 'customer' do
       config[:reactNativePath],
       :mac_catalyst_enabled => false
     )
+  installer.pods_project.targets.each do |target|
+      if target.name == "React-Core-RCTI18nStrings"
+        target.remove_from_project
+      end
+    end
   end
 end

@@ -30,7 +30,7 @@ export default function Login({navigation}) {
     <ScreenWrapper>
       <ThemeWrapper>
         <SafeAreaView>
-          <KeyboardAwareScrollView enableOnAndroid>
+          {/* <KeyboardAwareScrollView enableOnAndroid> */}
             <View style={styles.container}>
               <TouchableOpacity
                 activeOpacity={0.7}
@@ -112,7 +112,7 @@ export default function Login({navigation}) {
                 )}
               </Formik>
             </View>
-          </KeyboardAwareScrollView>
+          {/* </KeyboardAwareScrollView> */}
         </SafeAreaView>
       </ThemeWrapper>
     </ScreenWrapper>

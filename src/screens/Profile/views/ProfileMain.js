@@ -43,7 +43,7 @@ import {
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
 import {Card} from 'react-native-paper';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
+// import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
 export default function ProfileMain({navigation}) {
   const dispatch = useDispatch();
@@ -333,7 +333,7 @@ export default function ProfileMain({navigation}) {
                 ]}>
                 Get in Touch
               </Text>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 activeOpacity={0.7}
                 style={styles.cardlayout}
                 onPress={() => {
@@ -357,7 +357,7 @@ export default function ProfileMain({navigation}) {
                     style={[gs.fs26, {color: ts.secondarytext}]}
                   />
                 </Flex>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity
                 activeOpacity={0.7}
                 style={styles.cardlayout}
@@ -667,7 +667,8 @@ const styles = ScaledSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius:Platform?.OS=='ios'? 10.86:10.86,
-    elevation: 1,// For Android shadow
+    elevation: 1,// For Android shadow,
+    backgroundColor:'#fff'
   },
   topcontainer: {
     top:Platform?.OS=='ios'? '-190@ms':'-200@ms',

@@ -260,9 +260,10 @@ export const handleSearchSegregation = async ({
 export const getCaterersSearch = createAsyncThunk(
   'getCaterersSearch',
   async ({params}, {dispatch}) => {
+    console.log("get caterers search called",params)
     try {
       const res = await getCatererSearchService({params});
-      return res.data;
+      return res;
     } catch (error) {
       return rejectWithValue(error.message);
     } finally {
@@ -303,11 +304,13 @@ export const getMap = createAsyncThunk(
       place_id: location.place_id,
       limit: limit,
       current_page: page,
+      order_by:'distance'
     };
     try {
       const res = await getCatererSearchService({params});
-      return res.data;
+      return res;
     } catch (error) {
+      console.log("error in get map",error)
       return rejectWithValue(error.message);
     } finally {
     }
@@ -387,6 +390,7 @@ const searchSlice = createSlice({
       .addCase(getCaterersSearch.rejected, (state, action) => {
         state.caterersLoading = false;
         state.caterersError = action.error;
+        state.caterersData = [];
       })
       .addCase(getMap.pending, (state, action) => {
         state.mapLoading = true;

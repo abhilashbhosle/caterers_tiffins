@@ -21,7 +21,7 @@ import changeNavigationBarColor from 'react-native-navigation-bar-color';
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   useEffect(() => {
-    changeNavigationBarColor('transparent', true);
+    // changeNavigationBarColor('transparent', true);
     setTimeout(() => {
       setShowSplash(false);
     }, 1800);

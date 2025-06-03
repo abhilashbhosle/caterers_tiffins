@@ -25,14 +25,14 @@ import { useFocusEffect } from '@react-navigation/native';
 
 const Stack = createNativeStackNavigator();
 export default function PageStack() {
-   useFocusEffect(
-     useCallback(() => {
-       changeNavigationBarColor('#ffffff', true);
-       return () => {
-         changeNavigationBarColor('#ffffff', false);
-       };
-     }, []),
-   );
+  //  useFocusEffect(
+  //    useCallback(() => {
+  //      changeNavigationBarColor('#ffffff', true);
+  //      return () => {
+  //        changeNavigationBarColor('#ffffff', false);
+  //      };
+  //    }, []),
+  //  );
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>

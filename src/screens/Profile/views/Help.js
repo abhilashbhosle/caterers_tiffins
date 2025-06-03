@@ -97,6 +97,7 @@ export default function Help({navigation}) {
                 placeholderTextColor="#A7B2C2"
                 onFocus={() => setIssuefocus(true)}
                 onBlur={() => setIssuefocus(false)}
+                selectionColor={ts.secondary}
               />
               <TextInput
                 placeholder="Add comments"
@@ -114,6 +115,7 @@ export default function Help({navigation}) {
                 onBlur={() => setCmtfocus(false)}
                 value={comment}
                 onChangeText={text => setComment(text)}
+                selectionColor={ts.secondary}
               />
               <Center>
                 <TouchableOpacity

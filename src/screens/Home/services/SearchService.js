@@ -13,10 +13,10 @@ export const getLocationService = async searchText => {
     let res = await axios.get(
       `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchText}&key=${GOOGLE_KEY}`,
     );
-    // console.log("indide location service",res.data.results)
+    console.log("indide location service",res.data.results)
     return res.data.results;
-
   } catch (error) {
+    console.log('Error in getLocationService:', error);
     if (error.response && error.response.data) {
       throw new Error(error.response.data.message);
     } else {
@@ -50,15 +50,20 @@ export const getCatererSearchService = async ({params}) => {
   // console.log("params",params)
   try {
     let token = await AsyncStorage.getItem('token');
-    let res = await axios.get(`${endpoints.baseUrl}search-vendors`, {
-      params: {...params, save_filter: 1},
+    let res = await axios.post(`${endpoints.baseUrl}search-vendors`, params, {
+      // params: {...params, save_filter: 1},
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: `Bearer ${token}`,
       },
     });
-    return res.data;
+   
+    return res.data.data;
   } catch (error) {
+    console.log(
+      'Error details:',
+      error.response ? error.response.data : error.message,
+    );
     if (error.response && error.response.data) {
       throw new Error(error.response.data.message);
     } else {
@@ -71,8 +76,11 @@ export const getCatererSearchService = async ({params}) => {
 export const getSearchFilterService = async ({params}) => {
   try {
     let token = await AsyncStorage.getItem('token');
-    let res = await axios.get(`${endpoints.baseUrl}search-vendors`, {
-      params: params,
+    let res = await axios.post(`${endpoints.baseUrl}search-vendors`, 
+      params,
+      
+      {
+      // params: params,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: `Bearer ${token}`,
@@ -100,21 +108,28 @@ export const updateSubscriptionFilter = async ({
       app_type: 'app',
     };
     let token = await AsyncStorage.getItem('token');
-    let res = await axios.get(`${endpoints.baseUrl}search-vendors-update`, {
-      params: params,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Bearer ${token}`,
+    let res = await axios.post(
+      `${endpoints.baseUrl}search-vendors-update`,
+      params,
+      {
+        // params: params,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
     console.log('result in updated subscription', res.data.data.request);
     // if (res?.data?.status == 'success') {
-      setTimeout(async () => {
-        await dispatch(getSubscription({from}));
-      }, 2000);
+    setTimeout(async () => {
+      await dispatch(getSubscription({from}));
+    }, 2000);
     // }
     return res.data;
   } catch (error) {
-    console.log('error in update subfilter', error);
+    console.log(
+      'Error in updateSubscriptionFilter:',
+      error.response ? error.response.data : error.message,
+    );
   }
 };

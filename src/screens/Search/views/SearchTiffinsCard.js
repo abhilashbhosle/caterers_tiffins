@@ -170,7 +170,7 @@ function SearchCaterersCard({item, from, location}) {
               </Text>
             </Flex>
 
-            <Flex direction="row" align="center" style={[gs.mt7]}>
+            <Flex direction="row" align="center" justifyContent='space-between' style={[gs.mt7]}>
               {item?.kitchen_types?.map((e, i) => (
                 <View
                   key={i}
@@ -244,9 +244,7 @@ function SearchCaterersCard({item, from, location}) {
                   </Flex>
                 </View>
               ))}
-            </Flex>
-
-            <Flex
+                <Flex
               direction="row"
               align="center"
               style={[gs.mt4]}
@@ -329,6 +327,9 @@ function SearchCaterersCard({item, from, location}) {
                 ))}
               </Flex>
             </Flex>
+            </Flex>
+
+          
             <Divider style={[gs.mt5, gs.mb8]} />
             <Flex
               direction="row"
@@ -340,7 +341,7 @@ function SearchCaterersCard({item, from, location}) {
                   style={styles.ratingicon}
                 />
                 <Text style={[styles.startPrice, gs.fs14, gs.ph5]}>
-                  {item?.rating?.slice(0, 1)}
+                  {item?.rating}
                 </Text>
               </Flex>
               <Flex direction="row" align="center">

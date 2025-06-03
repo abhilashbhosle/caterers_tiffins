@@ -102,11 +102,13 @@ export default function TiffinProfile({navigation, route}) {
             showsVerticalScrollIndicator={false}
             // enableOnAndroid={true}
             nestedScrollEnabled={true}
-            extraScrollHeight={Platform.OS == 'ios' ? 100 : 0}
+            extraScrollHeight={Platform.OS == 'ios' ? 0 : 0}
             ref={scrollViewRef}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh}   progressViewOffset={60}/>
-            }>
+            }
+            bounces={false}
+            >
             {/* =======BANNER SLIDERS======= */}
             <View>
               <View style={{position: 'relative'}}>
@@ -844,6 +846,7 @@ export default function TiffinProfile({navigation, route}) {
                 onBlur={() => setCmtfocus(false)}
                 value={review}
                 onChangeText={text => setReview(text)}
+                selectionColor={ts.primary}
               />
               {!createLoading ? (
                 <Center style={[gs.mh10]}>

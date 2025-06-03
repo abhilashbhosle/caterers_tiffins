@@ -236,7 +236,7 @@ function SearchCaterersCard({item, from, location}) {
                   style={styles.ratingicon}
                 />
                 <Text style={[styles.startPrice, gs.fs14, gs.ph5]}>
-                  {item?.rating?.slice(0, 1)}
+                  {item?.rating}
                 </Text>
               </Flex>
               <Flex direction="row" align="center">

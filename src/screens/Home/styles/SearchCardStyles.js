@@ -15,13 +15,13 @@ export const styles = ScaledSheet.create({
     width: '115@ms',
   },
   cardcontainer: {
-    height: '188@ms',
+    height: '170@ms',
     marginVertical: '10@ms',
     backgroundColor: '#fff',
     borderRadius: '10@ms',
   },
   img: {
-    height: '188@ms',
+    height: '170@ms',
     borderTopLeftRadius: '10@ms',
     borderBottomLeftRadius: '10@ms',
     width: '115@ms',

@@ -207,7 +207,7 @@ export default function MyInquiries({navigation}) {
       contentContainerStyle={[gs.ph15, gs.pv10]}
       ListFooterComponent={renderFooter}
       ListEmptyComponent={
-        !inquiryLoading && !inquiryCatererData?.length? (
+        !inquiryLoading && !inquiryCatererData?.length ? (
           <Text
             style={[
               gs.fs14,
@@ -338,11 +338,7 @@ export default function MyInquiries({navigation}) {
           </Text>
           <TouchableOpacity
             activeOpacity={0.8}
-            style={[
-              styles.callnowbtn,
-              gs.br20,
-              {backgroundColor: ts.primary},
-            ]}
+            style={[styles.callnowbtn, gs.br20, {backgroundColor: ts.primary}]}
             onPress={() => {
               item?.vendor_phone_number
                 ? Linking.openURL(`tel:${item?.vendor_phone_number}`)
@@ -458,23 +454,40 @@ export default function MyInquiries({navigation}) {
               style={[styles.tabbarcontainer]}
               renderLabel={({focused, route}) => {
                 return (
-                  <Text
-                    // size={20}
-                    category="Medium"
-                    style={{
-                      ...styles.title,
-                      color: '#000',
-                      backgroundColor: focused ? '#fff' : 'transparent',
-                      width: width / 2.21,
-                      // left:-2
-                    }}>
-                    {route.title}{' '}
-                    {focused && route.title == 'Caterers'
-                      ? `(${inquiryCatererData?.length?inquiryCatererData?.length:0})`
-                      : focused && route.title == 'Tiffins'
-                      ? `(${inquiryTiffinData?.length?inquiryTiffinData?.length:0})`
-                      : null}
-                  </Text>
+                  <View
+                    style={[
+                      styles.titlecontainer,
+                      {
+                        backgroundColor: focused ? '#fff' : 'transparent',
+                        width: width / 2.21,
+                      },
+                    ]}>
+                    <Text
+                      // size={20}
+                      category="Medium"
+                      style={{
+                        ...styles.title,
+                        color: '#000',
+                        // backgroundColor: focused ? '#fff' : 'transparent',
+                        // width: width / 2.21,
+                        // left:-2
+                      }}>
+                      {route.title}{' '}
+                      {focused && route.title == 'Caterers'
+                        ? `(${
+                            inquiryCatererData?.length
+                              ? inquiryCatererData?.length
+                              : 0
+                          })`
+                        : focused && route.title == 'Tiffins'
+                        ? `(${
+                            inquiryTiffinData?.length
+                              ? inquiryTiffinData?.length
+                              : 0
+                          })`
+                        : null}
+                    </Text>
+                  </View>
                 );
               }}
               indicatorStyle={{backgroundColor: 'transparent'}}
@@ -535,11 +548,18 @@ const styles = ScaledSheet.create({
     // paddingVertical: '2@ms',
     borderRadius: '6@ms',
   },
+   titlecontainer: {
+    borderRadius: '6@ms',
+    height: '23@ms',
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom: '9@ms',
+  },
   title: {
-    fontFamily: ts.jakartasemibold,
+ fontFamily: ts.jakartasemibold,
     fontSize: '12@ms',
     textAlign: 'center',
-    bottom: '9.45@ms',
+    // bottom: '9.45@ms',
     paddingTop: '2@ms',
     height: '23@ms',
     borderRadius: '6@ms',

@@ -317,7 +317,7 @@ function SearchBar({from, navigation, ssd, sse, hideDate}) {
                     width: hideDate ? '100%' : '63%',
                     borderTopLeftRadius: hideDate ? 10 : 0,
                     borderBottomLeftRadius: hideDate ? 10 : 0,
-                    marginLeft: hideDate ? '0@ms' : '-1@ms',
+                    marginLeft: hideDate ? styles.ml0.marginLeft : styles.ml.marginLeft,
                   },
                   gs.fs14,
                   gs.ph10,
@@ -333,6 +333,7 @@ function SearchBar({from, navigation, ssd, sse, hideDate}) {
                 returnKeyLabel="search"
                 ref={inputRef}
                 selection={selection}
+                selectionColor={theme}
               />
               {hideDate == true ? null : <View style={styles.seperator}></View>}
               <Pressable

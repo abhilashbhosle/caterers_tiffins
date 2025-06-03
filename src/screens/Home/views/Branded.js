@@ -58,8 +58,10 @@ function Branded() {
     dispatch(getUser());
   }, []);
 
+ 
+
   useEffect(() => {
-    if (userDetails?.length && userDetails[0]?.formatted_address) {
+    if (userDetails?.length && userDetails[0]?.formatted_address && brandedData?.length==0) {
       dispatch(
         getBranded({
           latitude: userDetails[0]?.latitude,
@@ -70,7 +72,7 @@ function Branded() {
         }),
       );
     }
-  }, [userDetails]);
+  }, [userDetails,brandedData]);
 
   useFocusEffect(
     useCallback(() => {

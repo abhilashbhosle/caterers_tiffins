@@ -189,6 +189,7 @@ const styles = ScaledSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: Platform?.OS == 'ios' ? 10.86 : 10.86,
     elevation: 1, // For Android shadow
+    backgroundColor:'#fff',
   },
   icon1: {
     width: '24@ms',

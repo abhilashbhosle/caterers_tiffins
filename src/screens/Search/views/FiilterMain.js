@@ -63,9 +63,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Star} from '../../../components/Star';
 import {clearFilterService} from '../../Home/services/FilterMainService';
-import { debounce } from 'lodash';
-import { startLoader } from '../../../redux/CommonSlicer';
-import { useFocusEffect } from '@react-navigation/native';
+import {debounce} from 'lodash';
+import {startLoader} from '../../../redux/CommonSlicer';
+import {useFocusEffect} from '@react-navigation/native';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
 export default function FiilterMain({navigation, route}) {
@@ -124,8 +124,6 @@ export default function FiilterMain({navigation, route}) {
   const [occasionSortData, setOccassionSortData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
-
-
   useEffect(() => {
     const getAllData = async () => {
       dispatch(startLoader(true));
@@ -143,7 +141,7 @@ export default function FiilterMain({navigation, route}) {
         dispatch(getSubscription({from: 'Caterers'})),
       ]);
       dispatch(startLoader(false));
-    }
+    };
     getAllData();
   }, []);
 
@@ -172,7 +170,7 @@ export default function FiilterMain({navigation, route}) {
     if (ratingData?.length) {
       setRating(ratingData);
     }
-  
+
     (async () => {
       const asyncData = await AsyncStorage.getItem('searchJson');
       if (asyncData) {
@@ -183,8 +181,17 @@ export default function FiilterMain({navigation, route}) {
         setOccassionSortData(parsed?.occasions_filter || []);
       }
     })();
-  }, [servingData, serviceData, data, budgetData, cuisineData, headData, sortData, ratingData]);
-  
+  }, [
+    servingData,
+    serviceData,
+    data,
+    budgetData,
+    cuisineData,
+    headData,
+    sortData,
+    ratingData,
+  ]);
+
   // =======SEARCH CUISINE========//
   const handleSearch = text => {
     setSearch(text);
@@ -496,9 +503,15 @@ export default function FiilterMain({navigation, route}) {
                             style={[gs.pr10, gs.pv10, gs.fs16, {color: '#777'}]}
                           />
                         </TouchableOpacity>
-                        <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
-                          {e.name}
-                        </Text>
+                        <TouchableOpacity
+                          style={{width: '80%'}}
+                          onPress={() =>
+                            setExpanded(prev => (prev == i ? -1 : i))
+                          }>
+                          <Text style={[styles.servicetxt, gs.fs13, gs.mv10]}>
+                            {e.name}
+                          </Text>
+                        </TouchableOpacity>
                       </Flex>
                       <TouchableOpacity
                         onPress={() =>

@@ -110,7 +110,6 @@ export default function Caterers({navigation}) {
       setRefreshing(false);
     }, 1000);
   }, []);
-
   return (
     <ScreenWrapper>
       <ScrollView
@@ -123,7 +122,7 @@ export default function Caterers({navigation}) {
           onRefresh={onRefresh}
           progressViewOffset={60}
         />
-    
+
         }  
         >
         <LinearGradient
