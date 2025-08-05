@@ -191,6 +191,7 @@ export const getSimilarTiffins = createAsyncThunk(
       app_type:"app",
       search_term:''
     };
+    console.log(params)
     try {
       const res = await getSimilarTiffinService({params});
       return res.data;

@@ -38,7 +38,7 @@ export const getOtpService = async ({name, phoneNumber, navigation}) => {
     }
     return res;
   } catch (error) {
-    console.log(error)
+    console.log(error);
     if (error.response && error.response.data) {
       showMessage({
         message: 'Request Failed!',
@@ -81,7 +81,7 @@ export const getLoginOtpService = async ({phoneNumber, navigation}) => {
     }
     return res;
   } catch (error) {
-  console.log("error into get otp",error)
+    console.log('error into get otp', error);
     if (error.response && error.response.data) {
       showMessage({
         message: 'Request Failed!',
@@ -268,10 +268,8 @@ export const verifyLoginOtpService = async ({
   }
 };
 // ======GET ADDRESS=======//
-export const getAddress = async ({
-  place_id
-}) => {
-  console.log("placeid", place_id);
+export const getAddress = async ({place_id}) => {
+  console.log('placeid', place_id);
   try {
     // dispatch(startLoader(true));
     const response = await axios.get(
@@ -280,30 +278,39 @@ export const getAddress = async ({
         params: {
           place_id,
           key: GOOGLE_KEY,
-          components: "country:IN",
+          components: 'country:IN',
         },
-      }
+      },
     );
 
-    const { address_components, formatted_address, geometry } = response.data.result;
+    const {address_components, formatted_address, geometry} =
+      response.data.result;
 
     const getAddressComponent = (components, type) =>
-      components.find((component) => component.types.includes(type))?.long_name || '';
+      components.find(component => component.types.includes(type))?.long_name ||
+      '';
 
-      const addressData = {
-        street_name: getAddressComponent(address_components, 'route') || 'Unknown Street',
-        area: getAddressComponent(address_components, 'sublocality_level_1') || '',
-        pincode: getAddressComponent(address_components, 'postal_code') || '',
-        city: getAddressComponent(address_components, 'locality') ||
-              getAddressComponent(address_components, 'administrative_area_level_2'),
-        state: getAddressComponent(address_components, 'administrative_area_level_1') || '',
-        country: getAddressComponent(address_components, 'country') || '',
-        latitude: geometry.location.lat,
-        longitude: geometry.location.lng,
-        formatted_address,
-        place_id,
-      };
-      return addressData;
+    const addressData = {
+      street_name:
+        getAddressComponent(address_components, 'route') || 'Unknown Street',
+      area:
+        getAddressComponent(address_components, 'sublocality_level_1') || '',
+      pincode: getAddressComponent(address_components, 'postal_code') || '',
+      city:
+        getAddressComponent(address_components, 'locality') ||
+        getAddressComponent(address_components, 'administrative_area_level_2'),
+      state:
+        getAddressComponent(
+          address_components,
+          'administrative_area_level_1',
+        ) || '',
+      country: getAddressComponent(address_components, 'country') || '',
+      latitude: geometry.location.lat,
+      longitude: geometry.location.lng,
+      formatted_address,
+      place_id,
+    };
+    return addressData;
   } catch (error) {
     console.error('Error in getLocationService:', error);
   } finally {
@@ -319,9 +326,9 @@ export const getLocationService = async ({
   navigation,
   from,
   formatted_address,
-  place_id
+  place_id,
 }) => {
-  console.log("placeid", place_id)
+  console.log('placeid', place_id);
   try {
     dispatch(startLoader(true));
     const response = await axios.get(
@@ -330,38 +337,47 @@ export const getLocationService = async ({
         params: {
           place_id,
           key: GOOGLE_KEY,
-          components: "country:IN",
+          components: 'country:IN',
         },
-      }
+      },
     );
 
-    const { address_components, formatted_address, geometry } = response.data.result;
+    const {address_components, formatted_address, geometry} =
+      response.data.result;
 
     const getAddressComponent = (components, type) =>
-      components.find((component) => component.types.includes(type))?.long_name || '';
+      components.find(component => component.types.includes(type))?.long_name ||
+      '';
 
-      const addressData = {
-        street_name: getAddressComponent(address_components, 'route') || 'Unknown Street',
-        area: getAddressComponent(address_components, 'sublocality_level_1') || '',
-        pincode: getAddressComponent(address_components, 'postal_code') || '',
-        city: getAddressComponent(address_components, 'locality') ||
-              getAddressComponent(address_components, 'administrative_area_level_2'),
-        state: getAddressComponent(address_components, 'administrative_area_level_1') || '',
-        country: getAddressComponent(address_components, 'country') || '',
-        latitude: geometry.location.lat,
-        longitude: geometry.location.lng,
-        formatted_address,
-        place_id,
-      };
-      
-      // console.log(addressData);
+    const addressData = {
+      street_name:
+        getAddressComponent(address_components, 'route') || 'Unknown Street',
+      area:
+        getAddressComponent(address_components, 'sublocality_level_1') || '',
+      pincode: getAddressComponent(address_components, 'postal_code') || '',
+      city:
+        getAddressComponent(address_components, 'locality') ||
+        getAddressComponent(address_components, 'administrative_area_level_2'),
+      state:
+        getAddressComponent(
+          address_components,
+          'administrative_area_level_1',
+        ) || '',
+      country: getAddressComponent(address_components, 'country') || '',
+      latitude: geometry.location.lat,
+      longitude: geometry.location.lng,
+      formatted_address,
+      place_id,
+    };
 
-      await updateLocationService({
-        temp: addressData,
-        navigation,
-        dispatch,
-        from,
-      });
+    // console.log(addressData);
+
+    await updateLocationService({
+      temp: addressData,
+      navigation,
+      dispatch,
+      from,
+    });
   } catch (error) {
     console.error('Error in getLocationService:', error);
   } finally {
@@ -404,7 +420,7 @@ export const updateLocationService = async ({
     }
     return res;
   } catch (error) {
-    console.log(error)
+    console.log(error);
     dispatch(startLoader(false));
     if (error.response && error.response.data) {
       showMessage({
@@ -420,17 +436,21 @@ export const updateLocationService = async ({
 };
 
 //   =======CLEAR LOCATION======//
-export const clearLocation = async() => {
+export const clearLocation = async () => {
   try {
     // dispatch(startLoader(true));
     let token = await AsyncStorage.getItem('token');
-    console.log(token)
-    let res = await axios.post(`${endpoints.baseUrl}clear-location-filters-app`,null, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Bearer ${token}`,
+    console.log(token);
+    let res = await axios.post(
+      `${endpoints.baseUrl}clear-location-filters-app`,
+      null,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
     return res;
   } catch (error) {
     // dispatch(startLoader(false));
@@ -536,6 +556,40 @@ export const updateUserProfile = async (body, dispatch, setEnableOtp) => {
     }
     //   return res.data;
   } catch (error) {
+    dispatch(startLoader(false));
+    if (error.response && error.response.data) {
+      showMessage({
+        message: 'Request Failed!',
+        description: error.response.data.message,
+        type: 'danger',
+      });
+      return error.response.data;
+    } else {
+      return error.message;
+    }
+  } finally {
+    dispatch(startLoader(false));
+  }
+};
+
+// Delete account
+export const deleteAccount = async (body, dispatch) => {
+  try {
+    dispatch(startLoader(true));
+    let token = await AsyncStorage.getItem('token');
+    let res = await axios.post(`${endpoints.baseUrl}user-remove`, null, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    showMessage({
+      message: 'Account deleted succesfully!',
+      type: 'success',
+    });
+    return res.data;
+  } catch (error) {
+    console.log(error);
     dispatch(startLoader(false));
     if (error.response && error.response.data) {
       showMessage({

@@ -33,6 +33,7 @@ import TextField from '../../../components/TextField';
 import WhiteCoverBtn from '../../../components/WhiteCoverBtn';
 import Themebtn from '../../../components/Themebtn';
 import {
+  deleteAccount,
   updateProfile,
   updateUserProfile,
 } from '../../Onboarding/services/AuthService';
@@ -43,6 +44,7 @@ import {
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
 import {Card} from 'react-native-paper';
+import { color } from 'native-base/lib/typescript/theme/styled-system';
 // import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
 export default function ProfileMain({navigation}) {
@@ -84,6 +86,15 @@ export default function ProfileMain({navigation}) {
       dispatch(logout(false));
     }, 2000);
   };
+  const handleDeleteAccount=async()=>{
+   const res= await deleteAccount(null,dispatch);
+   if(res.status=="success"){
+    await handleLogout();
+   }
+   if(res){
+    await handleLogout();
+   }
+  }
   useEffect(() => {
     dispatch(getUser());
   }, []);
@@ -111,7 +122,7 @@ export default function ProfileMain({navigation}) {
 
         <ScrollView style={[{flex: 1}]} showsVerticalScrollIndicator={false}>
           <LinearGradient
-            colors={['#fff0f0', '#FFFDF5','#fff']}
+            colors={['#fff0f0', '#FFFDF5', '#fff']}
             start={{x: 0.2, y: 0.5}}
             end={{x: 0.5, y: 1.2}}
             // locations={[0.3,0.9,0.0]}
@@ -149,7 +160,7 @@ export default function ProfileMain({navigation}) {
                       style={[
                         gs.fs18,
                         {color: '#000', fontFamily: ts.jakartabold},
-                        gs.mb5
+                        gs.mb5,
                       ]}>
                       My Profile
                     </Text>
@@ -418,6 +429,20 @@ export default function ProfileMain({navigation}) {
                   </Flex>
                 </Flex>
               </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={[{justifyContent: 'center'},gs.mt20]}
+                onPress={handleDeleteAccount}>
+                <Flex
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between">
+                  <Flex direction="row" alignItems="center">
+                   <MaterialIcon name="delete-outline" style={[{...styles.icon1,color:ts.secondary},gs.fs25]} />
+                    <Text style={{...styles.cardtxt,top:2}}>Delete Account</Text>
+                  </Flex>
+                </Flex>
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
@@ -624,7 +649,7 @@ const styles = ScaledSheet.create({
     marginLeft: '10@ms',
     fontFamily: ts.jakartamedium,
     color: ts.primarytext,
-    marginBottom:'3@ms'
+    marginBottom: '3@ms',
   },
   logout: {
     height: '40@ms',
@@ -657,21 +682,21 @@ const styles = ScaledSheet.create({
   },
   container: {
     height: '400@ms',
-    position:'relative'
+    position: 'relative',
   },
   cardcontainer: {
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
     shadowOpacity: 0.1,
-    shadowRadius:Platform?.OS=='ios'? 10.86:10.86,
-    elevation: 1,// For Android shadow,
-    backgroundColor:'#fff'
+    shadowRadius: Platform?.OS == 'ios' ? 10.86 : 10.86,
+    elevation: 1, // For Android shadow,
+    backgroundColor: '#fff',
   },
   topcontainer: {
-    top:Platform?.OS=='ios'? '-190@ms':'-200@ms',
+    top: Platform?.OS == 'ios' ? '-190@ms' : '-200@ms',
   },
   icon1: {
     width: '24@ms',
